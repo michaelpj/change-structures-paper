@@ -1,0 +1,408 @@
+\documentclass[english]{article}
+\usepackage[T1]{fontenc}
+
+\usepackage[latin9]{inputenc}
+\usepackage{color}
+\usepackage{babel}
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{stmaryrd}
+
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=true,pdfborder={0 0 0},backref=false,colorlinks=true]
+ {hyperref}
+
+\newcommand{\als}[1]{\begin{align*} #1 \end{align*}}
+\newcommand{\red}[1]{{\color{red} #1}}
+\newcommand{\A}[1]{\mathbf{#1}}
+
+% Relation difference symbols
+\newcommand{\relD}[1]{\Delta #1}
+\newcommand{\relE}[1]{\mathcal{E} #1}
+\newcommand{\relG}[1]{\Gamma #1}
+
+% A few convenience commands
+\newcommand{\nxt}[3]{\left(#1 \vee #2 \right) \wedge \neg #3}
+\newcommand{\relNext}[1]{\nxt{#1}{\relD{#1}}{\relE{#1}}}
+\newcommand{\BAlg}[1]{\mathcal{#1}}
+
+% Datalog semantic bits
+\newcommand{\Rel}{Rel}
+\newcommand{\denote}[1]{[#1]}
+\newcommand{\domP}{\mathcal{P}}
+\newcommand{\consq}{\mathcal{I}}
+
+% Exact difference symbols
+\newcommand{\exactD}{d}
+\newcommand{\exactE}{e}
+\newcommand{\exactG}{g}
+
+% Various forms of the positive difference operator
+\newcommand{\diffL}[4]{\exactD \left(#1, #2, #3, #4\right)}
+\newcommand{\diff}[2]{\exactD \left(#1, #2, \relD{#2}, \relE{#2}\right)}
+\newcommand{\diffS}[1]{\exactD \left(#1\right)}
+
+% Various forms of the negative difference operator
+\newcommand{\eiffL}[4]{\exactE \left(#1, #2, #3, #4\right)}
+\newcommand{\eiff}[2]{\exactE \left(#1, #2, \relD{#2}, \relE{#2}\right)}
+\newcommand{\eiffS}[1]{\exactE \left(#1\right)}
+
+% Various forms of the combined difference operator
+\newcommand{\giffL}[4]{\exactG \left(#1, #2, #3, #4\right)}
+\newcommand{\giff}[2]{\exactG \left(#1, #2, \relD{#2}, \relE{#2}\right)}
+\newcommand{\giffS}[1]{\exactG \left(#1\right)}
+
+% Approximate difference symbols
+\newcommand{\approxD}{\delta}
+\newcommand{\approxE}{\epsilon}
+\newcommand{\approxG}{\gamma}
+
+% Various forms of the positive approximate difference operator
+\newcommand{\adiffL}[4]{\approxD \left(#1, #2, #3, #4\right)}
+\newcommand{\adiff}[2]{\approxD \left(#1, #2, \relD{#2}, \relE{#2}\right)}
+\newcommand{\adiffS}[1]{\approxD \left(#1\right)}
+
+% Various forms of the negative approximate difference operator
+\newcommand{\aeiffL}[4]{\approxE \left(#1, #2, #3, #4\right)}
+\newcommand{\aeiff}[2]{\approxE \left(#1, #2, \relD{#2}, \relE{#2}\right)}
+\newcommand{\aeiffS}[1]{\approxE \left(#1\right)}
+
+% Various forms of the combined approximate difference operator
+\newcommand{\agiff}[2]{\approxG \left(#1, #2, \relD{#2}, \relE{#2}\right)}
+\newcommand{\agiffS}[1]{\approxG \left(#1\right)}
+
+
+\makeatletter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+
+\theoremstyle{plain}
+\newtheorem{thm}{\protect\theoremname}
+\theoremstyle{remark}
+\newtheorem{rem}[thm]{\protect\remarkname}
+
+\theoremstyle{remark}
+\newtheorem{claim}[thm]{\protect\claimname}
+
+\theoremstyle{remark}
+\newtheorem{corollary}[thm]{\protect\corollaryname}
+
+\theoremstyle{definition}
+\newtheorem{defn}[thm]{\protect\definitionname}
+
+\theoremstyle{definition}
+\newtheorem{prop}[thm]{\protect\propositionname}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\newcommand{\ra}[0]{\rightarrow}
+\let\olditemize\itemize
+\renewcommand{\itemize}{
+  \olditemize
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}
+
+\makeatother
+
+\providecommand{\claimname}{Claim}
+\providecommand{\corollaryname}{Corollary}
+\providecommand{\definitionname}{Definition}
+\providecommand{\propositionname}{Proposition}
+\providecommand{\remarkname}{Remark}
+\providecommand{\theoremname}{Theorem}
+
+\newcommand{\kite}[0]{\mathbin{\rotatebox[origin=c]{45}{$\boxtimes$}}}
+\newcommand{\kminus}[0]{\mathbin{\rotatebox[origin=c]{-45}{$\boxslash$}}}
+\newcommand{\Dia}[0]{\mathbin{\rotatebox[origin=c]{45}{$\square$}}}
+
+\begin{document}
+
+\title{Insert clever pun here}
+\author{}
+
+\maketitle
+
+\section{A comment on the type of derivatives}
+
+Michael Arntzenius' notion of derivative is really interesting, because the types seem lifted right
+off DiLL (rather than Cai's formalism, even though they fit)
+
+Given a non-monotonic function $f : A \ra B$, i.e. a monotonic function $f : \square A \ra B$
+(where $\square A$ denotes the discrete order in $A$, note that this is a comonad), a derivative
+is a monotonic function $\square A \times A \ra B$, i.e. a function of two arguments which is
+monotonic in its second one. Furthermore, it is ``almost linear'': if it were linear, we would
+expect $f'(a, da) \vee f'(a, db) = f'(a, da \vee db)$, but instead (by monotonicity) we have
+$f'(a, da) \vee f'(a, db) \leq f'(a, da \vee db)$. Thus, sublinearity.
+
+\section{Example on the real numbers}
+
+Given a function $f$, we wish to decompose it as $f(x + a) = f(x) \oplus g(x, a)$ - in order to
+make the types fit, $g$ should be monotonic in its second argument. The intuition on how to
+do this is clear on a whiteboard, but the details are tricky.
+
+To make it easier, we suppose $f$ to be differentiable (differentiable almost anywhere might
+work too, but it might be trickier to prove). Now we define:
+\begin{align*}
+  f^+(x, dx) \triangleq \int_x^{x + dx} \text{max}(f'(z), 0) dz\\
+  f^-(x, dx) \triangleq \int_x^{x + dx} \text{min}(f'(z), 0) dz\\
+\end{align*}
+Note that $f^+$ is monotonic and $f^-$ is anti-monotonic (both on their second argument, but not
+the first). Furthermore:
+\begin{align*}
+  f(x + dx) &= f(x) + \int_x^{x + dx} f'(z) dz \\
+  &= f(x) + \int_x^{x + dx} \text{max}(f'(z), 0) + \text{min}(f'(z), 0) dz\\
+  &= f(x) + f^+(x, dx) + f^-(x, dx)
+\end{align*}
+
+Now if we define an ordering on $\mathbb{R^2}$ by
+\begin{align*}
+  (x, y) \sqsubseteq (x', y') \Leftrightarrow x \leq x' \wedge y \geq y'
+\end{align*}
+we have that the function
+\begin{align*}
+  f'(x, dx) \triangleq (f^+(x, dx), f^-(x, dx))
+\end{align*}
+is monotonic in its second argument and furthermore verifies
+\begin{align*}
+  f(x + dx) = f(x) \oplus f'(x, dx)
+\end{align*}
+where $x \oplus (y, z) \triangleq x + y + z$.
+
+Claim: this is exactly what's going on in the case with boolean algebras.
+
+\section{Order from change structures}
+
+Let $(A, \Delta A, \oplus)$ be some change structure (furthermore I assume it has the structure
+of a monoid action). It then induces a preorder on the underlying set $A$, which I call the
+reachability order on $A$:
+\begin{align*}
+  a \sqsubseteq b &\Leftrightarrow \exists da \in \Delta A . a \oplus da = b
+\end{align*}
+
+In the case of discrete change structures, i.e. $a \oplus da = a$, this is the discrete order.
+If the change structure has $\ominus$, then for every $a, b$ we have $a \sqsubseteq b$.
+
+A function $f : A_\oplus \ra B_\boxplus$ is differentiable iff it is monotonic (note that from
+this section it follows that functions from discrete change structures or into change structures
+with $\ominus$ are always differentiable).
+
+\subsection{Order on differences}
+
+As in the DREAD paper, given a preorder on $A$ there is a preorder on differences:
+\als{
+  da \sqsubseteq db \Leftrightarrow \forall a \in A . a \oplus da \leq a \oplus db
+}
+If we take the previous preorder on $A$, this becomes
+\als{
+  da \sqsubseteq db &\Leftrightarrow \forall a \in A .\exists dc \in \Delta A
+  . a \oplus da \oplus dc = a \oplus db\\
+  &\Leftrightarrow \forall a \in A . \exists dc \in \Delta A
+  . a \oplus (da + dc) = a \oplus db
+}
+Given the extensionality condition $ \forall a . (a \oplus da) \ominus a = da$ (or, equivalently,
+$ \forall a\ da\ db. a \oplus da = a \oplus db \Rightarrow da = db$), this order becomes:
+\als{
+  da \sqsubseteq db &\Leftrightarrow \exists dc . da + dc = db
+}
+which is precisely the reachability order on the change structure $(\Delta A, \Delta A, +)$.
+This can actually be weakened and it suffices that
+$\exists a .\forall da\ db. a \oplus da = a \oplus db \Rightarrow da = db$
+
+\subsection{Semilattices}
+
+Given a meet-semilattice $(A, \wedge, \top)$, there is a change structure given by
+\als{
+  \Delta A &\triangleq A\\
+  a \oplus b &\triangleq a \wedge b
+}
+The reachability order from this structure is precisely the opposite order of the semilattice.
+To see this,
+take $b \leq a$. Then $a \wedge b = b$, thus $a \oplus b = b$ hence $a \sqsubseteq b$. Conversely,
+suppose $a \sqsubseteq b$. Then $a \wedge c = b$ for some $c$ therefore $b \leq a$.
+
+Furthermore, since $\top \wedge a = a$, the previous weak extensionality condition holds and
+therefore the difference order on $A$ is the same as the reachability order (and the opposite as
+the lattice order).
+
+The exact same results are true of join-semilattices, but in that case the reachability order
+is the same as the order of the lattice.
+
+\subsection{Order on semilattice derivatives}
+
+Let $f : A \ra B$ be some $\vee$-differentiable map. The set of its derivatives is in itself
+a $\vee$-lattice, with the order being defined pointwise.
+
+\section{Order on change structures}
+
+Given a set $A$, we can establish a partial order on its possible change structures as follows:
+let $(\Delta_1 A, \oplus_1)$, $(\Delta_2 A, \oplus_2)$ be two change structures. Then we say
+$(\Delta_1 A, \oplus_1) \leq (\Delta_2 A, \oplus_2)$ if and only if the identity function on
+$A$ is differentiable when consider as a function from $(A, \Delta_1 A, \oplus_1)$ into
+$(A, \Delta_2 A, \oplus_2)$.
+
+This gives rise to a preorder $\A{CStr}(A)$ instead - indeed, it gives rise to a category,
+which is nothing but the fibre category over $A$ for the obvious forgetful functor. This
+category has some weak limits:
+
+\begin{prop}
+  The category $\A{CStr}(A)$ has a (family of) weak initial object(s), given by
+  $a \oplus da = a$.
+\end{prop}
+
+\begin{prop}
+  Any change structure with $\ominus$ is a weak terminal object of $\A{CStr}(A)$.
+\end{prop}
+
+We also have the following result:
+
+\begin{prop}
+  If $f : (A, \Delta A, \oplus) \ra (B, \Delta_1 B, \oplus_1)$ is differentiable and
+  $\oplus_1 \leq \oplus_2$ then $f : (A, \Delta A, \oplus) \ra (B, \Delta_2 B, \oplus_2)$ is
+  differentiable (a similar result is available for pre-composition).
+\end{prop}
+
+Unfortunately this ordering is not too great: there are lots of change structures that are
+``the same as'' others while being manifestly ``worse'' in a sense. For example, the family of
+weak initial objects. We can shave off some of these by restricting ourselves to ``non-redundant''
+structures, i.e. those satisfying weak extensionality. Under this assumption, the initial
+and terminal objects are unique.
+
+\subsection{Superposition of change structures}
+
+Given change structures (without minus) $\oplus$ and $\boxplus$ on $A$, a superposition of these,
+$\circledast$ is a weak coproduct. This is always going to be essentially the same as the 
+change structure:
+\als{
+  \Delta_\star &\triangleq (\Delta_\oplus \times \Delta_\boxplus)^\star\\
+  a \star (d, \delta) &\triangleq a \oplus d \boxplus \delta
+}
+Perhaps they are all quotients over this? The case on Boolean algebras certainly is. How do we
+quantify how much better/worse they are?
+
+\newcommand{\cast}[0]{\circledast}
+The proof that these are the same is relatively simple. Since $\cast$ is a (weak) coproduct, the
+identity into $\star$ is differentiable. For the converse, it suffices to map each pair
+$(d, \delta)$ into $\iota_1 d + \iota_2 \delta$ (modulo shuffling some stuff around).
+
+Furthermore, if the smallest preorder that contains $\leq_\oplus$ and $\leq_\boxplus$ is the whole
+set $A$, then $\star$ has a minus and hence every function into it (and therefore into $\cast$)
+is differentiable. This is precisely what happens in Boolean algebras.
+
+Alternatively, we can show that the reachability preorder is refined by inclusion (i.e. if a
+change structure is smaller than another, then its reachability preorder is finer - adjunction
+between the lattice of preorders on $A$ and change structures?). Thus, the reachability preorder of
+$\cast$ is at least as coarse as the finest preorder that contains $\leq_\oplus$ and $\leq_\boxplus$.
+
+\subsubsection{On lattices}
+
+Consider the change structures on some lattice $A$ given by $\wedge$ and $\vee$. We can define
+a superposition of these as follows (note that some details are up to choice):
+
+\begin{align*}
+  \Dia A &\triangleq \Delta A \times \nabla A\\
+  a \kite (da, \delta a) &\triangleq a \oplus da \boxplus \delta a\\
+  b \kminus a &{\triangleq \red{(b \ominus a, b \boxminus b)}}\\
+  b \kminus a &{\triangleq \red{(a \ominus a, b \boxminus a)}}\\
+  \red{(da, \delta a) + (db, \delta b) }&\red{\triangleq (da + db, \delta a + \delta b)}\\
+  \red{(da, \delta a) + (db, \delta b) }&\red{\triangleq
+  (da \oplus db, (\delta a \oplus db) \boxplus \delta b)}\\
+  (da, \delta a) + (db, \delta b) &\triangleq
+  ((da \boxplus \delta b) \oplus db, (\delta a \oplus db) \boxplus \delta b)\\
+\end{align*}
+Big question: this works fine in boolean algebras. Can it be generalized?
+
+\section{Subderivatives}
+
+Suppose a change structure $\oplus$ on a set $B$ endowed with a partial order $\leq$. Given
+a function $f : A \ra B$, a function $f' : A \times \Delta A \ra \Delta B$ is a subderivative
+if the following inequality holds for all $a, da$: \als{
+  f(a) \oplus f'(a, da) &\leq f(a \oplus da)
+}
+A supderivative is exactly the same thing, but the other way around. We abuse the notation
+and extend the order $\leq$ to $B$-valued functions.
+
+Given two functions $\partial_1 f, \partial_2 f : A \times \Delta A \ra \Delta B$, we define
+$\partial_1 f \leq \partial_2 f$ iff for all $a, da$ we have $f(a) \oplus \partial_1f(a, da)
+\leq f(a) \oplus \partial_2f(a, da)$.
+
+Some obvious propositions:
+\begin{prop}
+  $f'$ is a derivative for $f$ iff it is a sub- and sup-derivative for $f$.
+\end{prop}
+\begin{prop}
+  If the reachability order $\sqsubseteq$ refines $\leq$ (i.e. if $x \leq y$ entails
+  $x \sqsubseteq y$) then every subdifferentiable function is differentiable (the same is
+  not true of supderivatives).
+\end{prop}
+\begin{prop}
+  If $\partial_1 f, \partial_2 f$ are subderivatives of $f$ and $\partial_1 f \leq g \leq
+  \partial_2 f$, then so is $g$.
+\end{prop}
+\begin{prop}
+  If $\partial f$ is a subderivative of $f$ and $f'$ is a derivative of $f$, then
+  $\partial f \leq f'$.
+\end{prop}
+
+An operator $\ominus : A \times A \ra \Delta A$ is a ``subdifference'' for a change structure
+if $a \oplus (b \ominus a) \leq b$. Every such operator gives rise to a subderivative operator
+$\partial_\ominus$ defined as \als{
+  \partial_\ominus (f)(a, da) &= f(a \oplus da) \ominus f(a)
+}
+
+\begin{defn}
+  A change structure on a poset is \textbf{ascending} iff the reachability order refines the natural
+  order, i.e. whenever $f(a) \leq f(a \oplus b)$ it is the case that
+  $f(a) \sqsubseteq f(a \oplus b)$.
+\end{defn}
+\begin{defn}
+  A change structure on a poset is \textbf{descending} iff every function into the poset is
+  subdifferentiable.
+\end{defn}
+\begin{defn}
+  A change structure on a poset is \textbf{precise} iff every function into the poset is
+  differentiable.
+\end{defn}
+
+\begin{prop}
+  If a change structure is both ascending and descending, then it is precise
+\end{prop}
+
+\section{Orderings on difference operators}
+
+Important, do not forget: there may be a single minimal derivative even if there is no single
+derivative. This has many applications.
+
+\section{Desiderata}
+
+It would be cool if we could get the entirety of the theory in Griffin et al. from whatever it
+is we do. We can get their notion of ``minimal changes'' from ours. What is their derivative?
+It's ours, hopefully. How good is our derivative?
+
+\section{Differential equations}
+
+\newcommand{\defeq}[0]{\triangleq}
+Given a function $f : A \ra A$ we can define a kind of ``derivative'' by setting
+$f(a) = \A{Id}(a) \oplus \delta (a)$ (or, if there is $\ominus$, $f \ominus \A{Id} = \delta$)
+This operator satisfies a kind of chain rule: $\delta(g\circ f) = \delta(g) \circ f + \delta(f)$
+
+Note that such a $\delta : A \ra \Delta A$ is a kind of vector field.
+Given a curve $\alpha : \mathbb{N} \ra A$ we can
+define the line integral as
+\begin{align*}
+  \int_m^n \delta d\alpha \defeq \sum_{i = m}^{n-1} \delta(\alpha(i))
+\end{align*}
+
+An integral curve for $\delta$ is precisely one which is its own line integral, i.e.
+\begin{align*}
+  \alpha(m + k) = \alpha(m) \oplus \int_m^{m+k}\delta d\alpha
+\end{align*}
+We can check that it verifies the following differential equation:
+\begin{align*}
+  \alpha'(n, 1) = \delta(\alpha(n))
+\end{align*}
+
+
+\end{document}

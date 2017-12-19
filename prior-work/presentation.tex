@@ -1,0 +1,535 @@
+\documentclass[english]{beamer}
+\usetheme{Boadilla}
+\usepackage[T1]{fontenc}
+
+\usepackage[latin9]{inputenc}
+\usepackage{color}
+\usepackage{babel}
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{stmaryrd}
+
+\usepackage{amsthm}
+\usepackage{amssymb}
+
+\makeatletter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+
+\theoremstyle{plain}
+\newtheorem{thm}{\protect\theoremname}
+\theoremstyle{remark}
+\newtheorem{rem}[thm]{\protect\remarkname}
+
+\theoremstyle{remark}
+\newtheorem{claim}[thm]{\protect\claimname}
+
+\theoremstyle{remark}
+
+\theoremstyle{definition}
+\newtheorem{defn}[thm]{\protect\definitionname}
+
+\theoremstyle{definition}
+\newtheorem{prop}[thm]{\protect\propositionname}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\newcommand{\ra}[0]{\rightarrow}
+\newcommand{\defeq}[0]{\triangleq}
+\newcommand{\rleq}[0]{\sqsubseteq}
+\let\olditemize\itemize
+\renewcommand{\itemize}{
+  \olditemize
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}
+
+\makeatother
+
+\providecommand{\claimname}{Claim}
+\providecommand{\corollaryname}{Corollary}
+\providecommand{\definitionname}{Definition}
+\providecommand{\propositionname}{Proposition}
+\providecommand{\remarkname}{Remark}
+\providecommand{\theoremname}{Theorem}
+
+\newcommand{\kite}[0]{\mathbin{\rotatebox[origin=c]{45}{$\boxtimes$}}}
+\newcommand{\kminus}[0]{\mathbin{\rotatebox[origin=c]{-45}{$\boxslash$}}}
+\newcommand{\Dia}[0]{\mathbin{\rotatebox[origin=c]{45}{$\square$}}}
+\newcommand{\diff}[0]{\text{d}}
+\newcommand{\D}[0]{\text{D}}
+
+\title{Better living through derivatives}
+\author{Mario Alvarez-Picallo}
+
+\begin{document}
+\frame\titlepage
+
+\section{Change structures and why you should care}
+
+\subsection{Change structures and derivatives}
+
+\begin{frame}
+  \frametitle{History and the state of the art}
+  \begin{itemize}
+    
+  \item Originally introduced by Yufei Cai, Paolo Giarrusso and others to give a general
+    account of incremental computation.
+    \vfill
+  \item ``A theory of Changes for Higher-Order Languages'', published in PLDI 2014.
+    \vfill
+  \item Area of active research right now - many open questions.
+    \vfill
+  \item Cai \& Giarrusso at Marburg, Neel Krishnaswami \& Michael Arntzenius at Cambridge.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{What is a change structure?}
+  Cai's original formulation:
+  \begin{definition}[change structure]
+    A change structure $(A, \Delta_a A, \oplus, \ominus)$ is given by:
+    \begin{enumerate}
+    \item A set $A$ of values.
+    \item For every $a \in A$, a set $\Delta_a A$ of changes.
+    \item An operation $\oplus : (a \in A) \ra \Delta_a A \ra A$
+    \item An operation $\ominus : A \ra (a \in A) \ra \Delta_a A$
+    \item Subject to the equation $a \oplus (b \ominus a) = b$
+    \end{enumerate}
+  \end{definition}
+  \vfill
+  Intuition: $\Delta_a A$ is a set of possible ``updates'' or ``changes'' that can be applied
+  to $a$, e.g. $a$ is a database and $\Delta_a A$ are valid updates on $a$.
+  \vfill
+  Incremental computation consists of lifting operations on values to operations on changes!
+\end{frame}
+
+\begin{frame}
+  \frametitle{Change structures, revisited}
+  The original definition has some problems:
+  \begin{itemize}
+    \item Dependent types (which are erased in practice).
+    \item $\ominus$ often doesn't exist (think lists with append).
+    \item No operations on changes whatsoever.
+  \end{itemize}
+  \vfill
+  \begin{definition}[change structure' (forward structure?)]
+    A forward algebra $(A, \Delta A, \oplus, +, 0)$ is:
+    \begin{enumerate}
+      \item A set $A$
+      \item A monoid $(\Delta A, +, 0)$
+      \item An action $\oplus$ of $\Delta A$ on $A$
+        \begin{enumerate}
+        \item $a \oplus (\delta a + \delta b) = a \oplus \delta a \oplus \delta b$
+        \item $a \oplus 0 = a$
+        \end{enumerate}
+    \end{enumerate}
+  \end{definition}
+  \vfill
+  Advantages: no dependent types, less requirements, more elegant (YMMV).
+
+  The monoidal structure will be important later!
+\end{frame}
+
+\begin{frame}
+  \frametitle{Functions and derivatives}
+  \begin{definition}[derivative]
+    Given a function $f : A \ra B$ between forward algebras $A$, $B$, a function
+    $f' : A \times \Delta A \ra \Delta B$ is a derivative of $f$ whenever, for all $a \in A,
+    da \in \Delta A$, one has:
+    \begin{align*}
+      f(a \oplus da) = f(a) \oplus f'(a, da)
+    \end{align*}
+  \end{definition}
+  \vfill
+  Intuition: $f'$ is an \textbf{incremental} version of $f$.
+  \vfill
+  \textbf{But why call it derivative?}
+\end{frame}
+
+\begin{frame}
+  \frametitle{The chain rule}
+  The chain rule from calculus:
+  \begin{align*}
+    (g \circ f)'(x) = (g' \circ f) (x) \cdot f'(x)
+  \end{align*}
+  \vfill
+  The chain rule from differential geometry:
+  \begin{align*}
+    \diff(g \circ f)(x, \textbf{v}) = \diff(g) (f(x), \diff f(x, \textbf{v}))
+  \end{align*}
+  \vfill
+  The chain rule in forward structures:
+  \begin{align*}
+    \D(g \circ f)(x, \delta x) = \D g(f(x), \D f(x, \delta x))
+  \end{align*}
+  \vfill
+  Intuition: forward structures are ``like'' differentiable manifolds, $\Delta A$ is
+  the tangent space.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Derivatives: existence and uniqueness}
+  How do we find derivatives?
+  \vfill
+  Very easy in change structures!
+  \begin{align*}
+    f'(x, dx) \defeq f(x \oplus dx) \ominus f(x)
+  \end{align*}
+  \begin{itemize}
+    \item We may not have $\ominus$ (e.g. lists with append).
+    \item May not be unique.
+    \item May not be very good ($\ominus$ tends to give ``bad'' changes).
+  \end{itemize}
+  \vfill
+  Not so easy in forward algebras, derivatives may not exist.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Reachability and differentiability}
+  \begin{definition}[reachability order]
+    Given $a, b \in A$, we say $a \rleq b$ ($b$ is reachable from $a$) if and only if there
+    is some $\delta a \in \Delta A$ such that:
+    \begin{align*}
+      a \oplus \delta a = b
+    \end{align*}
+  \end{definition}
+  \vfill
+  In change structures, trivial (i.e. $a \rleq b$ for all $a, b$).
+  \vfill
+  In forward algebras, this defines a \textbf{preorder} (and a topology!)
+  Conversely, if the preorder is trivial, the forward algebra admits some $\ominus$.
+  \begin{lemma}
+    A function $f : A \ra B$ between forward algebras is differentiable iff it is monotonic in
+    the reachability order iff
+    it is continuous in the generated topology.
+  \end{lemma}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Uniqueness of derivatives}
+  Unlike in calculus, derivatives on forward algebras \textbf{fail to be unique}
+  \vfill
+  In general, \textit{many different derivatives for the same function!}
+  \vfill
+  \begin{definition}[tight forward algebras]
+    A forward algebra is \textit{tight} if, for every $a, \delta_1 a, \delta_2 a$, the following
+    holds:
+    \begin{align*}
+      a \oplus \delta_1 a = a \oplus \delta_2 a \Rightarrow \delta_1 a = \delta_2 a
+    \end{align*}
+  \end{definition}
+
+  \begin{lemma}[uniqueness of derivatives]
+    A function $f : A \ra B$ into a tight forward algebra $B$ has at most one derivative.
+    Conversely, if the identity function on $B$ has at most one derivative, then $B$ is tight.
+  \end{lemma}
+  
+\end{frame}
+
+\begin{frame}
+  \frametitle{Change structures on (semi-)lattices}
+  Consider a join-semilattice $(A, \vee)$ (e.g. any Boolean/Heyting algebra)
+  \vfill
+  Forward structure on $A$ given by:
+  \begin{align*}
+    \Delta A &\defeq A\\
+    a \oplus \delta a &\defeq a \vee \delta a\\
+    \delta a + \delta b &\defeq \delta a \vee \delta b\\
+    0 &\defeq \bot
+  \end{align*}
+  \begin{lemma}
+    The reachability order on a join semi-lattice forward algebra is the same as the
+    natural order.
+  \end{lemma}
+  The same is true of meet semi-lattices, with the opposite order!
+\end{frame}
+
+\newcommand{\sem}[1]{\llbracket #1 \rrbracket}
+\begin{frame}
+  \frametitle{Incrementalizing bottom-up Datalog}
+  A simple semantics of Datalog (shamelessly stolen from Michael), considering relations as
+  arguments:
+  \begin{align*}
+    \sem{R_i}(\bar{X}) &= X_i\\
+    \sem{P \wedge Q}(\bar{X}) &= \sem{P}(\bar{X}) \cap \sem{Q}(\bar{X})]\\
+      \ldots
+  \end{align*}
+  A Datalog term is a function $\mathit{Rel}^n \ra \mathit{Rel}$.
+  \vfill
+  But $\mathit{Rel}$ is a boolean algebra, and so is $\mathit{Rel}^n$!
+  \vfill
+  If our term is monotonic, we can differentiate (i.e. incrementalize) it - this corresponds
+  to semi-na\"ive evaluation!
+  \vfill
+  \textbf{But what if our term is not monotonic?}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Algebra on forward algebras}
+  Product of forward algebras works naturally:
+  \vfill
+  \begin{definition}[product algebra]
+    The product forward algebra on forward algebras $A, B$ is as follows:
+    \begin{itemize}
+      \item $\Delta (A \times B) \defeq \Delta A \times \Delta B$
+      \item $(a, b) \oplus_\times (\delta a, \delta b) \defeq (a \oplus \delta a, b \oplus \delta b)$
+      \item $(\delta a, \delta b) +_\times (\delta c, \delta d)
+        \defeq (\delta a + \delta c, \delta b + \delta d)$
+      \item $0_\times \defeq (0, 0)$
+    \end{itemize}
+  \end{definition}
+  \vfill
+  Very well-behaved (is a categorical product).
+  \vfill
+  Also: $A \times B$ is tight iff $A$ and $B$ are (important sometimes).
+\end{frame}
+
+\begin{frame}
+  \frametitle{Algebra on forward algebras, II}
+  Sum of forward algebras is slightly trickier
+  \vfill
+  \begin{definition}[sum algebra]
+    The sum forward algebra on forward algebras $A, B$ is as follows:
+    \begin{itemize}
+      \item $\Delta (A \times B) \defeq \Delta A \times \Delta B$
+      \item $\text{inl}(a) \oplus_+ (\delta a, \delta b) \defeq a \oplus \delta a$
+      \item $\text{inr}(b) \oplus_+ (\delta a, \delta b) \defeq b \oplus \delta b$
+      \item $(\delta a, \delta b) +_+ (\delta c, \delta d)
+        \defeq (\delta a + \delta c, \delta b + \delta d)$
+      \item $0_+ \defeq (0, 0)$
+    \end{itemize}
+  \end{definition}
+  \vfill
+  Not so well-behaved, but still a categorical co-product (depending on definition).
+  \vfill
+  $A + B$ fails to be tight (almost) always!
+\end{frame}
+
+\begin{frame}
+  \frametitle{Algebra on forward algebras, III}
+  We can even take forward algebras on function spaces.
+  \vfill
+  Two different ways:
+  \begin{itemize}
+  \item Cai's definition:
+    \begin{align*}
+      \Delta_f (A \ra B) &\defeq A \times \Delta A \ra \Delta B\\
+      (f \oplus \delta f)(a) &\defeq f(a) \oplus \delta f (a, a \ominus a)
+    \end{align*}
+    (plus some tricky conditions, doesn't admit tightness)
+  \item My definition:
+    \begin{align*}
+      \Delta (A \ra B) &\defeq A \ra \Delta B\\
+      (f \oplus \delta f)(a) &\defeq f(a) \oplus \delta f(a)\\
+      (\delta f + \delta g)(a) &\defeq \delta f(a) + \delta g(a)
+    \end{align*}
+    No tricky conditions, gives a CCC of tight forward algebras!
+
+    Nice geometric interpretation as vector fields.
+  \end{itemize}
+\end{frame}
+
+\newcommand{\cast}[0]{\circledast}
+\begin{frame}
+\frametitle{Superposition algebras}
+How to combine two different forward algebras on the same set? (e.g. $\wedge$ and $\vee$ structures
+on a lattice)
+\vfill
+\begin{definition}
+  Let $(\Delta_{\oplus} A, \oplus), (\Delta_{\boxplus} A, \boxplus)$ be different forward algebras on
+  the same
+  set $A$. The superposition forward algebra is given by:
+  \begin{align*}
+    \Delta_{\ast} &\defeq (\Delta_\oplus \times \Delta_\boxplus)^\ast\\
+    a \cast (\delta_\oplus a, \delta_\boxplus b)
+    &\defeq a \oplus \delta_\oplus a \boxplus \delta_\boxplus b
+  \end{align*}
+\end{definition}
+\vfill
+Not too great (many redundant changes), easy to compute but might take lots of space, no nice
+categorical properties (weak coproduct in the slice category over $A$...)
+\vfill
+In many cases, there is a better representation.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Subderivatives}
+  Sometimes a function is not differentiable, but it can be ``approximated''.
+  \vfill
+  E.g. under/overapproximating some relation.
+  \vfill
+  \begin{definition}[subderivative]
+    Given $f : A \ra B$ and an order $\leq$ on $A$, a function $\partial f$ is a
+    \textit{subderivative} of $f$ iff for all $a, \delta a$, we have:
+    \begin{align*}
+      f(a) \oplus \partial f(a, da) \leq f(a \oplus da)
+    \end{align*}
+  \end{definition}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Ascending and descending forward algebras}
+  \begin{definition}[ascending, descending]
+    A forward algebra $A$ with an order $\leq$ is \textit{ascending} iff the reachability
+    order refines the natural order, i.e. whenever $a \leq b$ we have $a \rleq b$.
+
+    It is $\textit{descending}$ iff every function into $A$ has a subderivative.
+
+    It is $\textit{precise}$ iff it is both ascending and descending.
+  \end{definition}
+  \vfill
+
+  Intuitively, a descending forward algebra in which there are enough changes to get you
+  ``under'' any given point, i.e. you can go as ``low'' as you want. Conversely, an ascending
+  algebra is one that has all changes that take you ``upwards''.
+  \vfill
+  \begin{lemma}
+    Every function into a precise forward algebra is differentiable.
+  \end{lemma}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Ascending and descending forward algebras on lattices}
+  \begin{lemma}
+    Given a $\vee$-semilattice, the forward algebra given by:
+    \begin{align*}
+      a \oplus b &\defeq a \vee b\\
+      a + b &\defeq a \vee b
+    \end{align*}
+    is ascending.
+  \end{lemma}
+  \begin{lemma}
+    Given a Boolean algebra, the forward algebra given by:
+    \begin{align*}
+      a \oplus b &\defeq a \wedge \neg b\\
+      a + b &\defeq a \vee b
+    \end{align*}
+    is descending.
+  \end{lemma}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Synthesizing precise algebras}
+  \begin{lemma}
+    If $\Delta_\oplus$ and $\Delta_\boxplus$ are respectively descending and ascending algebras
+    on a set $A$, then the superposition $\Delta_\cast$ is a precise forward algebra on $A$.
+  \end{lemma}
+  \vfill
+  Usually not very useful - unless one has a better representation for $\Delta_\cast$!
+  \vfill
+  On boolean algebras we do have one, due to Michael Peyton Jones!
+  \begin{align*}
+    \Delta_\cast A &\defeq A \times A\\
+    a \cast (p, q) &\defeq (a \vee p) \wedge \neg q\\
+    (p, q) + (r, s) &\defeq ((p \wedge \neg s) \vee r, (q \vee s) \wedge \neg r)
+  \end{align*}
+  (details slightly trickier)
+  \vfill
+  Thus we can incrementalize any Datalog predicate - not just monotonic ones!
+\end{frame}
+
+\begin{frame}
+  \frametitle{Derivatives of fixed point operators}
+  Recursive predicates in Datalog are defined as least fixed points.
+  \vfill
+  How do we incrementalize that?
+  \vfill
+  Ideally, if we get new data about the predicate $\phi$, we should use that to update
+  predicate $\textbf{fix}\ \phi$ without recomputing it.
+  \vfill
+  We seek a derivative operator for $\textbf{fix}$!
+  \vfill
+  Some work already done by Michael Arntzenius in the context of monotonic functions.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Derivatives of fixed point operators}
+  \begin{theorem}
+    If $\textbf{fix}_A : (A \ra A) \ra A$ is a fixed point operator and it admits a derivative,
+    then for every $f : A \ra A, \delta f : A \ra \Delta A$ we have:
+    \begin{align*}
+      \textbf{fix}_A(f) \oplus
+      \textbf{fix}_{\Delta A}(\lambda w . f'(\textbf{fix}_A(f), w) +
+      \delta f (\textbf{fix}_A(f) \oplus w))
+    \end{align*}
+    is a fixed point of $f \oplus \delta f$.
+
+    Furthermore, if $A$ is a partial order, the $\textbf{fix}$ operator
+    computes the least fixed point and $\oplus$ is monotonic with respect to the order on
+    $\Delta A$, then the previous expression is a derivative
+    for it.
+  \end{theorem}
+  \vfill
+  Is it practical? Not entirely sure yet!
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Vector fields and path integrals}
+  Q: Cai derivatives are ``like'' calculus derivatives. Is there an analogue of the calculus integral?
+  A: Kind of!
+  \vfill
+  We mentioned earlier that $f : A \ra \Delta A$ is our analogue of a vector field. By analogy
+  with differential geometry, we can define path integrals over a vector field!
+  
+  \begin{definition}[definite integral]
+    Let $f : A \ra \Delta A$ be a vector field, $\alpha : \mathbb{N} \ra A$ a curve
+    (a differentiable map from $\mathbb{N}$ with the obvious structure into $A$). We define the
+    integral of $f$ along $A$ as follows:
+    \begin{align*}
+      \int_m^n f \text{d}\alpha \defeq \sum_{i = m}^n f(\alpha(i))
+    \end{align*}
+  \end{definition}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Integral curves}
+  In differential geometry, an integral curve of a vector field is a curve whose derivative
+  coincides with the vector field at every point. They arise as solutions to differential equations.
+  \vfill
+  \begin{definition}[integral curve]
+    A curve $\alpha : \mathbb{N} \ra A$ is an integral curve for a vector field $f$ iff
+    \begin{align*}
+      \alpha(i + 1) = \alpha(i) \oplus f(\alpha(i))
+    \end{align*}
+
+  \end{definition}
+  \begin{lemma}
+    Integral curves are precisely the solutions to the ``differential equation'':
+    \begin{align*}
+      \alpha'(x, 1) = f(x)
+    \end{align*}
+  \end{lemma}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Numerical ``approximation'' of integral curves}
+  In numeric analysis, one often approximates integral curves by starting at a point and moving
+  in the direction of the vector field.
+
+  We can do the same in our setting!
+  \begin{lemma}
+    Let $\alpha$ be an integral curve of a field $f$. Then:
+    \begin{align*}
+      \alpha(i) = \alpha(0) \oplus \int_0^{i - 1}f \text{d}\alpha
+    \end{align*}
+    Furthermore, any curve thus defined is an integral curve of $f$.
+  \end{lemma}
+
+
+\end{frame}
+
+\section{Vector fields, flows and computing fixpoints}
+
+\subsection{Change structures at Semmle}
+
+\section{Comparing structures and derivatives}
+
+\subsection{Orders on derivatives: the kernel ordering}
+
+\subsection{Orders on change structures}
+
+
+
+
+\end{document}
