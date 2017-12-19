@@ -1,9 +1,59 @@
 \documentclass[english]{article}
 
-\usepackage{amsmath}
+\usepackage{color}
 
+\usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{amssymb}
+\usepackage{mathtools}
+
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=true,pdfborder={0 0 0},backref=false,colorlinks=true]
+{hyperref}
+
+% Theorem styles 
+
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}
+
+\theoremstyle{definition}
+\newtheorem{prop}[thm]{Proposition}
+
+\theoremstyle{remark}
+\newtheorem{claim}[thm]{Claim}
+
+\theoremstyle{remark}
+\newtheorem{corollary}[thm]{Corollary}
+
+\theoremstyle{remark}
+\newtheorem{rem}[thm]{Remark}
+
+% Definitions on their own counter
+
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}
+
+% Notation
+
+% General
+\newcommand{\defeq}{\coloneqq}
+\newcommand{\cat}[1]{\mathbf{#1}}
+
+% Change structures
+\newcommand{\cplus}{\oplus}
+\newcommand{\cpluss}{\boxplus}
+\newcommand{\cminus}{\ominus}
+\newcommand{\cstruct}[3]{(#1,#2,#3)}
+\newcommand{\changes}[1]{\Delta #1}
+\newcommand{\change}[1]{\delta #1}
+\newcommand{\derive}[1]{#1'}
+
+% Algebra
+\newcommand{\superpose}{\circledast}
+
+% Orders
+\newcommand{\reaches}{\leq_R}
 
 \begin{document}
 
@@ -21,6 +71,165 @@
 }
 
 \maketitle
+
+\section{Change structures}
+
+\begin{defn}[Change structures]
+
+  A change structure is defined as:
+
+  $$\mathcal{A} \defeq \cstruct{A}{\changes{A}}{\cplus}$$
+
+  where $A$ is a set, $\changes{A}$ is a semigroup, and $\cplus$ gives a semigroup action on $A$.
+
+  We will call $\changes{A}$ the change set of the change structure.
+\end{defn}
+
+Elements in the change set represent changes that can be made to elements in the
+base set, with the semigroup action being the operation that ``applies'' the
+change. The requirement that the change set be a semigroup is convenient but in
+fact inessential: given any set with an action on the base set, we can take the
+free semigroup over that set to obtain a semigroup action.
+
+Some examples of changes structures are:
+\begin{itemize}
+  \item $\mathbb{Z}_1 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{+}$
+  \item $\mathbb{Z}_2 \defeq \cstruct{\mathbb{Z}}{\mathbb{Z}}{+}$
+\end{itemize}
+
+Given a change structure, we have a natural notion of a derivative, following ~\cite{cai2014changes}:
+
+\begin{defn}[Derivatives]
+  A derivative of a function $f: A \rightarrow B$, where $A$ and $B$ are
+  change structures with actions $\cplus$ and $\cpluss$, is a function $\derive{f}: A \times \changes{A} \rightarrow
+  \changes{B}$ such that
+  $$f(a \cplus \change{a}) = f(a) \cpluss \derive{f}(a, \change{a})$$
+
+  A function which has a derivative is called differentiable.
+\end{defn}
+
+\begin{thm}[The Chain Rule]
+   $$\derive{(g \circ f)}(x, \change{x}) = \derive{g}\left(f(x), \derive{f}(x, \change{x})\right)$$
+\end{thm}
+\begin{proof}
+  \begin{itemize}
+    \item[ ]$(g \circ f)(x) \cpluss \derive{g}\left(f(x), \derive{f}(x,\change{x})\right)$
+    \item[ ]$(g(f(x)) \cpluss \derive{g}\left(f(x), \derive{f}(x,\change{x})\right)$
+    \item[=]$g\left(f(x) \cpluss \derive{f}(x, \change{x}) \right)$
+    \item[=]$g\left(f(x \cplus \change{x})\right)$
+    \item[=]$(g \circ f)(x \cplus \change{x})$
+  \end{itemize}
+  Therefore $\derive{g}\left(f(x), \derive{f}(x, \change{x})\right)$ is a
+  derivative for $(g \circ f)$.
+\end{proof}
+
+Why call this the ``chain rule''? It doesn't have quite the same structure as
+the chain rule in real calculus ($\derive{(g \circ f)}(x) = (\derive{g} \circ f)
+(x) \cdot \derive{f}(x)$), but it does have the same structure as the chain rule
+from differential geometry ($\derive{(g \circ f)}(x, \textbf{v}) = \derive{g}
+(f(x), \derive{f}(x, \textbf{v}))$), which will turn out to be a recurring connection.
+
+\subsection{Minus operators and completeness}
+
+Cai et al include the presence of a minus operator in their change structure
+definition. 
+
+\begin{defn}[Minus operator]
+  A minus operator is a function $\cminus: A \times A \rightarrow \changes{A}$
+  such that $a \cplus (b \cminus a) = b$.
+\end{defn}
+
+We have omitted minus operators from our change structure definition because
+there are many interesting change structures that do not have them (for example,
+$\mathbb{Z}_2$ does, but $\mathbb{Z}_1$ does not).
+
+\begin{defn}[Completeness]
+  A change structure is complete if for any $a, b \in A$, there is
+  a change $\change{a} \in \changes{A}$ such that $a \cplus \change{a} = b$.
+\end{defn}
+
+\begin{prop}[Completeness equivalences]
+  Let $A$ be a change structure. The following are equivalent:
+  \begin{itemize}
+    \item $A$ is complete.
+    \item There is a minus operator on $A$.
+    \item The semigroup action of the change structure on $A$ is transitive.
+  \end{itemize}
+\end{prop}
+
+\section{Algebra of change structures}
+
+\begin{defn}[Category of change structures]
+  We define the category $\cat{CStruct}$ of change structures. The objects are
+  change structures and the morphisms are 
+\end{defn}
+
+TODO: both of these cases depend on the underlying category (Set) having the
+requisite construction. Seems like this may just be a requirement.
+
+\begin{prop}[Products]
+  Let $\mathcal{A} = \cstruct{A}{\changes{A}}{\cplus}$ and $\mathcal{B} =
+  \cstruct{B}{\changes{B}}{\cpluss}$ be change structures.
+
+  Then $\mathcal{A} \times \mathcal{B} \defeq \cstruct{A \times B}{\changes{A} \times
+  \changes{B}}{\cplus \times \cpluss}$ is their categorical product.
+\end{prop}
+
+\begin{prop}[Equalizers]
+  Let $A$ and $B$ be change structures, and $f, g: A \rightarrow B$ be morphisms
+  between them.
+
+  Then let $EQ(f,g)$ be the equalizer of $f$ and $g$ in $\cat{Set}$
+
+  Then $\cstruct{EQ(f, g)}{\emptyset}{\emptyset}$ is an equalizer for $f$ and $g$
+  in $\cat{CStruct}$.
+\end{prop}
+
+\begin{corollary}
+  $\cat{CStruct}$ has all finite limits.
+\end{corollary}
+
+\subsection{Superpositions}
+
+As well as combining change structures entire, we can combine two different
+change structures on the same underlying set.
+
+\begin{defn}[Superposition]
+  Let $\mathcal{A}_\cplus = \cstruct{A}{\changes{A}_\cplus}{\cplus}$ and $\mathcal{A}_\cpluss =
+  \cstruct{A}{\changes{A}_\cpluss}{\cpluss}$ be change structures.
+
+  Then the superposition of $\mathcal{A}_\cplus$ and $\mathcal{A}_\cpluss$ is defined as:
+  $$\mathcal{A}_\cplus \superpose \mathcal{B}_\cpluss \defeq \cstruct{A}{
+    (\changes{A}_\cplus \times \changes{A}_\cpluss)^\ast}{\star}$$
+
+  where $X^\ast$ is the set of finite sequences of $X$, and $a \star (d, e)
+  \defeq (\cpluss \circ \cplus)^\ast$.
+ 
+\end{defn}
+
+\section{Order and change structures}
+
+\subsection{Orders on changes}
+
+There is a natural ordering on changes, given by reachability under the action.
+
+\begin{defn}[Reachability order]
+  $a \reaches b$ iff there is a $\change{a} \in \changes{A}$ such that $a \cplus
+  \change{a} = b$.
+\end{defn}
+
+A complete change structure has a (TODO: what is the word?) reachability order;
+a discrete change structure has a discrete reachability order.
+
+\begin{prop}
+  A function is differentiable iff it is monotonic with respect to the
+  reachability order.
+\end{prop}
+
+\begin{corollary}
+  Any function from a discrete change structure or into a complete change
+  structure is differentiable.
+\end{corollary}
 
 % remove once we actually cite things
 \nocite{*}

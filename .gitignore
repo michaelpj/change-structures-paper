@@ -1,10 +1,15 @@
 result
 
-*.aux
-*.bbl
-*.blg
-*.fdb_latexmk
-*.fls
-*.log
-*.pdf
-*.dvi
+**/auto
+**/*.aux
+**/*.bbl
+**/*.blg
+**/*.fdb_latexmk
+**/*.fls
+**/*.fmt
+**/*.log
+**/*.out
+**/*.pdf
+**/*.dvi
+
+**/_region_*
