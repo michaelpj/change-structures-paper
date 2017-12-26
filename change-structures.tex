@@ -272,6 +272,9 @@ The superposition is a useful construction, because it is a (weak) coproduct.
 \begin{prop}
   $A \superpose B$ is a weak coproduct of $A$ and $B$.
 \end{prop}
+\begin{proof}
+  TODO
+\end{proof}
 
 However, the weakness is not terribly important when considering $\fineOrder$
 (in particular, if we drop to the category corresponding to that order, the
@@ -282,7 +285,7 @@ objects).
   $A_\cplus \superpose A_\cpluss$ is the least upper bound of $A_\cplus$ and $A_\cpluss$ with respect to $\fineOrder$.
 \end{corollary}
 
-That is, the superposition is the weakest change structure that subsumes both
+That is, the superposition is the weakest change structure that is finer than both
 $A_\cplus$ and $A_\cpluss$.
 
 This gives us a join-semilattice for change structures on a given set.
@@ -292,6 +295,9 @@ This gives us a join-semilattice for change structures on a given set.
   ordered by $\fineOrder$, with the least element given by
   $A_\discrete$, and the join operation given by $\superpose$.
 \end{thm}
+
+All functions into a complete change structure are differentiable, so any
+complete change structures on $A$ will be maximal elements of the latice.
 
 \section{Order and change structures}
 
