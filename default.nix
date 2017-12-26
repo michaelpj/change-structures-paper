@@ -17,7 +17,7 @@ let
     bibtex biblatex 
     latexmk;
   };
-  filename = "paper";
+  filename = "change-structures";
 in
 stdenv.mkDerivation {
   name = "change-structures";
