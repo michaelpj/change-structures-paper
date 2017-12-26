@@ -39,21 +39,35 @@
 % General
 \newcommand{\defeq}{\coloneqq}
 \newcommand{\cat}[1]{\mathbf{#1}}
+\newcommand{\equalizer}[2]{Eq(#1, #2)}
 
 % Change structures
 \newcommand{\cplus}{\oplus}
 \newcommand{\cpluss}{\boxplus}
+\newcommand{\cplusss}{\odot}
 \newcommand{\cminus}{\ominus}
+
 \newcommand{\cstruct}[3]{(#1,#2,#3)}
 \newcommand{\changes}[1]{\Delta #1}
 \newcommand{\change}[1]{\delta #1}
+
+\newcommand{\discrete}{\emptyset}
+
 \newcommand{\derive}[1]{#1'}
+\newcommand{\supderive}[1]{#1_\uparrow}
+\newcommand{\supderiveM}[1]{#1_{\uparrow\uparrow}}
+\newcommand{\subderive}[1]{#1_\downarrow}
+\newcommand{\subderiveM}[1]{#1_{\downarrow\downarrow}}
+
+\newcommand{\difffunc}{\rightarrow_{D}}
 
 % Algebra
 \newcommand{\superpose}{\circledast}
 
 % Orders
-\newcommand{\reaches}{\leq_R}
+\newcommand{\reachOrder}{\leq_R}
+\newcommand{\changeOrder}{\leq_\Delta}
+\newcommand{\fineOrder}{\leq_D}
 
 \begin{document}
 
@@ -72,49 +86,58 @@
 
 \maketitle
 
+\section{Introduction}
+
 \section{Change structures}
 
 \begin{defn}[Change structures]
-
   A change structure is defined as:
 
   $$\mathcal{A} \defeq \cstruct{A}{\changes{A}}{\cplus}$$
 
-  where $A$ is a set, $\changes{A}$ is a semigroup, and $\cplus$ gives a semigroup action on $A$.
+  where $A$ is an object in some category $\cat{C}$, $\changes{A}$ is a semigroup, and $\cplus$ gives a semigroup action on $A$.
 
-  We will call $\changes{A}$ the change set of the change structure.
+  We will call $A$ the base set (although it may not be a set in general), and $\changes{A}$ the change set of the change structure.
 \end{defn}
 
 Elements in the change set represent changes that can be made to elements in the
 base set, with the semigroup action being the operation that ``applies'' the
 change. The requirement that the change set be a semigroup is convenient but in
 fact inessential: given any set with an action on the base set, we can take the
-free semigroup over that set to obtain a semigroup action.
+free semigroup over the action set to obtain a semigroup action.
 
 Some examples of changes structures are:
 \begin{itemize}
+  \item $A_\discrete \defeq \cstruct{A}{\emptyset}{\emptyset}$, the discrete
+    change structure on any base set.
   \item $\mathbb{Z}_1 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{+}$
-  \item $\mathbb{Z}_2 \defeq \cstruct{\mathbb{Z}}{\mathbb{Z}}{+}$
+  \item $\mathbb{Z}_2 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{-}$
+  \item $\mathbb{Z}_3 \defeq \cstruct{\mathbb{Z}}{\mathbb{Z}}{+}$
+  \item $F_2 \defeq$ integers modulo 2 with plus. TODO typeset this nicely
 \end{itemize}
 
-Given a change structure, we have a natural notion of a derivative, following ~\cite{cai2014changes}:
+Given change structures and functions between them, we have a natural notion of a derivative, following ~\cite{cai2014changes}:
 
 \begin{defn}[Derivatives]
-  A derivative of a function $f: A \rightarrow B$, where $A$ and $B$ are
-  change structures with actions $\cplus$ and $\cpluss$, is a function $\derive{f}: A \times \changes{A} \rightarrow
+  A derivative of a function $f: A_\cplus \rightarrow B_\cpluss$ is a function $\derive{f}: A \times \changes{A} \rightarrow
   \changes{B}$ such that
   $$f(a \cplus \change{a}) = f(a) \cpluss \derive{f}(a, \change{a})$$
 
   A function which has a derivative is called differentiable.
 \end{defn}
 
+Derivatives need not be unique, in general, so we will speak of ``a'' derivative.
+
 \begin{thm}[The Chain Rule]
+  Let $f: A_\cplus \rightarrow B_\cpluss$, $g: B_\cpluss \rightarrow C_\cplusss$ be differentiable functions. Then $g \circ f$ is also
+  differentiable, with derivative given by
    $$\derive{(g \circ f)}(x, \change{x}) = \derive{g}\left(f(x), \derive{f}(x, \change{x})\right)$$
 \end{thm}
 \begin{proof}
+  By equivalence:
   \begin{itemize}
-    \item[ ]$(g \circ f)(x) \cpluss \derive{g}\left(f(x), \derive{f}(x,\change{x})\right)$
-    \item[ ]$(g(f(x)) \cpluss \derive{g}\left(f(x), \derive{f}(x,\change{x})\right)$
+    \item[ ]$(g \circ f)(x) \cplusss \derive{g}\left(f(x), \derive{f}(x,\change{x})\right)$
+    \item[=]$(g(f(x)) \cplusss \derive{g}\left(f(x), \derive{f}(x,\change{x})\right)$
     \item[=]$g\left(f(x) \cpluss \derive{f}(x, \change{x}) \right)$
     \item[=]$g\left(f(x \cplus \change{x})\right)$
     \item[=]$(g \circ f)(x \cplus \change{x})$
@@ -131,17 +154,16 @@ from differential geometry ($\derive{(g \circ f)}(x, \textbf{v}) = \derive{g}
 
 \subsection{Minus operators and completeness}
 
-Cai et al include the presence of a minus operator in their change structure
-definition. 
+Cai et al include a ``minus operator'' in their definition of change structures. 
 
 \begin{defn}[Minus operator]
   A minus operator is a function $\cminus: A \times A \rightarrow \changes{A}$
   such that $a \cplus (b \cminus a) = b$.
 \end{defn}
 
-We have omitted minus operators from our change structure definition because
+We have omitted minus operators from our definition because
 there are many interesting change structures that do not have them (for example,
-$\mathbb{Z}_2$ does, but $\mathbb{Z}_1$ does not).
+$\mathbb{Z}_3$ does, but $\mathbb{Z}_1$ does not).
 
 \begin{defn}[Completeness]
   A change structure is complete if for any $a, b \in A$, there is
@@ -149,45 +171,129 @@ $\mathbb{Z}_2$ does, but $\mathbb{Z}_1$ does not).
 \end{defn}
 
 \begin{prop}[Completeness equivalences]
-  Let $A$ be a change structure. The following are equivalent:
+  Let $A$ be a change structure. Then the following are equivalent:
   \begin{itemize}
     \item $A$ is complete.
+    \item The semigroup action is transitive.
     \item There is a minus operator on $A$.
-    \item The semigroup action of the change structure on $A$ is transitive.
+  \end{itemize}
+\end{prop}
+
+\subsection{Extensionality}
+
+\begin{defn}[Extensionality]
+  A change structure is extensional if $\forall a \in A. a \cplus \change{a}
+  = a \cplus \change{b}$ implies that $\change{a} = \change{b}$.
+\end{defn}
+
+Many change structures are not extensional, for example $F_2$.
+
+\begin{prop}[Extensionality equivalences]
+  Let $A$ be a change structure. Then the following are equivalent.
+  \begin{itemize}
+    \item $A$ is extensional.
+    \item The semigroup action is faithful.
+    \item The transformation semigroup obtained from the semigroup action is
+      isomorphic to it.
   \end{itemize}
 \end{prop}
 
 \section{Algebra of change structures}
 
 \begin{defn}[Category of change structures]
-  We define the category $\cat{CStruct}$ of change structures. The objects are
-  change structures and the morphisms are 
+  We define the category $\cat{CStruct}$ of change structures over objects in
+  some category $\cat{C}$. The objects are
+  change structures and the morphisms are differentiable functions. We denote
+  the set of differentiable functions between $A$ and $B$ as $A \difffunc B$.
+  
+  We will usually leave the category $\cat{C}$ implicit, or refer to it as the
+  underlying category.
 \end{defn}
-
-TODO: both of these cases depend on the underlying category (Set) having the
-requisite construction. Seems like this may just be a requirement.
 
 \begin{prop}[Products]
   Let $\mathcal{A} = \cstruct{A}{\changes{A}}{\cplus}$ and $\mathcal{B} =
-  \cstruct{B}{\changes{B}}{\cpluss}$ be change structures.
+  \cstruct{B}{\changes{B}}{\cpluss}$ be change structures, and suppose that the
+  underlying category has products.
 
   Then $\mathcal{A} \times \mathcal{B} \defeq \cstruct{A \times B}{\changes{A} \times
   \changes{B}}{\cplus \times \cpluss}$ is their categorical product.
 \end{prop}
+\begin{proof}
+  Let $Y$ be a change structure, and $f_1: Y \rightarrow \mathcal{A}$, $f_2: Y
+  \rightarrow \mathcal{B}$ be morphisms.
+
+  Then the product morphism in the underlying category, $f_1 \times f_2$ is the product
+  morphism in $\cat{CStruct}$.
+
+  First, we show it is a morphism (i.e.) is differentiable. It can easily be
+  shown that $\derive{f_1} \times \derive{f_2}$ is a derivative of $f_1 \times f_2$.
+
+  Commutativity and uniqueness follow from the corresponding properties of the
+  product in the underlying category.
+\end{proof}
 
 \begin{prop}[Equalizers]
-  Let $A$ and $B$ be change structures, and $f, g: A \rightarrow B$ be morphisms
-  between them.
+  Let $A$ and $B$ be change structures, $f, g: A \rightarrow B$ be morphisms
+  between them, and suppose that the underlying category has equalizers.
 
-  Then let $EQ(f,g)$ be the equalizer of $f$ and $g$ in $\cat{Set}$
+  Let $\equalizer{f}{g}$ be the equalizer of $f$ and $g$ in the underlying category.
 
-  Then $\cstruct{EQ(f, g)}{\emptyset}{\emptyset}$ is an equalizer for $f$ and $g$
+  Then $\equalizer{f}{g}_\discrete$ is an equalizer for $f$ and $g$
   in $\cat{CStruct}$.
 \end{prop}
+\begin{proof}
+  The equalizer morphism is differentiable, since any function from a discrete change
+  structure is differentiable (see below), so it is a valid morphism in $\cat{CStruct}$.
 
-\begin{corollary}
-  $\cat{CStruct}$ has all finite limits.
-\end{corollary}
+  Equalization and uniqueness follow from the corresponding properties of the
+  equalizer in the underlying category.
+\end{proof}
+
+\begin{thm}
+  $\cat{CStruct}$ has all finite limits if the underlying category does.
+\end{thm}
+
+\begin{prop}[Exponentials]
+  Let $A_\cplus$ and $B_\cpluss$ be change structures, and suppose that the
+  underlying category has exponentials.
+
+  Then $\cstruct{A \difffunc B}{A
+    \rightarrow \changes{B}}{\lambda d. \lambda f. \lambda a. f(a) \cpluss
+    d(a)}$ is a change structure on $A \difffunc B$ and the exponential object.
+
+  The semigroup structure on $A \rightarrow \changes{B}$ is the semigroup
+  structure on $\changes{B}$ lifted pointwise, so we will typically reuse the
+  change operator for $B$ for $A \rightarrow \changes{B}$.
+\end{prop}
+\begin{proof}
+  We need to show that the evaluation map $ev: (A \difffunc B) \times A
+  \rightarrow B$ is differentiable, the other properties follow from the
+  properties of the exponential object in $\cat{Set}$.
+
+  $$\derive{ev}((f, a), (\change{f}, \change{a})) = \derive{(f \cpluss
+    \change{f})}(a \cplus {\change{a}})$$
+
+  TODO: I actually have no idea if this is even right. We definitely need to
+  talk about function changes at some point, regardless.
+\end{proof}
+
+\subsection{Ordering change structures}
+
+We can put an order on the change structures for a given base set as follows:
+
+\begin{defn}[Change structure ordering]
+  $A_\cplus \fineOrder A_\cpluss$ iff $\textrm{id}: A_\cplus \rightarrow A_\cpluss$ is differentiable.
+\end{defn}
+
+Transitivity of the order follows from the chain rule, and reflexivity is trivial.
+
+This ordering is useful because it gives us a natural sense of the ``fineness''
+of a change structure, in that
+
+\begin{prop}
+  If $f: A_\cplus \rightarrow B$ is differentiable, and $A_\cplus \fineOrder
+  A_\cpluss$ then $f: A_\cpluss \rightarrow B$ is differentiable.
+\end{prop}
 
 \subsection{Superpositions}
 
@@ -195,31 +301,64 @@ As well as combining change structures entire, we can combine two different
 change structures on the same underlying set.
 
 \begin{defn}[Superposition]
-  Let $\mathcal{A}_\cplus = \cstruct{A}{\changes{A}_\cplus}{\cplus}$ and $\mathcal{A}_\cpluss =
+  Let $A_\cplus = \cstruct{A}{\changes{A}_\cplus}{\cplus}$ and $A_\cpluss =
   \cstruct{A}{\changes{A}_\cpluss}{\cpluss}$ be change structures.
 
-  Then the superposition of $\mathcal{A}_\cplus$ and $\mathcal{A}_\cpluss$ is defined as:
-  $$\mathcal{A}_\cplus \superpose \mathcal{B}_\cpluss \defeq \cstruct{A}{
+  Then the superposition of $A_\cplus$ and $A_\cpluss$ is defined as:
+  $$A_\cplus \superpose A_\cpluss \defeq \cstruct{A}{
     (\changes{A}_\cplus \times \changes{A}_\cpluss)^\ast}{\star}$$
 
   where $X^\ast$ is the set of finite sequences of $X$, and $a \star (d, e)
   \defeq (\cpluss \circ \cplus)^\ast$.
- 
 \end{defn}
+
+In some cases we may be able to find a more compact representation of the
+superposition change structure, for example:
+
+\begin{rem}
+  The superposition $\mathbb{Z}_1 \superpose \mathbb{Z}_2$ is isomorphic to $\mathbb{Z}_3$.
+\end{rem}
+
+The superposition is a useful construction, because it is WHAT?
+
+PLAUSIBLE OPTIONS:
+\begin{itemize}
+  \item the pushout of $A_\cplus \xleftarrow{\text{id}} A_\discrete \xrightarrow{\text{id}} A_\cpluss$
+  \item the pushout of $A_\cplus \leftarrow A_\discrete
+    \rightarrow A_\cpluss$, but in the category of change structures on $A$ with
+    differentiable identities (corresponds to the poset category for $\fineOrder$)
+  \item the product of $A_\cplus$ and $A_\cpluss$ in that category
+\end{itemize}
+
+I THINK THIS WOULD GIVE US
+
+\begin{corollary}
+  $A_\cplus \superpose A_\cpluss$ is the least upper bound of $A_\cplus$ and
+  $A_\cpluss$ with respect to $\fineOrder$.
+\end{corollary}
+
+This gives us a join-semilattice for change structures on a given set.
+
+\begin{thm}[Change structure semilattice]
+  Change structures on a base set $A$ form a join-semilattice 
+  ordered by $\fineOrder$, with the least element given by
+  $A_\discrete$, and the join operation given by $\superpose$.
+\end{thm}
 
 \section{Order and change structures}
 
-\subsection{Orders on changes}
+\subsection{Orders on change sets}
 
-There is a natural ordering on changes, given by reachability under the action.
+There is a natural preorder on the base set of a change structure, given by reachability under the action.
 
 \begin{defn}[Reachability order]
-  $a \reaches b$ iff there is a $\change{a} \in \changes{A}$ such that $a \cplus
+  $a \reachOrder b$ iff there is a $\change{a} \in \changes{A}$ such that $a \cplus
   \change{a} = b$.
 \end{defn}
 
-A complete change structure has a (TODO: what is the word?) reachability order;
-a discrete change structure has a discrete reachability order.
+A complete change structure has a complete (TODO: is this the right word?) reachability order;
+a discrete change structure has a discrete reachability order. If the change set
+semigroup is a monoid, then the order is a full partial order.
 
 \begin{prop}
   A function is differentiable iff it is monotonic with respect to the
@@ -231,8 +370,143 @@ a discrete change structure has a discrete reachability order.
   structure is differentiable.
 \end{corollary}
 
-% remove once we actually cite things
-\nocite{*}
+\subsection{Orders on base sets}
+
+A common structure which we want to compute changes on is a poset. For this
+section we shall assume that all of our base sets are posets.
+
+Firstly, we can define ``approximations'' to derivatives from both sides.
+
+\begin{defn}
+  Let $f: A_\cplus \rightarrow B_\cpluss$ be a function. Then a sup-derivative
+  of $f$ is a function $\supderive{f}$ such that
+  $$f(a \cplus \change{a}) \leq f(a) \cpluss \supderive{f}(a, \change{a})$$
+  
+  Similarly, a sub-derivative of $f$ is a function $\subderive{f}$ such that 
+  $$f(a \cplus \change{a}) \geq f(a) \cpluss \subderive{f}(a, \change{a})$$
+
+  A function with a sup-derivative is sup-differentiable, and a function with a
+  sub-derivative is sub-differentiable.
+\end{defn}
+
+\begin{prop}
+  If $f$ is both a sup- and sub-derivative, then it is a derivative.
+\end{prop}
+
+Secondly, if the base set of a change structure is a poset, then this gives us a natural
+order on the change set.
+
+\begin{defn}[Change order]
+  $\change{a} \changeOrder \change{b}$ iff for all $a \in A$ it is the case that
+  $a \cplus \change{a} \leq a \cplus \change{b}$.
+\end{defn}
+
+Alternatively, the change order is the smallest order such that $\cplus$ is monotonic with
+respect to its second argument.
+
+If the change structure is extensional, then the order is antisymmetric, and a
+full partial order.
+
+Having a monotonic order on the changes is very useful.
+
+\begin{thm}
+  Let $f: A \rightarrow B$ be a function, and let $\changeOrder$ be a preorder on $\changes{B}$ such that $\cplus$ is monotonic with
+  respect to it. Then let $\supderive{f}$ be a sub-derivative for $f$, and $h: A \times
+  \changes{A} \rightarrow \changes{B}$ be a function such that
+  $$\supderive{f} \changeOrder h$$
+  Then $h$ is also a sup-derivative for $f$.
+
+  Similarly, if $\subderive{f}$ is a sup-derivative for $f$ such that 
+  $$h \changeOrder \subderive{f}$$
+  Then $h$ is also a sub-derivative for $f$.
+\end{thm}
+\begin{proof}
+  We prove the first case:
+  \begin{itemize}
+    \item[ ]$\supderive{f}(a, \change{a}) \changeOrder h(a, \change{a})$
+    \item[$\Rightarrow$]\{ by monotonicity \}\\
+      $f(a) \cplus \supderive{f}(a, \change{a}) \leq f(a) \cplus h(a, \change{a})$
+    \item[$\Rightarrow$]\{ sup-derivative property \}\\
+      $f(a \cplus \change{a}) \leq f(a) \cplus h(a, \change{a})$
+  \end{itemize}
+
+  The proof for the other case is symmetric.
+\end{proof}
+
+\begin{thm}[Sandwich lemma]
+  \label{thm:sandwich}
+  Let $\supderive{f}$ be a sup-derivative for $f$, $\subderive{f}$ be a sub-derivative for $f$, $\changeOrder$ be a preorder on $\changes{B}$ such that $\cplus$ is monotonic with
+  respect to it, and $g$ be such that
+
+  $$\supderive{f} \changeOrder g \changeOrder \subderive{f}$$
+
+  Then $g$ is a derivative for $f$.
+\end{thm}
+
+In particular, this applies if $g$ and $h$ are themselves derivatives.
+
+\begin{prop}
+  If $f: A_\cplus \rightarrow B$ is sub-differentiable, and $A_\cplus \fineOrder
+  A_\cpluss$ then $f: A_\cpluss \rightarrow B$ is sub-differentiable.
+  
+  Similarly, if $f: A_\cplus \rightarrow B$ is sup-differentiable, and $A_\cplus \fineOrder
+  A_\cpluss$ then $f: A_\cpluss \rightarrow B$ is sup-differentiable.
+\end{prop}
+
+NEED TO GET TO THE BIT WHERE WE STICK THEM TOGETHER TO MAKE IT DIFFERENTIABLE
+
+\subsection{Maximal and minimal derivatives}
+
+If we have a minus operator, then we can define maximal and minimal sup- and sub-derivatives.
+
+\begin{prop}[Maximal and minimal sup- and sub-derivatives]
+  \label{prop:maximalDerivatives}
+  Let $A$ be a change structure and $B$ be a complete change structure, and let $f: A \rightarrow B$ be a function. Then
+  $$\subderiveM{f}(a, \change{a}) = f(a \cplus \change{a}) \cminus f(a)$$
+  is a minimal sub-derivative, and
+  $$\supderiveM{f}(a, \change{a}) = f(a \cplus \change{a}) \cminus \bot$$
+  is a maximal sup-derivative.
+
+  TODO: should actually write a proof
+\end{prop}
+
+This then gives us a full characterisation of the derivatives on a complete
+change structure.
+
+\begin{thm}[Characterization of derivatives]
+  Let $A$ be a change structure and $B$ be a complete change structure, and let
+  $f: A \rightarrow B$ be a function. Then the derivatives of $f$ are precisely
+  the functions $\derive{f}$ such that
+  $$\subderiveM{f} \changeOrder \derive{f} \changeOrder \supderiveM{f}$$
+\end{thm}
+\begin{proof}
+  Follows easily from \ref{thm:sandwich} and \ref{prop:maximalDerivatives}.
+\end{proof}
+
+This theorem gives us leeway when trying to pick a derivative: we can pick out the
+bounds, and that tells us how much ``wiggle room'' we have. This can be helpful
+because some of the intermediary functions may be much easier to compute than
+others, or convenient for other reasons.
+
+\section{Related work}
+
+The seminal paper in this area is ~\cite{cai2014changes}. We use the notions
+defined in that paper heavily, but we deviate in two regards: the use of
+dependent types, and the nature of function changes.
+
+These two issues are linked, because part of the reason that Cai et al need
+dependently typed changes is in order to handle their notion of function
+changes.
+
+Our notion of function changes is different to Cai's because MARIO RANT HERE
+
+However, even if we think that we do not need dependently typed changes for the
+simple cases we have been considering, if we want to extend this formulation to
+synthetic differential geometry we will need them, since the tangent space is
+dependent on the point at which you are taking tangents.
+
+Griffin?
+
 \bibliographystyle{plain}
 \bibliography{paper}
 

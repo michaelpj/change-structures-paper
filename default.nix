@@ -13,7 +13,7 @@ let
     collection-bibtexextra
     collection-latex
     collection-luatex
-    collection-mathextra
+    #collection-mathextra
     bibtex biblatex 
     latexmk;
   };
