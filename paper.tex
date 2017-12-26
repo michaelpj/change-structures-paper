@@ -90,8 +90,9 @@
 
 \section{Change structures}
 
+TODO: decide if we're going to use ``change structure'' or ``forward algebra''
 \begin{defn}[Change structures]
-  A change structure is defined as:
+  A \textit{change structure} is defined as:
 
   $$\mathcal{A} \defeq \cstruct{A}{\changes{A}}{\cplus}$$
 
@@ -119,14 +120,16 @@ Some examples of changes structures are:
 Given change structures and functions between them, we have a natural notion of a derivative, following ~\cite{cai2014changes}:
 
 \begin{defn}[Derivatives]
-  A derivative of a function $f: A_\cplus \rightarrow B_\cpluss$ is a function $\derive{f}: A \times \changes{A} \rightarrow
+  A \textit{derivative} of a function $f: A_\cplus \rightarrow B_\cpluss$ is a function $\derive{f}: A \times \changes{A} \rightarrow
   \changes{B}$ such that
   $$f(a \cplus \change{a}) = f(a) \cpluss \derive{f}(a, \change{a})$$
 
-  A function which has a derivative is called differentiable.
+  A function which has a derivative is called \textit{differentiable}.
 \end{defn}
 
 Derivatives need not be unique, in general, so we will speak of ``a'' derivative.
+
+TODO: tightness
 
 \begin{thm}[The Chain Rule]
   Let $f: A_\cplus \rightarrow B_\cpluss$, $g: B_\cpluss \rightarrow C_\cplusss$ be differentiable functions. Then $g \circ f$ is also
@@ -157,7 +160,7 @@ from differential geometry ($\derive{(g \circ f)}(x, \textbf{v}) = \derive{g}
 Cai et al include a ``minus operator'' in their definition of change structures. 
 
 \begin{defn}[Minus operator]
-  A minus operator is a function $\cminus: A \times A \rightarrow \changes{A}$
+  A \textit{minus operator} is a function $\cminus: A \times A \rightarrow \changes{A}$
   such that $a \cplus (b \cminus a) = b$.
 \end{defn}
 
@@ -166,7 +169,7 @@ there are many interesting change structures that do not have them (for example,
 $\mathbb{Z}_3$ does, but $\mathbb{Z}_1$ does not).
 
 \begin{defn}[Completeness]
-  A change structure is complete if for any $a, b \in A$, there is
+  A change structure is \textit{complete} if for any $a, b \in A$, there is
   a change $\change{a} \in \changes{A}$ such that $a \cplus \change{a} = b$.
 \end{defn}
 
@@ -182,7 +185,7 @@ $\mathbb{Z}_3$ does, but $\mathbb{Z}_1$ does not).
 \subsection{Extensionality}
 
 \begin{defn}[Extensionality]
-  A change structure is extensional if $\forall a \in A. a \cplus \change{a}
+  A change structure is \textit{extensional} if $\forall a \in A. a \cplus \change{a}
   = a \cplus \change{b}$ implies that $\change{a} = \change{b}$.
 \end{defn}
 
@@ -304,7 +307,7 @@ change structures on the same underlying set.
   Let $A_\cplus = \cstruct{A}{\changes{A}_\cplus}{\cplus}$ and $A_\cpluss =
   \cstruct{A}{\changes{A}_\cpluss}{\cpluss}$ be change structures.
 
-  Then the superposition of $A_\cplus$ and $A_\cpluss$ is defined as:
+  Then the \textit{superposition} of $A_\cplus$ and $A_\cpluss$ is defined as:
   $$A_\cplus \superpose A_\cpluss \defeq \cstruct{A}{
     (\changes{A}_\cplus \times \changes{A}_\cpluss)^\ast}{\star}$$
 
@@ -319,23 +322,23 @@ superposition change structure, for example:
   The superposition $\mathbb{Z}_1 \superpose \mathbb{Z}_2$ is isomorphic to $\mathbb{Z}_3$.
 \end{rem}
 
-The superposition is a useful construction, because it is WHAT?
+The superposition is a useful construction, because it is a (weak) coproduct.
 
-PLAUSIBLE OPTIONS:
-\begin{itemize}
-  \item the pushout of $A_\cplus \xleftarrow{\text{id}} A_\discrete \xrightarrow{\text{id}} A_\cpluss$
-  \item the pushout of $A_\cplus \leftarrow A_\discrete
-    \rightarrow A_\cpluss$, but in the category of change structures on $A$ with
-    differentiable identities (corresponds to the poset category for $\fineOrder$)
-  \item the product of $A_\cplus$ and $A_\cpluss$ in that category
-\end{itemize}
+\begin{prop}
+  $A \superpose B$ is a weak coproduct of $A$ and $B$.
+\end{prop}
 
-I THINK THIS WOULD GIVE US
+However, the weakness is not terribly important when considering $\fineOrder$
+(in particular, if we drop to the category corresponding to that order, the
+coproduct is strong again, since there is at most one morphism between any two
+objects). 
 
 \begin{corollary}
-  $A_\cplus \superpose A_\cpluss$ is the least upper bound of $A_\cplus$ and
-  $A_\cpluss$ with respect to $\fineOrder$.
+  $A_\cplus \superpose A_\cpluss$ is the least upper bound of $A_\cplus$ and $A_\cpluss$ with respect to $\fineOrder$.
 \end{corollary}
+
+That is, the superposition is the weakest change structure that subsumes both
+$A_\cplus$ and $A_\cpluss$.
 
 This gives us a join-semilattice for change structures on a given set.
 
@@ -378,11 +381,11 @@ section we shall assume that all of our base sets are posets.
 Firstly, we can define ``approximations'' to derivatives from both sides.
 
 \begin{defn}
-  Let $f: A_\cplus \rightarrow B_\cpluss$ be a function. Then a sup-derivative
+  Let $f: A_\cplus \rightarrow B_\cpluss$ be a function. Then a \textit{sup-derivative}
   of $f$ is a function $\supderive{f}$ such that
   $$f(a \cplus \change{a}) \leq f(a) \cpluss \supderive{f}(a, \change{a})$$
   
-  Similarly, a sub-derivative of $f$ is a function $\subderive{f}$ such that 
+  Similarly, a \textit{sub-derivative} of $f$ is a function $\subderive{f}$ such that 
   $$f(a \cplus \change{a}) \geq f(a) \cpluss \subderive{f}(a, \change{a})$$
 
   A function with a sup-derivative is sup-differentiable, and a function with a
@@ -457,15 +460,17 @@ NEED TO GET TO THE BIT WHERE WE STICK THEM TOGETHER TO MAKE IT DIFFERENTIABLE
 
 \subsection{Maximal and minimal derivatives}
 
-If we have a minus operator, then we can define maximal and minimal sup- and sub-derivatives.
+SOME OF THIS IS WRONG
 
-\begin{prop}[Maximal and minimal sup- and sub-derivatives]
+If we have a minus operator, then we can define maximal and minimal sub- and sup-derivatives.
+
+\begin{prop}[Maximal and minimal sub- and sup-derivatives]
   \label{prop:maximalDerivatives}
   Let $A$ be a change structure and $B$ be a complete change structure, and let $f: A \rightarrow B$ be a function. Then
-  $$\subderiveM{f}(a, \change{a}) = f(a \cplus \change{a}) \cminus f(a)$$
-  is a minimal sub-derivative, and
-  $$\supderiveM{f}(a, \change{a}) = f(a \cplus \change{a}) \cminus \bot$$
-  is a maximal sup-derivative.
+  $$\supderiveM{f}(a, \change{a}) = f(a \cplus \change{a}) \cminus f(a)$$
+  is a minimal sup-derivative, and
+  $$\subderiveM{f}(a, \change{a}) = f(a \cplus \change{a}) \cminus \bot$$
+  is a maximal sub-derivative.
 
   TODO: should actually write a proof
 \end{prop}
