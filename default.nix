@@ -17,12 +17,13 @@ let
     bibtex biblatex 
     latexmk;
   };
-  filename = "change-structures";
 in
 stdenv.mkDerivation {
   name = "change-structures";
   buildInputs = [ tex biber ghostscript ];
   src = ./.;
-  buildPhase = "latexmk -view=pdf ${filename}";
-  installPhase = "install -Dt $out ${filename}.pdf";
+  buildPhase = ''
+    latexmk -view=pdf change-structures datalog
+  '';
+  installPhase = "install -Dt $out *.pdf";
 }

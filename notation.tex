@@ -1,0 +1,56 @@
+% Theorem styles 
+
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}
+
+\theoremstyle{definition}
+\newtheorem{prop}[thm]{Proposition}
+
+\theoremstyle{remark}
+\newtheorem{claim}[thm]{Claim}
+
+\theoremstyle{remark}
+\newtheorem{corollary}[thm]{Corollary}
+
+\theoremstyle{remark}
+\newtheorem{rem}[thm]{Remark}
+
+% Definitions on their own counter
+
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}
+
+% Notation
+
+% General
+\newcommand{\defeq}{\coloneqq}
+\newcommand{\cat}[1]{\mathbf{#1}}
+\newcommand{\equalizer}[2]{Eq(#1, #2)}
+
+% Change structures
+\newcommand{\cplus}{\oplus}
+\newcommand{\cpluss}{\boxplus}
+\newcommand{\cplusss}{\odot}
+\newcommand{\cminus}{\ominus}
+
+\newcommand{\cstruct}[3]{(#1,#2,#3)}
+\newcommand{\changes}[1]{\Delta #1}
+\newcommand{\change}[1]{\delta #1}
+
+\newcommand{\discrete}{\emptyset}
+
+\newcommand{\derive}[1]{#1'}
+\newcommand{\supderive}[1]{#1_\uparrow}
+\newcommand{\supderiveM}[1]{#1_{\uparrow\uparrow}}
+\newcommand{\subderive}[1]{#1_\downarrow}
+\newcommand{\subderiveM}[1]{#1_{\downarrow\downarrow}}
+
+\newcommand{\difffunc}{\rightarrow_{D}}
+
+% Algebra
+\newcommand{\superpose}{\circledast}
+
+% Orders
+\newcommand{\reachOrder}{\leq_R}
+\newcommand{\changeOrder}{\leq_\Delta}
+\newcommand{\fineOrder}{\leq_D}
