@@ -12,8 +12,12 @@ let
     scheme-small
     collection-bibtexextra
     collection-latex
+    collection-latexextra
     collection-luatex
+    collection-fontsextra
+    collection-fontsrecommended
     #collection-mathextra
+    acmart
     bibtex biblatex 
     latexmk;
   };
