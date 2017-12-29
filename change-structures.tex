@@ -1,5 +1,5 @@
-%\input{preamble-standard}
-\input{preamble-acm}
+\input{preamble-standard}
+%\input{preamble-acm}
 
 \usepackage{amsmath}
 \usepackage{amsthm}
@@ -10,8 +10,8 @@
 
 \begin{document}
 
-%\input{topmatter-standard}
-\input{topmatter-acm}
+\input{topmatter-standard}
+%\input{topmatter-acm}
 
 \title{Something about change structures}
 
@@ -210,7 +210,7 @@ However, if we compare the definition of a $\cat{SAct}$ ``act-preserving''
 homeomorphism (as in ~\cite{kilp2000monoids}) we can see that the structure is quite similar to our definition
 of differentiability:
 
-$$f(a \cdot s) = f(a) \cdot s$$
+$$f(a \splus s) = f(a) \splus s$$
 
 as opposed to
 
@@ -563,6 +563,7 @@ This then gives us a full characterisation of the derivatives on a complete
 change structure.
 
 \begin{thm}[Characterization of derivatives]
+\label{thm:derivativeCharacterization}
   Let $A$ be a change structure and $B$ be a complete change structure, let
   $f: A \rightarrow B$ be a function, and let $\subderiveM{f}$ and
   $\supderiveM{f}$ be minimal and maximal derivatives of $f$, respectively.
@@ -575,9 +576,270 @@ change structure.
 \end{proof}
 
 This theorem gives us leeway when trying to pick a derivative: we can pick out the
-bounds, and that tells us how much ``wiggle room'' we have. This can be helpful
+bounds, and that tells us how much ``wiggle room'' we have. This is helpful
 because some of the intermediary functions may be much easier to compute than
 others, or convenient for other reasons.
+
+\section{Lattices}
+
+\begin{defn}
+  Let $L$ be a join-semilattice. Then $L_\vee \defeq \cstruct{L}{L}{\vee}$ is a change
+  structure on $L$.
+
+  Similarly, if $L$ is a meet-semilattice, then $L_\wedge \defeq \cstruct{L}{L}{\wedge}$ is a change
+  structure on $L$.
+\end{defn}
+
+\begin{prop}
+  All of the following hold
+  \begin{itemize}
+    \item $L_\vee$ is ascending and has sup-derivatives.
+    \item $L_\wedge$ is descending and has sub-derivatives.
+    \item $L_\vee \superpose L_\wedge$ has derivatives.
+  \end{itemize}
+\end{prop}
+
+As usual, the superposition change structure is a pain to work with, since it
+consists of sequences of ``upwards'' and ``downwards'' changes. However, it does
+give us a complete change structure for any lattice.
+
+\subsection{Boolean algebras}
+
+Boolean algebras give us a much more compact representation for the
+superposition of $L_\vee$ and $L_\wedge$.
+
+\begin{prop}
+  Let $L$ be a Boolean algebra. Define
+  $$L_\superpose \defeq \cstruct{L}{L \times L}{\twist}$$
+  where
+  $$a \twist (p, q) \defeq (a \vee p) \wedge \neg q$$
+  and the semigroup action is
+  $$(p, q) \splus (r, s) \defeq ((p \wedge \neg s) \vee r, (q \vee s) \wedge \neg r)$$
+
+  Then $L_\superpose$ is isomorphic to $L_\vee \superpose L_\wedge$.
+\end{prop}
+
+We can think of $L_\superpose$ as tracking changes as pairs of ``upwards'' and
+``downwards'' changes, where the semigroup action simply applies both.
+
+Boolean algebras also have clean definitions for maximal and minimal minus
+operators.
+
+\begin{prop}
+  Let $L$ be a Boolean algebra. Then
+  $$a \cminus_\bot b = (a \wedge \neg b, b)$$
+  $$a \cminus_\top b = (a, b \wedge \neg a)$$
+
+  define minimal and maximal minus operators.
+\end{prop}
+
+In particular, \ref{thm:derivativeCharacterization} gives us clear bounds for
+all the derivatives on Boolean algebras:
+
+\begin{corollary}
+  Let $L$ be a Boolean algebra with the $L_\superpose$ change structure, $A$ be
+  a change structure, and $f: A \rightarrow
+  L$ a function. Then the derivatives of $f$ are precisely those functions
+  $\derive{f}$ such that
+  $$
+  (
+    f(a \cplus \change{a}) \wedge \neg f(a), 
+    f(a)
+  )
+  \changeOrder
+  \derive{f}(a, \change{a})
+  \changeOrder
+  (
+    f(a \cplus \change{a}), 
+    f(a) \wedge \neg f(a \cplus \change{a})
+  )
+  $$
+\end{corollary}
+
+\section{Fixpoints}
+
+\subsection{Incremental computation of fixpoints}
+
+Derivatives give us a technique for computing fixpoints incrementally. Kleene's
+fixpoint theorem tells us that fixpoints exist for monotone functions on dcpos, and also gives us
+a simple procedure for computing them: start from $\bot$ and apply the function
+until there is no change. However, this can be woefully inefficient.
+
+In the Datalog literature, the approach of computing the fixpoint by bottom-up
+iteration is called ``naive evaluation''. Naive evaluation has the property that
+if it derives a fact at some iteration, it will derive that fact at each
+subsequent iteration as well. This is obviously wasteful, and can turn what
+should be a linear computation into a quadratic one.
+
+The canonical solution to this problem is ``semi-naive evaluation'', which
+attempts to derive only the new facts at each iteration. However, ``semi-naive''
+as traditionally presented has some warts, and
+the following theorem provides a generalization of it to any differentiable function over a
+change structure. We will see the details of how to differentiate Datalog
+semantics in section SOMETHING.
+
+\begin{thm}[Incremental computation of iterated function applications]
+\label{thm:diffIter}
+  Let $L$ be a dcpo with least element $\bot$ and a change structure, $f: L \rightarrow L$ be
+  differentiable. Define $F_i$ as follows:
+
+  \begin{eqnarray*}
+  F_0 & = & x\\
+  \Delta F_0 & = & (\bot, \top) \\
+  F_1 & = & f(F_0)\\
+  \Delta F_1 & = & (F_1, F_1) \footnotemark \\
+  F_{i+2} & = & F_{i+1} \cplus \Delta F_{i+2} \\
+  \Delta F_{i+2} & = & \derive{f}(F_i, \Delta F_{i+1}) \\
+  \end{eqnarray*}
+
+  Then 
+  $$f^i(x) = F_i$$
+\end{thm}
+
+\footnotetext{A number of different values will do here, in general one can use $F_1
+\cminus F_0$ given a valid minus operator.}
+
+\begin{proof}
+We proceed inductively, proving that $F_{i+2} = f(F_{i+1})$
+
+\begin{itemize}
+\item[ ]$F_{i+2}$
+\item[=]
+$
+F_{i+1} \cplus \Delta F_{i+2}
+$
+\item[=]
+$
+F_{i+1} \cplus \derive{f}( F_i, \Delta F_{i+1})
+$
+\item[=] \{ by induction \}\\
+$
+f(F_i) \cplus \derive{f}(F_i, \Delta F_{i+1})
+$
+\item[=]
+$
+f(F_i \cplus \Delta F_{i+1})
+$ 
+\item[=]
+$f(F_{i+1})$
+\end{itemize}
+\end{proof}
+
+\begin{corollary}[Differential computation of fixed points]
+\label{corollary:diffFP}
+  Fixed points of differentiable functions which can be calculated by repeated
+  function application can also be calculated incrementally.
+\end{corollary}
+
+\subsection{Derivatives of fixpoints}
+
+The previous section has shown us how to use derivatives to compute fixpoints
+more efficiently, but we might also want to take the derivative of a fixpoint
+itself. The typical case for this will be where we have some fixed point
+$$\mu X. F(E, X)$$
+and we now wish to apply a change to $E$ and compute
+$$\mu X. F(E \cplus \change{E}, X)$$
+
+In Datalog this would allow us to update a recursively defined relation given an
+update to a non-recursive dependency of it, such as the base database. In the
+traditional databases literature, this amounts to a solution to the ``recursive
+view update problem''.
+
+However, this requires us to have a derivative for the fixpoint operator $\mu$.
+
+\begin{thm}[Derivatives of fixpoints]
+  Let $\fixpoint_X : (X \rightarrow X) \rightarrow X$ be a (differentiable?)
+  fixpoint operator, $A$ be a change structure, $f: A \rightarrow A$ a differentiable function,
+  and $\change{f} \in \changes{(A \rightarrow A)}$ be a change to $f$.
+
+  Define
+  $$
+  \derive{\fixpoint_A}(f, \change{f}) \defeq
+  \fixpoint_{\changes{A}}(
+    \lambda w .
+      \derive{f}(\fixpoint_A(f), w)
+      \splus
+      \change{f}(\fixpoint_A(f) \cplus w)
+  )
+  $$
+  Then $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a fixpoint of $f \cplus \change{f}$.
+
+  Furthermore, if $A$ is a partial order, $\fixpoint$ computes the least
+  fixpoint, $\cplus$ is monotonic with respect to the order on $\changes{A}$,
+  then the previous expression is also a least fixpoint and
+  $\derive{\fixpoint_A}$ is a derivative.
+\end{thm}
+
+\newcommand{\thefixpoint}{F}
+\newcommand{\theadjustment}{adjust}
+
+\begin{proof}
+  For the first part, let
+  $\thefixpoint = \fixpoint_A(f)$ and
+  $\theadjustment(F, f, \change{f}) = \lambda w . \derive{f}(F, w) \splus
+  \change{f}(F \cplus w)$.
+  Then
+  \begin{itemize}
+  \item[ ]
+    $
+    (f \cplus \change{f})(\thefixpoint \cplus \derive{\fixpoint_A}(f, \change{f}))
+    $
+  \item[=]\{ definition of $\cplus$ for $\changes{(A \rightarrow A)}$ \}\\
+    $
+    f(\thefixpoint \cplus \derive{\fixpoint_A}(f, \change{f}))
+    \cplus
+    \change{f}(\thefixpoint \cplus \derive{\fixpoint_A}(f, \change{f}))
+    $
+  \item[=]\{ derivative property of $\derive{f}$ \}\\
+    $
+    f(\thefixpoint)
+    \cplus
+    \derive{f}(\thefixpoint, \derive{\fixpoint_A}(f, \change{f}))
+    \cplus
+    \change{f}(\thefixpoint \cplus \derive{\fixpoint_A}(f, \change{f}))
+    $
+  \item[=]\{ semigroup action property \}\\
+    $
+    f(\thefixpoint)
+    \cplus
+    \derive{f}(\thefixpoint, \derive{\fixpoint_A}(f, \change{f}))
+    \splus
+    \change{f}(\thefixpoint \cplus \derive{\fixpoint_A}(f, \change{f}))
+    $
+  \item[=]\{ definition of $\theadjustment$, $\derive{\fixpoint_A}$ \}\\
+    $
+    f(\thefixpoint)
+    \cplus
+    \theadjustment(F, f, \change{f})(\fixpoint_{\changes{A}}(\theadjustment(F, f, \change{f})))
+    $
+  \item[=]\{ rolling both fixpoints \}\\
+    $
+    \thefixpoint
+    \cplus
+    \fixpoint_{\changes{A}}(\theadjustment(F, f, \change{f}))
+    $
+  \item[=]\{ definition of $\derive{\fixpoint_A}$ \}\\
+    $
+    \thefixpoint
+    \cplus
+    \derive{\fixpoint_A}(f, \change{f})
+    $
+  \end{itemize}
+
+  Hence $\derive{\fixpoint_A}(f, \change{f})$ is a fixpoint of $f \cplus \change{f}$.
+
+  For the second part, suppose that $F'$ is a fixpoint of $f \cplus \change{f}$
+  Then ???
+\end{proof}
+
+Sadly, this is far from simple to compute. It requires a fixpoint over the
+change structure partial order, which may not be possible (depending on our
+change structure). However, for lattices the $L_\superpose$ change structure is
+itself a lattice, so we can compute fixpoints over it.
+
+It may not be too expensive to compute a fixpoint, since the alternative
+``update strategy'' is the worst possible one: throw everything away and start
+again (which will itself require a fixpoint computation).
 
 \section{Related work}
 
