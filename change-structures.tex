@@ -59,6 +59,7 @@ The major contributions of this paper are:
 \section{Change structures}
 \label{sec:change-structures}
 
+MARIO: Should we pick a different name to distinguish them from Cai-style change structures?
 \begin{defn}[Change structures]
 
   A \textit{change structure} is defined as:
@@ -85,11 +86,14 @@ operation simply being composition.
 Here are some recurring examples of changes structures:
 \begin{itemize}
   \item $A_\discrete \defeq \cstruct{A}{\emptyset}{\emptyset}$, the discrete change structure on any base set
+  \item $A_\Rightarrow \defeq \cstruct{A}{A\Rightarrow A}{ev}$, where $A \Rightarrow A$ denotes the exponential object
   \item $\mathbb{Z}_1 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{+}$
   \item $\mathbb{Z}_2 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{-}$
   \item $\mathbb{Z}_3 \defeq \cstruct{\mathbb{Z}}{\mathbb{Z}}{+}$
-  \item $F_2 \defeq$ integers modulo 2 with plus
+  \item $F_2 \defeq$ integers modulo 2 with addition
 \end{itemize}
+Indeed, any semigroup $(A, +)$ can be seen as a change structure $(A, A, +)$. In particular,
+the change set of any change structure is itself a change structure.
 
 Given change structures and functions between them, we have a natural notion of a derivative, following ~\cite{cai2014changes}:
 
@@ -163,8 +167,8 @@ $\mathbb{Z}_3$ does, but $\mathbb{Z}_1$ does not).
 \subsection{Extensionality}
 
 \begin{defn}[Extensionality]
-  A change structure is \textit{extensional} if $\forall a \in A. a \cplus \change{a}
-  = a \cplus \change{b}$ implies that $\change{a} = \change{b}$.
+  A change structure is \textit{extensional} if whenever $a \cplus \change{a}
+  = a \cplus \change{b}$ for some $a \in A$, it is the case that $\change{a} = \change{b}$.
 \end{defn}
 
 Many change structures are not extensional, for example $F_2$.
@@ -173,14 +177,11 @@ Many change structures are not extensional, for example $F_2$.
   Let $A$ be a change structure. Then the following are equivalent.
   \begin{itemize}
     \item $A$ is extensional.
-    \item The semigroup action is faithful.
-    \item The transformation semigroup obtained from the semigroup action is
-      isomorphic to it.
+    \item The semigroup action is free.
   \end{itemize}
 \end{prop}
 
-Extensionality gives us uniqueness of derivatives.
-
+Extensionality gives us uniqueness of derivatives:
 \begin{prop}
   Let $B$ be an extensional change structure, and $f: A \rightarrow B$. Then $f$ has at
   most one derivative.
@@ -243,6 +244,11 @@ whose derivative is $\lambda a. \lambda d. d$.
 
   Commutativity and uniqueness follow from the corresponding properties of the
   product in the underlying category.
+
+  MARIO: This is actually a bit trickier, since we also need to show that e.g. 
+  $(A \times B, \discrete)$ is not a product. We should also mention that any change
+  structure with the same reachability order as $\Delta A \times \Delta B$ is a possible
+  product (since they are isomorphic).
 \end{proof}
 
 \begin{prop}[Equalizers]
@@ -253,6 +259,12 @@ whose derivative is $\lambda a. \lambda d. d$.
 
   Then $\equalizer{f}{g}_\discrete$ is an equalizer for $f$ and $g$
   in $\cat{CStruct}$.
+
+  MARIO: I don't think this is quite true, this would entail that the equalizer of
+  $f : A, \Delta A \rightarrow B,\Delta B$ and itself is $A, \discrete$ rather than
+  $A, \Delta A$ - I do think equalizers exist but $\Delta\equalizer{f}{g}$ is the
+  `largest' change structure that still makes $\equalizer{f}{g}$ differentiable (there
+  is no unique choice for this)
 \end{prop}
 \begin{proof}
   The equalizer morphism is differentiable, since any function from a discrete change
@@ -285,6 +297,10 @@ whose derivative is $\lambda a. \lambda d. d$.
 
   TODO: I actually have no idea if this is even right. We definitely need to
   talk about function changes at some point, regardless.
+
+  MARIO: I have only been able to prove this assuming the change structures are
+  commutative and extensional. I think it's easy to relax extensionality, but
+  commutativity is actually vital.
 \end{proof}
 
 \begin{thm}
@@ -386,18 +402,18 @@ the discrete change structure provides a minimal element.
 \section{Order and change structures}
 \label{sec:order}
 
-\subsection{Orders on change sets}
+\subsection{Orders from change sets}
 
-There is a natural preorder on the base set of a change structure, given by reachability under the action.
-
+Whenever the change set is a monoid, 
+there is a natural preorder on the base set of a change structure, given by reachability
+ under the action:
 \begin{defn}[Reachability order]
   $a \reachOrder b$ iff there is a $\change{a} \in \changes{A}$ such that $a \cplus
   \change{a} = b$.
 \end{defn}
 
-A complete change structure has a complete (TODO: is this the right word?) reachability order;
-a discrete change structure has a discrete reachability order. If the change set
-semigroup is a monoid, then the order is a full partial order.
+The reachability order of a complete change structure on $A$ is precisely the trivial relation
+$A \times A$. Conversely, any such change structure is necessarily complete.
 
 \begin{prop}
   A function is differentiable iff it is monotonic with respect to the
@@ -428,16 +444,19 @@ Firstly, we can define ``approximations'' to derivatives from both sides.
   sub-derivative is sub-differentiable.
 \end{defn}
 
-Some change structures always have sub- or sup-derivatives: for example $\mathbb{Z}_1$
-always has sup-derivatives, and $\mathbb{Z}_2$ always has sub-derivatives.
+Some change structures always have sub- or sup-derivatives: for example every function
+into $\mathbb{Z}_1$ is sup-differentiable, and every function into $\mathbb{Z}_2$ is 
+sub-differentiable.
 
 \begin{prop}
-  If $f$ is both a sub- and sup-derivative, then it is a derivative.
+  If $f'$ is both a sub- and sup-derivative of $f$, then it is a derivative of $f$.
 \end{prop}
 
 Note that this is not the same as saying that if $f$ is both sub- and
 sup-differentiable, then it is differentiable. The functions which provide the
 sub- and sup-derivatives must coincide for that to be the case.
+
+TODO: find a counterexample for this?
 
 Secondly, if the base set of a change structure is a poset, then this gives us a natural
 order on the change set.
