@@ -60,6 +60,8 @@ The major contributions of this paper are:
 \label{sec:change-structures}
 
 MARIO: Should we pick a different name to distinguish them from Cai-style change structures?
+MPJ: Not sure. I do really like ``change structure'', and I think they're
+similar, but perhaps we should use a different name. Forward algebra? Change action?
 \begin{defn}[Change structures]
 
   A \textit{change structure} is defined as:
@@ -92,7 +94,7 @@ Here are some recurring examples of changes structures:
   \item $\mathbb{Z}_3 \defeq \cstruct{\mathbb{Z}}{\mathbb{Z}}{+}$
   \item $F_2 \defeq$ integers modulo 2 with addition
 \end{itemize}
-Indeed, any semigroup $(A, +)$ can be seen as a change structure $(A, A, +)$. In particular,
+Indeed, any semigroup $(A, \splus)$ can be seen as a change structure $\cstruct{A}{A}{\splus}$. In particular,
 the change set of any change structure is itself a change structure.
 
 Given change structures and functions between them, we have a natural notion of a derivative, following ~\cite{cai2014changes}:
@@ -166,6 +168,11 @@ $\mathbb{Z}_3$ does, but $\mathbb{Z}_1$ does not).
 
 \subsection{Extensionality}
 
+MPJ: I think this should have a different name (I guess we could use ``free'') -
+extensionality makes me think of something like ``the element is characterized
+by its action''.
+However, that's probably not a very interesting notion, since it actually gives us a
+semigroup congruence, so we can always quotient out by it.
 \begin{defn}[Extensionality]
   A change structure is \textit{extensional} if whenever $a \cplus \change{a}
   = a \cplus \change{b}$ for some $a \in A$, it is the case that $\change{a} = \change{b}$.
@@ -178,6 +185,7 @@ Many change structures are not extensional, for example $F_2$.
   \begin{itemize}
     \item $A$ is extensional.
     \item The semigroup action is free.
+    \item The equalizer of any two elements is empty.
   \end{itemize}
 \end{prop}
 
@@ -249,6 +257,9 @@ whose derivative is $\lambda a. \lambda d. d$.
   $(A \times B, \discrete)$ is not a product. We should also mention that any change
   structure with the same reachability order as $\Delta A \times \Delta B$ is a possible
   product (since they are isomorphic).
+  MPJ: ugh, yes, of course there are more change structures than sets, so
+  we need to distinguish among them here and below. Agree that it will generally
+  be the biggest/smallest change structure on the thing though.
 \end{proof}
 
 \begin{prop}[Equalizers]
@@ -449,14 +460,16 @@ into $\mathbb{Z}_1$ is sup-differentiable, and every function into $\mathbb{Z}_2
 sub-differentiable.
 
 \begin{prop}
-  If $f'$ is both a sub- and sup-derivative of $f$, then it is a derivative of $f$.
+  If $\derive{f}$ is both a sub- and sup-derivative of $f$, then it is a derivative of $f$.
 \end{prop}
 
 Note that this is not the same as saying that if $f$ is both sub- and
 sup-differentiable, then it is differentiable. The functions which provide the
-sub- and sup-derivatives must coincide for that to be the case.
-
-TODO: find a counterexample for this?
+sub- and sup-derivatives must coincide for that to be the case. For example,
+consider any bounded lattice with the change set $\{ \lambda k . \bot, \lambda k
+ . \top \}$. Then any function has a sub-derivative (mapping everything to
+ bottom), and a sup-derivative (mapping everything to top), but in most cases
+ these are not true derivatives.
 
 Secondly, if the base set of a change structure is a poset, then this gives us a natural
 order on the change set.
