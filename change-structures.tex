@@ -5,6 +5,7 @@
 \usepackage{amsthm}
 \usepackage{amssymb}
 \usepackage{mathtools}
+\usepackage{stmaryrd}
 
 \input{notation}
 
@@ -51,7 +52,7 @@ The major contributions of this paper are:
     a definition of function changes that allows them to form a Cartesian closed
     category.
   \item A description of the properties of change structures over posets
-    (\ref{sec:order}), including theorems that characterize the range of
+    (\ref{sec:order}), including theobrems that characterize the range of
     possible derivatives available, and conditions under which compound change
     structures may admit derivatives.
 \end{itemize}
@@ -669,6 +670,7 @@ In particular, \ref{thm:derivativeCharacterization} gives us clear bounds for
 all the derivatives on Boolean algebras:
 
 \begin{corollary}
+\label{cor:booleanCharacterization}
   Let $L$ be a Boolean algebra with the $L_\superpose$ change structure, $A$ be
   a change structure, and $f: A \rightarrow
   L$ a function. Then the derivatives of $f$ are precisely those functions
@@ -768,18 +770,21 @@ $f(F_{i+1})$
 The previous section has shown us how to use derivatives to compute fixpoints
 more efficiently, but we might also want to take the derivative of a fixpoint
 itself. The typical case for this will be where we have some fixed point
-$$\mu X. F(E, X)$$
+$$\fixpoint (\lambda X . F(E, X))$$
 and we now wish to apply a change to $E$ and compute
-$$\mu X. F(E \cplus \change{E}, X)$$
+$$\fixpoint (\lambda X . F(E \cplus \change{E}, X))$$
+
+That is, we are applying a change to the function whose fixpoint we are taking.
 
 In Datalog this would allow us to update a recursively defined relation given an
 update to a non-recursive dependency of it, such as the base database. In the
 traditional databases literature, this amounts to a solution to the ``recursive
 view update problem''.
 
-However, this requires us to have a derivative for the fixpoint operator $\mu$.
+However, this requires us to have a derivative for the fixpoint operator $\fixpoint$.
 
 \begin{thm}[Derivatives of fixpoints]
+\label{thm:fixpointDiff}
   Let 
   \begin{itemize}
     \item$\fixpoint_X : (X \rightarrow X) \rightarrow X$ be a fixpoint operator
@@ -798,6 +803,7 @@ However, this requires us to have a derivative for the fixpoint operator $\mu$.
       \change{f}(\fixpoint_A(f) \cplus w)
   )
   $$
+
   Then $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a fixpoint of $f \cplus \change{f}$.
 
   Furthermore, if
@@ -810,7 +816,7 @@ However, this requires us to have a derivative for the fixpoint operator $\mu$.
 \end{thm}
 
 \newcommand{\thefixpoint}{F}
-\newcommand{\theadjustment}{adjust}
+\newcommand{\theadjustment}{\operatorname{adjust}}
 
 \begin{proof}
   Throughout, let
@@ -934,7 +940,184 @@ It may not be too expensive to compute a fixpoint, since the alternative
 ``update strategy'' is the worst possible one: throw everything away and start
 again (which will itself require a fixpoint computation).
 
-\section{Related work}
+\section{Datalog}
+
+Datalog is a well-known simple logic programming language. It is also a textbook
+example of the need for incremental computation, as its semantics rely on
+computing a least fixpoint by bottom-up iteration.
+
+There is an extensive existing literature on incremental computation of Datalog
+(CITES), but the aim of this section is to argue that by viewing the computation
+of Datalog semantics as composed of differentiable functions we can give a
+superior account.
+
+Firstly, however, we must show that we can see the semantics of Datalog in terms
+of elements that we know how to handle: Boolean algebras and fixpoints.
+
+\subsection{Denotational semantics}
+
+Datalog is usually given a logical semantics wherein we look for models that
+satisfy the program. We will instead give a simple denotational semantics that treats a Datalog
+program as denoting a family of relations.
+
+One obstacle to this approach is giving a denotation to negations. We adopt the
+closed-world assumption to solve this.
+
+\begin{defn}[Closed-world assumption and negation]
+  There exists a universal relation $\universalRel$.
+  
+  Negation on relations is then defined as $$\neg R \defeq \universalRel \ R$$
+\end{defn}
+
+This makes $\Rel$ into a Boolean algebra.
+
+\begin{defn}[Term semantics]
+  A Datalog term $T$ denotes a function from its free relation variables to
+  $\Rel$, $\denote{\_} : \Term \rightarrow \Rel^n \rightarrow \Rel$
+  \begin{eqnarray*}
+    \denote{R_i}(\overline{X}) &\defeq& X_i \text{ where } X_i \text { is the ith free relation variable }\\
+    \denote{T \wedge U}(\overline{X}) &\defeq& \denote{T}(\overline{X}) \cap  \denote{U}(\overline{X})\\
+    \denote{T \vee U}(\overline{X}) &\defeq& \denote{T}(\overline{X}) \cup  \denote{U}(\overline{X})\\
+    \denote{\exists x. T}(\overline{X}) &\defeq& \pi_x(\denote{T}(\overline{X}))\\
+    \denote{\neg T}(\overline{X}) &\defeq& \neg \denote{T}(\overline{X})\\
+    \denote{x=y}(\overline{X}) &\defeq& \Delta(x, y) \text{ where } \Delta \text{ is the diagonal relation }
+  \end{eqnarray*}
+\end{defn}
+
+Since $\Rel$ is a Boolean algebra, and so is $\Rel^n$, the denotation
+functions of terms are functions between Boolean algebras.
+
+\begin{defn}[Immediate consequence operator]
+  Given a program $\mathcal{P} = \overline(P)$, the immediate consequence operator $\consq: \Rel^n \rightarrow \Rel^n$ is defined as follows:
+  $$\consq(\overline{R}) = \overline{\denote{P_i}(\overline{R})}$$
+\end{defn}
+
+That is, given a value for the program, we pass in all the relations
+to the denotation of each predicate, to get a new product of relations.
+
+\begin{defn}[Program semantics]
+  The semantics of a program $\mathcal{P}$ is defined to be 
+  $$\denote{\mathcal{P}} \defeq \lfp_{\Rel^n}(\consq)$$
+  and may be calculated by repeated application of $\consq$ to $\bot$.
+\end{defn}
+
+Whether or not this program semantics exists will depend on whether the fixpoint
+exists. Typically this is ensured by constraining the program such that $\consq$
+is monotone. However, we will remain agnostic on this front - we are merely
+interested in calculating the semantics faster if it exists.
+
+\subsection{Differentiability of Datalog semantics}
+
+In order to apply the machinery we have developed, we need the $\denote{_}$ to
+be differentiable. However, it is a function on Boolean algebras, and we know
+that the $L_\superpose$ change structure is complete, so in fact we know that
+$\denote{\_}$ must be differentiable.
+
+However, this does not mean that we have a \emph{good} derivative for
+$\denote{\_}$. The derivative that we know we have for complete change structures
+is quite bad:
+$$\derive{f}(a, \change{a}) = f(a \cplus \change{a}) \cminus f(a)$$
+Naively computed, this requires \emph{more} work than evaluating $f(a \cplus \change{a})$ directly!
+
+However, \ref{cor:booleanCharacterization} gives us a range of derivatives to
+choose from, and we can optimize within that range to find one that satisfies
+our constraints.
+
+There is also the question of how to compute the derivative. Fortunately, the
+maximal and minimal minus operators are actually representable as pairs of terms
+in our Datalog, and so we can compute the derivative via a pair of terms that
+satisfy those bounds, allowing us to reuse our machinery for evaluating Datalog
+terms.\footnote{Indeed, if this process is occurring in an optimizing compiler,
+  the derivative terms can themselves be optimized as well. This is likely to be
+  beneficial, since as we will see the initial terms may be quite complex.}
+
+This does give us additional constraints that the derivative terms must satisfy:
+for example, we may need to preserve safety or range restriction in order to be
+able to evaluate them.
+
+The upshot of these considerations is that the optimal choice of derivatives is likely
+to be quite dependent on the precise variant of Datalog being evaluated, and the
+specifics of the evaluation engine. However, we give an example
+here.\footnote{This is the variant used at Semmle.}
+
+
+\newcommand{\bothdiff}{\diamond}
+\begin{thm}[Concrete Datalog term derivatives]
+  We give two mutually recursive definitions,
+  $\updiff: \Term \rightarrow \changes{\Rel^n} \rightarrow \changes{Rel}$ and
+  $\downdiff: \Term \rightarrow \changes{\Rel^n} \rightarrow \changes{Rel}$, such
+  that $\updiff \times \downdiff$ is a derivative for Datalog term semantics.
+  
+  Let $$\diamond X \defeq X \twist (\updiff X, \downdiff X)$$ in the following.
+
+  TODO: make the references to the argument changes more obvious
+  
+  \begin{eqnarray*}
+  \updiff\bot & \defeq & \bot\\
+  \updiff\top & \defeq & \bot\\
+  \updiff R & \defeq & \updiff R\\
+  \updiff(T\vee U) & \defeq & \updiff T \vee \updiff U\\
+  \updiff(T\wedge U) & \defeq & (\updiff T\wedge \bothdiff U) 
+                           \vee 
+                           (\updiff U \wedge \bothdiff T)\\
+  \updiff(\neg T) & \defeq & \downdiff T\\
+  \updiff(\exists x.T) & \defeq & \exists x.\updiff T
+  \end{eqnarray*}
+
+  \begin{eqnarray*}
+  \downdiff\bot & \defeq & \bot\\
+  \downdiff\top & \defeq & \bot\\
+  \downdiff R & \defeq & \downdiff R\\
+  \downdiff(T\vee U) & \defeq & (\downdiff T \wedge \neg \bothdiff U) 
+                           \vee 
+                           (\downdiff U \wedge \neg \bothdiff T)\\
+  \downdiff(T\wedge U) & \defeq & (\downdiff T\wedge U) \vee (T \wedge \downdiff U)\\
+  \downdiff(\neg T) & \defeq & \updiff T\\
+  \downdiff(\exists x.T) & \defeq & \exists x.\downdiff T \wedge \neg \exists x.\bothdiff T
+  \end{eqnarray*}
+\end{thm}
+\begin{proof}
+  Long, tedious structural induction. Maybe in an appendix?
+\end{proof}
+
+The cases for $\exists$ look quite different for $\updiff$ and $\downdiff$, but
+this is because we have chosen a dialect of Datalog without a primitive universal quantifier.
+If we did have one, its cases would be dual to those for $\exists$, namely:
+\begin{eqnarray*}
+\updiff(\forall x.T) & = & \exists x. \updiff T \wedge \forall x. \bothdiff T\\
+\downdiff(\forall x.T) & = & \forall x. \downdiff T
+\end{eqnarray*}
+
+We can easily extend this to a derivative for $\consq$.
+
+\begin{corollary}
+\label{corollary:consqDiff}
+  $\consq$ is differentiable.
+\end{corollary}
+
+\subsection{Differential evaluation of Datalog}
+
+Putting this together, we get two results.
+
+\begin{thm}[Differential evaluation of Datalog semantics]
+  Datalog program semantics can be evaluated incrementally.
+\end{thm}
+\begin{proof}
+  Corollary of \ref{corollary:diffFP} and \ref{corollary:consqDiff}.
+\end{proof}
+
+This is a generalization of semi-naive evaluation.
+
+\begin{thm}[Differential update of Datalog semantics]
+  Datalog program semantics can be incrementally updated with changes to non-recursive relations.
+\end{thm}
+\begin{proof}
+  Corollary of \ref{thm:fixpointDiff} and \ref{corollary:consqDiff}.
+\end{proof}
+
+This is a generalization of the view-update problem, including recursive relations.
+
+\section{Discussion and related work}
 
 The seminal paper in this area is ~\cite{cai2014changes}. We use the notions
 defined in that excellent paper heavily, but we deviate in two regards: the use of

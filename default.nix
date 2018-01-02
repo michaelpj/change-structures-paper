@@ -16,7 +16,7 @@ let
     collection-luatex
     collection-fontsextra
     collection-fontsrecommended
-    #collection-mathextra
+    collection-mathscience
     acmart
     bibtex biblatex 
     latexmk;
