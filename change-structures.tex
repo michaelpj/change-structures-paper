@@ -20,7 +20,7 @@
 
 \section{Introduction}
 
-The paper of Cai et al ~\cite{cai2014changes} defines compelling notions
+The paper of Cai et al. ~\cite{cai2014changes} defines compelling notions
 of change structure and derivative, and use them to provide a composable framework for
 evaluating incremental lambda calculus programs provided you have a ``plugin'' for the
 primitive operations of your program.
@@ -52,7 +52,7 @@ The major contributions of this paper are:
     a definition of function changes that allows them to form a Cartesian closed
     category.
   \item A description of the properties of change structures over posets
-    (\ref{sec:order}), including theobrems that characterize the range of
+    (\ref{sec:order}), including theorems that characterize the range of
     possible derivatives available, and conditions under which compound change
     structures may admit derivatives.
 \end{itemize}
@@ -411,10 +411,11 @@ All functions into a complete change structure are differentiable, so any
 complete change structures on $A$ will be maximal elements of the lattice, while
 the discrete change structure provides a minimal element.
 
-\section{Order and change structures}
-\label{sec:order}
+\section{Change structures over other structures}
+\label{sec:moreStructures}
 
-\subsection{Orders from change sets}
+\subsection{Posets}
+\subsubsection{Orders from change sets}
 
 Whenever the change set is a monoid, 
 there is a natural preorder on the base set of a change structure, given by reachability
@@ -437,7 +438,7 @@ $A \times A$. Conversely, any such change structure is necessarily complete.
   structure is differentiable.
 \end{corollary}
 
-\subsection{Orders on base sets}
+\subsubsection{Orders on base sets}
 
 A common structure which we want to compute changes on is a poset. For this
 section we shall assume that all of our base sets are posets.
@@ -526,7 +527,7 @@ although the condition of the theorem only requires the bounds to be sub- and
 sup-derivatives, the conclusion of the theorem also applies to the bounds, so
 they will always be full derivatives as well.
 
-\subsection{Ascending and descending change structures}
+\subsubsection{Ascending and descending change structures}
 
 Sub- and sup-derivatives alone are not quite enough to allow us to make
 functions fully differentiable. We need some additional power.
@@ -565,7 +566,7 @@ For example, $\mathbb{Z}_1$ is ascending (and has sup-derivatives), and
 $\mathbb{Z}_2$ is descending (and has sub-derivatives), so $\mathbb{Z}_1
 \superpose \mathbb{Z}_2 = \mathbb{Z}_3$ has derivatives.
 
-\subsection{Maximal and minimal derivatives}
+\subsubsection{Maximal and minimal derivatives}
 
 TODO: this section isn't very elegant
 
@@ -613,7 +614,7 @@ bounds, and that tells us how much ``wiggle room'' we have. This is helpful
 because some of the intermediary functions may be much easier to compute than
 others, or convenient for other reasons.
 
-\section{Lattices}
+\subsection{Lattices}
 
 \begin{defn}
   Let $L$ be a join-semilattice. Then $L_\vee \defeq \cstruct{L}{L}{\vee}$ is a change
@@ -710,7 +711,7 @@ attempts to derive only the new facts at each iteration. However, ``semi-naive''
 as traditionally presented has some warts, and
 the following theorem provides a generalization of it to any differentiable function over a
 change structure. We will see the details of how to differentiate Datalog
-semantics in section SOMETHING.
+semantics in section \ref{sec:datalog}.
 
 \begin{thm}[Incremental computation of iterated function applications]
 \label{thm:diffIter}
@@ -902,7 +903,7 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
   fixpoints and is differentiable, and $\cplus$ is monotonic in its second argument.
 
   Then suppose that $D$ is a derivative of $\fixpoint_X$. Then $\thefixpoint \cplus D(f,
-  \change{f})$ is a fixpoint of of $f \cplus \change{f}$.
+  \change{f})$ is a fixpoint of $f \cplus \change{f}$.
   \begin{itemize}
   \item[ ]
     $
@@ -941,6 +942,7 @@ It may not be too expensive to compute a fixpoint, since the alternative
 again (which will itself require a fixpoint computation).
 
 \section{Datalog}
+\label{sec:datalog}
 
 Datalog is a well-known simple logic programming language. It is also a textbook
 example of the need for incremental computation, as its semantics rely on
@@ -966,7 +968,7 @@ closed-world assumption to solve this.
 \begin{defn}[Closed-world assumption and negation]
   There exists a universal relation $\universalRel$.
   
-  Negation on relations is then defined as $$\neg R \defeq \universalRel \ R$$
+  Negation on relations is then defined as $$\neg R \defeq \universalRel \setminus R$$
 \end{defn}
 
 This makes $\Rel$ into a Boolean algebra.
@@ -1023,6 +1025,15 @@ However, \ref{cor:booleanCharacterization} gives us a range of derivatives to
 choose from, and we can optimize within that range to find one that satisfies
 our constraints.
 
+In the case of Datalog, the change ordering on the change structure also
+corresponds to the size of the derivative as a pair of relations. The minimal
+derivative contains precisely the elements that are newly added or removed,
+whereas the maximal derivative contains all the elements that have \emph{ever}
+been added or removed. This means that \ref{cor:booleanCharacterization} allows
+us to \emph{approximate} the most precise derivative while still being
+guaranteed that the result is sound.\footnote{The idea of using an approximation
+to the precise derivative, and a soundness condition, appears in ~\cite{bancilhon1986amateur}.}
+
 There is also the question of how to compute the derivative. Fortunately, the
 maximal and minimal minus operators are actually representable as pairs of terms
 in our Datalog, and so we can compute the derivative via a pair of terms that
@@ -1033,16 +1044,19 @@ terms.\footnote{Indeed, if this process is occurring in an optimizing compiler,
 
 This does give us additional constraints that the derivative terms must satisfy:
 for example, we may need to preserve safety or range restriction in order to be
-able to evaluate them.
+able to evaluate them; and we may wish to pick terms that will be easy or cheap
+for our evaluation engine to evaluate, even if the results are larger.
 
 The upshot of these considerations is that the optimal choice of derivatives is likely
 to be quite dependent on the precise variant of Datalog being evaluated, and the
-specifics of the evaluation engine. However, we give an example
-here.\footnote{This is the variant used at Semmle.}
-
+specifics of the evaluation engine. Here is one possibility.\footnote{These are
+  the rules actually in use at Semmle. We arrived at them by starting with the
+  minimal derivative and then simplifying and weakening it while preserving the
+  bound given by the maximal derivative.}
 
 \newcommand{\bothdiff}{\diamond}
 \begin{thm}[Concrete Datalog term derivatives]
+\label{thm:concreteDatalog}
   We give two mutually recursive definitions,
   $\updiff: \Term \rightarrow \changes{\Rel^n} \rightarrow \changes{Rel}$ and
   $\downdiff: \Term \rightarrow \changes{\Rel^n} \rightarrow \changes{Rel}$, such
@@ -1080,15 +1094,16 @@ here.\footnote{This is the variant used at Semmle.}
   Long, tedious structural induction. Maybe in an appendix?
 \end{proof}
 
-The cases for $\exists$ look quite different for $\updiff$ and $\downdiff$, but
-this is because we have chosen a dialect of Datalog without a primitive universal quantifier.
+There is a symmetry between the cases for $\wedge$ and $\vee$ between $\updiff$
+and $\downdiff$, but the cases for $\exists$ look quite different. 
+This is because we have chosen a dialect of Datalog without a primitive universal quantifier.
 If we did have one, its cases would be dual to those for $\exists$, namely:
 \begin{eqnarray*}
 \updiff(\forall x.T) & = & \exists x. \updiff T \wedge \forall x. \bothdiff T\\
 \downdiff(\forall x.T) & = & \forall x. \downdiff T
 \end{eqnarray*}
 
-We can easily extend this to a derivative for $\consq$.
+We can easily extend a derivative for the term semantics to a derivative for $\consq$.
 
 \begin{corollary}
 \label{corollary:consqDiff}
@@ -1100,6 +1115,7 @@ We can easily extend this to a derivative for $\consq$.
 Putting this together, we get two results.
 
 \begin{thm}[Differential evaluation of Datalog semantics]
+\label{thm:diffEval}
   Datalog program semantics can be evaluated incrementally.
 \end{thm}
 \begin{proof}
@@ -1109,6 +1125,7 @@ Putting this together, we get two results.
 This is a generalization of semi-naive evaluation.
 
 \begin{thm}[Differential update of Datalog semantics]
+\label{thm:diffUpdate}
   Datalog program semantics can be incrementally updated with changes to non-recursive relations.
 \end{thm}
 \begin{proof}
@@ -1117,17 +1134,46 @@ This is a generalization of semi-naive evaluation.
 
 This is a generalization of the view-update problem, including recursive relations.
 
-\section{Discussion and related work}
+\subsection{Extensions to Datalog}
 
-The seminal paper in this area is ~\cite{cai2014changes}. We use the notions
+Our formulation of Datalog term semantics and differential evaluation is quite
+generic and composable, so it is relatively easy to extend the language with new
+term constructs.
+
+A new term construct must have:
+\begin{itemize}
+  \item An interpretation as a function on its free relation variables.
+  \item An implementation of $\updiff$ and $\downdiff$.
+\end{itemize}
+
+These are very easy conditions - the former is needed for the construct to even
+make sense, and the latter can always be satisfied by using the maximal or
+minimal derivative. Although they are very bad derivatives, having them
+available as options is very helpful. It means that even if we have a term
+construct which we cannot find a good derivative for, we only lose incremental
+evaluation for those subterms, and not for anything else.
+
+Note that this does not say anything about monotonicity. New term constructs may
+be required to be monotonic if they are to participate in recursion, but we are
+interested in derivatives even for non-monotonic terms because they allow us to
+use \ref{thm:diffUpdate}.
+
+This is important in practice for Semmle's variant of Datalog, which includes
+aggregation and other primitives with interesting derivatives.
+
+\section{Related work}
+
+\subsection{Change structures}
+
+The seminal paper in this area is Cai et al. ~\cite{cai2014changes}. We use the notions
 defined in that excellent paper heavily, but we deviate in two regards: the use of
 dependent types, and the nature of function changes.
 
-These two issues are linked, because part of the reason that Cai et al need
+These two issues are linked, because part of the reason that Cai et al. need
 dependently typed changes is in order to handle their notion of function
 changes.
 
-Our notion of function changes is different to Cai's because Cai requires the
+Our notion of function changes is different to Cai et al.'s because they require the
 function changes to behave like derivatives. To our eyes, this confuses two ways
 in which functions can change: the derivative gives the change in the function
 at a point, as the point moves; whereas a change in the function itself is a
@@ -1154,11 +1200,65 @@ this paper, and would have complicated the exposition significantly, so we opted
 to leave it for future work.
 
 S-acts and their categorical structure have received a fair amount of attention
-over the years (~\cite{kilp2000monoids} is a good overview). However, our work
+over the years (Kilp, Knauer, and Mikhalev ~\cite{kilp2000monoids} is a good overview). However, our work
 is largely distinct from this, since we are interested in acts over different
 monoids/semigroups, which necessitates the presence of derivatives.
 
-Griffin?
+Arntzenius ~\cite{arntz2017fixpoints} gives a derivative operator for fixpoints. However,
+it uses the definition of function changes from Cai et al., whereas
+we have a different notion of function changes, so the result is unfortunately
+inapplicable. In addition, we prove our result for all functions, not just
+monotone functions.
+
+\subsection{Datalog}
+
+The earliest explication of semi-naive evaluation as a derivative process
+appears in Bancilhon ~\cite{bancilhon1986naive}. The idea of using an approximate derivative
+and the requisite soundness condition appears as a throwaway comment in
+Bancilhon and Ramakrishnan ~\cite{bancilhon1986amateur}, although as far as we know nobody has since
+developed that approach. 
+
+There is existing literature on incremental updates to relational algebra
+expressions. In particular Griffin et al ~\cite{griffin1997improved} following
+Qian and Wiederhold ~\cite{qian1991incremental} shows the essential insight that it is necessary to
+track both an ``upwards'' and a ``downwards'' difference, and produces a set of
+rules that look quite similar to those we derive in \ref{thm:concreteDatalog}.
+
+Where our presentation improves over Griffin et al. is mainly in
+the genericity of the presentation. Our machinery works for a wider variety of
+algebraic structures, and it is clear how the parts of the proof work together
+to produce the result. In addition, it is easy to see how to extend the proofs
+to cover additional language constructs.
+
+Griffin et al. are interested in \emph{minimal} changes. These correspond to
+minimal derivatives in the sense of \ref{cor:booleanCharacterization}. However,
+while minimality (or proximity to minimality) is desirable (since it decreases
+the size of the derivatives as relations), it is important to be able to trade
+it off against other considerations. For example, at
+Semmle we use the derivatives given in \ref{thm:concreteDatalog}, which are not minimal.
+
+There are some inessential points of difference as well: we work on Datalog,
+rather than relational algebra; and we use set semantics rather than bag
+semantics. This is largely a matter of convenience: Datalog is an easier
+language to work with, and set semantics allows a much wider range of valid
+simplifications. However, all the same machinery applies to relational algebra
+with bag semantics, it is simply necessary to produce a valid version of \ref{thm:concreteDatalog}.
+
+We also solve the problem of updating \emph{recursive} expressions. As far as we
+know, this is unsolved in general. Most of the attempts to solve it have
+focussed on Datalog rather than relational algebra, since Datalog is designed to
+make heavy use of recursion. 
+
+Gupta et al ~\cite{gupta1995maintenance} has a good summary of the approaches so far.
+
+WRITE MORE HERE
+
+Datafun (Arntzenius ~\cite{arntz2016datafun}) is a functional programming language that embeds
+Datalog, allowing significant improvements in genericity, such as the use of
+higher-order functions. Since we have directly defined a change structure and
+derivative operator for Datalog, our work could be used as a ``plugin'' in the sense
+of Cai et al., allowing Datafun to compute its internal fixpoints
+incrementally, but also allowing Datafun expressions to be fully incrementally updated.
 
 \bibliography{paper}
 
