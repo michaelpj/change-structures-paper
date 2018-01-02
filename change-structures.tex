@@ -1,3 +1,5 @@
+% Toggle comments for preamble and topmatter to typeset in ACM style
+
 \input{preamble-standard}
 %\input{preamble-acm}
 
@@ -20,7 +22,7 @@
 
 \section{Introduction}
 
-The paper of Cai et al. ~\cite{cai2014changes} defines compelling notions
+The paper of Cai et al.~\cite{cai2014changes} defines compelling notions
 of change structure and derivative, and use them to provide a composable framework for
 evaluating incremental lambda calculus programs provided you have a ``plugin'' for the
 primitive operations of your program.
@@ -98,7 +100,7 @@ Here are some recurring examples of changes structures:
 Indeed, any semigroup $(A, \splus)$ can be seen as a change structure $\cstruct{A}{A}{\splus}$. In particular,
 the change set of any change structure is itself a change structure.
 
-Given change structures and functions between them, we have a natural notion of a derivative, following ~\cite{cai2014changes}:
+Given change structures and functions between them, we have a natural notion of a derivative, following \cite{cai2014changes}:
 
 \begin{defn}[Derivatives]
   A \textit{derivative} of a function $f: A_\cplus \rightarrow B_\cpluss$ is a function $\derive{f}: A \times \changes{A} \rightarrow
@@ -137,7 +139,7 @@ from differential geometry ($\derive{(g \circ f)}(x, \textbf{v}) = \derive{g}
 
 \subsection{Minus operators and completeness}
 
-Cai et al ~\cite{cai2014changes} include a ``minus operator'' in their definition of change structures. 
+Cai et al.~\cite{cai2014changes} include a ``minus operator'' in their definition of change structures. 
 
 \begin{defn}[Minus operator]
   A \textit{minus operator} is a function $\cminus: A \times A \rightarrow \changes{A}$ such that $a \cplus (b \cminus a) = b$.
@@ -202,6 +204,8 @@ Extensionality gives us uniqueness of derivatives:
 \section{Algebra of change structures}
 \label{sec:algebra}
 
+\subsection{Categorical constructions}
+
 \begin{defn}[Category of change structures]
   We define the category $\cat{CStruct}$ of change structures over objects in
   some category $\cat{C}$. The objects are
@@ -217,7 +221,7 @@ S-acts $\cat{SAct}$: the objects of $\cat{SAct}$ all maintain the same monoid
 structure, whereas we are interested in changing the structure of the act.
 
 However, if we compare the definition of a $\cat{SAct}$ ``act-preserving''
-homeomorphism (as in ~\cite{kilp2000monoids}) we can see that the structure is quite similar to our definition
+homeomorphism (as in \cite{kilp2000monoids}) we can see that the structure is quite similar to our definition
 of differentiability:
 
 $$f(a \splus s) = f(a) \splus s$$
@@ -1032,7 +1036,7 @@ whereas the maximal derivative contains all the elements that have \emph{ever}
 been added or removed. This means that \ref{cor:booleanCharacterization} allows
 us to \emph{approximate} the most precise derivative while still being
 guaranteed that the result is sound.\footnote{The idea of using an approximation
-to the precise derivative, and a soundness condition, appears in ~\cite{bancilhon1986amateur}.}
+to the precise derivative, and a soundness condition, appears in \cite{bancilhon1986amateur}.}
 
 There is also the question of how to compute the derivative. Fortunately, the
 maximal and minimal minus operators are actually representable as pairs of terms
@@ -1165,7 +1169,7 @@ aggregation and other primitives with interesting derivatives.
 
 \subsection{Change structures}
 
-The seminal paper in this area is Cai et al. ~\cite{cai2014changes}. We use the notions
+The seminal paper in this area is Cai et al.~\cite{cai2014changes}. We use the notions
 defined in that excellent paper heavily, but we deviate in two regards: the use of
 dependent types, and the nature of function changes.
 
@@ -1200,11 +1204,11 @@ this paper, and would have complicated the exposition significantly, so we opted
 to leave it for future work.
 
 S-acts and their categorical structure have received a fair amount of attention
-over the years (Kilp, Knauer, and Mikhalev ~\cite{kilp2000monoids} is a good overview). However, our work
+over the years (Kilp, Knauer, and Mikhalev~\cite{kilp2000monoids} is a good overview). However, our work
 is largely distinct from this, since we are interested in acts over different
 monoids/semigroups, which necessitates the presence of derivatives.
 
-Arntzenius ~\cite{arntz2017fixpoints} gives a derivative operator for fixpoints. However,
+Arntzenius~\cite{arntz2017fixpoints} gives a derivative operator for fixpoints. However,
 it uses the definition of function changes from Cai et al., whereas
 we have a different notion of function changes, so the result is unfortunately
 inapplicable. In addition, we prove our result for all functions, not just
@@ -1213,14 +1217,14 @@ monotone functions.
 \subsection{Datalog}
 
 The earliest explication of semi-naive evaluation as a derivative process
-appears in Bancilhon ~\cite{bancilhon1986naive}. The idea of using an approximate derivative
+appears in Bancilhon~\cite{bancilhon1986naive}. The idea of using an approximate derivative
 and the requisite soundness condition appears as a throwaway comment in
-Bancilhon and Ramakrishnan ~\cite{bancilhon1986amateur}, although as far as we know nobody has since
+Bancilhon and Ramakrishnan~\cite{bancilhon1986amateur}, although as far as we know nobody has since
 developed that approach. 
 
 There is existing literature on incremental updates to relational algebra
-expressions. In particular Griffin et al ~\cite{griffin1997improved} following
-Qian and Wiederhold ~\cite{qian1991incremental} shows the essential insight that it is necessary to
+expressions. In particular Griffin et al.~\cite{griffin1997improved} following
+Qian and Wiederhold~\cite{qian1991incremental} shows the essential insight that it is necessary to
 track both an ``upwards'' and a ``downwards'' difference, and produces a set of
 rules that look quite similar to those we derive in \ref{thm:concreteDatalog}.
 
@@ -1249,11 +1253,11 @@ know, this is unsolved in general. Most of the attempts to solve it have
 focussed on Datalog rather than relational algebra, since Datalog is designed to
 make heavy use of recursion. 
 
-Gupta et al ~\cite{gupta1995maintenance} has a good summary of the approaches so far.
+Gupta et al.~\cite{gupta1995maintenance} has a good summary of the approaches so far.
 
 WRITE MORE HERE
 
-Datafun (Arntzenius ~\cite{arntz2016datafun}) is a functional programming language that embeds
+Datafun (Arntzenius~\cite{arntz2016datafun}) is a functional programming language that embeds
 Datalog, allowing significant improvements in genericity, such as the use of
 higher-order functions. Since we have directly defined a change structure and
 derivative operator for Datalog, our work could be used as a ``plugin'' in the sense
