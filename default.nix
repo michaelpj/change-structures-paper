@@ -27,7 +27,7 @@ stdenv.mkDerivation {
   buildInputs = [ tex biber ghostscript ];
   src = ./.;
   buildPhase = ''
-    latexmk -view=pdf change-structures datalog
+    latexmk -view=pdf change-structures
   '';
   installPhase = "install -Dt $out *.pdf";
 }
