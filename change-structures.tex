@@ -121,7 +121,9 @@ derivative.
 \begin{thm}[The Chain Rule]
   Let $f: A_\cplus \rightarrow B_\cpluss$, $g: B_\cpluss \rightarrow C_\cplusss$ be differentiable functions. Then $g \circ f$ is also
   differentiable, with derivative given by
-   $$\derive{(g \circ f)}(x, \change{x}) = \derive{g}\left(f(x), \derive{f}(x, \change{x})\right)$$
+  $$\derive{(g \circ f)}(x, \change{x}) = \derive{g}(f(x), \derive{f}(x, \change{x}))$$
+  or in curried form 
+  $$\derive{(g \circ f)}(x) = \derive{g}(f(x)) \circ \derive{f}(x)$$
 \end{thm}
 \begin{proof}
   By equivalence:
@@ -140,7 +142,8 @@ Why call this the ``chain rule''? It doesn't have quite the same structure as
 the chain rule in real calculus ($\derive{(g \circ f)}(x) = (\derive{g} \circ f)
 (x) \cdot \derive{f}(x)$), but it does have the same structure as the chain rule
 from differential geometry ($\derive{(g \circ f)}(x, \textbf{v}) = \derive{g}
-(f(x), \derive{f}(x, \textbf{v}))$), which will turn out to be a recurring connection.
+(f(x), \derive{f}(x, \textbf{v}))$), which will turn out to be a recurring
+connection. 
 
 \subsection{Minus operators and completeness}
 
@@ -1228,7 +1231,8 @@ In fact, a slightly different dependently-typed formulation seems promising, sin
 to draw out a 2-categorical interpretation of change structures. For example, if
 we consider our base set as a category, with changes $\Delta_a^b$ between $a$
 and $b$ as morphisms between $a$ and $b$, then a function is
-differentiable iff it is a functor on that category (i.e. provides a change in $\Delta_{f(a)}^{f(b)}$).
+differentiable iff it is a functor on that category (i.e. provides a change in
+$\Delta_{f(a)}^{f(b)}$). 
 
 While this is a promising direction, it wasn't necessary for the material in
 this paper, and would have complicated the exposition significantly, so we opted
