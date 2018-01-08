@@ -122,6 +122,8 @@ derivative.
   Let $f: A_\cplus \rightarrow B_\cpluss$, $g: B_\cpluss \rightarrow C_\cplusss$ be differentiable functions. Then $g \circ f$ is also
   differentiable, with derivative given by
    $$\derive{(g \circ f)}(x, \change{x}) = \derive{g}\left(f(x), \derive{f}(x, \change{x})\right)$$
+   or, in curried form
+   $$\derive{(g \circ f)}(x)(\change{x}) = \derive{g}(f(x)) \circ \derive{f}(x)$$
 \end{thm}
 \begin{proof}
   By equivalence:
@@ -505,9 +507,8 @@ Firstly, we can define ``approximations'' to derivatives from both sides.
 Both sup- and sub-derivatives satisfy the chain rule, in the following sense: 
 \begin{prop}[Chain rule for sub-derivatives]
   let $f : A_\cplus \rightarrow B_\cpluss$ and $g : B_\cpluss \rightarrow C_\cplusss$ be
-  sub-differentiable functions with sub-derivatives $f', g'$ respectively. Then the composite
-  $$ \lambda a. \lambda da. g'(f(a), f'''(a, da)) $$
-  is a subderivative of $g \circ f$
+  sub-differentiable functions with sub-derivatives $f', g'$ respectively. Then
+  $$\derive{g}(f(a)) \circ \derive{f}(a)$$ is a subderivative of $g \circ f$
 \end{prop}
 
 Some change structures always have sub- or sup-derivatives: for example every function
