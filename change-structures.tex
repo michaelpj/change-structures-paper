@@ -849,12 +849,12 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
     \item $\change{f} \in \changes{(A \rightarrow A)}$ be a change to $f$
   \end{itemize}
 
-  Suppose a change $\delta w \in \Delta A$ satisfies
+  Suppose a change $\change{w} \in \Delta A$ satisfies
   the equation:
   \begin{equation}\label{eqn:fixcondition}
-    \delta w = f'(\fixpoint_A(f), \delta w) \cdot \delta f (\fixpoint_A(f) \oplus \delta w)
+    \change{w} = \derive{\ev}((f, \fixpoint_A(f)), (\change{f}, \change{w}))
   \end{equation}
-  Then $\fixpoint_A(f) \oplus \delta w$ is a fixpoint of $f \oplus \delta f$. In particular,
+  Then $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \delta f$. In particular,
   if the operator $\fixpoint_X$ is defined over $\Delta A$, we define:
   $$
   \derive{\fixpoint_A}(f, \change{f}) \defeq
@@ -891,15 +891,9 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
     $
     f(\thefixpoint)
     \cplus
-    \left[ \derive{f}(\thefixpoint, \change{w}) \splus \change{f}(\thefixpoint \cplus \change{w}) \right]
+    \derive{\ev}((f, \fixpoint_A(f)), (\change{f}, \change{w}))
     $
-  \item[=]\{ rolling the fixpoint \}\\
-    $
-    \thefixpoint
-    \cplus
-    \left[ \derive{f}(\thefixpoint, \change{w}) \splus \change{f}(\thefixpoint \cplus \change{w}) \right]
-    $
-  \item[=]\{ equation \ref{eqn:fixcondition} \}\\
+  \item[=]\{ rolling the fixpoint and equation \ref{eqn:fixcondition} \}\\
     $
     \thefixpoint
     \cplus
