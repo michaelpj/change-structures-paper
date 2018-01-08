@@ -336,11 +336,13 @@ whose derivative is $\lambda a. \lambda d. d$.
   Cai's is obviously bad - even though it is!)
 \end{proof}
 
-\begin{prop}
+\begin{prop}[Incrementalization]
+\label{prop:incrementalization}
   The derivative of $\ev: (A \difffunc B) \times A \rightarrow B$ is 
   $$\derive{\ev}((f, a), (\change{f}, \change{a})) = \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})$$
   Therefore 
-  $$(f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})$$
+  $$(f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus \left[\derive{f}(a,
+    \change{a}) \splus \change{f}(a \cplus \change{a}) \right]$$
 \end{prop}
 
 This is our equivalent of Cai et al.'s ``Incrementalization'' lemma.
@@ -857,9 +859,7 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
   \derive{\fixpoint_A}(f, \change{f}) \defeq
   \fixpoint_{\changes{A}}(
     \lambda w .
-      \derive{f}(\fixpoint_A(f), w)
-      \splus
-      \change{f}(\fixpoint_A(f) \cplus w)
+      \derive{\ev}((f, \fixpoint_A(f)), (\change{f}, w))
   )
   $$
   thus $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a fixpoint of $f \cplus \change{f}$.
@@ -878,50 +878,7 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
 \newcommand{\theadjustment}{\operatorname{adjust}}
 
 \begin{proof}
-  Throughout, let
-  $\thefixpoint = \fixpoint_A(f)$ and
-  $\theadjustment(F, f, \change{f}) = \lambda w . \derive{f}(F, w) \splus
-  \change{f}(F \cplus w)$.
-
-  MPJ: possibly this should be its own lemma? It's a similar to form to Cai's
-  ``Incrementalization'' lemma, and we could drop the final rolling of the
-  fixpoint for a simpler statement
-
-  First, we prove an equivalence that we will use in both parts. For any $\change{a} \in \changes{A}$
-  \begin{itemize}
-  \item[ ]
-    $
-    (f \cplus \change{f})(\thefixpoint \cplus \change{a})
-    $
-  \item[=]\{ definition of $\cplus$ for $\changes{(A \rightarrow A)}$ \}\\
-    $
-    f(\thefixpoint \cplus \change{a})
-    \cplus
-    \change{f}(\thefixpoint \cplus \change{a})
-    $
-  \item[=]\{ derivative property of $\derive{f}$ \}\\
-    $
-    f(\thefixpoint)
-    \cplus
-    \derive{f}(\thefixpoint, \change{a})
-    \cplus
-    \change{f}(\thefixpoint \cplus \change{a})
-    $
-  \item[=]\{ semigroup action property \}\\
-    $
-    f(\thefixpoint)
-    \cplus
-    \derive{f}(\thefixpoint, \change{a})
-    \splus
-    \change{f}(\thefixpoint \cplus \change{a})
-    $
-  \item[=]\{ definition of $\theadjustment$, rolling the fixpoint \}\\
-    $
-    \thefixpoint
-    \cplus
-    \theadjustment(\thefixpoint, f, \change{f})(\change{a})
-    $
-  \end{itemize}
+  Throughout, let $\thefixpoint = \fixpoint_A(f)$.
 
   For the first part, let $\change{w} \in \Delta A$ satisfy equation \ref{eqn:fixcondition}.
   \begin{itemize}
@@ -929,21 +886,17 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
     $
     (f \cplus \change{f})(\thefixpoint \cplus \change{w})
     $
-  \item[=]\{ definition of $\Delta(A \rightarrow A)$ \}\\
-    $
-    f(\thefixpoint \cplus \change{w}) \cplus \change{f}(\thefixpoint \cplus \change{w})
-    $
-  \item[=]\{ differentiability of $f$ \}\\
+  \item[=]\{ by \ref{prop:incrementalization} \}\\
     $
     f(\thefixpoint)
     \cplus
-    \left[ f'(\thefixpoint, \change{w}) + \change{f}(\thefixpoint \cplus \change{w}) \right]
+    \left[ \derive{f}(\thefixpoint, \change{w}) \splus \change{f}(\thefixpoint \cplus \change{w}) \right]
     $
   \item[=]\{ rolling the fixpoint \}\\
     $
     \thefixpoint
     \cplus
-    \left[ f'(\thefixpoint, \delta w) + \change{f}(\thefixpoint \cplus \change{w}) \right]
+    \left[ \derive{f}(\thefixpoint, \change{w}) \splus \change{f}(\thefixpoint \cplus \change{w}) \right]
     $
   \item[=]\{ equation \ref{eqn:fixcondition} \}\\
     $
@@ -953,22 +906,23 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
     $
   \end{itemize}
 
-  Hence $F \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$.
+  Hence $\thefixpoint \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$.
 
   For the second part, we are supposing that $\fixpoint$ computes least
   fixpoints and is differentiable, and $\cplus$ is monotonic in its second argument.
 
   Then suppose that $D$ is a derivative of $\fixpoint_X$, and hence $\thefixpoint \cplus D(f,
-  \change{f})$ is the least fixpoint of $f \cplus \change{f}$. As we have seen,
-  $D(f, \change{f})$ satisfies equation \ref{eqn:fixcondition} and, therefore,
-  by the least fixpoint property, we have $\fixpoint'_A(f, \change{f}) \leq D(f, \change{f})$.
-  Since $\cplus$ is monotonic on its second argument, we have:
+  \change{f})$ is the least fixpoint of $f \cplus \change{f}$.
+
+  As we have seen (where??), $D(f, \change{f})$ satisfies equation \ref{eqn:fixcondition} and, therefore,
+  by the least fixpoint property, we have $\derive{\fixpoint_A}(f, \change{f}) \leq D(f, \change{f})$.
+  Since $\cplus$ is monotonic in its second argument, we have:
   $$
     \fixpoint_A(f \cplus \change{f}) \leq 
-    \fixpoint_A(f) \cplus \fixpoint'_A(f, \change{f}) \leq
+    \fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f}) \leq
     \fixpoint_A(f) \cplus D(f, \change{f}) = \fixpoint_A(f \cplus \change{f})
   $$
-  Hence $\fixpoint_A(f \cplus \change{f}) = \fixpoint_A(f) \cplus \fixpoint'_A(f, \change{f})$
+  Hence $\fixpoint_A(f \cplus \change{f}) = \fixpoint_A(f) \cplus \derive{\fixpoint}_A(f, \change{f})$
   and $\fixpoint'_A$ is a derivative of $\fixpoint_A$.
 \end{proof}
 
