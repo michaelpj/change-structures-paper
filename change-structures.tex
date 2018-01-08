@@ -320,7 +320,7 @@ whose derivative is $\lambda a. \lambda d. d$.
   change operator for $B$ for $A \rightarrow \changes{B}$.
 \end{prop}
 \begin{proof}
-  We need to show that the evaluation map $ev: (A \difffunc B) \times A
+  We need to show that the evaluation map $\ev: (A \difffunc B) \times A
   \rightarrow B$ is differentiable, the other properties follow from the
   properties of the exponential object in $\cat{Set}$.
 
@@ -335,6 +335,15 @@ whose derivative is $\lambda a. \lambda d. d$.
   function changes that isn't this (or the geometric hand-waving, or just saying
   Cai's is obviously bad - even though it is!)
 \end{proof}
+
+\begin{prop}
+  The derivative of $\ev: (A \difffunc B) \times A \rightarrow B$ is 
+  $$\derive{\ev}((f, a), (\change{f}, \change{a})) = \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})$$
+  Therefore 
+  $$(f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})$$
+\end{prop}
+
+This is our equivalent of Cai et al.'s ``Incrementalization'' lemma.
 
 TODO: Can I be reminded of why we don't have coproducts? Extensional forward algebras
 don't, but the argument doesn't apply to arbitrary ones, I think.
@@ -495,7 +504,7 @@ Both sup- and sub-derivatives satisfy the chain rule, in the following sense:
 \begin{prop}[Chain rule for sub-derivatives]
   let $f : A_\cplus \rightarrow B_\cpluss$ and $g : B_\cpluss \rightarrow C_\cplusss$ be
   sub-differentiable functions with sub-derivatives $f', g'$ respectively. Then the composite
-  $$ \lambda a. \lambda da. g'(f(a), f'(a, da)) $$
+  $$ \lambda a. \lambda da. g'(f(a), f'''(a, da)) $$
   is a subderivative of $g \circ f$
 \end{prop}
 
