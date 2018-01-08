@@ -181,6 +181,9 @@ extensionality makes me think of something like ``the element is characterized
 by its action''.
 However, that's probably not a very interesting notion, since it actually gives us a
 semigroup congruence, so we can always quotient out by it.
+MARIO: Agreed, I've been calling it ``tightness'' (in the sense that the change set
+is as small as it can be), but I don't really like the name, so I'm open to any
+alternatives.
 \begin{defn}[Extensionality]
   A change structure is \textit{extensional} if whenever $a \cplus \change{a}
   = a \cplus \change{b}$ for some $a \in A$, it is the case that $\change{a} = \change{b}$.
@@ -286,6 +289,11 @@ whose derivative is $\lambda a. \lambda d. d$.
   $A, \Delta A$ - I do think equalizers exist but $\Delta\equalizer{f}{g}$ is the
   `largest' change structure that still makes $\equalizer{f}{g}$ differentiable (there
   is no unique choice for this)
+
+  MARIO: Actually, is there a more general version of this? E.g. Whenever the underlying
+  category has limits, the limit in FAlg is the ``largest'' fwd-algebra that makes the arrows
+  involved differentiable / same for colimits with ``smallest''. Is there a categorical definition
+  of ``smallest/largest''? A limit/colimit on the category of fwd-algebas over the specific object?
 \end{prop}
 \begin{proof}
   The equalizer morphism is differentiable, since any function from a discrete change
@@ -829,7 +837,13 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
     \item $\change{f} \in \changes{(A \rightarrow A)}$ be a change to $f$
   \end{itemize}
 
-  Define
+  Suppose a change $\delta w \in \Delta A$ satisfies
+  the equation:
+  \begin{equation}\label{eqn:fixcondition}
+    \delta w = f'(\fixpoint_A(f), \delta w) \cdot \delta f (\fixpoint_A(f) \oplus \delta w)
+  \end{equation}
+  Then $\fixpoint_A(f) \oplus \delta w$ is a fixpoint of $f \oplus \delta f$. In particular,
+  if the operator $\fixpoint_X$ is defined over $\Delta A$, we define:
   $$
   \derive{\fixpoint_A}(f, \change{f}) \defeq
   \fixpoint_{\changes{A}}(
@@ -839,8 +853,7 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
       \change{f}(\fixpoint_A(f) \cplus w)
   )
   $$
-
-  Then $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a fixpoint of $f \cplus \change{f}$.
+  thus $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a fixpoint of $f \cplus \change{f}$.
 
   Furthermore, if
   \begin{itemize}
@@ -848,7 +861,8 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
     \item $\fixpoint$ computes least fixpoints and is differentiable
     \item $\cplus$ is monotonic with respect to the order on $\changes{A}$
   \end{itemize}
-  then the previous expression is also a least fixpoint and $\derive{\fixpoint_A}$ is a derivative.
+  then the previous expression is also a least fixpoint and therefore $\derive{\fixpoint_A}$
+  is a derivative of $\fixpoint_A$.
 \end{thm}
 
 \newcommand{\thefixpoint}{F}
@@ -900,67 +914,53 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
     $
   \end{itemize}
 
-  For the first part, we set $\change{a} = \derive{\fixpoint_A}(f, \delta{f})$
+  For the first part, let $\change{w} \in \Delta A$ satisfy equation \ref{eqn:fixcondition}.
   \begin{itemize}
   \item[ ]
     $
-    (f \cplus \change{f})(\thefixpoint \cplus \derive{\fixpoint_A}(f, \delta{f}))
+    (f \cplus \change{f})(\thefixpoint \cplus \change{w})
     $
-  \item[=]\{ previous equivalence \}\\
+  \item[=]\{ definition of $\Delta(A \rightarrow A)$ \}\\
     $
-    \thefixpoint
+    f(\thefixpoint \cplus \change{w}) \cplus \change{f}(\thefixpoint \cplus \change{w})
+    $
+  \item[=]\{ differentiability of $f$ \}\\
+    $
+    f(\thefixpoint)
     \cplus
-    \theadjustment(\thefixpoint, f, \change{f})(\derive{\fixpoint_A}(f, \delta{f}))
-    $
-  \item[=]\{ definition of $\derive{\fixpoint_A}$ \}\\
-    $
-    \thefixpoint
-    \cplus
-    \theadjustment(\thefixpoint, f, \change{f})(\fixpoint_{\changes{A}}(\theadjustment(\thefixpoint, f, \change{f})))
+    \left[ f'(\thefixpoint, \change{w}) + \change{f}(\thefixpoint \cplus \change{w}) \right]
     $
   \item[=]\{ rolling the fixpoint \}\\
     $
     \thefixpoint
     \cplus
-    \fixpoint_{\changes{A}}(\theadjustment(\thefixpoint, f, \change{f}))
+    \left[ f'(\thefixpoint, \delta w) + \change{f}(\thefixpoint \cplus \change{w}) \right]
     $
-  \item[=]\{ definition of $\derive{\fixpoint_A}$ \}\\
+  \item[=]\{ equation \ref{eqn:fixcondition} \}\\
     $
     \thefixpoint
     \cplus
-    \derive{\fixpoint_A}(f, \change{f})
+    \change{w}
     $
   \end{itemize}
 
-  Hence $\derive{\fixpoint_A}(f, \change{f})$ is a fixpoint of $f \cplus \change{f}$.
+  Hence $F \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$.
 
   For the second part, we are supposing that $\fixpoint$ computes least
   fixpoints and is differentiable, and $\cplus$ is monotonic in its second argument.
 
-  Then suppose that $D$ is a derivative of $\fixpoint_X$. Then $\thefixpoint \cplus D(f,
-  \change{f})$ is a fixpoint of $f \cplus \change{f}$.
-  \begin{itemize}
-  \item[ ]
-    $
-    (f \cplus \change{f})(\thefixpoint \cplus D(f, \change{f}))
-    $
-  \item[=]\{ previous equivalence \}\\
-    $
-    \thefixpoint
-    \cplus
-    \theadjustment(\thefixpoint, f, \change{f})(D(f \change{f}))
-    $
-  \item[$\geq$]\{ STILL WRONG NEED TO SHOW OTHER THING IS PREFIX POINT monotonicity of $\cplus$, $\fixpoint_{\changes{A}}$ computes a
-    least prefix point \}\\
-    $
-    \thefixpoint
-    \cplus
-    \fixpoint_{\changes{A}}(\theadjustment(\thefixpoint, f, \change{f}))
-    $
-  \end{itemize}
-
-  Therefore $\thefixpoint \cplus \derive{\fixpoint_A}(f, \change{f})$ is a least fixpoint of $f
-  \cplus \change{f}$, and hence $\derive{\fixpoint_A}$ is a derivative.
+  Then suppose that $D$ is a derivative of $\fixpoint_X$, and hence $\thefixpoint \cplus D(f,
+  \change{f})$ is the least fixpoint of $f \cplus \change{f}$. As we have seen,
+  $D(f, \change{f})$ satisfies equation \ref{eqn:fixcondition} and, therefore,
+  by the least fixpoint property, we have $\fixpoint'_A(f, \change{f}) \leq D(f, \change{f})$.
+  Since $\cplus$ is monotonic on its second argument, we have:
+  $$
+    \fixpoint_A(f \cplus \change{f}) \leq 
+    \fixpoint_A(f) \cplus \fixpoint'_A(f, \change{f}) \leq
+    \fixpoint_A(f) \cplus D(f, \change{f}) = \fixpoint_A(f \cplus \change{f})
+  $$
+  Hence $\fixpoint_A(f \cplus \change{f}) = \fixpoint_A(f) \cplus \fixpoint'_A(f, \change{f})$
+  and $\fixpoint'_A$ is a derivative of $\fixpoint_A$.
 \end{proof}
 
 The requirement that $\fixpoint$ be differentiable may seem awkward, but it is
