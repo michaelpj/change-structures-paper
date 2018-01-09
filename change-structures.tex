@@ -54,7 +54,7 @@ The major contributions of this paper are:
     a definition of function changes that allows them to form a Cartesian closed
     category.
   \item A description of the properties of change structures over posets
-    (\ref{sec:order}), including theorems that characterize the range of
+    (\ref{sec:moreStructures}), including theorems that characterize the range of
     possible derivatives available, and conditions under which compound change
     structures may admit derivatives.
 \end{itemize}
@@ -63,19 +63,25 @@ The major contributions of this paper are:
 \label{sec:change-structures}
 
 MARIO: Should we pick a different name to distinguish them from Cai-style change structures?
+
 MPJ: Not sure. I do really like ``change structure'', and I think they're
 similar, but perhaps we should use a different name. Forward algebra? Change action?
+
 MARIO: I've been calling them ``forward algebras'', but the specific name is not particularly
 important. I would definitely like to have a different name, especially since we often contrast the two.
-\begin{defn}[Change structures]
 
+MPJ: I propose ``change action'', since we're emphasising the semigroup action
+connection. Really, I think they're just semigroup/monoid actions with a more
+general notion of morphism.
+
+\begin{defn}[Change structures]
   A \textit{change structure} is defined as:
 
   $$\mathcal{A} \defeq \cstruct{A}{\changes{A}}{\cplus}$$
 
-  where $A$ is an object in some category $\cat{C}$, $\changes{A}$ is a semigroup, and $\cplus$ gives a semigroup action on $A$.
+  where $A$ is a set, $\changes{A}$ is a semigroup, and $\cplus$ gives a semigroup action on $A$.
 
-  We will call $A$ the base set (although it may not be a set in general), and $\changes{A}$ the change set of the change structure.
+  We will call $A$ the base set, and $\changes{A}$ the change set of the change structure.
 \end{defn}
 
 Elements in the change set represent changes that can be made to elements in the
@@ -217,13 +223,9 @@ Extensionality gives us uniqueness of derivatives:
 \subsection{Categorical constructions}
 
 \begin{defn}[Category of change structures]
-  We define the category $\cat{CStruct}$ of change structures over objects in
-  some category $\cat{C}$. The objects are
+  We define the category $\cat{CStruct}$ of change structures. The objects are
   change structures and the morphisms are differentiable functions. We denote
   the set of differentiable functions between $A$ and $B$ as $A \difffunc B$.
-  
-  We will usually leave the category $\cat{C}$ implicit, or refer to it as the
-  underlying category.
 \end{defn}
 
 We can now see the difference between $\cat{CStruct}$ and the category of
@@ -249,8 +251,7 @@ whose derivative is $\lambda a. \lambda d. d$.
 
 \begin{prop}[Products]
   Let $A = \cstruct{A}{\changes{A}}{\cplus}$ and $B =
-  \cstruct{B}{\changes{B}}{\cpluss}$ be change structures, and suppose that the
-  underlying category has products.
+  \cstruct{B}{\changes{B}}{\cpluss}$ be change structures.
 
   Then $A \times B \defeq \cstruct{A \times B}{\changes{A} \times
   \changes{B}}{\cplus \times \cpluss}$ is their categorical product.
@@ -259,29 +260,29 @@ whose derivative is $\lambda a. \lambda d. d$.
   Let $Y$ be a change structure, and $f_1: Y \rightarrow A$, $f_2: Y
   \rightarrow B$ be morphisms.
 
-  Then the product morphism in the underlying category, $f_1 \times f_2$ is the product
+  Then the product morphism in $\cat{Set}$, $f_1 \times f_2$ is the product
   morphism in $\cat{CStruct}$.
 
   First, we show it is a morphism (i.e.) is differentiable. It can easily be
   shown that $\derive{f_1} \times \derive{f_2}$ is a derivative of $f_1 \times f_2$.
 
   Commutativity and uniqueness follow from the corresponding properties of the
-  product in the underlying category.
+  product in the $\cat{Set}$.
 
   MARIO: This is actually a bit trickier, since we also need to show that e.g. 
   $(A \times B, \discrete)$ is not a product. We should also mention that any change
   structure with the same reachability order as $\Delta A \times \Delta B$ is a possible
   product (since they are isomorphic).
-  MPJ: ugh, yes, of course there are more change structures than sets, so
-  we need to distinguish among them here and below. Agree that it will generally
-  be the biggest/smallest change structure on the thing though.
+
+  MPJ: actually, I think it is this simple. We don't have to show that nothing else
+  is a product - it's just that if they are then they're isomorphic.
 \end{proof}
 
 \begin{prop}[Equalizers]
   Let $A$ and $B$ be change structures, $f, g: A \rightarrow B$ be morphisms
-  between them, and suppose that the underlying category has equalizers.
+  between them.
 
-  Let $\equalizer{f}{g}$ be the equalizer of $f$ and $g$ in the underlying category.
+  Let $\equalizer{f}{g}$ be the equalizer of $f$ and $g$ in $\cat{Set}$.
 
   Then $\equalizer{f}{g}_\discrete$ is an equalizer for $f$ and $g$
   in $\cat{CStruct}$.
@@ -292,26 +293,46 @@ whose derivative is $\lambda a. \lambda d. d$.
   `largest' change structure that still makes $\equalizer{f}{g}$ differentiable (there
   is no unique choice for this)
 
+  MPJ: The superposition?
+
   MARIO: Actually, is there a more general version of this? E.g. Whenever the underlying
   category has limits, the limit in FAlg is the ``largest'' fwd-algebra that makes the arrows
   involved differentiable / same for colimits with ``smallest''. Is there a categorical definition
   of ``smallest/largest''? A limit/colimit on the category of fwd-algebas over the specific object?
+
+  MPJ: that would be a very nice way of showing this! Isn't the definition of
+  smaller/larger we're looking for precisely the one that we define later with
+  differentiable id? Something like: take the limit in the underlying category,
+  now consider the change structures on that limit. Take the lub (superposition)
+  of all of them, this is guaranteed to be finer than any of them. We might
+  still want to show the product case directly, since it has a ``nicer'' version
+  of this.
 \end{prop}
 \begin{proof}
   The equalizer morphism is differentiable, since any function from a discrete change
   structure is differentiable (see below), so it is a valid morphism in $\cat{CStruct}$.
 
   Equalization and uniqueness follow from the corresponding properties of the
-  equalizer in the underlying category.
+  equalizer in the $\cat{Set}$.
 \end{proof}
 
 \begin{thm}
-  $\cat{CStruct}$ has all finite limits if the underlying category does.
+  $\cat{CStruct}$ has all finite limits.
 \end{thm}
 
+We now define change structures for functions. Here we deviate from Cai et al.
+again - rather than considering $\changes{(A \rightarrow B)}$ to be $A
+\rightarrow \changes{A} \rightarrow \changes{B}$, we consider it to be $A
+\rightarrow \changes{B}$. This separates function changes from derivatives -
+they are related (see \ref{prop:incrementalization}), but different. Moreover,
+our formulation makes $\cat{CStruct}$ into a Cartesian closed category.
+
+MPJ: do we have a proof that Cai's formulation doesn't give a CCC? That would be
+nice.
+
 \begin{prop}[Exponentials]
-  Let $A_\cplus$ and $B_\cpluss$ be change structures, and suppose that the
-  underlying category has exponentials.
+\label{prop:exponentials}
+  Let $A_\cplus$ and $B_\cpluss$ be change structures
 
   Then $\cstruct{A \difffunc B}{A
     \rightarrow \changes{B}}{\lambda d. \lambda f. \lambda a. f(a) \cpluss
@@ -321,13 +342,75 @@ whose derivative is $\lambda a. \lambda d. d$.
   structure on $\changes{B}$ lifted pointwise, so we will typically reuse the
   change operator for $B$ for $A \rightarrow \changes{B}$.
 \end{prop}
-\begin{proof}
-  We need to show that the evaluation map $\ev: (A \difffunc B) \times A
-  \rightarrow B$ is differentiable, the other properties follow from the
-  properties of the exponential object in $\cat{Set}$.
 
-  TODO: I actually have no idea if this is even right. We definitely need to
-  talk about function changes at some point, regardless.
+First we need a lemma for working with function changes.
+
+\begin{prop}[Incrementalization]
+\label{prop:incrementalization}
+  $$(f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus \left[\derive{f}(a,
+    \change{a}) \splus \change{f}(a \cplus \change{a}) \right]$$
+\end{prop}
+
+MARIO: nice proof, I'm a bit worried about the $f'$, though, since there may be more than one,
+and I feel like we need the axiom of choice to ``pick'' a $f'$ for every $f$.
+
+MPJ: there's only one $f$ here - we only need AoC if we're doing *arbitrary*
+choices for *infinitely* many $f$s.
+
+This is our equivalent of Cai et al.'s ``Incrementalization'' lemma.
+
+Now we can give the proof of \ref{prop:exponentials}.
+
+\begin{proof}
+  Since we are working over $\cat{Set}$, we can use the definitions of $\ev$ and
+  $\curry{f}$ from $\cat{Set}$:
+
+  $$\ev(f, a) \defeq f(a)$$
+  $$\curry{f}(a) \defeq \lambda b. f((a, b))$$
+  
+  We merely need to show that they are differentiable: differentiability if $\curry{f}
+  \times id$ follows from products; commutativity and
+  uniqueness follow from the corresponding properties of the exponential object
+  on $\cat{Set}$.
+
+  Let 
+  $$\derive{\ev}((f, a), (\change{f}, \change{a})) \defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})$$
+
+  Then
+  \begin{itemize}
+    \item[ ]$\ev((f, a) \cplus (\change{f}, \change{a})$
+    \item[=]$\ev((f \cplus \change{f}, a \cplus \change{a})$
+    \item[=]\{ definition of $\ev$ \}\\
+      $(f \cplus \change{f})(a \cplus \change{a})$
+    \item[=]\{ by \ref{prop:incrementalization} \}\\
+      $f(a) \cplus \left[\derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a}) \right]$
+    \item[=]\{ definition of $\derive{\ev}$ \}\\
+      $\ev(f, a) \cplus \derive{\ev}((f, a), (\change{f}, \change{a}))$
+  \end{itemize}
+  Therefore $\derive{\ev}$ is a derivative for $\ev$, so $\ev$ is differentiable.
+  
+  Let
+  $$\derive{\curry{f}}(a, \change{a}) \defeq \lambda b. \derive{f}((a, b),
+  (\change{a}, 0))$$
+  
+  Then
+  \begin{itemize}
+    \item[ ]$\curry{f}(a \cplus \change{a})$
+    \item[=]\{ definition of $\curry{f}$ \}\\
+      $\lambda b. f((a \cplus \change{a}, b))$
+    \item[=] $\lambda b. f((a, b) \cplus (\change{a}, 0))$
+    \item[=]\{ since $f$ is differentiable \}\\
+      $\lambda b. f((a, b)) \cplus \derive{f}((a, b), (\change{a}, 0))$
+    \item[=]\{ definition of $\changes{(A \rightarrow B)}$ \}\\
+      $(\lambda b. f((a, b))) \cplus (\lambda b. \derive{f}((a, b), (\change{a}, 0)))$
+    \item[=]\{ definition of $\derive{\curry{f}}$ \}\\
+      $\curry{f}(a) \cplus \derive{\curry{f}}(a, \change{a})$
+  \end{itemize}
+
+  Therefore $\derive{\curry{f}}$ is a derivative for $\curry{f}$, so $\curry{f}$
+  is differentiable.
+
+  TODO: I needed the monoid zero here, is that required?
 
   MARIO: I have only been able to prove this assuming the change structures are
   commutative and extensional. I think it's easy to relax extensionality, but
@@ -337,27 +420,17 @@ whose derivative is $\lambda a. \lambda d. d$.
   MARIO: At any rate, it would be good if we can find a justification for our
   function changes that isn't this (or the geometric hand-waving, or just saying
   Cai's is obviously bad - even though it is!)
+  
+  MPJ: leaving above notes, not sure if they apply - my way seems to work
+  nicely, but is assuming we're working in $\cat{Set}$.
 \end{proof}
 
-\begin{prop}[Incrementalization]
-\label{prop:incrementalization}
-  The derivative of $\ev: (A \difffunc B) \times A \rightarrow B$ is 
-  $$\derive{\ev}((f, a), (\change{f}, \change{a})) = \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})$$
-  Therefore 
-  $$(f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus \left[\derive{f}(a,
-    \change{a}) \splus \change{f}(a \cplus \change{a}) \right]$$
-\end{prop}
-MARIO: nice proof, I'm a bit worried about the $f'$, though, since there may be more than one,
-and I feel like we need the axiom of choice to ``pick'' a $f'$ for every $f$.
-
-This is our equivalent of Cai et al.'s ``Incrementalization'' lemma.
-
-TODO: Can I be reminded of why we don't have coproducts? Extensional forward algebras
-don't, but the argument doesn't apply to arbitrary ones, I think.
-
 \begin{thm}
-  $\cat{CStruct}$ is a Cartesian closed category if the underlying category is.
+  $\cat{CStruct}$ is a Cartesian closed category.
 \end{thm}
+
+MARIO: Can I be reminded of why we don't have coproducts? Extensional forward algebras
+don't, but the argument doesn't apply to arbitrary ones, I think.
 
 \subsection{Ordering change structures}
 
