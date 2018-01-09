@@ -331,7 +331,8 @@ whose derivative is $\lambda a. \lambda d. d$.
 
   MARIO: I have only been able to prove this assuming the change structures are
   commutative and extensional. I think it's easy to relax extensionality, but
-  commutativity is actually vital.
+  commutativity is actually vital (actually nevermind, commutativity is only necessary
+  to prove $\ev$ is smooth, not differentiable).
 
   MARIO: At any rate, it would be good if we can find a justification for our
   function changes that isn't this (or the geometric hand-waving, or just saying
@@ -346,6 +347,8 @@ whose derivative is $\lambda a. \lambda d. d$.
   $$(f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus \left[\derive{f}(a,
     \change{a}) \splus \change{f}(a \cplus \change{a}) \right]$$
 \end{prop}
+MARIO: nice proof, I'm a bit worried about the $f'$, though, since there may be more than one,
+and I feel like we need the axiom of choice to ``pick'' a $f'$ for every $f$.
 
 This is our equivalent of Cai et al.'s ``Incrementalization'' lemma.
 
@@ -852,18 +855,23 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
   Suppose a change $\change{w} \in \Delta A$ satisfies
   the equation:
   \begin{equation}\label{eqn:fixcondition}
-    \change{w} = \derive{\ev}((f, \fixpoint_A(f)), (\change{f}, \change{w}))
+    \fixpoint_A(f) \cplus \change{w} = \fixpoint_A(f) \cplus \derive{\ev}((f, \fixpoint_A(f)), (\change{f}, \change{w}))
   \end{equation}
-  Then $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \delta f$. In particular,
-  if the operator $\fixpoint_X$ is defined over $\Delta A$, we define:
+  Then $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$. Conversely
+  if $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$ then
+  it satisfies equation \ref{eqn:fixcondition}.
+  
+  In particular, this means that 
+  if the operator $\fixpoint_X$ is defined over $\Delta A$, we can define:
   $$
   \derive{\fixpoint_A}(f, \change{f}) \defeq
   \fixpoint_{\changes{A}}(
-    \lambda w .
-      \derive{\ev}((f, \fixpoint_A(f)), (\change{f}, w))
+    \lambda \change{} .
+      \derive{\ev}((f, \fixpoint_A(f)), (\change{f}, \change{}))
   )
   $$
-  thus $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a fixpoint of $f \cplus \change{f}$.
+  thus $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a fixpoint 
+  of $f \cplus \change{f}$.\\
 
   Furthermore, if
   \begin{itemize}
@@ -900,25 +908,44 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
     \change{w}
     $
   \end{itemize}
-
-  Hence $\thefixpoint \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$.
+  Hence $\thefixpoint \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$. The converse
+  follows from reversing the direction of the proof.
 
   For the second part, we are supposing that $\fixpoint$ computes least
   fixpoints and is differentiable, and $\cplus$ is monotonic in its second argument.
 
   Then suppose that $D$ is a derivative of $\fixpoint_X$, and hence $\thefixpoint \cplus D(f,
-  \change{f})$ is the least fixpoint of $f \cplus \change{f}$.
+  \change{f})$ is the least fixpoint of $f \cplus \change{f}$. 
+  Since $D$ is a derivative of $\fixpoint_X$, it follows that for every $f, \change{f}$ the 
+  equation \ref{eqn:fixcondition} is satisfied, i.e. for every $f, \change{f}$
+  \begin{align*}
+    \fixpoint_A (f \cplus \change{f})
+    &= \fixpoint_A(f) \cplus D(f, \change{f})\\
+    &= \fixpoint_A(f) \cplus ev'((f, \fixpoint_A(f)), (\change{f}, D(f, \change{f}))
+  \end{align*}
 
-  As we have seen (where??), $D(f, \change{f})$ satisfies equation \ref{eqn:fixcondition} and, therefore,
-  by the least fixpoint property, we have $\derive{\fixpoint_A}(f, \change{f}) \leq D(f, \change{f})$.
-  Since $\cplus$ is monotonic in its second argument, we have:
+  MARIO: WARNING: what follows is not constructive and very unsatisfactory.
+
+  Then the map $ev(f, a)$ admits a derivative $ev'_D((f, a), (\change{f}, \change{a}))$ that
+  coincides with $D$ whenever $a = \fixpoint_A(f), \change{a} = D(f, \change{f})$. Hence
+  $D(f, \change{f})$ is a fixpoint of the function
   $$
-    \fixpoint_A(f \cplus \change{f}) \leq 
-    \fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f}) \leq
-    \fixpoint_A(f) \cplus D(f, \change{f}) = \fixpoint_A(f \cplus \change{f})
+    \omega(\change{w}) \defeq ev'_D((f, \fixpoint_A(f)), (\change{f}, \change{w}))
   $$
-  Hence $\fixpoint_A(f \cplus \change{f}) = \fixpoint_A(f) \cplus \derive{\fixpoint}_A(f, \change{f})$
-  and $\fixpoint'_A$ is a derivative of $\fixpoint_A$.
+  Now let 
+  $$
+  \change{w} \defeq \fixpoint_\changes{A}(\omega)
+  $$
+  We have $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$. Furthermore,
+  since $\change{w}$ is, by definition, a least fixpoint, we have $\change{w} \leq D(f, \change{f})$
+  and, by monotonicity of $\cplus$, it follows that 
+  $\fixpoint_A(f) \cplus \change{w} \leq \fixpoint_A(f) \cplus D(f, \change{f})$. But
+  since $\fixpoint_A(f) \cplus D(f, \change{f})$ is the least fixpoint of $f \cplus \change{f}$,
+  it must be the case that 
+  $$
+  \fixpoint_A(f) \cplus D(f, \change{f}) = \fixpoint_A(f) \cplus \change{w}
+  $$
+  thus $\fixpoint_A(f) \cplus \change{w}$ is the least fixpoint of $f \cplus \change{f}$.
 \end{proof}
 
 The requirement that $\fixpoint$ be differentiable may seem awkward, but it is
