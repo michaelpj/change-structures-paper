@@ -771,7 +771,6 @@ give us a complete change structure for any lattice.
 
 Boolean algebras give us a much more compact representation for the
 superposition of $L_\vee$ and $L_\wedge$.
-TODO: Can we do this for lattices? Heyting algebras?
 
 \begin{prop}
   Let $L$ be a Boolean algebra. Define
@@ -779,10 +778,99 @@ TODO: Can we do this for lattices? Heyting algebras?
   where
   $$a \twist (p, q) \defeq (a \vee p) \wedge \neg q$$
   and the semigroup action is
-  $$(p, q) \splus (r, s) \defeq ((p \wedge \neg s) \vee r, (q \vee s) \wedge \neg r)$$
+  $$(p, q) \splus (r, s) \defeq ((p \wedge \neg q) \vee r, (q \wedge \neg r) \vee s)$$
 
   Then $L_\superpose$ is isomorphic to $L_\vee \superpose L_\wedge$.
 \end{prop}
+\begin{proof}
+  First we show that the semigroup action property holds:
+  \begin{itemize}
+    \item[ ]$a \twist \left[(p, q) \splus (r, s)\right]$
+    \item[=]$a \twist ((p \wedge \neg q) \vee r, (q \wedge \neg r) \vee s)$
+    \item[=]$
+      \left(
+        a \vee
+        \left(
+          \left(
+            p \wedge \neg q
+          \right)
+          \vee r
+        \right)
+      \right)
+      \wedge \neg
+      \left(
+        \left(
+          q \wedge \neg r
+        \right)
+        \vee s
+      \right)$
+    \item[=]\{ distributing $\vee$ over $\wedge$, applying both de Morgan rules \}\\
+      $
+      \left(
+        \left(
+          \left(  
+            a \vee p
+          \right)
+          \wedge
+          \left(
+            a \vee \neg q
+          \right)
+        \right)
+        \vee r
+      \right)
+      \wedge 
+      \left(
+        \neg q \vee r
+      \right)
+      \wedge
+      \neg s
+      $
+    \item[=]\{ un-distributing $\vee$ over $\wedge $\}\\
+      $
+      \left(
+        \left(
+          \left(  
+            a \vee p
+          \right)
+          \wedge
+          \left(
+            a \vee \neg q
+          \right)
+          \wedge
+          \neg q
+        \right)
+        \vee r
+      \right)
+      \wedge
+      \neg s
+      $
+    \item[=]\{ $(A \vee B) \wedge B = B$\}\\
+      $
+      \left(
+        \left(
+          \left(  
+            a \vee p
+          \right)
+          \wedge
+          \neg q
+        \right)
+        \vee r
+      \right)
+      \wedge
+      \neg s
+      $
+    \item[=]$a \twist (p, q) \twist (r, s)$
+  \end{itemize}
+
+  Now $\splus^\ast$ gives an action-preserving injection from $(L \times
+  L)^\ast$ to $(L \times L)$. The reverse direction is simply the singleton map.
+\end{proof}
+
+MARIO: Can we do this for lattices? Heyting algebras?
+
+MPJ: I don't think so - I've pointed out where we use which assumptions. Heyting
+algebras only have one of the de Morgan rules, the other introduces a double negation which I
+think would block us. 
 
 We can think of $L_\superpose$ as tracking changes as pairs of ``upwards'' and
 ``downwards'' changes, where the semigroup action simply applies both.
@@ -1103,7 +1191,7 @@ interested in calculating the semantics faster if it exists.
 
 \subsection{Differentiability of Datalog semantics}
 
-In order to apply the machinery we have developed, we need the $\denote{_}$ to
+In order to apply the machinery we have developed, we need the semantics $\denote{\_}$ to
 be differentiable. However, it is a function on Boolean algebras, and we know
 that the $L_\superpose$ change structure is complete, so in fact we know that
 $\denote{\_}$ must be differentiable.
