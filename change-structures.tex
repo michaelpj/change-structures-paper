@@ -99,9 +99,11 @@ operation simply being composition.
 Here are some recurring examples of changes structures:
 \begin{itemize}
   \item $A_\discrete \defeq \cstruct{A}{\emptyset}{\emptyset}$, the discrete change structure on any base set.
-  \item $A_\Rightarrow \defeq \cstruct{A}{A\Rightarrow A}{ev}$, where $A \Rightarrow A$ denotes the exponential object.
-  \item $A_\leq \defeq \cstruct{A}{\leq \subseteq A \times A}{ev_\leq}$, where $\leq$ is some transitive relation and $ev_\leq$ denotes
-    conditional application, i.e. $evl_\leq(a, (b, c))$ is equal to $c$ if $a = b$, and $a$ otherwise. Composition of changes is obtained
+  \item $A_\Rightarrow \defeq \cstruct{A}{A\Rightarrow A}{\ev}$, where $A
+    \Rightarrow A$ denotes the exponential object and $\ev$ is the evaluation map.
+  \item $A_\leq \defeq \cstruct{A}{\leq}{ev_\leq}$, where $\leq$ is some
+    transitive relation on $A$ and $ev_\leq$ denotes
+    conditional application, i.e. $ev_\leq(a, (b, c))$ is equal to $c$ if $a = b$, and $a$ otherwise. Composition of changes is obtained
     by transitivity of $\leq$.
   \item $\mathbb{Z}_1 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{+}$
   \item $\mathbb{Z}_2 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{-}$
@@ -109,7 +111,8 @@ Here are some recurring examples of changes structures:
   \item $F_2 \defeq$ integers modulo 2 with addition.
 \end{itemize}
 Indeed, any semigroup $(A, \splus)$ can be seen as a change structure $\cstruct{A}{A}{\splus}$. In particular,
-the change set of any change structure is itself a change structure.
+for any change structure $\cstruct{A}{\changes{A}}{\cplus}$,
+$\cstruct{\changes{A}}{\changes{A}}{\splus}$ is also a change structure.
 
 Given change structures and functions between them, we have a natural notion of a derivative, following \cite{cai2014changes}:
 
@@ -551,12 +554,22 @@ $A \times A$. Conversely, any such change structure is necessarily complete.
 \end{prop}
 
 \begin{corollary}
+  Two change structures are isomorphic iff their posets under the reachability
+  order are isomorphic.
+\end{corollary}
+
+TODO: I think this is true. It also seems perhaps just a trivial reframing of
+things - is it actually letting us do anything more nicely? Also this applies to
+any semigroup action, not just change structures.
+
+\begin{corollary}
   Any function from a discrete change structure or into a complete change
   structure is differentiable.
 \end{corollary}
 
 Conversely, any preorder $\leq$ on some set $A$ induces the corresponding change structure
 $A_\leq$.
+
 TODO: I suspect this forms a functor which is right adjoint to the forgetful functor into $\cat{PreOrd}$.
 Conversely, I think there is a left adjoint which maps $A, \leq$ to $A, A \Rightarrow_\leq A$ ($\Rightarrow_\leq$
 denoting the set of $\leq$-monotone functions) - the isomorphism of Hom-sets is obvious, but I can't prove naturality.
