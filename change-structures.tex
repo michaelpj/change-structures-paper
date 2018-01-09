@@ -54,7 +54,7 @@ The major contributions of this paper are:
     a definition of function changes that allows them to form a Cartesian closed
     category.
   \item A description of the properties of change structures over posets
-    (\ref{sec:order}), including theorems that characterize the range of
+    (\ref{sec:moreStructures}), including theorems that characterize the range of
     possible derivatives available, and conditions under which compound change
     structures may admit derivatives.
 \end{itemize}
@@ -63,19 +63,25 @@ The major contributions of this paper are:
 \label{sec:change-structures}
 
 MARIO: Should we pick a different name to distinguish them from Cai-style change structures?
+
 MPJ: Not sure. I do really like ``change structure'', and I think they're
 similar, but perhaps we should use a different name. Forward algebra? Change action?
+
 MARIO: I've been calling them ``forward algebras'', but the specific name is not particularly
 important. I would definitely like to have a different name, especially since we often contrast the two.
-\begin{defn}[Change structures]
 
+MPJ: I propose ``change action'', since we're emphasising the semigroup action
+connection. Really, I think they're just semigroup/monoid actions with a more
+general notion of morphism.
+
+\begin{defn}[Change structures]
   A \textit{change structure} is defined as:
 
   $$\mathcal{A} \defeq \cstruct{A}{\changes{A}}{\cplus}$$
 
-  where $A$ is an object in some category $\cat{C}$, $\changes{A}$ is a semigroup, and $\cplus$ gives a semigroup action on $A$.
+  where $A$ is a set, $\changes{A}$ is a semigroup, and $\cplus$ gives a semigroup action on $A$.
 
-  We will call $A$ the base set (although it may not be a set in general), and $\changes{A}$ the change set of the change structure.
+  We will call $A$ the base set, and $\changes{A}$ the change set of the change structure.
 \end{defn}
 
 Elements in the change set represent changes that can be made to elements in the
@@ -93,9 +99,11 @@ operation simply being composition.
 Here are some recurring examples of changes structures:
 \begin{itemize}
   \item $A_\discrete \defeq \cstruct{A}{\emptyset}{\emptyset}$, the discrete change structure on any base set.
-  \item $A_\Rightarrow \defeq \cstruct{A}{A\Rightarrow A}{ev}$, where $A \Rightarrow A$ denotes the exponential object.
-  \item $A_\leq \defeq \cstruct{A}{\leq \subseteq A \times A}{ev_\leq}$, where $\leq$ is some transitive relation and $ev_\leq$ denotes
-    conditional application, i.e. $evl_\leq(a, (b, c))$ is equal to $c$ if $a = b$, and $a$ otherwise. Composition of changes is obtained
+  \item $A_\Rightarrow \defeq \cstruct{A}{A\Rightarrow A}{\ev}$, where $A
+    \Rightarrow A$ denotes the exponential object and $\ev$ is the evaluation map.
+  \item $A_\leq \defeq \cstruct{A}{\leq}{ev_\leq}$, where $\leq$ is some
+    transitive relation on $A$ and $ev_\leq$ denotes
+    conditional application, i.e. $ev_\leq(a, (b, c))$ is equal to $c$ if $a = b$, and $a$ otherwise. Composition of changes is obtained
     by transitivity of $\leq$.
   \item $\mathbb{Z}_1 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{+}$
   \item $\mathbb{Z}_2 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{-}$
@@ -103,7 +111,8 @@ Here are some recurring examples of changes structures:
   \item $F_2 \defeq$ integers modulo 2 with addition.
 \end{itemize}
 Indeed, any semigroup $(A, \splus)$ can be seen as a change structure $\cstruct{A}{A}{\splus}$. In particular,
-the change set of any change structure is itself a change structure.
+for any change structure $\cstruct{A}{\changes{A}}{\cplus}$,
+$\cstruct{\changes{A}}{\changes{A}}{\splus}$ is also a change structure.
 
 Given change structures and functions between them, we have a natural notion of a derivative, following \cite{cai2014changes}:
 
@@ -121,9 +130,9 @@ derivative.
 \begin{thm}[The Chain Rule]
   Let $f: A_\cplus \rightarrow B_\cpluss$, $g: B_\cpluss \rightarrow C_\cplusss$ be differentiable functions. Then $g \circ f$ is also
   differentiable, with derivative given by
-  $$\derive{(g \circ f)}(x, \change{x}) = \derive{g}(f(x), \derive{f}(x, \change{x}))$$
-  or in curried form 
-  $$\derive{(g \circ f)}(x) = \derive{g}(f(x)) \circ \derive{f}(x)$$
+   $$\derive{(g \circ f)}(x, \change{x}) = \derive{g}\left(f(x), \derive{f}(x, \change{x})\right)$$
+   or, in curried form
+   $$\derive{(g \circ f)}(x)(\change{x}) = \derive{g}(f(x)) \circ \derive{f}(x)$$
 \end{thm}
 \begin{proof}
   By equivalence:
@@ -184,6 +193,9 @@ extensionality makes me think of something like ``the element is characterized
 by its action''.
 However, that's probably not a very interesting notion, since it actually gives us a
 semigroup congruence, so we can always quotient out by it.
+MARIO: Agreed, I've been calling it ``tightness'' (in the sense that the change set
+is as small as it can be), but I don't really like the name, so I'm open to any
+alternatives.
 \begin{defn}[Extensionality]
   A change structure is \textit{extensional} if whenever $a \cplus \change{a}
   = a \cplus \change{b}$ for some $a \in A$, it is the case that $\change{a} = \change{b}$.
@@ -215,13 +227,9 @@ Extensionality gives us uniqueness of derivatives:
 \subsection{Categorical constructions}
 
 \begin{defn}[Category of change structures]
-  We define the category $\cat{CStruct}$ of change structures over objects in
-  some category $\cat{C}$. The objects are
+  We define the category $\cat{CStruct}$ of change structures. The objects are
   change structures and the morphisms are differentiable functions. We denote
   the set of differentiable functions between $A$ and $B$ as $A \difffunc B$.
-  
-  We will usually leave the category $\cat{C}$ implicit, or refer to it as the
-  underlying category.
 \end{defn}
 
 We can now see the difference between $\cat{CStruct}$ and the category of
@@ -247,8 +255,7 @@ whose derivative is $\lambda a. \lambda d. d$.
 
 \begin{prop}[Products]
   Let $A = \cstruct{A}{\changes{A}}{\cplus}$ and $B =
-  \cstruct{B}{\changes{B}}{\cpluss}$ be change structures, and suppose that the
-  underlying category has products.
+  \cstruct{B}{\changes{B}}{\cpluss}$ be change structures.
 
   Then $A \times B \defeq \cstruct{A \times B}{\changes{A} \times
   \changes{B}}{\cplus \times \cpluss}$ is their categorical product.
@@ -257,29 +264,29 @@ whose derivative is $\lambda a. \lambda d. d$.
   Let $Y$ be a change structure, and $f_1: Y \rightarrow A$, $f_2: Y
   \rightarrow B$ be morphisms.
 
-  Then the product morphism in the underlying category, $f_1 \times f_2$ is the product
+  Then the product morphism in $\cat{Set}$, $f_1 \times f_2$ is the product
   morphism in $\cat{CStruct}$.
 
   First, we show it is a morphism (i.e.) is differentiable. It can easily be
   shown that $\derive{f_1} \times \derive{f_2}$ is a derivative of $f_1 \times f_2$.
 
   Commutativity and uniqueness follow from the corresponding properties of the
-  product in the underlying category.
+  product in the $\cat{Set}$.
 
   MARIO: This is actually a bit trickier, since we also need to show that e.g. 
   $(A \times B, \discrete)$ is not a product. We should also mention that any change
   structure with the same reachability order as $\Delta A \times \Delta B$ is a possible
   product (since they are isomorphic).
-  MPJ: ugh, yes, of course there are more change structures than sets, so
-  we need to distinguish among them here and below. Agree that it will generally
-  be the biggest/smallest change structure on the thing though.
+
+  MPJ: actually, I think it is this simple. We don't have to show that nothing else
+  is a product - it's just that if they are then they're isomorphic.
 \end{proof}
 
 \begin{prop}[Equalizers]
   Let $A$ and $B$ be change structures, $f, g: A \rightarrow B$ be morphisms
-  between them, and suppose that the underlying category has equalizers.
+  between them.
 
-  Let $\equalizer{f}{g}$ be the equalizer of $f$ and $g$ in the underlying category.
+  Let $\equalizer{f}{g}$ be the equalizer of $f$ and $g$ in $\cat{Set}$.
 
   Then $\equalizer{f}{g}_\discrete$ is an equalizer for $f$ and $g$
   in $\cat{CStruct}$.
@@ -289,22 +296,47 @@ whose derivative is $\lambda a. \lambda d. d$.
   $A, \Delta A$ - I do think equalizers exist but $\Delta\equalizer{f}{g}$ is the
   `largest' change structure that still makes $\equalizer{f}{g}$ differentiable (there
   is no unique choice for this)
+
+  MPJ: The superposition?
+
+  MARIO: Actually, is there a more general version of this? E.g. Whenever the underlying
+  category has limits, the limit in FAlg is the ``largest'' fwd-algebra that makes the arrows
+  involved differentiable / same for colimits with ``smallest''. Is there a categorical definition
+  of ``smallest/largest''? A limit/colimit on the category of fwd-algebas over the specific object?
+
+  MPJ: that would be a very nice way of showing this! Isn't the definition of
+  smaller/larger we're looking for precisely the one that we define later with
+  differentiable id? Something like: take the limit in the underlying category,
+  now consider the change structures on that limit. Take the lub (superposition)
+  of all of them, this is guaranteed to be finer than any of them. We might
+  still want to show the product case directly, since it has a ``nicer'' version
+  of this.
 \end{prop}
 \begin{proof}
   The equalizer morphism is differentiable, since any function from a discrete change
   structure is differentiable (see below), so it is a valid morphism in $\cat{CStruct}$.
 
   Equalization and uniqueness follow from the corresponding properties of the
-  equalizer in the underlying category.
+  equalizer in the $\cat{Set}$.
 \end{proof}
 
 \begin{thm}
-  $\cat{CStruct}$ has all finite limits if the underlying category does.
+  $\cat{CStruct}$ has all finite limits.
 \end{thm}
 
+We now define change structures for functions. Here we deviate from Cai et al.
+again - rather than considering $\changes{(A \rightarrow B)}$ to be $A
+\rightarrow \changes{A} \rightarrow \changes{B}$, we consider it to be $A
+\rightarrow \changes{B}$. This separates function changes from derivatives -
+they are related (see \ref{prop:incrementalization}), but different. Moreover,
+our formulation makes $\cat{CStruct}$ into a Cartesian closed category.
+
+MPJ: do we have a proof that Cai's formulation doesn't give a CCC? That would be
+nice.
+
 \begin{prop}[Exponentials]
-  Let $A_\cplus$ and $B_\cpluss$ be change structures, and suppose that the
-  underlying category has exponentials.
+\label{prop:exponentials}
+  Let $A_\cplus$ and $B_\cpluss$ be change structures
 
   Then $\cstruct{A \difffunc B}{A
     \rightarrow \changes{B}}{\lambda d. \lambda f. \lambda a. f(a) \cpluss
@@ -314,29 +346,95 @@ whose derivative is $\lambda a. \lambda d. d$.
   structure on $\changes{B}$ lifted pointwise, so we will typically reuse the
   change operator for $B$ for $A \rightarrow \changes{B}$.
 \end{prop}
-\begin{proof}
-  We need to show that the evaluation map $ev: (A \difffunc B) \times A
-  \rightarrow B$ is differentiable, the other properties follow from the
-  properties of the exponential object in $\cat{Set}$.
 
-  TODO: I actually have no idea if this is even right. We definitely need to
-  talk about function changes at some point, regardless.
+First we need a lemma for working with function changes.
+
+\begin{prop}[Incrementalization]
+\label{prop:incrementalization}
+  $$(f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus \left[\derive{f}(a,
+    \change{a}) \splus \change{f}(a \cplus \change{a}) \right]$$
+\end{prop}
+
+MARIO: nice proof, I'm a bit worried about the $f'$, though, since there may be more than one,
+and I feel like we need the axiom of choice to ``pick'' a $f'$ for every $f$.
+
+MPJ: there's only one $f$ here - we only need AoC if we're doing *arbitrary*
+choices for *infinitely* many $f$s.
+
+This is our equivalent of Cai et al.'s ``Incrementalization'' lemma.
+
+Now we can give the proof of \ref{prop:exponentials}.
+
+\begin{proof}
+  Since we are working over $\cat{Set}$, we can use the definitions of $\ev$ and
+  $\curry{f}$ from $\cat{Set}$:
+
+  $$\ev(f, a) \defeq f(a)$$
+  $$\curry{f}(a) \defeq \lambda b. f((a, b))$$
+  
+  We merely need to show that they are differentiable: differentiability if $\curry{f}
+  \times id$ follows from products; commutativity and
+  uniqueness follow from the corresponding properties of the exponential object
+  on $\cat{Set}$.
+
+  Let 
+  $$\derive{\ev}((f, a), (\change{f}, \change{a})) \defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})$$
+
+  Then
+  \begin{itemize}
+    \item[ ]$\ev((f, a) \cplus (\change{f}, \change{a})$
+    \item[=]$\ev((f \cplus \change{f}, a \cplus \change{a})$
+    \item[=]\{ definition of $\ev$ \}\\
+      $(f \cplus \change{f})(a \cplus \change{a})$
+    \item[=]\{ by \ref{prop:incrementalization} \}\\
+      $f(a) \cplus \left[\derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a}) \right]$
+    \item[=]\{ definition of $\derive{\ev}$ \}\\
+      $\ev(f, a) \cplus \derive{\ev}((f, a), (\change{f}, \change{a}))$
+  \end{itemize}
+  Therefore $\derive{\ev}$ is a derivative for $\ev$, so $\ev$ is differentiable.
+  
+  Let
+  $$\derive{\curry{f}}(a, \change{a}) \defeq \lambda b. \derive{f}((a, b),
+  (\change{a}, 0))$$
+  
+  Then
+  \begin{itemize}
+    \item[ ]$\curry{f}(a \cplus \change{a})$
+    \item[=]\{ definition of $\curry{f}$ \}\\
+      $\lambda b. f((a \cplus \change{a}, b))$
+    \item[=] $\lambda b. f((a, b) \cplus (\change{a}, 0))$
+    \item[=]\{ since $f$ is differentiable \}\\
+      $\lambda b. f((a, b)) \cplus \derive{f}((a, b), (\change{a}, 0))$
+    \item[=]\{ definition of $\changes{(A \rightarrow B)}$ \}\\
+      $(\lambda b. f((a, b))) \cplus (\lambda b. \derive{f}((a, b), (\change{a}, 0)))$
+    \item[=]\{ definition of $\derive{\curry{f}}$ \}\\
+      $\curry{f}(a) \cplus \derive{\curry{f}}(a, \change{a})$
+  \end{itemize}
+
+  Therefore $\derive{\curry{f}}$ is a derivative for $\curry{f}$, so $\curry{f}$
+  is differentiable.
+
+  TODO: I needed the monoid zero here, is that required?
 
   MARIO: I have only been able to prove this assuming the change structures are
   commutative and extensional. I think it's easy to relax extensionality, but
-  commutativity is actually vital.
+  commutativity is actually vital (actually nevermind, commutativity is only necessary
+  to prove $\ev$ is smooth, not differentiable).
 
   MARIO: At any rate, it would be good if we can find a justification for our
   function changes that isn't this (or the geometric hand-waving, or just saying
   Cai's is obviously bad - even though it is!)
+  
+  MPJ: leaving above notes, not sure if they apply - my way seems to work
+  nicely, but is assuming we're working in $\cat{Set}$.
 \end{proof}
 
-TODO: Can I be reminded of why we don't have coproducts? Extensional forward algebras
-don't, but the argument doesn't apply to arbitrary ones, I think.
-
 \begin{thm}
-  $\cat{CStruct}$ is a Cartesian closed category if the underlying category is.
+  $\cat{CStruct}$ is a Cartesian closed category.
 \end{thm}
+
+MARIO: Can I be reminded of why we don't have coproducts? Extensional forward algebras
+don't, but the argument doesn't apply to arbitrary ones, I think.
 
 \subsection{Ordering change structures}
 
@@ -457,12 +555,22 @@ $A \times A$. Conversely, any such change structure is necessarily complete.
 \end{prop}
 
 \begin{corollary}
+  Two change structures are isomorphic iff their posets under the reachability
+  order are isomorphic.
+\end{corollary}
+
+TODO: I think this is true. It also seems perhaps just a trivial reframing of
+things - is it actually letting us do anything more nicely? Also this applies to
+any semigroup action, not just change structures.
+
+\begin{corollary}
   Any function from a discrete change structure or into a complete change
   structure is differentiable.
 \end{corollary}
 
 Conversely, any preorder $\leq$ on some set $A$ induces the corresponding change structure
 $A_\leq$.
+
 TODO: I suspect this forms a functor which is right adjoint to the forgetful functor into $\cat{PreOrd}$.
 Conversely, I think there is a left adjoint which maps $A, \leq$ to $A, A \Rightarrow_\leq A$ ($\Rightarrow_\leq$
 denoting the set of $\leq$-monotone functions) - the isomorphism of Hom-sets is obvious, but I can't prove naturality.
@@ -489,9 +597,8 @@ Firstly, we can define ``approximations'' to derivatives from both sides.
 Both sup- and sub-derivatives satisfy the chain rule, in the following sense: 
 \begin{prop}[Chain rule for sub-derivatives]
   let $f : A_\cplus \rightarrow B_\cpluss$ and $g : B_\cpluss \rightarrow C_\cplusss$ be
-  sub-differentiable functions with sub-derivatives $f', g'$ respectively. Then the composite
-  $$ \lambda a. \lambda da. g'(f(a), f'(a, da)) $$
-  is a subderivative of $g \circ f$
+  sub-differentiable functions with sub-derivatives $f', g'$ respectively. Then
+  $$\derive{g}(f(a)) \circ \derive{f}(a)$$ is a subderivative of $g \circ f$
 \end{prop}
 
 Some change structures always have sub- or sup-derivatives: for example every function
@@ -678,7 +785,6 @@ give us a complete change structure for any lattice.
 
 Boolean algebras give us a much more compact representation for the
 superposition of $L_\vee$ and $L_\wedge$.
-TODO: Can we do this for lattices? Heyting algebras?
 
 \begin{prop}
   Let $L$ be a Boolean algebra. Define
@@ -686,10 +792,99 @@ TODO: Can we do this for lattices? Heyting algebras?
   where
   $$a \twist (p, q) \defeq (a \vee p) \wedge \neg q$$
   and the semigroup action is
-  $$(p, q) \splus (r, s) \defeq ((p \wedge \neg s) \vee r, (q \vee s) \wedge \neg r)$$
+  $$(p, q) \splus (r, s) \defeq ((p \wedge \neg q) \vee r, (q \wedge \neg r) \vee s)$$
 
   Then $L_\superpose$ is isomorphic to $L_\vee \superpose L_\wedge$.
 \end{prop}
+\begin{proof}
+  First we show that the semigroup action property holds:
+  \begin{itemize}
+    \item[ ]$a \twist \left[(p, q) \splus (r, s)\right]$
+    \item[=]$a \twist ((p \wedge \neg q) \vee r, (q \wedge \neg r) \vee s)$
+    \item[=]$
+      \left(
+        a \vee
+        \left(
+          \left(
+            p \wedge \neg q
+          \right)
+          \vee r
+        \right)
+      \right)
+      \wedge \neg
+      \left(
+        \left(
+          q \wedge \neg r
+        \right)
+        \vee s
+      \right)$
+    \item[=]\{ distributing $\vee$ over $\wedge$, applying both de Morgan rules \}\\
+      $
+      \left(
+        \left(
+          \left(  
+            a \vee p
+          \right)
+          \wedge
+          \left(
+            a \vee \neg q
+          \right)
+        \right)
+        \vee r
+      \right)
+      \wedge 
+      \left(
+        \neg q \vee r
+      \right)
+      \wedge
+      \neg s
+      $
+    \item[=]\{ un-distributing $\vee$ over $\wedge $\}\\
+      $
+      \left(
+        \left(
+          \left(  
+            a \vee p
+          \right)
+          \wedge
+          \left(
+            a \vee \neg q
+          \right)
+          \wedge
+          \neg q
+        \right)
+        \vee r
+      \right)
+      \wedge
+      \neg s
+      $
+    \item[=]\{ $(A \vee B) \wedge B = B$\}\\
+      $
+      \left(
+        \left(
+          \left(  
+            a \vee p
+          \right)
+          \wedge
+          \neg q
+        \right)
+        \vee r
+      \right)
+      \wedge
+      \neg s
+      $
+    \item[=]$a \twist (p, q) \twist (r, s)$
+  \end{itemize}
+
+  Now $\splus^\ast$ gives an action-preserving injection from $(L \times
+  L)^\ast$ to $(L \times L)$. The reverse direction is simply the singleton map.
+\end{proof}
+
+MARIO: Can we do this for lattices? Heyting algebras?
+
+MPJ: I don't think so - I've pointed out where we use which assumptions. Heyting
+algebras only have one of the de Morgan rules, the other introduces a double negation which I
+think would block us. 
 
 We can think of $L_\superpose$ as tracking changes as pairs of ``upwards'' and
 ``downwards'' changes, where the semigroup action simply applies both.
@@ -832,18 +1027,26 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
     \item $\change{f} \in \changes{(A \rightarrow A)}$ be a change to $f$
   \end{itemize}
 
-  Define
+  Suppose a change $\change{w} \in \Delta A$ satisfies
+  the equation:
+  \begin{equation}\label{eqn:fixcondition}
+    \fixpoint_A(f) \cplus \change{w} = \fixpoint_A(f) \cplus \derive{\ev}((f, \fixpoint_A(f)), (\change{f}, \change{w}))
+  \end{equation}
+  Then $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$. Conversely
+  if $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$ then
+  it satisfies equation \ref{eqn:fixcondition}.
+  
+  In particular, this means that 
+  if the operator $\fixpoint_X$ is defined over $\Delta A$, we can define:
   $$
   \derive{\fixpoint_A}(f, \change{f}) \defeq
   \fixpoint_{\changes{A}}(
-    \lambda w .
-      \derive{f}(\fixpoint_A(f), w)
-      \splus
-      \change{f}(\fixpoint_A(f) \cplus w)
+    \lambda \change{} .
+      \derive{\ev}((f, \fixpoint_A(f)), (\change{f}, \change{}))
   )
   $$
-
-  Then $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a fixpoint of $f \cplus \change{f}$.
+  thus $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a fixpoint 
+  of $f \cplus \change{f}$.\\
 
   Furthermore, if
   \begin{itemize}
@@ -851,119 +1054,73 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
     \item $\fixpoint$ computes least fixpoints and is differentiable
     \item $\cplus$ is monotonic with respect to the order on $\changes{A}$
   \end{itemize}
-  then the previous expression is also a least fixpoint and $\derive{\fixpoint_A}$ is a derivative.
+  then the previous expression is also a least fixpoint and therefore $\derive{\fixpoint_A}$
+  is a derivative of $\fixpoint_A$.
 \end{thm}
 
 \newcommand{\thefixpoint}{F}
 \newcommand{\theadjustment}{\operatorname{adjust}}
 
 \begin{proof}
-  Throughout, let
-  $\thefixpoint = \fixpoint_A(f)$ and
-  $\theadjustment(F, f, \change{f}) = \lambda w . \derive{f}(F, w) \splus
-  \change{f}(F \cplus w)$.
+  Throughout, let $\thefixpoint = \fixpoint_A(f)$.
 
-  MPJ: possibly this should be its own lemma? It's a similar to form to Cai's
-  ``Incrementalization'' lemma, and we could drop the final rolling of the
-  fixpoint for a simpler statement
-
-  First, we prove an equivalence that we will use in both parts. For any $\change{a} \in \changes{A}$
+  For the first part, let $\change{w} \in \Delta A$ satisfy equation \ref{eqn:fixcondition}.
   \begin{itemize}
   \item[ ]
     $
-    (f \cplus \change{f})(\thefixpoint \cplus \change{a})
+    (f \cplus \change{f})(\thefixpoint \cplus \change{w})
     $
-  \item[=]\{ definition of $\cplus$ for $\changes{(A \rightarrow A)}$ \}\\
-    $
-    f(\thefixpoint \cplus \change{a})
-    \cplus
-    \change{f}(\thefixpoint \cplus \change{a})
-    $
-  \item[=]\{ derivative property of $\derive{f}$ \}\\
+  \item[=]\{ by \ref{prop:incrementalization} \}\\
     $
     f(\thefixpoint)
     \cplus
-    \derive{f}(\thefixpoint, \change{a})
-    \cplus
-    \change{f}(\thefixpoint \cplus \change{a})
+    \derive{\ev}((f, \fixpoint_A(f)), (\change{f}, \change{w}))
     $
-  \item[=]\{ semigroup action property \}\\
-    $
-    f(\thefixpoint)
-    \cplus
-    \derive{f}(\thefixpoint, \change{a})
-    \splus
-    \change{f}(\thefixpoint \cplus \change{a})
-    $
-  \item[=]\{ definition of $\theadjustment$, rolling the fixpoint \}\\
+  \item[=]\{ rolling the fixpoint and equation \ref{eqn:fixcondition} \}\\
     $
     \thefixpoint
     \cplus
-    \theadjustment(\thefixpoint, f, \change{f})(\change{a})
+    \change{w}
     $
   \end{itemize}
-
-  For the first part, we set $\change{a} = \derive{\fixpoint_A}(f, \delta{f})$
-  \begin{itemize}
-  \item[ ]
-    $
-    (f \cplus \change{f})(\thefixpoint \cplus \derive{\fixpoint_A}(f, \delta{f}))
-    $
-  \item[=]\{ previous equivalence \}\\
-    $
-    \thefixpoint
-    \cplus
-    \theadjustment(\thefixpoint, f, \change{f})(\derive{\fixpoint_A}(f, \delta{f}))
-    $
-  \item[=]\{ definition of $\derive{\fixpoint_A}$ \}\\
-    $
-    \thefixpoint
-    \cplus
-    \theadjustment(\thefixpoint, f, \change{f})(\fixpoint_{\changes{A}}(\theadjustment(\thefixpoint, f, \change{f})))
-    $
-  \item[=]\{ rolling the fixpoint \}\\
-    $
-    \thefixpoint
-    \cplus
-    \fixpoint_{\changes{A}}(\theadjustment(\thefixpoint, f, \change{f}))
-    $
-  \item[=]\{ definition of $\derive{\fixpoint_A}$ \}\\
-    $
-    \thefixpoint
-    \cplus
-    \derive{\fixpoint_A}(f, \change{f})
-    $
-  \end{itemize}
-
-  Hence $\derive{\fixpoint_A}(f, \change{f})$ is a fixpoint of $f \cplus \change{f}$.
+  Hence $\thefixpoint \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$. The converse
+  follows from reversing the direction of the proof.
 
   For the second part, we are supposing that $\fixpoint$ computes least
   fixpoints and is differentiable, and $\cplus$ is monotonic in its second argument.
 
-  Then suppose that $D$ is a derivative of $\fixpoint_X$. Then $\thefixpoint \cplus D(f,
-  \change{f})$ is a fixpoint of $f \cplus \change{f}$.
-  \begin{itemize}
-  \item[ ]
-    $
-    (f \cplus \change{f})(\thefixpoint \cplus D(f, \change{f}))
-    $
-  \item[=]\{ previous equivalence \}\\
-    $
-    \thefixpoint
-    \cplus
-    \theadjustment(\thefixpoint, f, \change{f})(D(f \change{f}))
-    $
-  \item[$\geq$]\{ STILL WRONG NEED TO SHOW OTHER THING IS PREFIX POINT monotonicity of $\cplus$, $\fixpoint_{\changes{A}}$ computes a
-    least prefix point \}\\
-    $
-    \thefixpoint
-    \cplus
-    \fixpoint_{\changes{A}}(\theadjustment(\thefixpoint, f, \change{f}))
-    $
-  \end{itemize}
+  Then suppose that $D$ is a derivative of $\fixpoint_X$, and hence $\thefixpoint \cplus D(f,
+  \change{f})$ is the least fixpoint of $f \cplus \change{f}$. 
+  Since $D$ is a derivative of $\fixpoint_X$, it follows that for every $f, \change{f}$ the 
+  equation \ref{eqn:fixcondition} is satisfied, i.e. for every $f, \change{f}$
+  \begin{align*}
+    \fixpoint_A (f \cplus \change{f})
+    &= \fixpoint_A(f) \cplus D(f, \change{f})\\
+    &= \fixpoint_A(f) \cplus ev'((f, \fixpoint_A(f)), (\change{f}, D(f, \change{f}))
+  \end{align*}
 
-  Therefore $\thefixpoint \cplus \derive{\fixpoint_A}(f, \change{f})$ is a least fixpoint of $f
-  \cplus \change{f}$, and hence $\derive{\fixpoint_A}$ is a derivative.
+  MARIO: WARNING: what follows is not constructive and very unsatisfactory.
+
+  Then the map $ev(f, a)$ admits a derivative $ev'_D((f, a), (\change{f}, \change{a}))$ that
+  coincides with $D$ whenever $a = \fixpoint_A(f), \change{a} = D(f, \change{f})$. Hence
+  $D(f, \change{f})$ is a fixpoint of the function
+  $$
+    \omega(\change{w}) \defeq ev'_D((f, \fixpoint_A(f)), (\change{f}, \change{w}))
+  $$
+  Now let 
+  $$
+  \change{w} \defeq \fixpoint_\changes{A}(\omega)
+  $$
+  We have $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$. Furthermore,
+  since $\change{w}$ is, by definition, a least fixpoint, we have $\change{w} \leq D(f, \change{f})$
+  and, by monotonicity of $\cplus$, it follows that 
+  $\fixpoint_A(f) \cplus \change{w} \leq \fixpoint_A(f) \cplus D(f, \change{f})$. But
+  since $\fixpoint_A(f) \cplus D(f, \change{f})$ is the least fixpoint of $f \cplus \change{f}$,
+  it must be the case that 
+  $$
+  \fixpoint_A(f) \cplus D(f, \change{f}) = \fixpoint_A(f) \cplus \change{w}
+  $$
+  thus $\fixpoint_A(f) \cplus \change{w}$ is the least fixpoint of $f \cplus \change{f}$.
 \end{proof}
 
 The requirement that $\fixpoint$ be differentiable may seem awkward, but it is
@@ -1048,7 +1205,7 @@ interested in calculating the semantics faster if it exists.
 
 \subsection{Differentiability of Datalog semantics}
 
-In order to apply the machinery we have developed, we need the $\denote{_}$ to
+In order to apply the machinery we have developed, we need the semantics $\denote{\_}$ to
 be differentiable. However, it is a function on Boolean algebras, and we know
 that the $L_\superpose$ change structure is complete, so in fact we know that
 $\denote{\_}$ must be differentiable.

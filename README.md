@@ -13,3 +13,8 @@ evince result/paper.pdf
 nix-shell
 # run latexmk, emacs, etc
 ```
+
+```
+# launches a tmux session with editor, automatic recompilation, and a viewer
+tmuxinator start.
+```

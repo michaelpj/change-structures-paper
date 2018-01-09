@@ -1,0 +1,9 @@
+# ~/.tmuxinator/change-structures.yml
+
+name: change-structures
+
+windows:
+  - shell: nix-shell --run zsh
+  - editor: nix-shell --run emacs
+  - compile: while inotifywait -e modify change-structures.tex notation.tex; do ./refresh.sh; done
+  - view: ./refresh.sh; evince change-structures.pdf
