@@ -687,11 +687,6 @@ functions fully differentiable. We need some additional power.
 Intuitively, an ascending change structure is one where you can produce
 arbitrary changes that follow the partial order.
 
-\begin{corollary}
-  A change structure which is both ascending, descending, and has a minimal or
-  maximal element is complete.
-\end{corollary}
-
 \begin{thm}
   Let $A$, $B$ be a change structures, $f: A \rightarrow B$ be a function. Then
   any of the following are sufficient for $f$ to be differentiable.
@@ -784,14 +779,14 @@ give us a complete change structure for any lattice.
 \subsection{Boolean algebras}
 
 Boolean algebras give us a much more compact representation for the
-superposition of $L_\vee$ and $L_\wedge$.
+superposition of $L_\vee \superpose L_\wedge$.
 
 \begin{prop}
   Let $L$ be a Boolean algebra. Define
   $$L_\superpose \defeq \cstruct{L}{L \times L}{\twist}$$
   where
   $$a \twist (p, q) \defeq (a \vee p) \wedge \neg q$$
-  and the semigroup action is
+  and the semigroup operator is
   $$(p, q) \splus (r, s) \defeq ((p \wedge \neg q) \vee r, (q \wedge \neg r) \vee s)$$
 
   Then $L_\superpose$ is isomorphic to $L_\vee \superpose L_\wedge$.
@@ -900,7 +895,7 @@ operators.
   define minimal and maximal minus operators.
 \end{prop}
 
-In particular, \ref{thm:derivativeCharacterization} gives us clear bounds for
+In particular, \ref{thm:derivativeCharacterization} gives us bounds for
 all the derivatives on Boolean algebras:
 
 \begin{corollary}
@@ -924,6 +919,9 @@ all the derivatives on Boolean algebras:
   $$
 \end{corollary}
 
+This gives us a good deal of flexibility in picking derivatives, which will
+prove essential in \ref{sec:datalogDifferentiability}.
+
 \section{Fixpoints}
 
 \subsection{Incremental computation of fixpoints}
@@ -944,7 +942,7 @@ attempts to derive only the new facts at each iteration. However, ``semi-naive''
 as traditionally presented has some warts, and
 the following theorem provides a generalization of it to any differentiable function over a
 change structure. We will see the details of how to differentiate Datalog
-semantics in section \ref{sec:datalog}.
+semantics in section \ref{sec:datalogDifferentiability}.
 
 \begin{thm}[Incremental computation of iterated function applications]
 \label{thm:diffIter}
@@ -1204,6 +1202,7 @@ is monotone. However, we will remain agnostic on this front - we are merely
 interested in calculating the semantics faster if it exists.
 
 \subsection{Differentiability of Datalog semantics}
+\label{sec:datalogDifferentiability}
 
 In order to apply the machinery we have developed, we need the semantics $\denote{\_}$ to
 be differentiable. However, it is a function on Boolean algebras, and we know
