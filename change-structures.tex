@@ -1042,7 +1042,7 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
   Suppose a change $\change{w} \in \Delta A$ satisfies
   the equation:
   \begin{equation}\label{eqn:fixcondition}
-    \fixpoint_A(f) \cplus \change{w} = \fixpoint_A(f) \cplus \derive{\ev}((f, \fixpoint_A(f)), (\change{f}, \change{w}))
+    \change{w} = \derive{\ev}((f, \fixpoint_A(f)), (\change{f}, \change{w}))
   \end{equation}
   Then $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$. Conversely
   if $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$ then
@@ -1069,6 +1069,18 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
   then the previous expression is also a least fixpoint and therefore $\derive{\fixpoint_A}$
   is a derivative of $\fixpoint_A$.
 \end{thm}
+
+\begin{prop}
+  Let $f: A \rightarrow B$ be monotone and differentiable. Then $f$ has a
+  monotone derivative $\monotoneDerive{f}$.
+\end{prop}
+
+\begin{prop}
+  Let $f: A \rightarrow B$ be a function, $\change{f} \in \changes{(A
+    \rightarrow B)}$, and suppose that $f \cplus \change{f}$ is differentiable.
+  Then $\derive{\ev}$ has a derivative $\monotoneDerive{\ev}$ which is monotone
+  with respect to its second argument.
+\end{prop}
 
 \newcommand{\thefixpoint}{F}
 \newcommand{\theadjustment}{\operatorname{adjust}}
@@ -1108,31 +1120,38 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
   \begin{align*}
     \fixpoint_A (f \cplus \change{f})
     &= \fixpoint_A(f) \cplus D(f, \change{f})\\
-    &= \fixpoint_A(f) \cplus ev'((f, \fixpoint_A(f)), (\change{f}, D(f, \change{f}))
+    &= \fixpoint_A(f) \cplus \derive{\ev}((f, \fixpoint_A(f)), (\change{f}, D(f, \change{f}))
   \end{align*}
 
-  MARIO: WARNING: what follows is not constructive and very unsatisfactory.
+  That is, $\derive{\ev}((f \fixpoint_A(f)), (\change{f}, D(f \change{f})))$ is also a
+  derivative of $\fixpoint_X$.
 
-  Then the map $ev(f, a)$ admits a derivative $ev'_D((f, a), (\change{f}, \change{a}))$ that
-  coincides with $D$ whenever $a = \fixpoint_A(f), \change{a} = D(f, \change{f})$. Hence
-  $D(f, \change{f})$ is a fixpoint of the function
-  $$
-    \omega(\change{w}) \defeq ev'_D((f, \fixpoint_A(f)), (\change{f}, \change{w}))
-  $$
-  Now let 
-  $$
-  \change{w} \defeq \fixpoint_\changes{A}(\omega)
-  $$
-  We have $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$. Furthermore,
-  since $\change{w}$ is, by definition, a least fixpoint, we have $\change{w} \leq D(f, \change{f})$
-  and, by monotonicity of $\cplus$, it follows that 
-  $\fixpoint_A(f) \cplus \change{w} \leq \fixpoint_A(f) \cplus D(f, \change{f})$. But
-  since $\fixpoint_A(f) \cplus D(f, \change{f})$ is the least fixpoint of $f \cplus \change{f}$,
-  it must be the case that 
-  $$
-  \fixpoint_A(f) \cplus D(f, \change{f}) = \fixpoint_A(f) \cplus \change{w}
-  $$
-  thus $\fixpoint_A(f) \cplus \change{w}$ is the least fixpoint of $f \cplus \change{f}$.
+  Now, let $D_{max}$ be a maximal derivative of $\fixpoint_x$ such that $D_{max}
+  < \derive{\fixpoint_x}$.
+
+  Then $D_2 \defeq \derive{\ev}((f, \fixpoint_A(f)), (\change{f}, D(f, \change{f})))$ is
+  \begin{itemize}
+    \item A derivative of $\fixpoint_X$
+    \item Strictly greater than $D(f, \change{f})$
+  \end{itemize}
+
+  Since $D$ is maximal amongst derivatives which are less than
+  $\derive{\fixpoint_X}$, it must be that $\derive{\fixpoint_X} \leq D_2$.
+
+  Hence 
+  \begin{itemize}
+    \item[ ]
+      $\fixpoint_A(f \cplus \change{f})$
+    \item[$\leq$]\{ $\fixpoint_A$ computes least fixpoints \}\\
+      $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$
+    \item[$\leq$]\{ monotonicity of $\cplus$ \}\\
+      $\fixpoint_A(f) \cplus D_2(f, \change{f})$
+    \item[=]\{ $D_2$ is a derivative \}\\
+      $\fixpoint_A(f \cplus \change{f})$
+  \end{itemize}
+
+  Therefore $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f}) =
+  \fixpoint_A(f \cplus \change{f})$, so $\derive{fixpoint_A}$ is a derivative of $\fixpoint_A$
 \end{proof}
 
 The requirement that $\fixpoint$ be differentiable may seem awkward, but it is
