@@ -351,8 +351,17 @@ First we need a lemma for working with function changes.
 
 \begin{prop}[Incrementalization]
 \label{prop:incrementalization}
-  $$(f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus \left[\derive{f}(a,
-    \change{a}) \splus \change{f}(a \cplus \change{a}) \right]$$
+  Let $f: A \rightarrow B$, $a \in A$, $\change{a} \in
+  \changes{A}$, $\change{f} \in \changes{(A \rightarrow B)}$.
+
+  Then if $f$ is differentiable
+  $$(f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus 
+  \left[\derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a}) \right]$$
+  
+  Or, if $f \cplus \change{f}$ is differentiable
+  $$(f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus 
+  \left[\change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a}) \right]$$
+
 \end{prop}
 
 MARIO: nice proof, I'm a bit worried about the $f'$, though, since there may be more than one,
@@ -361,7 +370,12 @@ and I feel like we need the axiom of choice to ``pick'' a $f'$ for every $f$.
 MPJ: there's only one $f$ here - we only need AoC if we're doing *arbitrary*
 choices for *infinitely* many $f$s.
 
-This is our equivalent of Cai et al.'s ``Incrementalization'' lemma.
+This is our equivalent of Cai et al.'s ``Incrementalization'' lemma. It shows us
+how function changes and derivatives work together. Interestingly, we get two
+different ways of computing the updated value: either by applying the derivative
+of the original function at the original location, and then applying the change at the new location; or
+by applying the change at the original location, and then applying the
+derivative of the new function at the new location
 
 Now we can give the proof of \ref{prop:exponentials}.
 
@@ -386,7 +400,7 @@ Now we can give the proof of \ref{prop:exponentials}.
     \item[=]$\ev((f \cplus \change{f}, a \cplus \change{a})$
     \item[=]\{ definition of $\ev$ \}\\
       $(f \cplus \change{f})(a \cplus \change{a})$
-    \item[=]\{ by \ref{prop:incrementalization} \}\\
+    \item[=]\{ by \ref{prop:incrementalization}, since $f$ is differentiable \}\\
       $f(a) \cplus \left[\derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a}) \right]$
     \item[=]\{ definition of $\derive{\ev}$ \}\\
       $\ev(f, a) \cplus \derive{\ev}((f, a), (\change{f}, \change{a}))$
