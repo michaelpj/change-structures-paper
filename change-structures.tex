@@ -1029,6 +1029,8 @@ view update problem''.
 
 However, this requires us to have a derivative for the fixpoint operator $\fixpoint$.
 
+\newcommand{\thefixpoint}{\fixpoint_A(f)}
+\newcommand{\theadjustment}{\operatorname{adjust}}
 \begin{thm}[Derivatives of fixpoints]
 \label{thm:fixpointDiff}
   Let 
@@ -1058,36 +1060,10 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
   )
   $$
   thus $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a fixpoint 
-  of $f \cplus \change{f}$.\\
-
-  Furthermore, if
-  \begin{itemize}
-    \item $A$ is a partial order
-    \item $f \cplus \change{f}$ is monotone and differentiable
-    \item $\fixpoint$ computes least fixpoints and is differentiable
-    \item $\cplus$ is monotonic with respect to the order on $\changes{A}$
-  \end{itemize}
-  then the previous expression is also a least fixpoint and therefore $\derive{\fixpoint_A}$
-  is a derivative of $\fixpoint_A$.
+  of $f \cplus \change{f}$.
 \end{thm}
-
-\begin{prop}
-  Let $f: A \rightarrow B$ be monotone and differentiable. Then $f$ has a
-  monotone derivative $\monotoneDerive{f}$.
-\end{prop}
-
-\begin{prop}
-  Let $f: A \rightarrow B$ be a function, $\change{f} \in \changes{(A
-    \rightarrow B)}$, and suppose that $f \cplus \change{f}$ is monotone and differentiable.
-  Then $\derive{\ev}$ has a derivative $\monotoneDerive{\ev}$ which is monotone
-  with respect to its second argument.
-\end{prop}
-
-\newcommand{\thefixpoint}{\fixpoint_A(f)}
-\newcommand{\theadjustment}{\operatorname{adjust}}
-
 \begin{proof}
-  For the first part, let $\change{w} \in \Delta A$ satisfy equation \ref{eqn:fixcondition}.
+  Let $\change{w} \in \Delta A$ satisfy equation \ref{eqn:fixcondition}. Then
   \begin{itemize}
   \item[ ]
     $
@@ -1108,11 +1084,44 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
   \end{itemize}
   Hence $\thefixpoint \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$. The converse
   follows from reversing the direction of the proof.
+\end{proof}
 
-  For the second part, we are supposing that $\fixpoint$ computes least
-  fixpoints and is differentiable, and $\cplus$ is monotonic in its second argument.
+This is not enough give us a true derivative, however, because we are merely
+assured that $\thefixpoint \cplus \derive{\fixpoint_A}$ computes \emph{a} fixpoint, not necessarily
+the same one computed by $\fixpoint_A{(f \cplus \change{f})}$.
 
-  Then suppose that $D$ is a derivative of $\fixpoint_A$, and hence $\thefixpoint \cplus D(f,
+However, we can get a true derivative if we are working with least fixpoints.
+
+\begin{thm}[Derivatives of least fixpoints]
+\label{thm:leastFixpointDiff}
+  Let 
+  \begin{itemize}
+    \item$\fixpoint_A : (A \rightarrow A) \rightarrow A$ be a differentiable
+      least fixpoint operator
+    \item $A$ be a change structure
+    \item $f: A \rightarrow A$ be a monotone differentiable function
+    \item $\cplus$ be monotonic with respect to the order on $\changes{A}$
+    \item $\change{f} \in \changes{(A \rightarrow A)}$ be a change to $f$
+  \end{itemize}
+
+  then $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a least
+  fixpoint and therefore $\derive{\fixpoint_A}$ is a derivative of $\fixpoint_A$.
+\end{thm}
+
+\begin{prop}
+  Let $f: A \rightarrow B$ be monotone and differentiable. Then $f$ has a
+  monotone derivative $\monotoneDerive{f}$.
+\end{prop}
+
+\begin{prop}
+  Let $f: A \rightarrow B$ be a function, $\change{f} \in \changes{(A
+    \rightarrow B)}$, and suppose that $f \cplus \change{f}$ is monotone and differentiable.
+  Then $\derive{\ev}$ has a derivative $\monotoneDerive{\ev}$ which is monotone
+  with respect to its second argument.
+\end{prop}
+
+\begin{proof}
+  Suppose that $D$ is a derivative of $\fixpoint_A$, and hence $\thefixpoint \cplus D(f,
   \change{f})$ is the least fixpoint of $f \cplus \change{f}$. 
   Since $D$ is a derivative of $\fixpoint_A$, it follows that for every $f, \change{f}$
   \begin{align*}
