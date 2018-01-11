@@ -1033,7 +1033,7 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
 \label{thm:fixpointDiff}
   Let 
   \begin{itemize}
-    \item$\fixpoint_X : (X \rightarrow X) \rightarrow X$ be a fixpoint operator
+    \item$\fixpoint_A : (A \rightarrow A) \rightarrow A$ be a fixpoint operator
     \item $A$ be a change structure
     \item $f: A \rightarrow A$ be a differentiable function
     \item $\change{f} \in \changes{(A \rightarrow A)}$ be a change to $f$
@@ -1063,6 +1063,7 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
   Furthermore, if
   \begin{itemize}
     \item $A$ is a partial order
+    \item $f \cplus \change{f}$ is monotone and differentiable
     \item $\fixpoint$ computes least fixpoints and is differentiable
     \item $\cplus$ is monotonic with respect to the order on $\changes{A}$
   \end{itemize}
@@ -1077,17 +1078,15 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
 
 \begin{prop}
   Let $f: A \rightarrow B$ be a function, $\change{f} \in \changes{(A
-    \rightarrow B)}$, and suppose that $f \cplus \change{f}$ is differentiable.
+    \rightarrow B)}$, and suppose that $f \cplus \change{f}$ is monotone and differentiable.
   Then $\derive{\ev}$ has a derivative $\monotoneDerive{\ev}$ which is monotone
   with respect to its second argument.
 \end{prop}
 
-\newcommand{\thefixpoint}{F}
+\newcommand{\thefixpoint}{\fixpoint_A(f)}
 \newcommand{\theadjustment}{\operatorname{adjust}}
 
 \begin{proof}
-  Throughout, let $\thefixpoint = \fixpoint_A(f)$.
-
   For the first part, let $\change{w} \in \Delta A$ satisfy equation \ref{eqn:fixcondition}.
   \begin{itemize}
   \item[ ]
@@ -1113,21 +1112,20 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
   For the second part, we are supposing that $\fixpoint$ computes least
   fixpoints and is differentiable, and $\cplus$ is monotonic in its second argument.
 
-  Then suppose that $D$ is a derivative of $\fixpoint_X$, and hence $\thefixpoint \cplus D(f,
+  Then suppose that $D$ is a derivative of $\fixpoint_A$, and hence $\thefixpoint \cplus D(f,
   \change{f})$ is the least fixpoint of $f \cplus \change{f}$. 
-  Since $D$ is a derivative of $\fixpoint_X$, it follows that for every $f, \change{f}$ the 
-  equation \ref{eqn:fixcondition} is satisfied, i.e. for every $f, \change{f}$
+  Since $D$ is a derivative of $\fixpoint_A$, it follows that for every $f, \change{f}$
   \begin{align*}
     \fixpoint_A (f \cplus \change{f})
     &= \fixpoint_A(f) \cplus D(f, \change{f})\\
-    &= \fixpoint_A(f) \cplus \derive{\ev}((f, \fixpoint_A(f)), (\change{f}, D(f, \change{f}))
+    &= \fixpoint_A(f) \cplus \derive{\ev}((f, \thefixpoint), (\change{f}, D(f, \change{f}))
   \end{align*}
 
-  That is, $\derive{\ev}((f \fixpoint_A(f)), (\change{f}, D(f \change{f})))$ is also a
-  derivative of $\fixpoint_X$.
+  That is, $\derive{\ev}((f \thefixpoint, (\change{f}, D(f \change{f})))$ is also a
+  derivative of $\fixpoint_A$.
 
-  Now, let $D_{max}$ be a maximal derivative of $\fixpoint_x$ such that $D_{max}
-  < \derive{\fixpoint_x}$.
+  Now, let $D_{max}$ be a maximal derivative of $\fixpoint_A$ such that $D_{max}
+  < \derive{\fixpoint_A}$.
 
   Then $D_2 \defeq \derive{\ev}((f, \fixpoint_A(f)), (\change{f}, D(f, \change{f})))$ is
   \begin{itemize}
@@ -1135,8 +1133,8 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
     \item Strictly greater than $D(f, \change{f})$
   \end{itemize}
 
-  Since $D$ is maximal amongst derivatives which are less than
-  $\derive{\fixpoint_X}$, it must be that $\derive{\fixpoint_X} \leq D_2$.
+  Suppose $D_2 < \derive{\fixpoint_A}$. That contradicts maximality $D_{max}$,
+  since $D_{max} < D_2$. So it must be that $\derive{\fixpoint_X} \leq D_2$.
 
   Hence 
   \begin{itemize}
