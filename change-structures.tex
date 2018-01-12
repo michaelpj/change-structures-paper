@@ -541,6 +541,9 @@ the discrete change structure provides a minimal element.
 \label{sec:moreStructures}
 
 \subsection{Posets}
+A common structure which we want to compute changes on is a poset. For this
+section we shall assume that all of our base sets are posets.
+
 \subsubsection{Orders from change sets}
 
 Whenever the change set is a monoid, 
@@ -588,10 +591,47 @@ TODO: I suspect this forms a functor which is right adjoint to the forgetful fun
 Conversely, I think there is a left adjoint which maps $A, \leq$ to $A, A \Rightarrow_\leq A$ ($\Rightarrow_\leq$
 denoting the set of $\leq$-monotone functions) - the isomorphism of Hom-sets is obvious, but I can't prove naturality.
 
-\subsubsection{Orders on base sets}
+\subsubsection{Monotone functions}
 
-A common structure which we want to compute changes on is a poset. For this
-section we shall assume that all of our base sets are posets.
+Monotone functions have some useful properties.
+
+\begin{prop}
+  Let $f: A \rightarrow B$ be differentiable and monotone. Then there exists a
+  derivative $\monotoneDerive{f}$ which is montone.
+\end{prop}
+\begin{proof}
+  Let $D$ be the set of derivatives of $f$. Construct a derivative
+  $\deriveMonotone{f}$ as follows: for every $a$, construct the equivalence
+  classes of $\change{a}$s such that they have the same $a \cplus \change{a}$.
+  For each such class, pick a representative element $\change{a}'$. Then for all
+  $\change{a}$ in that class, $$
+
+  Now suppose $\change{a} \changeOrder \change{b}$. Then
+  \begin{itemize}
+    \item[ ]$\change{a} \changeOrder \change{b}$
+    \item[$\Rightarrow$]\{ definition of $\changeOrder$ \}\\
+      $a \cplus \change{a} \leq a \cplus \change{b}$
+    \item[$\Rightarrow$]\{ $f$ is monotone \}\\
+      $f(a \cplus \change{a}) \leq f(a \cplus \change{b})\}$
+    \item[$\Rightarrow$]\{ $\deriveMonotone{f}$ is a derivative \}\\
+      $f(a) \cplus \deriveMonotone{f}(a, \change{a}) \leq f(a) \cplus \deriveMonotone{f}(a, \change{b})$
+  \end{itemize}
+
+  Then there are three cases:
+
+  If $\deriveMonotone{f}(a, \change{a}) \changeOrder \deriveMonotone{f}(a,
+  \change{b})$ then we are done.
+
+  If $\deriveMonotone{f}(a, \change{a}) \gt_\Delta \deriveMonotone{f}(a,
+  \change{b})$, then we have a contradiction to the above equation.
+
+  If $\deriveMonoton{f}(a, \change{a})$ 
+
+
+  THIS PROOF IS WRONG
+\end{proof}
+
+\subsubsection{Orders on base sets}
 
 Firstly, we can define ``approximations'' to derivatives from both sides.
 
@@ -1188,6 +1228,42 @@ Now we can give the proof of \ref{thm:leastFixpointDiff}:
 
   Therefore $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f}) =
   \fixpoint_A(f \cplus \change{f})$, so $\derive{\fixpoint_A}$ is a derivative of $\fixpoint_A$
+\end{proof}
+
+The requirements of this theorem may seem onerous. However, the setting in which
+we are usually working with least fixpoints is complete lattices with monotone
+functions, and there the conditions are easy to satisfy.
+
+\begin{prop}
+  Let
+  \begin{itemize}
+    \item $A$ be a complete change structure, and a complete lattice
+    \item $\changes{A}$ be ordered according to $\changeOrder$
+    \item $f: A \rightarrow A$ be differentiable and monotone
+    \item $\change{f} \in \changes{(A \righarrow A)}$ be a
+      change to $f$
+    \item$f \cplus \change{f}$ be differentiable and monotone
+  \end{itemize}
+
+  Then
+  \begin{itemize}
+    \item The least fixpoint operator $\fixpoint_A$ exists for $f$ and $f \cplus
+      \change{f}$ and is differentiable
+    \item $\cplus$ is continuous and monotone
+    \item There is a monotone derivative of $\ev$
+  \end{itemize}
+
+  And therefore $\derive{\fixpoint_A}$ is a derivative of $\fixpoint_A$.
+\end{prop}
+\begin{proof}
+  Largely trivial, but we give a proof of the final item.
+
+  Define 
+  $$\derive{\ev}((f, a), (\change{a}, \change{f}) \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})$$
+  
+  This is a valid derivative for $\ev$ by \ref{prop:incrementalization}, and it
+  is monotone since $f \cplus \change{f}$ (and hence $\derive{(f \cplus
+    \change{f})}$, by REF)and $\cplus$ are monotone.
 \end{proof}
 
 The requirement that $\fixpoint$ be differentiable may seem awkward, but it is
