@@ -601,10 +601,10 @@ Monotone functions have some useful properties.
 \end{prop}
 \begin{proof}
   Let $D$ be the set of derivatives of $f$. Construct a derivative
-  $\deriveMonotone{f}$ as follows: for every $a$, construct the equivalence
+  $\monotoneDerive{f}$ as follows: for every $a$, construct the equivalence
   classes of $\change{a}$s such that they have the same $a \cplus \change{a}$.
   For each such class, pick a representative element $\change{a}'$. Then for all
-  $\change{a}$ in that class, $$
+  $\change{a}$ in that class,
 
   Now suppose $\change{a} \changeOrder \change{b}$. Then
   \begin{itemize}
@@ -613,19 +613,19 @@ Monotone functions have some useful properties.
       $a \cplus \change{a} \leq a \cplus \change{b}$
     \item[$\Rightarrow$]\{ $f$ is monotone \}\\
       $f(a \cplus \change{a}) \leq f(a \cplus \change{b})\}$
-    \item[$\Rightarrow$]\{ $\deriveMonotone{f}$ is a derivative \}\\
-      $f(a) \cplus \deriveMonotone{f}(a, \change{a}) \leq f(a) \cplus \deriveMonotone{f}(a, \change{b})$
+    \item[$\Rightarrow$]\{ $\monotoneDerive{f}$ is a derivative \}\\
+      $f(a) \cplus \monotoneDerive{f}(a, \change{a}) \leq f(a) \cplus \monotoneDerive{f}(a, \change{b})$
   \end{itemize}
 
   Then there are three cases:
 
-  If $\deriveMonotone{f}(a, \change{a}) \changeOrder \deriveMonotone{f}(a,
+  If $\monotoneDerive{f}(a, \change{a}) \changeOrder \monotoneDerive{f}(a,
   \change{b})$ then we are done.
 
-  If $\deriveMonotone{f}(a, \change{a}) \gt_\Delta \deriveMonotone{f}(a,
+  If $\monotoneDerive{f}(a, \change{a}) >_\Delta \monotoneDerive{f}(a,
   \change{b})$, then we have a contradiction to the above equation.
 
-  If $\deriveMonoton{f}(a, \change{a})$ 
+  If $\monotoneDerive{f}(a, \change{a})$ 
 
 
   THIS PROOF IS WRONG
@@ -1240,7 +1240,7 @@ functions, and there the conditions are easy to satisfy.
     \item $A$ be a complete change structure, and a complete lattice
     \item $\changes{A}$ be ordered according to $\changeOrder$
     \item $f: A \rightarrow A$ be differentiable and monotone
-    \item $\change{f} \in \changes{(A \righarrow A)}$ be a
+    \item $\change{f} \in \changes{(A \rightarrow A)}$ be a
       change to $f$
     \item$f \cplus \change{f}$ be differentiable and monotone
   \end{itemize}
