@@ -370,6 +370,9 @@ and I feel like we need the axiom of choice to ``pick'' a $f'$ for every $f$.
 MPJ: there's only one $f$ here - we only need AoC if we're doing *arbitrary*
 choices for *infinitely* many $f$s.
 
+MARIO: I'm referring to the proof of exponentials - in order to define $\derive{ev}$ you
+need it to pick a $\derive{f}$ for each $f$.
+
 This is our equivalent of Cai et al.'s ``Incrementalization'' lemma. It shows us
 how function changes and derivatives work together. Interestingly, we get two
 different ways of computing the updated value: either by applying the derivative
@@ -386,7 +389,7 @@ Now we can give the proof of \ref{prop:exponentials}.
   $$\ev(f, a) \defeq f(a)$$
   $$\curry{f}(a) \defeq \lambda b. f((a, b))$$
   
-  We merely need to show that they are differentiable: differentiability if $\curry{f}
+  We merely need to show that they are differentiable: differentiability of $\curry{f}
   \times id$ follows from products; commutativity and
   uniqueness follow from the corresponding properties of the exponential object
   on $\cat{Set}$.
@@ -429,18 +432,6 @@ Now we can give the proof of \ref{prop:exponentials}.
   is differentiable.
 
   TODO: I needed the monoid zero here, is that required?
-
-  MARIO: I have only been able to prove this assuming the change structures are
-  commutative and extensional. I think it's easy to relax extensionality, but
-  commutativity is actually vital (actually nevermind, commutativity is only necessary
-  to prove $\ev$ is smooth, not differentiable).
-
-  MARIO: At any rate, it would be good if we can find a justification for our
-  function changes that isn't this (or the geometric hand-waving, or just saying
-  Cai's is obviously bad - even though it is!)
-  
-  MPJ: leaving above notes, not sure if they apply - my way seems to work
-  nicely, but is assuming we're working in $\cat{Set}$.
 \end{proof}
 
 \begin{thm}
@@ -577,6 +568,14 @@ TODO: I think this is true. It also seems perhaps just a trivial reframing of
 things - is it actually letting us do anything more nicely? Also this applies to
 any semigroup action, not just change structures.
 
+MARIO: It's definitely true, although the proof may depend (as usual) on the axiom of choice.
+I think you can state it more simply by saying that there is a full and faithful functor from
+change actions (with a zero) into preorders, but I'm not sure what it buys us. Re. semigroup actions,
+if I recall correctly usually one requires that maps be semigroup homomorphisms, which we don't, 
+so this is actually not true.
+
+MARIO: Also, there's an equivalence of categories between CStruct and PreOrd, which actually proves
+the existence of all limits and colimits in CStruct, but not in a ``convenient'' form.
 \begin{corollary}
   Any function from a discrete change structure or into a complete change
   structure is differentiable.
