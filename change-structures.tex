@@ -1044,6 +1044,7 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
     \item$\fixpoint_A : (A \rightarrow A) \rightarrow A$ be a fixpoint operator
     \item $f: A \rightarrow A$ be a differentiable function
     \item $\change{f} \in \changes{(A \rightarrow A)}$ be a change to $f$
+    \item $\derive{\ev}$ be a derivative of the evaluation map
   \end{itemize}
 
   Suppose a change $\change{w} \in \Delta A$ satisfies
@@ -1098,26 +1099,58 @@ However, we can get a true derivative if we are working with least fixpoints.
 \label{thm:leastFixpointDiff}
   Let 
   \begin{itemize}
-    \item $A$ be a change structure and a complete lattice
+    \item $A$ be a change structure 
+    \item $A, \changes{A}$ be complete lattices
     \item$\fixpoint_A : (A \rightarrow A) \rightarrow A$ be a differentiable
       least fixpoint operator
-    \item $\cplus$ be monotonic with respect to the order on $\changes{A}$
+    \item $\cplus$ be continuous and monotone with respect to the order on $\changes{A}$
     \item $f: A \rightarrow A$ be a differentiable function
     \item $\change{f} \in \changes{(A \rightarrow A)}$ be a change to $f$
+    \item $\derive{\ev}$ be a derivative of the evaluation map which is monotone
+      with respect to $\change{a}$
   \end{itemize}
 
   then $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a least
   fixpoint of $f \cplus \change{f}$ and therefore $\derive{\fixpoint_A}$ is a derivative of $\fixpoint_A$.
 \end{thm}
 
+First we need a couple of lemmas, including a tiny bit of topology.
+
 \begin{prop}
-  Let $f: A \rightarrow B$ be a differentiable function, and $B$ be a complete lattice
+\label{prop:continuity}
+  Let $f: A \rightarrow B$ be a function, and $A$ and $B$ be a
+  join-semilattices. Then if $f$ is \textit{continuous} under the Alexandrov
+  topologies on $A$ and $B$ iff, for any $A' \subseteq A$, 
+  $$f(\bigvee_{A'} a) = \bigvee_{A'} f(a)$$
 \end{prop}
+
+\begin{prop}
+\label{prop:supDerivatives}
+  Let $f: A_\cplus \rightarrow B_\cpluss$ be differentiable, $B$ and
+  $\changes{B}$ be complete lattices, and suppose that $\cpluss$ is continuous
+  in its second argument. Then for any set $D$ of derivatives of $f$, $\bigvee
+  D$ is also a derivative.
+\end{prop}
+\begin{proof}
+  We show the derivative property directly.
+  \begin{itemize}
+    \item[ ]$f(a) \cpluss (\bigvee D)(f, \change{a})$
+    \item[=]$f(a) \cpluss \bigvee_{\derive{f} \in D} \derive{f}(f, \change{a})$
+    \item[=]\{ continuity of $\cpluss$, \ref{prop:continuity} \}\\
+      $\bigvee_{\derive{f} \in D} (f(a) \cpluss \derive{f}(f, \change{a}))$
+    \item[=]\{ $\derive{f}$ is a derivative \}\\
+      $\bigvee_{\derive{f} \in D} f(a \cplus \change{a})$
+    \item[=]\{ since $D$ is non-empty, as $f$ is differentiable \}\\
+      $f(a \cplus \change{a})$
+  \end{itemize}
+\end{proof}
+
+Now we can give the proof of \ref{thm:leastFixpointDiff}:
 
 \begin{proof}
   Suppose that $D$ is a derivative of $\fixpoint_A$, and hence $\thefixpoint \cplus D(f,
   \change{f})$ is the least fixpoint of $f \cplus \change{f}$. 
-  Since $D$ is a derivative of $\fixpoint_A$, it follows that for every $f, \change{f}$
+  Since $D$ is a derivative of $\fixpoint_A$, it follows that 
   \begin{itemize}
     \item[ ]$\fixpoint_A (f \cplus \change{f})$
     \item[=]$\fixpoint_A(f) \cplus D(f, \change{f})$
@@ -1127,14 +1160,21 @@ However, we can get a true derivative if we are working with least fixpoints.
   That is, $\theadjustment(f, \change{f})(D(f, \change{f}))$ is also a
   derivative of $\fixpoint_A$.
 
-  Now, let $D_{max}$ be the sup of all derivatives of $\fixpoint_A$. Then
-  $\theadjustment(f, \change{f})(D(f, \change{f}))$ is a
-  derivative, so is less than $D_{max}$. Hence $D_{max}$ is a prefix point of
-  $\theadjustment(f, \change{f})$, hence it is greater than
-  $\fixpoint_{\changes{A}}(\theadjustment(f, \change{f}))$, since the least fixed point is the least prefix
-  point.
+  Now, let $D_{max} \defeq \bigvee \{D \mid D \textrm{ is a derivative of }
+  \fixpoint_A \}$. This exists, since $\changes{A}$ is a complete lattice, and
+  is itself a derivative by \ref{prop:supDerivatives}.
 
-  Hence 
+  Then, since 
+  $\theadjustment(f, \change{f})(D(f, \change{f}))$ is a
+  derivative, it is less than $D_{max}$. Hence $D_{max}$ is a prefix point of
+  $\theadjustment(f, \change{f})$.
+
+  Since $\derive{\ev}$ is monotone, so is $\theadjustment(f, \change{f})$, and
+  hence $\fixpoint_{\changes{A}}(\theadjustment(f, \change{f}))$ is also the
+  least prefix point of $\theadjustment(f, \change{f})$, and hence it is less
+  than $D_{max}$.
+
+  And so 
   \begin{itemize}
     \item[ ]
       $\fixpoint_A(f \cplus \change{f})$
