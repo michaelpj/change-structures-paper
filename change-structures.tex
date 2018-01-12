@@ -1031,12 +1031,18 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
 
 \newcommand{\thefixpoint}{\fixpoint_A(f)}
 \newcommand{\theadjustment}{\operatorname{adjust}}
+
+\begin{defn}
+  $$\theadjustment(f, \change{f}) \defeq \lambda\ \change{a} . \derive{\ev}((f,
+  \fixpoint_A(f), (\change{f}, \change{a})))$$
+\end{defn}
+
 \begin{thm}[Derivatives of fixpoints]
 \label{thm:fixpointDiff}
   Let 
   \begin{itemize}
-    \item$\fixpoint_A : (A \rightarrow A) \rightarrow A$ be a fixpoint operator
     \item $A$ be a change structure
+    \item$\fixpoint_A : (A \rightarrow A) \rightarrow A$ be a fixpoint operator
     \item $f: A \rightarrow A$ be a differentiable function
     \item $\change{f} \in \changes{(A \rightarrow A)}$ be a change to $f$
   \end{itemize}
@@ -1044,20 +1050,17 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
   Suppose a change $\change{w} \in \Delta A$ satisfies
   the equation:
   \begin{equation}\label{eqn:fixcondition}
-    \change{w} = \derive{\ev}((f, \fixpoint_A(f)), (\change{f}, \change{w}))
+    \change{w} = \theadjustment(f, \change{f})(\change{w})
   \end{equation}
   Then $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$. Conversely
   if $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$ then
   it satisfies equation \ref{eqn:fixcondition}.
   
   In particular, this means that 
-  if the operator $\fixpoint_X$ is defined over $\Delta A$, we can define:
+  if the operator $\fixpoint$ is defined over $\Delta A$, we can define:
   $$
   \derive{\fixpoint_A}(f, \change{f}) \defeq
-  \fixpoint_{\changes{A}}(
-    \lambda \change{} .
-      \derive{\ev}((f, \fixpoint_A(f)), (\change{f}, \change{}))
-  )
+  \fixpoint_{\changes{A}}(\theadjustment(f, \change{f}))
   $$
   thus $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a fixpoint 
   of $f \cplus \change{f}$.
@@ -1073,7 +1076,7 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
     $
     f(\thefixpoint)
     \cplus
-    \derive{\ev}((f, \fixpoint_A(f)), (\change{f}, \change{w}))
+    \theadjustment(f, \change{f})(\change{w})
     $
   \item[=]\{ rolling the fixpoint and equation \ref{eqn:fixcondition} \}\\
     $
@@ -1096,69 +1099,56 @@ However, we can get a true derivative if we are working with least fixpoints.
 \label{thm:leastFixpointDiff}
   Let 
   \begin{itemize}
+    \item $A$ be a change structure and a complete lattice
     \item$\fixpoint_A : (A \rightarrow A) \rightarrow A$ be a differentiable
       least fixpoint operator
-    \item $A$ be a change structure
-    \item $f: A \rightarrow A$ be a monotone differentiable function
     \item $\cplus$ be monotonic with respect to the order on $\changes{A}$
+    \item $f: A \rightarrow A$ be a differentiable function
     \item $\change{f} \in \changes{(A \rightarrow A)}$ be a change to $f$
   \end{itemize}
 
   then $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a least
-  fixpoint and therefore $\derive{\fixpoint_A}$ is a derivative of $\fixpoint_A$.
+  fixpoint of $f \cplus \change{f}$ and therefore $\derive{\fixpoint_A}$ is a derivative of $\fixpoint_A$.
 \end{thm}
 
 \begin{prop}
-  Let $f: A \rightarrow B$ be monotone and differentiable. Then $f$ has a
-  monotone derivative $\monotoneDerive{f}$.
-\end{prop}
-
-\begin{prop}
-  Let $f: A \rightarrow B$ be a function, $\change{f} \in \changes{(A
-    \rightarrow B)}$, and suppose that $f \cplus \change{f}$ is monotone and differentiable.
-  Then $\derive{\ev}$ has a derivative $\monotoneDerive{\ev}$ which is monotone
-  with respect to its second argument.
+  Let $f: A \rightarrow B$ be a differentiable function, and $B$ be a complete lattice
 \end{prop}
 
 \begin{proof}
   Suppose that $D$ is a derivative of $\fixpoint_A$, and hence $\thefixpoint \cplus D(f,
   \change{f})$ is the least fixpoint of $f \cplus \change{f}$. 
   Since $D$ is a derivative of $\fixpoint_A$, it follows that for every $f, \change{f}$
-  \begin{align*}
-    \fixpoint_A (f \cplus \change{f})
-    &= \fixpoint_A(f) \cplus D(f, \change{f})\\
-    &= \fixpoint_A(f) \cplus \derive{\ev}((f, \thefixpoint), (\change{f}, D(f, \change{f}))
-  \end{align*}
-
-  That is, $\derive{\ev}((f \thefixpoint, (\change{f}, D(f \change{f})))$ is also a
-  derivative of $\fixpoint_A$.
-
-  Now, let $D_{max}$ be a maximal derivative of $\fixpoint_A$ such that $D_{max}
-  < \derive{\fixpoint_A}$.
-
-  Then $D_2 \defeq \derive{\ev}((f, \fixpoint_A(f)), (\change{f}, D(f, \change{f})))$ is
   \begin{itemize}
-    \item A derivative of $\fixpoint_X$
-    \item Strictly greater than $D(f, \change{f})$
+    \item[ ]$\fixpoint_A (f \cplus \change{f})$
+    \item[=]$\fixpoint_A(f) \cplus D(f, \change{f})$
+    \item[=]$\fixpoint_A(f) \cplus \theadjustment(f, \change{f})(D(f, \change{f}))$
   \end{itemize}
 
-  Suppose $D_2 < \derive{\fixpoint_A}$. That contradicts maximality $D_{max}$,
-  since $D_{max} < D_2$. So it must be that $\derive{\fixpoint_X} \leq D_2$.
+  That is, $\theadjustment(f, \change{f})(D(f, \change{f}))$ is also a
+  derivative of $\fixpoint_A$.
+
+  Now, let $D_{max}$ be the sup of all derivatives of $\fixpoint_A$. Then
+  $\theadjustment(f, \change{f})(D(f, \change{f}))$ is a
+  derivative, so is less than $D_{max}$. Hence $D_{max}$ is a prefix point of
+  $\theadjustment(f, \change{f})$, hence it is greater than
+  $\fixpoint_{\changes{A}}(\theadjustment(f, \change{f}))$, since the least fixed point is the least prefix
+  point.
 
   Hence 
   \begin{itemize}
     \item[ ]
       $\fixpoint_A(f \cplus \change{f})$
-    \item[$\leq$]\{ $\fixpoint_A$ computes least fixpoints \}\\
+    \item[$\leq$]\{ $\fixpoint_A$ is a least fixpoint \}\\
       $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$
     \item[$\leq$]\{ monotonicity of $\cplus$ \}\\
-      $\fixpoint_A(f) \cplus D_2(f, \change{f})$
-    \item[=]\{ $D_2$ is a derivative \}\\
+      $\fixpoint_A(f) \cplus D_{max}(f, \change{f})$
+    \item[=]\{ $D_{max}$ is a derivative \}\\
       $\fixpoint_A(f \cplus \change{f})$
   \end{itemize}
 
   Therefore $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f}) =
-  \fixpoint_A(f \cplus \change{f})$, so $\derive{fixpoint_A}$ is a derivative of $\fixpoint_A$
+  \fixpoint_A(f \cplus \change{f})$, so $\derive{\fixpoint_A}$ is a derivative of $\fixpoint_A$
 \end{proof}
 
 The requirement that $\fixpoint$ be differentiable may seem awkward, but it is
