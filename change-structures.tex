@@ -323,12 +323,8 @@ whose derivative is $\lambda a. \lambda d. d$.
   $\cat{CStruct}$ has all finite limits.
 \end{thm}
 
-We now define change structures for functions. Here we deviate from Cai et al.
-again - rather than considering $\changes{(A \rightarrow B)}$ to be $A
-\rightarrow \changes{A} \rightarrow \changes{B}$, we consider it to be $A
-\rightarrow \changes{B}$. This separates function changes from derivatives -
-they are related (see \ref{prop:incrementalization}), but different. Moreover,
-our formulation makes $\cat{CStruct}$ into a Cartesian closed category.
+We now define change structures for functions, which shows that our category
+forms a Cartesian closed category.
 
 MPJ: do we have a proof that Cai's formulation doesn't give a CCC? That would be
 nice.
@@ -345,42 +341,6 @@ nice.
   structure on $\changes{B}$ lifted pointwise, so we will typically reuse the
   change operator for $B$ for $A \rightarrow \changes{B}$.
 \end{prop}
-
-First we need a lemma for working with function changes.
-
-\begin{prop}[Incrementalization]
-\label{prop:incrementalization}
-  Let $f: A \rightarrow B$, $a \in A$, $\change{a} \in
-  \changes{A}$, $\change{f} \in \changes{(A \rightarrow B)}$.
-
-  Then if $f$ is differentiable
-  $$(f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus 
-  \left[\derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a}) \right]$$
-  
-  Or, if $f \cplus \change{f}$ is differentiable
-  $$(f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus 
-  \left[\change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a}) \right]$$
-
-\end{prop}
-
-MARIO: nice proof, I'm a bit worried about the $f'$, though, since there may be more than one,
-and I feel like we need the axiom of choice to ``pick'' a $f'$ for every $f$.
-
-MPJ: there's only one $f$ here - we only need AoC if we're doing *arbitrary*
-choices for *infinitely* many $f$s.
-
-MARIO: I'm referring to the proof of exponentials - in order to define $\derive{ev}$ you
-need it to pick a $\derive{f}$ for each $f$.
-
-This is our equivalent of Cai et al.'s ``Incrementalization'' lemma. It shows us
-how function changes and derivatives work together. Interestingly, we get two
-different ways of computing the updated value: either by applying the derivative
-of the original function at the original location, and then applying the change at the new location; or
-by applying the change at the original location, and then applying the
-derivative of the new function at the new location
-
-Now we can give the proof of \ref{prop:exponentials}.
-
 \begin{proof}
   Since we are working over $\cat{Set}$, we can use the definitions of $\ev$ and
   $\curry{f}$ from $\cat{Set}$:
@@ -402,8 +362,12 @@ Now we can give the proof of \ref{prop:exponentials}.
     \item[=]$\ev((f \cplus \change{f}, a \cplus \change{a})$
     \item[=]\{ definition of $\ev$ \}\\
       $(f \cplus \change{f})(a \cplus \change{a})$
-    \item[=]\{ by \ref{prop:incrementalization}, since $f$ is differentiable \}\\
-      $f(a) \cplus \left[\derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a}) \right]$
+    \item[=]\{ definition of $\changes{(A \rightarrow B)}$ \}\\
+      $f(a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})$
+    \item[=]\{ definition of $\changes{(A \rightarrow B)}$ \}\\
+      $f(a) \cplus \derive{f}(a, \change{a}) \cplus \change{f}(a \cplus \change{a})$
+    \item[=]\{ monoid action property \}\\
+      $f(a) \cplus \left[ \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})\right]$
     \item[=]\{ definition of $\derive{\ev}$ \}\\
       $\ev(f, a) \cplus \derive{\ev}((f, a), (\change{f}, \change{a}))$
   \end{itemize}
@@ -429,8 +393,53 @@ Now we can give the proof of \ref{prop:exponentials}.
 
   Therefore $\derive{\curry{f}}$ is a derivative for $\curry{f}$, so $\curry{f}$
   is differentiable.
+\end{proof}
 
-  TODO: I needed the monoid zero here, is that required?
+MARIO: nice proof, I'm a bit worried about the $f'$, though, since there may be more than one,
+and I feel like we need the axiom of choice to ``pick'' a $f'$ for every $f$.
+
+MPJ: there's only one $f$ here - we only need AoC if we're doing *arbitrary*
+choices for *infinitely* many $f$s.
+
+MARIO: I'm referring to the proof of exponentials - in order to define $\derive{ev}$ you
+need it to pick a $\derive{f}$ for each $f$.
+
+MPJ: oh I see - yes, perhaps. I think that's likely to be a problem in a number
+of places. (I don't particularly mind the AoC, especially since we don't care
+about constructing this thing)
+
+Derivatives of the evaluation map correspond to incremental evaluation of functions:
+
+\begin{prop}[Incrementalization]
+\label{prop:incrementalization}
+  Let $f: A \rightarrow B$, $a \in A$, $\change{a} \in
+  \changes{A}$, $\change{f} \in \changes{(A \rightarrow B)}$, and let
+  $\derive{\ev}$ be a derivative of the evaluation map.
+
+  Then 
+  $$(f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus \derive{\ev}((f, a), (\change{f}, \change{a}))$$
+\end{prop}
+
+Conveniently, our proof of \ref{prop:exponentials} gives us actual derivatives for the evaluation map:
+
+\begin{prop}[Derivatives of the evaluation map]
+\label{prop:evDerivatives}
+  Let $f: A \rightarrow B$, $a \in A$, $\change{a} \in
+  \changes{A}$, $\change{f} \in \changes{(A \rightarrow B)}$.
+
+  Then if $f$ is differentiable
+  $$\derive{\ev}_1 \defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})$$
+
+  is a derivative for the evaluation map.
+  
+  Or, if $f \cplus \change{f}$ is differentiable
+  $$\derive{\ev}_2 \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})$$
+
+  is a derivative for the evaluation map.
+\end{prop}
+\begin{proof}
+  The first is shown in the proof of \ref{prop:exponentials}, the second is
+  similar but begins by taking the derivative of $f \cplus \change{f}$.
 \end{proof}
 
 \begin{thm}
@@ -595,39 +604,34 @@ denoting the set of $\leq$-monotone functions) - the isomorphism of Hom-sets is 
 Monotone functions have some useful properties.
 
 \begin{prop}
-  Let $f: A \rightarrow B$ be differentiable and monotone. Then there exists a
-  derivative $\monotoneDerive{f}$ which is montone.
+  Let $f: A \rightarrow B$ be differentiable and suppose that $\derive{f}$ is
+  continuous. Then $\derive{f}$ is monotone.
 \end{prop}
 \begin{proof}
-  Let $D$ be the set of derivatives of $f$. Construct a derivative
-  $\monotoneDerive{f}$ as follows: for every $a$, construct the equivalence
-  classes of $\change{a}$s such that they have the same $a \cplus \change{a}$.
-  For each such class, pick a representative element $\change{a}'$. Then for all
-  $\change{a}$ in that class,
+  THIS IS TRIVIAL
 
-  Now suppose $\change{a} \changeOrder \change{b}$. Then
+  Suppose $\change{a} \leq \change{b}$.
+
+  Then
   \begin{itemize}
-    \item[ ]$\change{a} \changeOrder \change{b}$
-    \item[$\Rightarrow$]\{ definition of $\changeOrder$ \}\\
-      $a \cplus \change{a} \leq a \cplus \change{b}$
-    \item[$\Rightarrow$]\{ $f$ is monotone \}\\
-      $f(a \cplus \change{a}) \leq f(a \cplus \change{b})\}$
-    \item[$\Rightarrow$]\{ $\monotoneDerive{f}$ is a derivative \}\\
-      $f(a) \cplus \monotoneDerive{f}(a, \change{a}) \leq f(a) \cplus \monotoneDerive{f}(a, \change{b})$
+  \item[ ]
+    $\change{a} \leq (\change{a} \vee \change{b})$
+  \item[$\Rightarrow$]
+    $\derive{f}(a, \change{a}) \leq \derive{f}(a, \change{a} \vee \change{b})$
+  \item[$\Rightarrow$]
+    $\derive{f}(a, \change{a}) \leq \derive{f}(a, \change{a} \vee \change{b})$
+  \item[$\Rightarrow$]\{ by continuity \}
+    $
+    \derive{f}(a, \change{a}) \leq
+    (
+      \derive{f}(a, \change{a})
+      \vee
+      \derive{f}(a, \change{b})
+    )
+    $
+  \item[$\Rightarrow$]
+    $\derive{f}(a, \change{a}) \leq \derive{f}(a, \change{b})$
   \end{itemize}
-
-  Then there are three cases:
-
-  If $\monotoneDerive{f}(a, \change{a}) \changeOrder \monotoneDerive{f}(a,
-  \change{b})$ then we are done.
-
-  If $\monotoneDerive{f}(a, \change{a}) >_\Delta \monotoneDerive{f}(a,
-  \change{b})$, then we have a contradiction to the above equation.
-
-  If $\monotoneDerive{f}(a, \change{a})$ 
-
-
-  THIS PROOF IS WRONG
 \end{proof}
 
 \subsubsection{Orders on base sets}
@@ -675,9 +679,6 @@ order on the change set.
 \begin{defn}[Change order]
   $\change{a} \changeOrder \change{b}$ iff for all $a \in A$ it is the case that $a \cplus \change{a} \leq a \cplus \change{b}$.
 \end{defn}
-
-Alternatively, the change order is the largest (TODO: I think this is right?) order such that $\cplus$ is monotonic with
-respect to its second argument.
 
 If the change structure is extensional, then the order is antisymmetric, and a
 full partial order.
@@ -1050,6 +1051,7 @@ $f(F_{i+1})$
 \end{corollary}
 
 \subsection{Derivatives of fixpoints}
+\label{sec:fixpointDerivatives}
 
 The previous section has shown us how to use derivatives to compute fixpoints
 more efficiently, but we might also want to take the derivative of a fixpoint
@@ -1067,7 +1069,6 @@ view update problem''.
 
 However, this requires us to have a derivative for the fixpoint operator $\fixpoint$.
 
-\newcommand{\thefixpoint}{\fixpoint_A(f)}
 \newcommand{\theadjustment}{\operatorname{adjust}}
 
 \begin{defn}
@@ -1109,27 +1110,27 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
   \begin{itemize}
   \item[ ]
     $
-    (f \cplus \change{f})(\thefixpoint \cplus \change{w})
+    (f \cplus \change{f})(\fixpoint_A(f) \cplus \change{w})
     $
   \item[=]\{ by \ref{prop:incrementalization} \}\\
     $
-    f(\thefixpoint)
+    f(\fixpoint_A(f))
     \cplus
     \theadjustment(f, \change{f})(\change{w})
     $
   \item[=]\{ rolling the fixpoint and equation \ref{eqn:fixcondition} \}\\
     $
-    \thefixpoint
+    \fixpoint_A(f)
     \cplus
     \change{w}
     $
   \end{itemize}
-  Hence $\thefixpoint \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$. The converse
+  Hence $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$. The converse
   follows from reversing the direction of the proof.
 \end{proof}
 
-This is not enough give us a true derivative, however, because we are merely
-assured that $\thefixpoint \cplus \derive{\fixpoint_A}$ computes \emph{a} fixpoint, not necessarily
+This is not enough give us a true derivative, because we are merely
+assured that $\fixpoint_A(f) \cplus \derive{\fixpoint_A}$ computes \emph{a} fixpoint, not necessarily
 the same one computed by $\fixpoint_A{(f \cplus \change{f})}$.
 
 However, we can get a true derivative if we are working with least fixpoints.
@@ -1142,7 +1143,7 @@ However, we can get a true derivative if we are working with least fixpoints.
     \item $A, \changes{A}$ be complete lattices
     \item$\fixpoint_A : (A \rightarrow A) \rightarrow A$ be a differentiable
       least fixpoint operator
-    \item $\cplus$ be continuous and monotone with respect to the order on $\changes{A}$
+    \item $\cplus$ be monotone with respect to the order on $\changes{A}$
     \item $f: A \rightarrow A$ be a differentiable function
     \item $\change{f} \in \changes{(A \rightarrow A)}$ be a change to $f$
     \item $\derive{\ev}$ be a derivative of the evaluation map which is monotone
@@ -1158,15 +1159,17 @@ First we need a couple of lemmas, including a tiny bit of topology.
 \begin{prop}
 \label{prop:continuity}
   Let $f: A \rightarrow B$ be a function, and $A$ and $B$ be a
-  join-semilattices. Then if $f$ is \textit{continuous} under the Alexandrov
-  topologies on $A$ and $B$ iff, for any $A' \subseteq A$, 
-  $$f(\bigvee_{A'} a) = \bigvee_{A'} f(a)$$
+  complete join-semilattices. Then the following are equivalent:
+  \begin{itemize}
+    \item $f$ is monotone
+    \item $f$ is \textit{continuous} under the Alexandrov topologies on $A$ and $B$
+    \item for any $A' \subseteq A$, $$f(\bigvee_{A'} a) = \bigvee_{A'} f(a)$$
 \end{prop}
 
 \begin{prop}
 \label{prop:supDerivatives}
   Let $f: A_\cplus \rightarrow B_\cpluss$ be differentiable, $B$ and
-  $\changes{B}$ be complete lattices, and suppose that $\cpluss$ is continuous
+  $\changes{B}$ be complete join-semilattices, and suppose that $\cpluss$ is monotone
   in its second argument. Then for any set $D$ of derivatives of $f$, $\bigvee
   D$ is also a derivative.
 \end{prop}
@@ -1175,7 +1178,7 @@ First we need a couple of lemmas, including a tiny bit of topology.
   \begin{itemize}
     \item[ ]$f(a) \cpluss (\bigvee D)(f, \change{a})$
     \item[=]$f(a) \cpluss \bigvee_{\derive{f} \in D} \derive{f}(f, \change{a})$
-    \item[=]\{ continuity of $\cpluss$, \ref{prop:continuity} \}\\
+    \item[=]\{ monotonicity of $\cpluss$, \ref{prop:continuity} \}\\
       $\bigvee_{\derive{f} \in D} (f(a) \cpluss \derive{f}(f, \change{a}))$
     \item[=]\{ $\derive{f}$ is a derivative \}\\
       $\bigvee_{\derive{f} \in D} f(a \cplus \change{a})$
@@ -1187,7 +1190,7 @@ First we need a couple of lemmas, including a tiny bit of topology.
 Now we can give the proof of \ref{thm:leastFixpointDiff}:
 
 \begin{proof}
-  Suppose that $D$ is a derivative of $\fixpoint_A$, and hence $\thefixpoint \cplus D(f,
+  Suppose that $D$ is a derivative of $\fixpoint_A$, and hence $\fixpoint_A(f) \cplus D(f,
   \change{f})$ is the least fixpoint of $f \cplus \change{f}$. 
   Since $D$ is a derivative of $\fixpoint_A$, it follows that 
   \begin{itemize}
@@ -1511,15 +1514,34 @@ These two issues are linked, because part of the reason that Cai et al. need
 dependently typed changes is in order to handle their notion of function
 changes.
 
-Our notion of function changes is different to Cai et al.'s because they require the
-function changes to behave like derivatives. To our eyes, this confuses two ways
-in which functions can change: the derivative gives the change in the function
-at a point, as the point moves; whereas a change in the function itself is a
-global change to the function at all points.
+Our notion of function changes is different to Cai et al's, because we consider changes of functions to be what Cai et al. describe as
+\textit{pointwise changes}. As they point out, you can reconstruct their
+function changes from pointwise changes and derivatives, so the two formulations
+are equivalent. This gives us the following correspondences:
+\begin{itemize}
+  \item Our \textit{derivatives of the
+      evaluation map} are Cai et al.'s \textit{function changes}
+  \item Our \textit{function changes} are Cai et al.'s \textit{pointwise differences}
+\end{itemize}
 
-Furthermore, our notion of function changes provides a more natural structure,
-in that it allows us to make the category of change structures into a cartesian
-closed category.
+Our equivalent to Cai et al's ``Incrementalization'' lemma
+(\ref{prop:incrementalization}) is an important lemma for us as well - it is used
+crucially in \ref{sec:fixpointDerivatives}. However, the incremental computation part of
+the lemma simply follows from the fact that we are using the derivative of the
+evaluation map - any derivative will do. It is then a further fact that we can
+find actual definitions for this derivative (\ref{prop:evDerivatives}).
+
+Cai et al. assert that the reason they use their function changes instead of pointwise
+changes as the primitive notion is that a function change has access to more
+information, and so is easier to optimize. In contrast, we find that pointwise
+changes are simpler from a theoretical point of view, and (at least in our
+implementations for Datalog) are not significantly harder to compute. Indeed,
+there is nothing preventing a ``plugin'' for Cai et al.'s system providing the
+ability to create both function changes and pointwise changes depending on which
+is easier to work with.
+
+The equivalence of our presentations means that our work should be compatible
+with ILC.
 
 Our function changes do not need to be dependently typed, so we do not need a
 dependently typed formulation for the cases we have been considering. However,
