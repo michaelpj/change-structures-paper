@@ -329,6 +329,10 @@ forms a Cartesian closed category.
 MPJ: do we have a proof that Cai's formulation doesn't give a CCC? That would be
 nice.
 
+MPJ: actually, I think they *do* form a CCC: you just use the function change
+argument to get the derivative of of ev, and then it works by their
+incrementalization lemma. You can use the same derivative of $\curry{f}$. Bah.
+
 \begin{prop}[Exponentials]
 \label{prop:exponentials}
   Let $A_\cplus$ and $B_\cpluss$ be change structures
@@ -492,46 +496,38 @@ change structures on the same underlying set.
 
   Then the \textit{superposition} of $A_\cplus$ and $A_\cpluss$ is defined as:
   $$A_\cplus \superpose A_\cpluss \defeq \cstruct{A}{
-    (\changes{A}_\cplus \times \changes{A}_\cpluss)^\ast}{\star^\ast}$$
+    (\changes{A}_\cplus + \changes{A}_\cpluss)^\ast}{(\cplus + \cpluss)^\ast}$$
 
-  where $X^\ast$ is the set of finite sequences of $X$, and $a \star (d, e)
-  \defeq a \cplus d \cpluss e$.
+  where $X^\ast$ is the set of finite sequences of $X$.
 \end{defn}
 
 Here we have used the ``trick'' mentioned earlier to ensure that our change
-set has a monoid structure: $\cstruct{A}{(\changes{A}_\cplus \times
+set has a monoid structure: $\cstruct{A}{(\changes{A}_\cplus +
   \changes{A}_\cpluss)}{\star}$ does not have a monoid structure, so we take
 the free extension to finite sequences.
 
 In some cases we may be able to find a more compact representation of the
 superposition change structure, for example $\mathbb{Z}_1 \superpose \mathbb{Z}_2$ is isomorphic to $\mathbb{Z}_3$.
 
-TODO: this isn't quite right, I think it's a coproduct only on the category of algebras over some fixed 
-set $A$. Should we mention this in the paper?
-Superposition is a useful construction, because it is a (weak) coproduct.
-
-\begin{prop}
-  $A \superpose B$ is a weak coproduct of $A$ and $B$.
-\end{prop}
-\begin{proof}
-  TODO - also, I think we may need the component change structures to actually
-  be monoidal here, so that we can lift $\change{b}$ to $(\mzero, \change{b})$ in
-  the superposition.
-  MARIO: either this or define the superposition by $(\changes{A}_\cplus + \changes{A}_\cpluss)^\ast$,
-  which should be equivalent, I think.
-\end{proof}
-
-However, the weakness is not terribly important when considering $\fineOrder$
-(in particular, if we drop to the category corresponding to that order, the
-coproduct is strong again, since there is at most one morphism between any two
-objects). 
+Superposition is a useful construction, because it gives us the coarsest
+change structure finer than its components.
 
 \begin{corollary}
   $A_\cplus \superpose A_\cpluss$ is the least upper bound of $A_\cplus$ and $A_\cpluss$ with respect to $\fineOrder$.
 \end{corollary}
+\begin{proof}
+  The derivative of $id_1: A_\cplus \rightarrow (A_\cplus \superpose
+  A_\cpluss)$ is given by $\derive{id_1}(a, \change{a}) \defeq a \cplus
+  i_1(\change{a})$, and similarly for $id_2$ on the other side.
 
-That is, the superposition is the weakest change structure that is finer than both
-$A_\cplus$ and $A_\cpluss$.
+  TODO: this is super ugly and unclear.
+
+  Let $A_\cplusss$ be greater than $A_\cplus$ and $A_\cpluss$.
+  Then a
+  derivative of $id: (A_\cplus \superpose A_\cpluss) \rightarrow A_\cplusss$ is
+  given by $\derive{id}(a, \change{a}) \defeq a ((\cpluss \derive{id_1}) +
+  (\cplusss \derive{id_2}))^\ast$.
+\end{proof}
 
 This gives us a join-semilattice for change structures on a given set.
 
@@ -1164,6 +1160,7 @@ First we need a couple of lemmas, including a tiny bit of topology.
     \item $f$ is monotone
     \item $f$ is \textit{continuous} under the Alexandrov topologies on $A$ and $B$
     \item for any $A' \subseteq A$, $$f(\bigvee_{A'} a) = \bigvee_{A'} f(a)$$
+  \end{itemize}
 \end{prop}
 
 \begin{prop}
@@ -1470,7 +1467,7 @@ This is a generalization of semi-naive evaluation.
   Datalog program semantics can be incrementally updated with changes to non-recursive relations.
 \end{thm}
 \begin{proof}
-  Corollary of \ref{thm:fixpointDiff} and \ref{corollary:consqDiff}.
+  Corollary of \ref{thm:leastFixpointDiff} and \ref{corollary:consqDiff}.
 \end{proof}
 
 This is a generalization of the view-update problem, including recursive relations.
