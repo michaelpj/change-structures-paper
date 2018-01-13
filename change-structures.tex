@@ -70,7 +70,7 @@ similar, but perhaps we should use a different name. Forward algebra? Change act
 MARIO: I've been calling them ``forward algebras'', but the specific name is not particularly
 important. I would definitely like to have a different name, especially since we often contrast the two.
 
-MPJ: I propose ``change action'', since we're emphasising the semigroup action
+MPJ: I propose ``change action'', since we're emphasising the monoid action
 connection. Really, I think they're just semigroup/monoid actions with a more
 general notion of morphism.
 
@@ -79,21 +79,20 @@ general notion of morphism.
 
   $$\mathcal{A} \defeq \cstruct{A}{\changes{A}}{\cplus}$$
 
-  where $A$ is a set, $\changes{A}$ is a semigroup, and $\cplus$ gives a semigroup action on $A$.
+  where $A$ is a set, $(\changes{A}, \splus, \mzero)$ is a monoid, and $\cplus$ gives a monoid action on $A$.
 
   We will call $A$ the base set, and $\changes{A}$ the change set of the change structure.
 \end{defn}
 
 Elements in the change set represent changes that can be made to elements in the
-base set, with the semigroup action being the operation that ``applies'' the
-change. The requirement that the change set be a semigroup is convenient but in
+base set, with the monoid action being the operation that ``applies'' the
+change. The requirement that the change set be a monoid is convenient but in
 fact inessential: given any set with an action on the base set, we can take the
-free semigroup over the action set to obtain a semigroup action (in fact, we can
-easily extend to a monoid as well).
+free monoid over the action set to obtain a monoid action.
 
-The fact that the change set is a semigroup action reveals the heart of the
+The fact that the change set is a monoid action reveals the heart of the
 change structure definition: the change set is a representation of a
-\textit{transformation semigroup} over the base set, with the semigroup
+\textit{transformation monoid} over the base set, with the monoid
 operation simply being composition.
 
 Here are some recurring examples of changes structures:
@@ -110,7 +109,7 @@ Here are some recurring examples of changes structures:
   \item $\mathbb{Z}_3 \defeq \cstruct{\mathbb{Z}}{\mathbb{Z}}{+}$
   \item $F_2 \defeq$ integers modulo 2 with addition.
 \end{itemize}
-Indeed, any semigroup $(A, \splus)$ can be seen as a change structure $\cstruct{A}{A}{\splus}$. In particular,
+Indeed, any monoid $(A, \splus)$ can be seen as a change structure $\cstruct{A}{A}{\splus}$. In particular,
 for any change structure $\cstruct{A}{\changes{A}}{\cplus}$,
 $\cstruct{\changes{A}}{\changes{A}}{\splus}$ is also a change structure.
 
@@ -175,7 +174,7 @@ $\mathbb{Z}_3$ does, but $\mathbb{Z}_1$ does not).
   Let $A$ be a change structure. Then the following are equivalent:
   \begin{itemize}
     \item $A$ is complete.
-    \item The semigroup action is transitive.
+    \item The monoid action is transitive.
     \item There is a minus operator on $A$.
   \end{itemize}
 \end{prop}
@@ -192,7 +191,7 @@ MPJ: I think this should have a different name (I guess we could use ``free'') -
 extensionality makes me think of something like ``the element is characterized
 by its action''.
 However, that's probably not a very interesting notion, since it actually gives us a
-semigroup congruence, so we can always quotient out by it.
+monoid congruence, so we can always quotient out by it.
 MARIO: Agreed, I've been calling it ``tightness'' (in the sense that the change set
 is as small as it can be), but I don't really like the name, so I'm open to any
 alternatives.
@@ -207,7 +206,7 @@ Many change structures are not extensional, for example $F_2$.
   Let $A$ be a change structure. Then the following are equivalent.
   \begin{itemize}
     \item $A$ is extensional.
-    \item The semigroup action is free.
+    \item The monoid action is free.
     \item The equalizer of any two elements is empty.
   \end{itemize}
 \end{prop}
@@ -342,7 +341,7 @@ nice.
     \rightarrow \changes{B}}{\lambda d. \lambda f. \lambda a. f(a) \cpluss
     d(a)}$ is a change structure on $A \difffunc B$ and the exponential object.
 
-  The semigroup structure on $A \rightarrow \changes{B}$ is the semigroup
+  The monoid structure on $A \rightarrow \changes{B}$ is the monoid
   structure on $\changes{B}$ lifted pointwise, so we will typically reuse the
   change operator for $B$ for $A \rightarrow \changes{B}$.
 \end{prop}
@@ -412,18 +411,18 @@ Now we can give the proof of \ref{prop:exponentials}.
   
   Let
   $$\derive{\curry{f}}(a, \change{a}) \defeq \lambda b. \derive{f}((a, b),
-  (\change{a}, 0))$$
+  (\change{a}, \mzero))$$
   
   Then
   \begin{itemize}
     \item[ ]$\curry{f}(a \cplus \change{a})$
     \item[=]\{ definition of $\curry{f}$ \}\\
       $\lambda b. f((a \cplus \change{a}, b))$
-    \item[=] $\lambda b. f((a, b) \cplus (\change{a}, 0))$
+    \item[=] $\lambda b. f((a, b) \cplus (\change{a}, \mzero))$
     \item[=]\{ since $f$ is differentiable \}\\
-      $\lambda b. f((a, b)) \cplus \derive{f}((a, b), (\change{a}, 0))$
+      $\lambda b. f((a, b)) \cplus \derive{f}((a, b), (\change{a}, \mzero))$
     \item[=]\{ definition of $\changes{(A \rightarrow B)}$ \}\\
-      $(\lambda b. f((a, b))) \cplus (\lambda b. \derive{f}((a, b), (\change{a}, 0)))$
+      $(\lambda b. f((a, b))) \cplus (\lambda b. \derive{f}((a, b), (\change{a}, \mzero)))$
     \item[=]\{ definition of $\derive{\curry{f}}$ \}\\
       $\curry{f}(a) \cplus \derive{\curry{f}}(a, \change{a})$
   \end{itemize}
@@ -491,8 +490,8 @@ change structures on the same underlying set.
 \end{defn}
 
 Here we have used the ``trick'' mentioned earlier to ensure that our change
-set has a semigroup structure: $\cstruct{A}{(\changes{A}_\cplus \times
-  \changes{A}_\cpluss)}{\star}$ does not have a semigroup structure, so we take
+set has a monoid structure: $\cstruct{A}{(\changes{A}_\cplus \times
+  \changes{A}_\cpluss)}{\star}$ does not have a monoid structure, so we take
 the free extension to finite sequences.
 
 In some cases we may be able to find a more compact representation of the
@@ -507,7 +506,7 @@ Superposition is a useful construction, because it is a (weak) coproduct.
 \end{prop}
 \begin{proof}
   TODO - also, I think we may need the component change structures to actually
-  be monoidal here, so that we can lift $\change{b}$ to $(0, \change{b})$ in
+  be monoidal here, so that we can lift $\change{b}$ to $(\mzero, \change{b})$ in
   the superposition.
   MARIO: either this or define the superposition by $(\changes{A}_\cplus + \changes{A}_\cpluss)^\ast$,
   which should be equivalent, I think.
@@ -569,7 +568,7 @@ $A \times A$. Conversely, any such change structure is necessarily complete.
 
 TODO: I think this is true. It also seems perhaps just a trivial reframing of
 things - is it actually letting us do anything more nicely? Also this applies to
-any semigroup action, not just change structures.
+any monoid action, not just change structures.
 
 MARIO: It's definitely true, although the proof may depend (as usual) on the axiom of choice.
 I think you can state it more simply by saying that there is a full and faithful functor from
@@ -839,13 +838,13 @@ superposition of $L_\vee \superpose L_\wedge$.
   $$L_\superpose \defeq \cstruct{L}{L \times L}{\twist}$$
   where
   $$a \twist (p, q) \defeq (a \vee p) \wedge \neg q$$
-  and the semigroup operator is
+  and the monoid operator is
   $$(p, q) \splus (r, s) \defeq ((p \wedge \neg q) \vee r, (q \wedge \neg r) \vee s)$$
 
   Then $L_\superpose$ is isomorphic to $L_\vee \superpose L_\wedge$.
 \end{prop}
 \begin{proof}
-  First we show that the semigroup action property holds:
+  First we show that the monoid action property holds:
   \begin{itemize}
     \item[ ]$a \twist \left[(p, q) \splus (r, s)\right]$
     \item[=]$a \twist ((p \wedge \neg q) \vee r, (q \wedge \neg r) \vee s)$
@@ -935,7 +934,7 @@ algebras only have one of the de Morgan rules, the other introduces a double neg
 think would block us. 
 
 We can think of $L_\superpose$ as tracking changes as pairs of ``upwards'' and
-``downwards'' changes, where the semigroup action simply applies both.
+``downwards'' changes, where the monoid action simply applies both.
 
 Boolean algebras also have clean definitions for maximal and minimal minus
 operators.
