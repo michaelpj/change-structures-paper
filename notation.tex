@@ -2,6 +2,7 @@
 
 \theoremstyle{plain}
 \newtheorem{thm}{Theorem}
+\newtheorem{lemma}[thm]{Lemma}
 
 \theoremstyle{definition}
 \newtheorem{prop}[thm]{Proposition}
@@ -29,11 +30,29 @@
 \newcommand{\powerset}[1]{\mathcal{P}(#1)}
 \newcommand{\denote}[1]{\llbracket #1 \rrbracket} 
 \newcommand{\ev}{\operatorname{ev}} 
+\newcommand{\doubleplus}{\ensuremath{\mathbin{+\mkern-10mu+}}}
+\newcommand{\pair}[2]{\left\langle {#1}, {#2} \right\rangle}
 
 % Change structures
+% Generic "thing in a circle" operator
+\makeatletter
+\newcommand\cplussym
+{
+  \mathpalette\@incircbin
+}
+\newcommand\@incircbin[2]
+{
+  \mathbin
+  {
+    \ooalign{\hidewidth$#1#2$\hidewidth\crcr$#1\bigcirc$}%
+  }
+}
+\makeatother
+
 \newcommand{\cplus}{\oplus}
 \newcommand{\cpluss}{\boxplus}
 \newcommand{\cplusss}{\odot}
+\newcommand{\cplusvee}{\cplussym{\vee}}
 \newcommand{\cminus}{\ominus}
 
 \newcommand{\splus}{\cdot}

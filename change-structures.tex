@@ -74,6 +74,12 @@ MPJ: I propose ``change action'', since we're emphasising the monoid action
 connection. Really, I think they're just semigroup/monoid actions with a more
 general notion of morphism.
 
+MARIO: Can we use something that references the monoid? Like `monoid system' or
+`monoid algebra' or `monoid thingamajig'? So we can talk about group systems, vector
+space systems and similar.
+I'd just call them monoid actions, but that usually refers to the function itself, not
+the whole thing.
+
 \begin{defn}[Change structures]
   A \textit{change structure} is defined as:
 
@@ -111,7 +117,18 @@ Here are some recurring examples of changes structures:
 \end{itemize}
 Indeed, any monoid $(A, \splus)$ can be seen as a change structure $\cstruct{A}{A}{\splus}$. In particular,
 for any change structure $\cstruct{A}{\changes{A}}{\cplus}$,
-$\cstruct{\changes{A}}{\changes{A}}{\splus}$ is also a change structure.
+$\cstruct{\changes{A}}{\changes{A}}{\splus}$ is also a change structure. Many practical change structures
+can be constructed in this way:
+\begin{itemize}
+  \item $[A]$, the type of lists of elements of type $A$, is a monoid under
+  list concatenation. Hence it defines a change structure $\cstruct{[A]}{[A]}{\doubleplus}$.
+  \item $\{A\}$, the type of sets, is a monoid under either set union or intersection,
+  and thus it defines change structures $\cstruct{\{A\}}{\{A\}}{\cup},\cstruct{\{A\}}{\{A\}}{\cap}$
+\end{itemize}
+
+Many other notions in computer science can be naturally understood in terms of change structures, e.g. databases
+and database updates, files and \textit{diff}s, Git repositories and commits, even video compression
+algorithms that encode a frame as a series of changes to the previous frame.
 
 Given change structures and functions between them, we have a natural notion of a derivative, following \cite{cai2014changes}:
 
@@ -163,7 +180,11 @@ Cai et al.~\cite{cai2014changes} include a ``minus operator'' in their definitio
 
 We have omitted minus operators from our definition because
 there are many interesting change structures that do not have them (for example,
-$\mathbb{Z}_3$ does, but $\mathbb{Z}_1$ does not).
+$\mathbb{Z}_3$ does, but $\mathbb{Z}_1$ does not). Indeed, requiring change structures to provide
+a minus operator is overly restrictive, and would often force one to adopt unwieldy representations
+for change sets (for example, the change structures described before on sets and lists are clearly
+useful for incremental computation on streams, yet they do not admit minus operators - instead, one would
+be forced to work with e.g. multisets admitting negative arities, as Cai et al.~\cite{cai2014changes} do).
 
 \begin{defn}[Completeness]
   A change structure is \textit{complete} if for any $a, b \in A$, there is
@@ -176,8 +197,11 @@ $\mathbb{Z}_3$ does, but $\mathbb{Z}_1$ does not).
     \item $A$ is complete.
     \item The monoid action is transitive.
     \item There is a minus operator on $A$.
+    \item Any function from any change structure into $A$ is differentiable.
   \end{itemize}
 \end{prop}
+This last property is of the utmost importance, since we are often concerned with the differentiability
+of functions.
 
 \begin{defn}[Minus derivative]
   Given a minus operator $\cminus$, we have a derivative for any function $f$,
@@ -207,6 +231,7 @@ Many change structures are not extensional, for example $F_2$.
   \begin{itemize}
     \item $A$ is extensional.
     \item The monoid action is free.
+    MARIO: What notion of equalizer is this?
     \item The equalizer of any two elements is empty.
   \end{itemize}
 \end{prop}
@@ -216,7 +241,7 @@ Extensionality gives us uniqueness of derivatives:
   Let $B$ be an extensional change structure, and $f: A \rightarrow B$. Then $f$ has at
   most one derivative.
 
-  Conversely, if $\textrm{id}: B \rightarrow B$ has at most one derivative, then
+  Conversely, if $\textrm{id}: B \rightarrow B$ has exactly one derivative, then
   $B$ is extensional.
 \end{prop}
 
@@ -230,6 +255,9 @@ Extensionality gives us uniqueness of derivatives:
   change structures and the morphisms are differentiable functions. We denote
   the set of differentiable functions between $A$ and $B$ as $A \difffunc B$.
 \end{defn}
+
+MARIO: I think we should move all the discusion of S-acts to the final section
+on related work.
 
 We can now see the difference between $\cat{CStruct}$ and the category of
 S-acts $\cat{SAct}$: the objects of $\cat{SAct}$ all maintain the same monoid
@@ -263,22 +291,13 @@ whose derivative is $\lambda a. \lambda d. d$.
   Let $Y$ be a change structure, and $f_1: Y \rightarrow A$, $f_2: Y
   \rightarrow B$ be morphisms.
 
-  Then the product morphism in $\cat{Set}$, $f_1 \times f_2$ is the product
-  morphism in $\cat{CStruct}$.
-
-  First, we show it is a morphism (i.e.) is differentiable. It can easily be
-  shown that $\derive{f_1} \times \derive{f_2}$ is a derivative of $f_1 \times f_2$.
+  Then the product morphism in $\cat{Set}$, $\pair{f_1}{f_2}$ is the product
+  morphism in $\cat{CStruct}$. It can easily be
+  shown that $\derive{f_1} \times \derive{f_2}$ is a derivative of $f_1 \times f_2$,
+  hence $\pair{f_1}{f_2}$ is a morphism in $\cat{SAct}$.
 
   Commutativity and uniqueness follow from the corresponding properties of the
   product in the $\cat{Set}$.
-
-  MARIO: This is actually a bit trickier, since we also need to show that e.g. 
-  $(A \times B, \discrete)$ is not a product. We should also mention that any change
-  structure with the same reachability order as $\Delta A \times \Delta B$ is a possible
-  product (since they are isomorphic).
-
-  MPJ: actually, I think it is this simple. We don't have to show that nothing else
-  is a product - it's just that if they are then they're isomorphic.
 \end{proof}
 
 \begin{prop}[Equalizers]
@@ -446,12 +465,43 @@ Conveniently, our proof of \ref{prop:exponentials} gives us actual derivatives f
   similar but begins by taking the derivative of $f \cplus \change{f}$.
 \end{proof}
 
-\begin{thm}
+\begin{corollary}
   $\cat{CStruct}$ is a Cartesian closed category.
-\end{thm}
+\end{corollary}
 
-MARIO: Can I be reminded of why we don't have coproducts? Extensional forward algebras
-don't, but the argument doesn't apply to arbitrary ones, I think.
+\begin{lemma}
+  The product $A \times B$ of change structures $A$ and $B$ is extensional if and only if both $A$ and $B$ are.
+  Furthermore, whenever $A$ and $B$ are complete, then so is $A \times B$.
+
+  The exponential object $A \Rightarrow B$ of change structures $A$ and $B$ is extensional if $B$ is. 
+  Furthermore, whenever $B$ is complete, then so is $A \Rightarrow B$.
+\end{lemma}
+
+Thus, the category of extensional change structures is Cartesian closed as well.
+
+\begin{proof}[Coproducts]
+  Let $A = \cstruct{A}{\changes{A}}{\cplus}$ and $B =
+  \cstruct{B}{\changes{B}}{\cpluss}$ be change structures.
+
+  Then $A + B \defeq \cstruct{A + B}{\changes{A} \times
+  \changes{B}}{\cplusvee}$ is their categorical coproduct, with $\cplusvee$ defined as:
+  $$
+    i_1 a \cplusvee (\change{a}, \change{b}) \defeq \iota_1 (a \cplus \change{a})\\
+    i_2 b \cplusvee (\change{a}, \change{b}) \defeq \iota_2 (b \cplus \change{b})
+  $$
+\end{proof}
+\begin{proof}
+  Let $Y$ be a change structure, and $f_1 : A \rightarrow Y$, $f_2 : B
+  \rightarrow Y$ be differentiable maps.
+
+  As before, it suffices to prove that the universal map $[f_1, f_2]$ in $\cat{Set}$ is a differentiable
+  map from $\cstruct{A + B}{\changes{A} \times \changes{B}}{\cplusvee}$ into $Y$. It's easy to see 
+  that the following morphism is a derivative:
+  \begin{align*}
+    [f_1, f_2]' (i_1 a, (\change{a}, \change{b})) \defeq f_1'(a, \change{a})\\
+    [f_1, f_2]' (i_2 b, (\change{a}, \change{b})) \defeq f_2'(b, \change{b})\\
+  \end{align*}
+\end{proof}
 
 \subsection{Ordering change structures}
 
@@ -496,9 +546,8 @@ change structures on the same underlying set.
 
   Then the \textit{superposition} of $A_\cplus$ and $A_\cpluss$ is defined as:
   $$A_\cplus \superpose A_\cpluss \defeq \cstruct{A}{
-    (\changes{A}_\cplus + \changes{A}_\cpluss)^\ast}{(\cplus + \cpluss)^\ast}$$
-
-  where $X^\ast$ is the set of finite sequences of $X$.
+    (\changes{A}_\cplus \times \changes{A}_\cpluss)^\ast}{(\cplus + \cpluss)^\ast}$$
+  where $X^\ast$ denotes the set of finite sequences of elements $X$.
 \end{defn}
 
 Here we have used the ``trick'' mentioned earlier to ensure that our change
@@ -507,7 +556,31 @@ set has a monoid structure: $\cstruct{A}{(\changes{A}_\cplus +
 the free extension to finite sequences.
 
 In some cases we may be able to find a more compact representation of the
-superposition change structure, for example $\mathbb{Z}_1 \superpose \mathbb{Z}_2$ is isomorphic to $\mathbb{Z}_3$.
+superposition change structure, for example $\mathbb{Z}_1 \superpose \mathbb{Z}_2$ is 
+isomorphic to $\mathbb{Z}_3$. The following result shows one way of finding such representations which
+we have found helpful in practice:
+
+\begin{lemma}
+  Let $\changes{A}_\cplus, \cplus$ and $\changes{A}_\cpluss, \cpluss$ be two different change structures on
+  a set $A$. Suppose there exists a function
+  $\wr : \changes{A}_\cplus \times \changes{A}_\cpluss \rightarrow \changes{A}_\cplus$ satisfying for
+  all $a \in A$:
+  $$
+    a \cplus \change{a} \cpluss \change{b} \cplus \change{c}
+    = a \cplus (\change{a} + \wr(\change{c},\change{b})) \cpluss \change{b}
+  $$
+
+  Then $\cstruct{A}{\changes{A}_\cplus \times \changes{A}_\cpluss}{\cplussym{\wedge}}$
+  is a change structurewith monoidal structure given by:
+  $$
+    (\change{a}, \change{b}) + (\change{c}, \change{d}) \defeq 
+    (\change{a} + \wr(\change{c}, \change{b}), \change{b} + \change{d})
+  $$
+  and action $\cplussym{\wedge}$ defined as:
+  $$
+    a \cplussym{\wedge} (\change{a}, \change{b}) \defeq a \cplus \change{a} \cpluss \change{b}
+  $$
+\end{lemma}
 
 Superposition is a useful construction, because it gives us the coarsest
 change structure finer than its components.
@@ -517,16 +590,18 @@ change structure finer than its components.
 \end{corollary}
 \begin{proof}
   The derivative of $id_1: A_\cplus \rightarrow (A_\cplus \superpose
-  A_\cpluss)$ is given by $\derive{id_1}(a, \change{a}) \defeq a \cplus
-  i_1(\change{a})$, and similarly for $id_2$ on the other side.
-
-  TODO: this is super ugly and unclear.
+  A_\cpluss)$ is given by $\derive{id_1}(a, \change{a}) \defeq 
+  i_1(\change{a})$, and similarly for $id_2$ on the other side. Hence $A_\cplus \superpose A_\cpluss$ 
+  is an upper bound of $A_\cplus$ and $A_\cpluss$.
 
   Let $A_\cplusss$ be greater than $A_\cplus$ and $A_\cpluss$.
   Then a
   derivative of $id: (A_\cplus \superpose A_\cpluss) \rightarrow A_\cplusss$ is
-  given by $\derive{id}(a, \change{a}) \defeq a ((\cpluss \derive{id_1}) +
-  (\cplusss \derive{id_2}))^\ast$.
+  given by :
+  $$
+  \derive{id}(a, (\change{a_i}, \change{b_i})) \defeq 
+    \sum_i (\derive{id}(a, \change{a_i}) + \derive{id}(a, \change{b_i}))
+  $$
 \end{proof}
 
 This gives us a join-semilattice for change structures on a given set.
@@ -559,11 +634,14 @@ there is a natural preorder on the base set of a change structure, given by reac
 \end{defn}
 
 The reachability order of a complete change structure on $A$ is precisely the trivial relation
-$A \times A$. Conversely, any such change structure is necessarily complete.
+$A \times A$. Conversely, any such change structure is necessarily complete. The correspondence
+between a change structure and its corresponding reachability preorder actually gives rise to
+a faithful functor $Reach : \cat{CStruct} \rightarrow \cat{PreOrd}$ that acts as the identity
+on morphisms.
 
 \begin{prop}
   A function is differentiable iff it is monotonic with respect to the
-  reachability order.
+  reachability order. Equivalently, the functor $Reach$ is full.
 \end{prop}
 
 \begin{corollary}
@@ -571,29 +649,51 @@ $A \times A$. Conversely, any such change structure is necessarily complete.
   order are isomorphic.
 \end{corollary}
 
-TODO: I think this is true. It also seems perhaps just a trivial reframing of
-things - is it actually letting us do anything more nicely? Also this applies to
-any monoid action, not just change structures.
-
-MARIO: It's definitely true, although the proof may depend (as usual) on the axiom of choice.
-I think you can state it more simply by saying that there is a full and faithful functor from
-change actions (with a zero) into preorders, but I'm not sure what it buys us. Re. semigroup actions,
-if I recall correctly usually one requires that maps be semigroup homomorphisms, which we don't, 
-so this is actually not true.
-
-MARIO: Also, there's an equivalence of categories between CStruct and PreOrd, which actually proves
-the existence of all limits and colimits in CStruct, but not in a ``convenient'' form.
 \begin{corollary}
   Any function from a discrete change structure or into a complete change
   structure is differentiable.
 \end{corollary}
 
 Conversely, any preorder $\leq$ on some set $A$ induces the corresponding change structure
-$A_\leq$.
+$A_\leq$. This gives rise to a (full and faithful) functor $\{\_\}_\leq : \cat{PreOrd} \rightarrow \cat{CStruct}$
 
-TODO: I suspect this forms a functor which is right adjoint to the forgetful functor into $\cat{PreOrd}$.
-Conversely, I think there is a left adjoint which maps $A, \leq$ to $A, A \Rightarrow_\leq A$ ($\Rightarrow_\leq$
-denoting the set of $\leq$-monotone functions) - the isomorphism of Hom-sets is obvious, but I can't prove naturality.
+\begin{thm}[Equivalence to $\cat{PreOrd}$]
+  The functor $Reach$ from $\cat{CStruct}$ to $\cat{PreOrd}$ together with the 
+  functor $\{\_\}_\leq$ in the opposite direction form an equivalence of categories.
+\end{thm}
+\begin{proof}
+  On one hand, if $U$ is a preorder, it's trivial to check that $Reach (\{U\}_\leq) = U$.
+
+  On the other hand, we need to find a natural isomorphism between $\{\_\}_\leq \circ Reach$
+  and the identity functor. First, we note that the base set for the change structure $\{Reach(A)\}$ is
+  the same as the base set for $A$. We claim that the desired natural isomorphism is given by the
+  the identity on the base sets. It remains to prove that the identities
+  $id_A : A \rightarrow \{Reach(A)\}$ and $id_{\reachOrder} : \{Reach(A)\} \rightarrow A$
+  is indeed differentiable in both directions.
+
+  On one direction, a derivative is given by
+  $$
+    \derive{id}_A(a, \change{a}) \defeq (a, a \cplus \change{a})
+  $$
+  Conversely, let $(a, b) \in \reachOrder$. By definition of $\reachOrder$, there is some
+  $\change{}_{(a, b)} \in \changes{A}$ satisfying $a \cplus \change{}_{(a,b)} = b$. Hence we set the
+  derivative to be
+  $$
+    \derive{id}_{\reachOrder}(a, (a, b)) \defeq \change{}_{(a, b)}
+  $$
+  MARIO: the axiom of choice strikes again...
+\end{proof}
+
+Since $\cat{PreOrd}$ is a reflective subcategory of $\cat{Set}$, this gives us a much shorter proof
+of the existence of limits and colimits in $\cat{CStruct}$.
+\begin{corollary}
+  The category $\cat{CStruct}$ has all limits, colimits and exponential objects. 
+\end{corollary}
+
+It may seem redundant, then, to have explicitly constructed limits, colimits and exponentials
+in $\cat{CStruct}$ as we have done before. It is necessary to do so, however, if one wants to
+actually perform incremental computation on those structures, as the specific representations
+of limits obtained by applying this equivalence are wasteful, unwieldy and impractical.
 
 \subsubsection{Monotone functions}
 
