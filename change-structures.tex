@@ -1041,17 +1041,11 @@ all the derivatives on Boolean algebras:
   L$ a function. Then the derivatives of $f$ are precisely those functions
   $\derive{f}$ such that
   $$
-  (
-    f(a \cplus \change{a}) \wedge \neg f(a), 
-    f(a)
-  )
+  f(a \cplus \change{a}) \cminus_\bot f(a)
   \changeOrder
   \derive{f}(a, \change{a})
   \changeOrder
-  (
-    f(a \cplus \change{a}), 
-    f(a) \wedge \neg f(a \cplus \change{a})
-  )
+  f(a \cplus \change{a}) \cminus_\top f(a)
   $$
 \end{corollary}
 
