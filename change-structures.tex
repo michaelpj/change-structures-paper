@@ -3,13 +3,17 @@
 \input{preamble-standard}
 %\input{preamble-acm}
 
+
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{amssymb}
 \usepackage{mathtools}
 \usepackage{stmaryrd}
+\usepackage{biblatex}
 
 \input{notation}
+
+\addbibresource{paper.bib}
 
 \begin{document}
 
@@ -22,7 +26,7 @@
 
 \section{Introduction}
 
-The paper of Cai et al.~\cite{cai2014changes} defines compelling notions
+The paper of \textcite{cai2014changes} defines compelling notions
 of change structure and derivative, and use them to provide a composable framework for
 evaluating incremental lambda calculus programs provided you have a ``plugin'' for the
 primitive operations of your program.
@@ -135,7 +139,7 @@ Many other notions in computer science can be naturally understood in terms of c
 and database updates, files and \textit{diff}s, Git repositories and commits, even video compression
 algorithms that encode a frame as a series of changes to the previous frame.
 
-Given change structures and functions between them, we have a natural notion of a derivative, following \cite{cai2014changes}:
+Given change structures and functions between them, we have a natural notion of a derivative, following \textcite{cai2014changes}:
 
 \begin{defn}[Derivatives]
   A \textit{derivative} of a function $f: A_\cplus \rightarrow B_\cpluss$ is a function $\derive{f}: A \times \changes{A} \rightarrow
@@ -177,7 +181,7 @@ connection.
 
 \subsection{Minus operators and completeness}
 
-Cai et al.~\cite{cai2014changes} include a ``minus operator'' in their definition of change structures. 
+\textcite{cai2014changes} include a ``minus operator'' in their definition of change structures. 
 
 \begin{defn}[Minus operator]
   A \textit{minus operator} is a function $\cminus: A \times A \rightarrow \changes{A}$ such that $a \cplus (b \cminus a) = b$.
@@ -189,7 +193,7 @@ $\mathbb{Z}_3$ does, but $\mathbb{Z}_1$ does not). Indeed, requiring change stru
 a minus operator is overly restrictive, and would often force one to adopt unwieldy representations
 for change sets (for example, the change structures described before on sets and lists are clearly
 useful for incremental computation on streams, yet they do not admit minus operators - instead, one would
-be forced to work with e.g. multisets admitting negative arities, as Cai et al.~\cite{cai2014changes} do).
+be forced to work with e.g. multisets admitting negative arities, as \textcite{cai2014changes} do).
 
 \begin{defn}[Completeness]
   A change structure is \textit{complete} if for any $a, b \in A$, there is
@@ -447,13 +451,13 @@ Conveniently, our proof of \ref{prop:exponentials} gives us actual derivatives f
   $\cat{CStruct}$ is a Cartesian closed category.
 \end{corollary}
 
-\begin{lemma}
+\begin{prop}
   The product $A \times B$ of change structures $A$ and $B$ is thin if and only if both $A$ and $B$ are.
   Furthermore, whenever $A$ and $B$ are complete, then so is $A \times B$.
 
   The exponential object $A \Rightarrow B$ of change structures $A$ and $B$ is thin if $B$ is. 
   Furthermore, whenever $B$ is complete, then so is $A \Rightarrow B$.
-\end{lemma}
+\end{prop}
 
 Thus, the category of thin change structures is Cartesian closed as well.
 
@@ -536,7 +540,7 @@ superposition change structure, for example $\mathbb{Z}_1 \superpose \mathbb{Z}_
 isomorphic to $\mathbb{Z}_3$. The following result shows one way of finding such representations which
 we have found helpful in practice:
 
-\begin{lemma}
+\begin{prop}
   Let $\changes{A}_\cplus, \cplus$ and $\changes{A}_\cpluss, \cpluss$ be two different change structures on
   a set $A$. Suppose there exists a function
   $\wr : \changes{A}_\cplus \times \changes{A}_\cpluss \rightarrow \changes{A}_\cplus$ satisfying for
@@ -556,7 +560,7 @@ we have found helpful in practice:
   $$
     a \cplussym{\wedge} (\change{a}, \change{b}) \defeq a \cplus \change{a} \cpluss \change{b}
   $$
-\end{lemma}
+\end{prop}
 
 Superposition is a useful construction, because it gives us the coarsest
 change structure finer than its components.
@@ -1417,7 +1421,7 @@ whereas the maximal derivative contains all the elements that have \emph{ever}
 been added or removed. This means that \ref{cor:booleanCharacterization} allows
 us to \emph{approximate} the most precise derivative while still being
 guaranteed that the result is sound.\footnote{The idea of using an approximation
-to the precise derivative, and a soundness condition, appears in \cite{bancilhon1986amateur}.}
+to the precise derivative, and a soundness condition, appears in \textcite{bancilhon1986amateur}.}
 
 There is also the question of how to compute the derivative. Fortunately, the
 maximal and minimal minus operators are actually representable as pairs of terms
@@ -1552,37 +1556,38 @@ aggregation and other primitives with interesting derivatives.
 
 \subsubsection{Cai et al.'s change structures}
 
-The seminal paper in this area is Cai et al.~\cite{cai2014changes}. We use the notions
+The seminal paper in this area is \textcite{cai2014changes}. We use the notions
 defined in that excellent paper heavily, but we deviate in two regards: the use of
 dependent types, and the nature of function changes.
 
-These two issues are linked, because part of the reason that Cai et al. need
+These two issues are linked, because part of the reason that \citeauthor{cai2014changes} need
 dependently typed changes is in order to handle their notion of function
 changes.
 
-Our notion of function changes is different to Cai et al's, because we consider changes of functions to be what Cai et al. describe as
+Our notion of function changes is different to \citeauthor{cai2014changes}'s,
+because we consider changes of functions to be what \citeauthor{cai2014changes} describe as
 \textit{pointwise changes}. As they point out, you can reconstruct their
 function changes from pointwise changes and derivatives, so the two formulations
 are equivalent. This gives us the following correspondences:
 \begin{itemize}
   \item Our \textit{derivatives of the
-      evaluation map} are Cai et al.'s \textit{function changes}
-  \item Our \textit{function changes} are Cai et al.'s \textit{pointwise differences}
+      evaluation map} are \citeauthor{cai2014changes}'s \textit{function changes}
+  \item Our \textit{function changes} are \citeauthor{cai2014changes}'s \textit{pointwise differences}
 \end{itemize}
 
-Our equivalent to Cai et al's ``Incrementalization'' lemma
+Our equivalent to \citeauthor{cai2014changes}'s ``Incrementalization'' lemma
 (\ref{prop:incrementalization}) is an important lemma for us as well - it is used
 crucially in \ref{sec:fixpointDerivatives}. However, the incremental computation part of
 the lemma simply follows from the fact that we are using the derivative of the
 evaluation map - any derivative will do. It is then a further fact that we can
 find actual definitions for this derivative (\ref{prop:evDerivatives}).
 
-Cai et al. assert that the reason they use their function changes instead of pointwise
+\citeauthor{cai2014changes} assert that the reason they use their function changes instead of pointwise
 changes as the primitive notion is that a function change has access to more
 information, and so is easier to optimize. In contrast, we find that pointwise
 changes are simpler from a theoretical point of view, and (at least in our
 implementations for Datalog) are not significantly harder to compute. Indeed,
-there is nothing preventing a ``plugin'' for Cai et al.'s system providing the
+there is nothing preventing a ``plugin'' for \citeauthor{cai2014changes}'s system providing the
 ability to create both function changes and pointwise changes depending on which
 is easier to work with.
 
@@ -1609,13 +1614,13 @@ to leave it for future work.
 \subsubsection{S-acts}
 
 S-acts and their categorical structure have received a fair amount of attention
-over the years (Kilp, Knauer, and Mikhalev~\cite{kilp2000monoids} is a good
+over the years (\textcite{kilp2000monoids} is a good
 overview). However, there is a key difference between our $\cat{CStruct}$ and the category of
 S-acts $\cat{SAct}$: the objects of $\cat{SAct}$ all maintain the same monoid
 structure, whereas we are interested in changing both the base set \emph{and} the structure of the act.
 
 There are similarities: if we compare the definition of a $\cat{SAct}$ ``act-preserving''
-homeomorphism (as in \cite{kilp2000monoids}) we can see that the structure is
+homeomorphism \footcite[See][]{kilp2000monoids} we can see that the structure is
 quite similar to the definition of differentiability:
 
 $$f(a \splus s) = f(a) \splus s$$
@@ -1633,7 +1638,7 @@ whose derivative is $\lambda a. \lambda d. d$.
 
 \subsubsection{Derivatives of fixpoints}
 
-Arntzenius~\cite{arntz2017fixpoints} gives a derivative operator for fixpoints. However,
+\textcite{arntz2017fixpoints} gives a derivative operator for fixpoints. However,
 it uses the definition of function changes from Cai et al., whereas
 we have a different notion of function changes, so the result is unfortunately
 inapplicable. In addition, we prove our result for all functions, not just
@@ -1644,26 +1649,26 @@ monotone functions.
 \subsubsection{Incremental evaluation}
 
 The earliest explication of semi-naive evaluation as a derivative process
-appears in Bancilhon~\cite{bancilhon1986naive}. The idea of using an approximate derivative
+appears in \textcite{bancilhon1986naive}. The idea of using an approximate derivative
 and the requisite soundness condition appears as a throwaway comment in
-Bancilhon and Ramakrishnan~\cite{bancilhon1986amateur}, although as far as we know nobody has since
+\textcite{bancilhon1986amateur}, although as far as we know nobody has since
 developed that approach. 
 
 \subsubsection{Incremental updates}
 
 There is existing literature on incremental updates to relational algebra
-expressions. In particular Griffin et al.~\cite{griffin1997improved} following
-Qian and Wiederhold~\cite{qian1991incremental} shows the essential insight that it is necessary to
+expressions. In particular \textcite{griffin1997improved} following
+\textcite{qian1991incremental} shows the essential insight that it is necessary to
 track both an ``upwards'' and a ``downwards'' difference, and produces a set of
 rules that look quite similar to those we derive in \ref{thm:concreteDatalog}.
 
-Where our presentation improves over Griffin et al. is mainly in
+Where our presentation improves over \citeauthor{griffin1997improved} is mainly in
 the genericity of the presentation. Our machinery works for a wider variety of
 algebraic structures, and it is clear how the parts of the proof work together
 to produce the result. In addition, it is easy to see how to extend the proofs
 to cover additional language constructs.
 
-Griffin et al. are interested in \emph{minimal} changes. These correspond to
+\citeauthor{griffin1997improved} are interested in \emph{minimal} changes. These correspond to
 minimal derivatives in the sense of \ref{cor:booleanCharacterization}. However,
 while minimality (or proximity to minimality) is desirable (since it decreases
 the size of the derivatives as relations), it is important to be able to trade
@@ -1682,19 +1687,19 @@ know, this is unsolved in general. Most of the attempts to solve it have
 focussed on Datalog rather than relational algebra, since Datalog is designed to
 make heavy use of recursion. 
 
-Gupta et al.~\cite{gupta1995maintenance} has a good summary of the approaches so far.
+\textcite{gupta1995maintenance} has a good summary of the approaches so far.
 
 WRITE MORE HERE
 
 \subsubsection{Embedding Datalog}
 
-Datafun (Arntzenius~\cite{arntz2016datafun}) is a functional programming language that embeds
+Datafun (\textcite{arntz2016datafun}) is a functional programming language that embeds
 Datalog, allowing significant improvements in genericity, such as the use of
 higher-order functions. Since we have directly defined a change structure and
 derivative operator for Datalog, our work could be used as a ``plugin'' in the sense
-of Cai et al., allowing Datafun to compute its internal fixpoints
+of \citeauthor{cai2014changes}, allowing Datafun to compute its internal fixpoints
 incrementally, but also allowing Datafun expressions to be fully incrementally updated.
 
-\bibliography{paper}
+\printbibliography
 
 \end{document}
