@@ -80,6 +80,11 @@ space systems and similar.
 I'd just call them monoid actions, but that usually refers to the function itself, not
 the whole thing.
 
+MPJ: I do like the idea of just calling them monoid actions, but I think having
+a different name is useful because e.g. it gives us something to call our
+category, which has some additional assumptions on morphisms that aren't
+standard for monoid actions.
+
 \begin{defn}[Change structures]
   A \textit{change structure} is defined as:
 
@@ -200,6 +205,7 @@ be forced to work with e.g. multisets admitting negative arities, as Cai et al.~
     \item Any function from any change structure into $A$ is differentiable.
   \end{itemize}
 \end{prop}
+
 This last property is of the utmost importance, since we are often concerned with the differentiability
 of functions.
 
@@ -216,9 +222,11 @@ extensionality makes me think of something like ``the element is characterized
 by its action''.
 However, that's probably not a very interesting notion, since it actually gives us a
 monoid congruence, so we can always quotient out by it.
+
 MARIO: Agreed, I've been calling it ``tightness'' (in the sense that the change set
 is as small as it can be), but I don't really like the name, so I'm open to any
 alternatives.
+
 \begin{defn}[Extensionality]
   A change structure is \textit{extensional} if whenever $a \cplus \change{a}
   = a \cplus \change{b}$ for some $a \in A$, it is the case that $\change{a} = \change{b}$.
@@ -259,26 +267,6 @@ Extensionality gives us uniqueness of derivatives:
 MARIO: I think we should move all the discusion of S-acts to the final section
 on related work.
 
-We can now see the difference between $\cat{CStruct}$ and the category of
-S-acts $\cat{SAct}$: the objects of $\cat{SAct}$ all maintain the same monoid
-structure, whereas we are interested in changing the structure of the act.
-
-However, if we compare the definition of a $\cat{SAct}$ ``act-preserving''
-homeomorphism (as in \cite{kilp2000monoids}) we can see that the structure is quite similar to our definition
-of differentiability:
-
-$$f(a \splus s) = f(a) \splus s$$
-
-as opposed to
-
-$$f(a \cplus s) = f(a) \cplus \derive{f}(a, s)$$
-
-That is, we use $\derive{f}$ to transform the action element into the new
-structure, whereas in $\cat{SAct}$ it simply remains the same.
-
-In fact, $\cat{SAct}$ is a subcategory of $\cat{CStruct}$, where we only
-consider change structures with change set $S$, and the only functions are those
-whose derivative is $\lambda a. \lambda d. d$.
 
 \begin{prop}[Products]
   Let $A = \cstruct{A}{\changes{A}}{\cplus}$ and $B =
@@ -1603,6 +1591,8 @@ aggregation and other primitives with interesting derivatives.
 
 \subsection{Change structures}
 
+\subsubsection{Cai et al.'s change structures}
+
 The seminal paper in this area is Cai et al.~\cite{cai2014changes}. We use the notions
 defined in that excellent paper heavily, but we deviate in two regards: the use of
 dependent types, and the nature of function changes.
@@ -1657,10 +1647,32 @@ While this is a promising direction, it wasn't necessary for the material in
 this paper, and would have complicated the exposition significantly, so we opted
 to leave it for future work.
 
+\subsubsection{S-acts}
+
 S-acts and their categorical structure have received a fair amount of attention
-over the years (Kilp, Knauer, and Mikhalev~\cite{kilp2000monoids} is a good overview). However, our work
-is largely distinct from this, since we are interested in acts over different
-monoids/semigroups, which necessitates the presence of derivatives.
+over the years (Kilp, Knauer, and Mikhalev~\cite{kilp2000monoids} is a good
+overview). However, there is a key difference between our $\cat{CStruct}$ and the category of
+S-acts $\cat{SAct}$: the objects of $\cat{SAct}$ all maintain the same monoid
+structure, whereas we are interested in changing both the base set \emph{and} the structure of the act.
+
+There are similarities: if we compare the definition of a $\cat{SAct}$ ``act-preserving''
+homeomorphism (as in \cite{kilp2000monoids}) we can see that the structure is
+quite similar to the definition of differentiability:
+
+$$f(a \splus s) = f(a) \splus s$$
+
+as opposed to
+
+$$f(a \cplus s) = f(a) \cplus \derive{f}(a, s)$$
+
+That is, we use $\derive{f}$ to transform the action element into the new
+monoid, whereas in $\cat{SAct}$ it simply remains the same.
+
+In fact, $\cat{SAct}$ is a subcategory of $\cat{CStruct}$, where we only
+consider change structures with change set $S$, and the only functions are those
+whose derivative is $\lambda a. \lambda d. d$.
+
+\subsubsection{Derivatives of fixpoints}
 
 Arntzenius~\cite{arntz2017fixpoints} gives a derivative operator for fixpoints. However,
 it uses the definition of function changes from Cai et al., whereas
@@ -1670,11 +1682,15 @@ monotone functions.
 
 \subsection{Datalog}
 
+\subsubsection{Incremental evaluation}
+
 The earliest explication of semi-naive evaluation as a derivative process
 appears in Bancilhon~\cite{bancilhon1986naive}. The idea of using an approximate derivative
 and the requisite soundness condition appears as a throwaway comment in
 Bancilhon and Ramakrishnan~\cite{bancilhon1986amateur}, although as far as we know nobody has since
 developed that approach. 
+
+\subsubsection{Incremental updates}
 
 There is existing literature on incremental updates to relational algebra
 expressions. In particular Griffin et al.~\cite{griffin1997improved} following
@@ -1710,6 +1726,8 @@ make heavy use of recursion.
 Gupta et al.~\cite{gupta1995maintenance} has a good summary of the approaches so far.
 
 WRITE MORE HERE
+
+\subsubsection{Embedding Datalog}
 
 Datafun (Arntzenius~\cite{arntz2016datafun}) is a functional programming language that embeds
 Datalog, allowing significant improvements in genericity, such as the use of
