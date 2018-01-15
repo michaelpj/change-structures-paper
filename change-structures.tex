@@ -1275,9 +1275,12 @@ However, we can get a true derivative if we are working with least fixpoints.
   \fixpoint_A(f \cplus \change{f})$, so $\derive{\fixpoint_A}$ is a derivative of $\fixpoint_A$
 \end{proof}
 
-The requirements of this theorem may seem onerous. However, when working with
-least fixpoints, the setting is usually cpos that satisfy the ACC with monotone
-functions, and there the conditions are easy to satisfy.
+The requirements of this theorem may seem onerous. However, usually when we are
+working with least fixpoints in a computational setting, we are interested in
+being able to compute them by using Kleene's Theorem and iterating from $\bot$.
+That means our base set is going to be a cpo satisfying the ACC, and our
+functions are going to be monotone. In this setting, it's much easier to satisfy
+the conditions.
 
 \begin{prop}
   Let
