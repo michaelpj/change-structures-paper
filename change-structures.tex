@@ -215,42 +215,32 @@ of functions.
   $$\derive{f}_\cminus(a, \change{a}) \defeq f(a \cplus \change{a}) \cminus f(a)$$
 \end{defn}
 
-\subsection{Extensionality}
+\subsection{Thin change structures}
 
-MPJ: I think this should have a different name (I guess we could use ``free'') -
-extensionality makes me think of something like ``the element is characterized
-by its action''.
-However, that's probably not a very interesting notion, since it actually gives us a
-monoid congruence, so we can always quotient out by it.
-
-MARIO: Agreed, I've been calling it ``tightness'' (in the sense that the change set
-is as small as it can be), but I don't really like the name, so I'm open to any
-alternatives.
-
-\begin{defn}[Extensionality]
-  A change structure is \textit{extensional} if whenever $a \cplus \change{a}
+\begin{defn}[Thin change structures]
+  A change structure is \textit{thin} if whenever $a \cplus \change{a}
   = a \cplus \change{b}$ for some $a \in A$, it is the case that $\change{a} = \change{b}$.
 \end{defn}
 
-Many change structures are not extensional, for example $F_2$.
+Many change structures are not thin, for example $F_2$.
 
-\begin{prop}[Extensionality equivalences]
+\begin{prop}[Thin equivalences]
   Let $A$ be a change structure. Then the following are equivalent.
   \begin{itemize}
-    \item $A$ is extensional.
+    \item $A$ is thin.
     \item The monoid action is free.
     MARIO: What notion of equalizer is this?
     \item The equalizer of any two elements is empty.
   \end{itemize}
 \end{prop}
 
-Extensionality gives us uniqueness of derivatives:
+Thinness gives us uniqueness of derivatives:
 \begin{prop}
-  Let $B$ be an extensional change structure, and $f: A \rightarrow B$. Then $f$ has at
+  Let $B$ be a thin change structure, and $f: A \rightarrow B$. Then $f$ has at
   most one derivative.
 
   Conversely, if $\textrm{id}: B \rightarrow B$ has exactly one derivative, then
-  $B$ is extensional.
+  $B$ is thin.
 \end{prop}
 
 \section{Algebra of change structures}
@@ -458,14 +448,14 @@ Conveniently, our proof of \ref{prop:exponentials} gives us actual derivatives f
 \end{corollary}
 
 \begin{lemma}
-  The product $A \times B$ of change structures $A$ and $B$ is extensional if and only if both $A$ and $B$ are.
+  The product $A \times B$ of change structures $A$ and $B$ is thin if and only if both $A$ and $B$ are.
   Furthermore, whenever $A$ and $B$ are complete, then so is $A \times B$.
 
-  The exponential object $A \Rightarrow B$ of change structures $A$ and $B$ is extensional if $B$ is. 
+  The exponential object $A \Rightarrow B$ of change structures $A$ and $B$ is thin if $B$ is. 
   Furthermore, whenever $B$ is complete, then so is $A \Rightarrow B$.
 \end{lemma}
 
-Thus, the category of extensional change structures is Cartesian closed as well.
+Thus, the category of thin change structures is Cartesian closed as well.
 
 \begin{prop}[Coproducts]
   Let $A = \cstruct{A}{\changes{A}}{\cplus}$ and $B =
@@ -729,7 +719,7 @@ order on the change set.
   $\change{a} \changeOrder \change{b}$ iff for all $a \in A$ it is the case that $a \cplus \change{a} \leq a \cplus \change{b}$.
 \end{defn}
 
-If the change structure is extensional, then the order is antisymmetric, and a
+If the change structure is thin, then the order is antisymmetric, and a
 full partial order.
 
 Having a monotonic order on the changes is very useful.
