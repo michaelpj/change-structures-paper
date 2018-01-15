@@ -866,14 +866,14 @@ As usual, the superposition change structure is a pain to work with, since it
 consists of sequences of ``upwards'' and ``downwards'' changes. However, it does
 give us a complete change structure for any lattice.
 
-As well as monotone functions, \emph{continuous} functions between lattices can
-be useful.
+We will also consider \textit{continuous} functions between lattices, which we
+will consider to be those that preserve all suprema.
 
-\begin{defn}
+\begin{defn}[Continuity]
 \label{defn:continuity}
   Let $f: A \rightarrow B$ be a function, and $A$ and $B$ be a
-  complete join-semilattices. Then $f$ is (Scott-)\textit{continuous} if for any $A' \subseteq A$,
-  $$f(\bigvee_{A'} a) = \bigvee_{A'} f(a)$$
+  complete lattices. Then $f$ is \textit{continuous} if for any directed $D \subseteq A$,
+  $$f(\bigvee_D a) = \bigvee_D f(a)$$
 \end{defn}
 
 In particular, if $\cplus$ is continuous then we can take suprema of sets of derivatives.
@@ -881,8 +881,8 @@ In particular, if $\cplus$ is continuous then we can take suprema of sets of der
 \begin{prop}
 \label{prop:supDerivatives}
   Let $f: A_\cplus \rightarrow B_\cpluss$ be differentiable, $B$ and
-  $\changes{B}$ be complete join-semilattices, and suppose that $\cpluss$ is continuous
-  in its second argument. Then for any set $D$ of derivatives of $f$, $\bigvee
+  $\changes{B}$ be complete lattices, and suppose that $\cpluss$ is continuous
+  in its second argument. Then for any directed set $D$ of derivatives of $f$, $\bigvee
   D$ is also a derivative.
 \end{prop}
 \begin{proof}
@@ -1201,7 +1201,7 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
 \end{proof}
 
 This is not enough give us a true derivative, because we are merely
-assured that $\fixpoint_A(f) \cplus \derive{\fixpoint_A}$ computes \emph{a} fixpoint, not necessarily
+assured that $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ computes \emph{a} fixpoint, not necessarily
 the same one computed by $\fixpoint_A{(f \cplus \change{f})}$.
 
 However, we can get a true derivative if we are working with least fixpoints.
@@ -1275,7 +1275,7 @@ functions, and there the conditions are easy to satisfy.
   Let
   \begin{itemize}
     \item $A$ be a complete change structure, and a complete lattice
-    \item $\changes{A}$ be ordered according to $\changeOrder$
+    \item $\changes{A}$ be ordered according to $\changeOrder$, and a complete lattice
     \item $f: A \rightarrow A$ be differentiable and monotone
     \item $\change{f} \in \changes{(A \rightarrow A)}$ be a
       change to $f$
