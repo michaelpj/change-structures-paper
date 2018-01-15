@@ -683,41 +683,6 @@ in $\cat{CStruct}$ as we have done before. It is necessary to do so, however, if
 actually perform incremental computation on those structures, as the specific representations
 of limits obtained by applying this equivalence are wasteful, unwieldy and impractical.
 
-\subsubsection{Monotone functions}
-
-Monotone functions have some useful properties.
-
-\begin{prop}
-  Let $f: A \rightarrow B$ be differentiable and suppose that $\derive{f}$ is
-  continuous. Then $\derive{f}$ is monotone.
-\end{prop}
-\begin{proof}
-  THIS IS TRIVIAL
-
-  Suppose $\change{a} \leq \change{b}$.
-
-  Then
-  \begin{itemize}
-  \item[ ]
-    $\change{a} \leq (\change{a} \vee \change{b})$
-  \item[$\Rightarrow$]
-    $\derive{f}(a, \change{a}) \leq \derive{f}(a, \change{a} \vee \change{b})$
-  \item[$\Rightarrow$]
-    $\derive{f}(a, \change{a}) \leq \derive{f}(a, \change{a} \vee \change{b})$
-  \item[$\Rightarrow$]\{ by continuity \}
-    $
-    \derive{f}(a, \change{a}) \leq
-    (
-      \derive{f}(a, \change{a})
-      \vee
-      \derive{f}(a, \change{b})
-    )
-    $
-  \item[$\Rightarrow$]
-    $\derive{f}(a, \change{a}) \leq \derive{f}(a, \change{b})$
-  \end{itemize}
-\end{proof}
-
 \subsubsection{Orders on base sets}
 
 Firstly, we can define ``approximations'' to derivatives from both sides.
@@ -913,6 +878,39 @@ As usual, the superposition change structure is a pain to work with, since it
 consists of sequences of ``upwards'' and ``downwards'' changes. However, it does
 give us a complete change structure for any lattice.
 
+As well as monotone functions, \emph{continuous} functions between lattices can
+be useful.
+
+\begin{defn}
+\label{defn:continuity}
+  Let $f: A \rightarrow B$ be a function, and $A$ and $B$ be a
+  complete join-semilattices. Then $f$ is (Scott-)\textit{continuous} if for any $A' \subseteq A$,
+  $$f(\bigvee_{A'} a) = \bigvee_{A'} f(a)$$.
+\end{defn}
+
+In particular, if $\cplus$ is continuous then we can take suprema of sets of derivatives.
+
+\begin{prop}
+\label{prop:supDerivatives}
+  Let $f: A_\cplus \rightarrow B_\cpluss$ be differentiable, $B$ and
+  $\changes{B}$ be complete join-semilattices, and suppose that $\cpluss$ is continuous
+  in its second argument. Then for any set $D$ of derivatives of $f$, $\bigvee
+  D$ is also a derivative.
+\end{prop}
+\begin{proof}
+  We show the derivative property directly.
+  \begin{itemize}
+    \item[ ]$f(a) \cpluss (\bigvee D)(f, \change{a})$
+    \item[=]$f(a) \cpluss \bigvee_{\derive{f} \in D} \derive{f}(f, \change{a})$
+    \item[=]\{ continuity of $\cpluss$, \ref{defn:continuity} \}\\
+      $\bigvee_{\derive{f} \in D} (f(a) \cpluss \derive{f}(f, \change{a}))$
+    \item[=]\{ $\derive{f}$ is a derivative \}\\
+      $\bigvee_{\derive{f} \in D} f(a \cplus \change{a})$
+    \item[=]\{ since $D$ is non-empty, as $f$ is differentiable \}\\
+      $f(a \cplus \change{a})$
+  \end{itemize}
+\end{proof}
+
 \subsection{Boolean algebras}
 
 Boolean algebras give us a much more compact representation for the
@@ -1081,6 +1079,10 @@ the following theorem provides a generalization of it to any differentiable func
 change structure. We will see the details of how to differentiate Datalog
 semantics in section \ref{sec:datalogDifferentiability}.
 
+TODO: I had to use the minus to get something generic for $\Delta F_1$ - that's
+a bit unsatisfying, is there something better? We can also use ``the change that
+maps everything to $F_1$'', if we have that.
+
 \begin{thm}[Incremental computation of iterated function applications]
 \label{thm:diffIter}
   Let $L$ be a dcpo with least element $\bot$ and a change structure, $f: L \rightarrow L$ be
@@ -1088,9 +1090,9 @@ semantics in section \ref{sec:datalogDifferentiability}.
 
   \begin{eqnarray*}
   F_0 & = & x\\
-  \Delta F_0 & = & (\bot, \top) \\
+  \Delta F_0 & = & \mzero \\
   F_1 & = & f(F_0)\\
-  \Delta F_1 & = & (F_1, F_1) \footnotemark \\
+  \Delta F_1 & = & F_1 \cminus F_0 \\
   F_{i+2} & = & F_{i+1} \cplus \Delta F_{i+2} \\
   \Delta F_{i+2} & = & \derive{f}(F_i, \Delta F_{i+1}) \\
   \end{eqnarray*}
@@ -1098,9 +1100,6 @@ semantics in section \ref{sec:datalogDifferentiability}.
   Then 
   $$f^i(x) = F_i$$
 \end{thm}
-
-\footnotetext{A number of different values will do here, in general one can use $F_1
-\cminus F_0$ given a valid minus operator.}
 
 \begin{proof}
 We proceed inductively, proving that $F_{i+2} = f(F_{i+1})$
@@ -1227,7 +1226,7 @@ However, we can get a true derivative if we are working with least fixpoints.
     \item $A, \changes{A}$ be complete lattices
     \item$\fixpoint_A : (A \rightarrow A) \rightarrow A$ be a differentiable
       least fixpoint operator
-    \item $\cplus$ be monotone with respect to the order on $\changes{A}$
+    \item $\cplus$ be monotone with respect to the order on $\changes{A}$, and continuous
     \item $f: A \rightarrow A$ be a differentiable function
     \item $\change{f} \in \changes{(A \rightarrow A)}$ be a change to $f$
     \item $\derive{\ev}$ be a derivative of the evaluation map which is monotone
@@ -1237,43 +1236,6 @@ However, we can get a true derivative if we are working with least fixpoints.
   then $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a least
   fixpoint of $f \cplus \change{f}$ and therefore $\derive{\fixpoint_A}$ is a derivative of $\fixpoint_A$.
 \end{thm}
-
-First we need a couple of lemmas, including a tiny bit of topology.
-
-\begin{prop}
-\label{prop:continuity}
-  Let $f: A \rightarrow B$ be a function, and $A$ and $B$ be a
-  complete join-semilattices. Then the following are equivalent:
-  \begin{itemize}
-    \item $f$ is monotone
-    \item $f$ is \textit{continuous} under the Alexandrov topologies on $A$ and $B$
-    \item for any $A' \subseteq A$, $$f(\bigvee_{A'} a) = \bigvee_{A'} f(a)$$
-  \end{itemize}
-\end{prop}
-
-\begin{prop}
-\label{prop:supDerivatives}
-  Let $f: A_\cplus \rightarrow B_\cpluss$ be differentiable, $B$ and
-  $\changes{B}$ be complete join-semilattices, and suppose that $\cpluss$ is monotone
-  in its second argument. Then for any set $D$ of derivatives of $f$, $\bigvee
-  D$ is also a derivative.
-\end{prop}
-\begin{proof}
-  We show the derivative property directly.
-  \begin{itemize}
-    \item[ ]$f(a) \cpluss (\bigvee D)(f, \change{a})$
-    \item[=]$f(a) \cpluss \bigvee_{\derive{f} \in D} \derive{f}(f, \change{a})$
-    \item[=]\{ monotonicity of $\cpluss$, \ref{prop:continuity} \}\\
-      $\bigvee_{\derive{f} \in D} (f(a) \cpluss \derive{f}(f, \change{a}))$
-    \item[=]\{ $\derive{f}$ is a derivative \}\\
-      $\bigvee_{\derive{f} \in D} f(a \cplus \change{a})$
-    \item[=]\{ since $D$ is non-empty, as $f$ is differentiable \}\\
-      $f(a \cplus \change{a})$
-  \end{itemize}
-\end{proof}
-
-Now we can give the proof of \ref{thm:leastFixpointDiff}:
-
 \begin{proof}
   Suppose that $D$ is a derivative of $\fixpoint_A$, and hence $\fixpoint_A(f) \cplus D(f,
   \change{f})$ is the least fixpoint of $f \cplus \change{f}$. 
@@ -1329,8 +1291,11 @@ functions, and there the conditions are easy to satisfy.
     \item $f: A \rightarrow A$ be differentiable and monotone
     \item $\change{f} \in \changes{(A \rightarrow A)}$ be a
       change to $f$
-    \item$f \cplus \change{f}$ be differentiable and monotone
+    \item$f \cplus \change{f}$ be differentiable and monotone, with a monotone derivative.
   \end{itemize}
+
+  TODO: would be nice to have some condition which implied that $\derive{(f
+    \cplus \change{f})}$ was monotone rather than having to stipulate it.
 
   Then
   \begin{itemize}
@@ -1349,21 +1314,18 @@ functions, and there the conditions are easy to satisfy.
   $$\derive{\ev}((f, a), (\change{a}, \change{f}) \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})$$
   
   This is a valid derivative for $\ev$ by \ref{prop:incrementalization}, and it
-  is monotone since $f \cplus \change{f}$ (and hence $\derive{(f \cplus
-    \change{f})}$, by REF)and $\cplus$ are monotone.
+  is monotone since $\derive{f \cplus \change{f}}$ and $\cplus$ are monotone.
 \end{proof}
 
-The requirement that $\fixpoint$ be differentiable may seem awkward, but it is
-true for any complete change structure, in particular the superposition change
-structure on lattices (and $L_\superpose$ on Boolean algebras).
+The requirement that $\changes{A}$ be a complete lattice and $\cplus$ be
+continuous is still awkward, but is easily shown to be true on Boolean algebras
+with $L_\superpose$.
 
-Sadly, the explicit derivative for fixpoints is far from simple to compute. It requires a fixpoint over the
-change structure partial order, which may not be possible (depending on our
-change structure). However, for lattices the $L_\superpose$ change structure is
-itself a lattice, so we can compute fixpoints over it.
+MPJ: this paragraph makes me sad
 
-It may not be too expensive to compute a fixpoint, since the alternative
-``update strategy'' is the worst possible one: throw everything away and start
+Computing the derivative still requires computing a fixpoint (over the change
+lattice), but this may still be significantly less expensive than the
+alternative ``update strategy'': throw everything away and start
 again (which will itself require a fixpoint computation).
 
 \section{Datalog}
