@@ -281,7 +281,7 @@ on related work.
 
   Then the product morphism in $\cat{Set}$, $\pair{f_1}{f_2}$ is the product
   morphism in $\cat{CStruct}$. It can easily be
-  shown that $\derive{f_1} \times \derive{f_2}$ is a derivative of $f_1 \times f_2$,
+  shown that $\pair{\derive{f_1}}{\derive{f_2}}$ is a derivative of $\pair{f_1}{f_2}$,
   hence $\pair{f_1}{f_2}$ is a morphism in $\cat{SAct}$.
 
   Commutativity and uniqueness follow from the corresponding properties of the
@@ -467,7 +467,7 @@ Conveniently, our proof of \ref{prop:exponentials} gives us actual derivatives f
 
 Thus, the category of extensional change structures is Cartesian closed as well.
 
-\begin{proof}[Coproducts]
+\begin{prop}[Coproducts]
   Let $A = \cstruct{A}{\changes{A}}{\cplus}$ and $B =
   \cstruct{B}{\changes{B}}{\cpluss}$ be change structures.
 
@@ -477,7 +477,7 @@ Thus, the category of extensional change structures is Cartesian closed as well.
     i_1 a \cplusvee (\change{a}, \change{b}) \defeq \iota_1 (a \cplus \change{a})\\
     i_2 b \cplusvee (\change{a}, \change{b}) \defeq \iota_2 (b \cplus \change{b})
   $$
-\end{proof}
+\end{prop}
 \begin{proof}
   Let $Y$ be a change structure, and $f_1 : A \rightarrow Y$, $f_2 : B
   \rightarrow Y$ be differentiable maps.
