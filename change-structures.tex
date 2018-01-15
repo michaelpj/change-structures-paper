@@ -1298,7 +1298,7 @@ functions, and there the conditions are easy to satisfy.
     \item The least fixpoint operator $\fixpoint_A$ exists for $f$ and $f \cplus
       \change{f}$ and is differentiable
     \item The least fixpoint operator $\fixpoint_{\changes{A}}$ exists for
-      $\adjust(f, \change{f})$
+      $\theadjustment(f, \change{f})$
     \item $\cplus$ is continuous and monotone
     \item There is a monotone derivative of $\ev$
   \end{itemize}
@@ -1306,13 +1306,10 @@ functions, and there the conditions are easy to satisfy.
   And therefore $\derive{\fixpoint_A}$ is a derivative of $\fixpoint_A$.
 \end{prop}
 \begin{proof}
-  Largely trivial (see \ref{prop:monotoneContinuous}), but we give a proof of the final item.
-
-  Define 
-  $$\derive{\ev}((f, a), (\change{a}, \change{f}) \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})$$
-  
-  This is a valid derivative for $\ev$ by \ref{prop:incrementalization}, and it
-  is monotone since $\derive{f \cplus \change{f}}$ and $\cplus$ are monotone.
+  Largely trivial. Continuity of $\cplus$ follows from
+  \ref{prop:monotoneContinuous}; and we take $\derive{\ev}_2$ from
+  \ref{prop:evDerivatives} as our derivative of $\ev$, which is monotone 
+  since $\derive{(f \cplus \change{f})}$ and $\cplus$ are monotone.
 \end{proof}
 
 The requirement that $\changes{A}$ be a cpo satisfying the ACC is still awkward, but is easily
