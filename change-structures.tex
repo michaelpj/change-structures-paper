@@ -843,6 +843,48 @@ bounds, and that tells us how much ``wiggle room'' we have. This is helpful
 because some of the intermediary functions may be much easier to compute than
 others, or convenient for other reasons.
 
+\subsection{Complete partial orders}
+
+Complete partial orders give us a notion of \emph{continuity} of functions.
+
+\begin{defn}[Continuity]
+\label{defn:continuity}
+  Let $f: A \rightarrow B$ be a function, and $A$ and $B$ be a
+  complete lattices. Then $f$ is \textit{continuous} if for any directed $D \subseteq A$,
+  $$f(\bigvee_D a) = \bigvee_D f(a)$$
+\end{defn}
+
+In particular, if $\cplus$ is continuous then we can take suprema of sets of derivatives.
+
+\begin{prop}
+\label{prop:supDerivatives}
+  Let $f: A_\cplus \rightarrow B_\cpluss$ be differentiable, $B$ and
+  $\changes{B}$ be cpos, and suppose that $\cpluss$ is continuous
+  in its second argument. Then for any set $D$ of derivatives of $f$, $\bigvee
+  D$ is also a derivative.
+\end{prop}
+\begin{proof}
+  We show the derivative property directly.
+  \begin{itemize}
+    \item[ ]$f(a) \cpluss (\bigvee D)(f, \change{a})$
+    \item[=]$f(a) \cpluss \bigvee_{\derive{f} \in D} \derive{f}(f, \change{a})$
+    \item[=]\{ continuity of $\cpluss$, \ref{defn:continuity} \}\\
+      $\bigvee_{\derive{f} \in D} (f(a) \cpluss \derive{f}(f, \change{a}))$
+    \item[=]\{ $\derive{f}$ is a derivative \}\\
+      $\bigvee_{\derive{f} \in D} f(a \cplus \change{a})$
+    \item[=]\{ since $D$ is non-empty, as $f$ is differentiable \}\\
+      $f(a \cplus \change{a})$
+  \end{itemize}
+\end{proof}
+
+We mention another well known fact which will be useful later.
+
+\begin{prop}
+\label{prop:monotoneContinuous}
+  All monotone functions on cpos which satisfy the Ascending Chain Condition
+  (ACC) are continuous.
+\end{prop}
+
 \subsection{Lattices}
 
 \begin{defn}
@@ -865,39 +907,6 @@ others, or convenient for other reasons.
 As usual, the superposition change structure is a pain to work with, since it
 consists of sequences of ``upwards'' and ``downwards'' changes. However, it does
 give us a complete change structure for any lattice.
-
-We will also consider \textit{continuous} functions between lattices, which we
-will consider to be those that preserve all suprema.
-
-\begin{defn}[Continuity]
-\label{defn:continuity}
-  Let $f: A \rightarrow B$ be a function, and $A$ and $B$ be a
-  complete lattices. Then $f$ is \textit{continuous} if for any directed $D \subseteq A$,
-  $$f(\bigvee_D a) = \bigvee_D f(a)$$
-\end{defn}
-
-In particular, if $\cplus$ is continuous then we can take suprema of sets of derivatives.
-
-\begin{prop}
-\label{prop:supDerivatives}
-  Let $f: A_\cplus \rightarrow B_\cpluss$ be differentiable, $B$ and
-  $\changes{B}$ be complete lattices, and suppose that $\cpluss$ is continuous
-  in its second argument. Then for any directed set $D$ of derivatives of $f$, $\bigvee
-  D$ is also a derivative.
-\end{prop}
-\begin{proof}
-  We show the derivative property directly.
-  \begin{itemize}
-    \item[ ]$f(a) \cpluss (\bigvee D)(f, \change{a})$
-    \item[=]$f(a) \cpluss \bigvee_{\derive{f} \in D} \derive{f}(f, \change{a})$
-    \item[=]\{ continuity of $\cpluss$, \ref{defn:continuity} \}\\
-      $\bigvee_{\derive{f} \in D} (f(a) \cpluss \derive{f}(f, \change{a}))$
-    \item[=]\{ $\derive{f}$ is a derivative \}\\
-      $\bigvee_{\derive{f} \in D} f(a \cplus \change{a})$
-    \item[=]\{ since $D$ is non-empty, as $f$ is differentiable \}\\
-      $f(a \cplus \change{a})$
-  \end{itemize}
-\end{proof}
 
 \subsection{Boolean algebras}
 
@@ -1073,8 +1082,7 @@ maps everything to $F_1$'', if we have that.
 
 \begin{thm}[Incremental computation of iterated function applications]
 \label{thm:diffIter}
-  Let $L$ be a dcpo with least element $\bot$ and a change structure, $f: L \rightarrow L$ be
-  differentiable. Define $F_i$ as follows:
+  Let $L$ be a change structure, $x \in L$, and $f: L \rightarrow L$ be differentiable. Define $F_i$ as follows:
 
   \begin{eqnarray*}
   F_0 & = & x\\
@@ -1211,7 +1219,7 @@ However, we can get a true derivative if we are working with least fixpoints.
   Let 
   \begin{itemize}
     \item $A$ be a change structure 
-    \item $A, \changes{A}$ be complete lattices
+    \item $A, \changes{A}$ be cpos
     \item$\fixpoint_A : (A \rightarrow A) \rightarrow A$ be a differentiable
       least fixpoint operator
     \item $\cplus$ be monotone with respect to the order on $\changes{A}$, and continuous
@@ -1267,18 +1275,18 @@ However, we can get a true derivative if we are working with least fixpoints.
   \fixpoint_A(f \cplus \change{f})$, so $\derive{\fixpoint_A}$ is a derivative of $\fixpoint_A$
 \end{proof}
 
-The requirements of this theorem may seem onerous. However, the setting in which
-we are usually working with least fixpoints is complete lattices with monotone
+The requirements of this theorem may seem onerous. However, when working with
+least fixpoints, the setting is usually cpos that satisfy the ACC with monotone
 functions, and there the conditions are easy to satisfy.
 
 \begin{prop}
   Let
   \begin{itemize}
-    \item $A$ be a complete change structure, and a complete lattice
-    \item $\changes{A}$ be ordered according to $\changeOrder$, and a complete lattice
+    \item $A$ be a complete change structure, and a cpo satisfying the ACC
+    \item $\changes{A}$ be ordered according to $\changeOrder$, and a cpo
+      satisfying the ACC
     \item $f: A \rightarrow A$ be differentiable and monotone
-    \item $\change{f} \in \changes{(A \rightarrow A)}$ be a
-      change to $f$
+    \item $\change{f} \in \changes{(A \rightarrow A)}$ be a change to $f$
     \item$f \cplus \change{f}$ be differentiable and monotone, with a monotone derivative.
   \end{itemize}
 
@@ -1289,6 +1297,8 @@ functions, and there the conditions are easy to satisfy.
   \begin{itemize}
     \item The least fixpoint operator $\fixpoint_A$ exists for $f$ and $f \cplus
       \change{f}$ and is differentiable
+    \item The least fixpoint operator $\fixpoint_{\changes{A}}$ exists for
+      $\adjust(f, \change{f})$
     \item $\cplus$ is continuous and monotone
     \item There is a monotone derivative of $\ev$
   \end{itemize}
@@ -1296,7 +1306,7 @@ functions, and there the conditions are easy to satisfy.
   And therefore $\derive{\fixpoint_A}$ is a derivative of $\fixpoint_A$.
 \end{prop}
 \begin{proof}
-  Largely trivial, but we give a proof of the final item.
+  Largely trivial (see \ref{prop:monotoneContinuous}), but we give a proof of the final item.
 
   Define 
   $$\derive{\ev}((f, a), (\change{a}, \change{f}) \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})$$
@@ -1305,11 +1315,9 @@ functions, and there the conditions are easy to satisfy.
   is monotone since $\derive{f \cplus \change{f}}$ and $\cplus$ are monotone.
 \end{proof}
 
-The requirement that $\changes{A}$ be a complete lattice and $\cplus$ be
-continuous is still awkward, but is easily shown to be true on Boolean algebras
-with $L_\superpose$.
-
-MPJ: this paragraph makes me sad
+The requirement that $\changes{A}$ be a cpo satisfying the ACC is still awkward, but is easily
+shown to be true on Boolean algebras with $L_\superpose$ (so long as the base
+algebra also satisfies the ACC).
 
 Computing the derivative still requires computing a fixpoint (over the change
 lattice), but this may still be significantly less expensive than the
