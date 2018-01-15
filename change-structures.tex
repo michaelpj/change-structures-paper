@@ -1327,14 +1327,15 @@ again (which will itself require a fixpoint computation).
 \section{Datalog}
 \label{sec:datalog}
 
-Datalog is a well-known simple logic programming language. It is also a textbook
+Datalog is a well-known, simple logic programming language. It is also a textbook
 example of the need for incremental computation, as its semantics rely on
-computing a least fixpoint by bottom-up iteration.
+bottom-up computation of a least fixpoint.
 
 There is an extensive existing literature on incremental computation of Datalog
 (CITES), but the aim of this section is to argue that by viewing the computation
 of Datalog semantics as composed of differentiable functions we can give a
-superior account.
+bring the machinery that we've developed so far to bear, and give an elegant,
+flexible account of incremental evaluation.
 
 Firstly, however, we must show that we can see the semantics of Datalog in terms
 of elements that we know how to handle: Boolean algebras and fixpoints.
@@ -1351,7 +1352,7 @@ closed-world assumption to solve this.
 \begin{defn}[Closed-world assumption and negation]
   There exists a universal relation $\universalRel$.
   
-  Negation on relations is then defined as $$\neg R \defeq \universalRel \setminus R$$
+  Negation on relations is defined as $$\neg R \defeq \universalRel \setminus R$$
 \end{defn}
 
 This makes $\Rel$ into a Boolean algebra.
@@ -1360,7 +1361,7 @@ This makes $\Rel$ into a Boolean algebra.
   A Datalog term $T$ denotes a function from its free relation variables to
   $\Rel$, $\denote{\_} : \Term \rightarrow \Rel^n \rightarrow \Rel$
   \begin{eqnarray*}
-    \denote{R_i}(\overline{X}) &\defeq& X_i \text{ where } X_i \text { is the ith free relation variable }\\
+    \denote{R_i}(\overline{X}) &\defeq& \overline{X}[i] \\
     \denote{T \wedge U}(\overline{X}) &\defeq& \denote{T}(\overline{X}) \cap  \denote{U}(\overline{X})\\
     \denote{T \vee U}(\overline{X}) &\defeq& \denote{T}(\overline{X}) \cup  \denote{U}(\overline{X})\\
     \denote{\exists x. T}(\overline{X}) &\defeq& \pi_x(\denote{T}(\overline{X}))\\
@@ -1373,7 +1374,7 @@ Since $\Rel$ is a Boolean algebra, and so is $\Rel^n$, the denotation
 functions of terms are functions between Boolean algebras.
 
 \begin{defn}[Immediate consequence operator]
-  Given a program $\mathcal{P} = \overline(P)$, the immediate consequence operator $\consq: \Rel^n \rightarrow \Rel^n$ is defined as follows:
+  Given a program $\mathcal{P} = \overline{P}$, the immediate consequence operator $\consq: \Rel^n \rightarrow \Rel^n$ is defined as follows:
   $$\consq(\overline{R}) = \overline{\denote{P_i}(\overline{R})}$$
 \end{defn}
 
