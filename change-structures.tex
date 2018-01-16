@@ -3,13 +3,14 @@
 \input{preamble-standard}
 %\input{preamble-acm}
 
-
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{amssymb}
 \usepackage{mathtools}
 \usepackage{stmaryrd}
 \usepackage{biblatex}
+\usepackage{hyperref}
+\usepackage{cleveref}
 
 \input{notation}
 
@@ -66,12 +67,12 @@ notion of derivative that will encompass differential geometry as well.
 The major contributions of this paper are:
 \begin{itemize}
   \item A generalised definition of change structures and derivatives
-    (\ref{sec:change-structures}).
-  \item A description of the algebraic properties of change structures (\ref{sec:algebra}), including
+    (\cref{sec:change-structures}).
+  \item A description of the algebraic properties of change structures (\cref{sec:algebra}), including
     a definition of function changes that allows them to form a Cartesian closed
     category.
   \item A description of the properties of change structures over posets
-    (\ref{sec:moreStructures}), including theorems that characterize the range of
+    (\cref{sec:moreStructures}), including theorems that characterize the range of
     possible derivatives available, and conditions under which compound change
     structures may admit derivatives.
 \end{itemize}
@@ -485,7 +486,7 @@ Derivatives of the evaluation map correspond to incremental evaluation of functi
   $$(f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus \derive{\ev}((f, a), (\change{f}, \change{a}))$$
 \end{prop}
 
-Conveniently, our proof of \ref{prop:exponentials} gives us actual derivatives for the evaluation map:
+Conveniently, our proof of \cref{prop:exponentials} gives us actual derivatives for the evaluation map:
 
 \begin{prop}[Derivatives of the evaluation map]
 \label{prop:evDerivatives}
@@ -503,7 +504,7 @@ Conveniently, our proof of \ref{prop:exponentials} gives us actual derivatives f
   is a derivative for the evaluation map.
 \end{prop}
 \begin{proof}
-  The first is shown in the proof of \ref{prop:exponentials}, the second is
+  The first is shown in the proof of \cref{prop:exponentials}, the second is
   similar but begins by taking the derivative of $f \cplus \change{f}$.
 \end{proof}
 
@@ -804,13 +805,13 @@ change structure.
   $$\subderiveM{f} \changeOrder \derive{f} \changeOrder \supderiveM{f}$$
 \end{thm}
 \begin{proof}
-  Follows easily from \ref{thm:sandwich} and minimality/maximality.
+  Follows easily from \cref{thm:sandwich} and minimality/maximality.
 \end{proof}
 
 This theorem gives us leeway when trying to pick a derivative: we can pick out the
 bounds, and that tells us how much ``wiggle room'' we have. This is helpful
 because some of the intermediary functions may be much easier to compute than
-others, or convenient for other reasons.
+others, as we will see in \cref{sec:datalogDifferentiability}.
 
 \subsection{Complete partial orders}
 
@@ -837,7 +838,7 @@ In particular, if $\cplus$ is continuous then we can take suprema of sets of der
   \begin{itemize}
     \item[ ]$f(a) \cpluss (\bigvee D)(f, \change{a})$
     \item[=]$f(a) \cpluss \bigvee_{\derive{f} \in D} \derive{f}(f, \change{a})$
-    \item[=]\{ continuity of $\cpluss$, \ref{defn:continuity} \}\\
+    \item[=]\{ continuity of $\cpluss$, \cref{defn:continuity} \}\\
       $\bigvee_{\derive{f} \in D} (f(a) \cpluss \derive{f}(f, \change{a}))$
     \item[=]\{ $\derive{f}$ is a derivative \}\\
       $\bigvee_{\derive{f} \in D} f(a \cplus \change{a})$
@@ -873,9 +874,11 @@ We mention another well known fact which will be useful later.
   \end{itemize}
 \end{prop}
 
-As usual, the superposition change structure is a pain to work with, since it
-consists of sequences of ``upwards'' and ``downwards'' changes. However, it does
-give us a complete change structure for any lattice.
+As usual, the superposition change structure is difficult to work with, since it
+consists of sequences of ``upwards'' and ``downwards'' changes. However, it
+makes precise the intuition that we can ``glue together'' the ``upwards'' change
+structure for joins and the ``downwards'' change structure for meets into a
+complete change structure for the full lattice.
 
 \subsection{Boolean algebras}
 
@@ -977,7 +980,10 @@ superposition of $L_\vee \superpose L_\wedge$.
 \end{proof}
 
 We can think of $L_\superpose$ as tracking changes as pairs of ``upwards'' and
-``downwards'' changes, where the monoid action simply applies both.
+``downwards'' changes, where the monoid action simply applies both. This
+definition is much more usable than $L_\vee \superpose L_\wedge$, because we
+only need to track pairs of changes, rather than sequences, which makes a big
+difference in practice.
 
 Boolean algebras also have clean definitions for maximal and minimal minus
 operators.
@@ -990,7 +996,7 @@ operators.
   define minimal and maximal minus operators.
 \end{prop}
 
-In particular, \ref{thm:derivativeCharacterization} gives us bounds for
+In particular, \cref{thm:derivativeCharacterization} gives us bounds for
 all the derivatives on Boolean algebras:
 
 \begin{corollary}
@@ -1008,8 +1014,8 @@ all the derivatives on Boolean algebras:
   $$
 \end{corollary}
 
-This gives us a good deal of flexibility in picking derivatives, which will
-prove essential in \ref{sec:datalogDifferentiability}.
+This makes \cref{thm:derivativeCharacterization} actually usable in practice, as
+we have concrete definitions for our bounds (which, again, we will make use of in \cref{sec:datalogDifferentiability}).
 
 \section{Fixpoints}
 
@@ -1031,7 +1037,7 @@ attempts to derive only the new facts at each iteration. However, ``semi-naive''
 as traditionally presented has some warts, and
 the following theorem provides a generalization of it to any differentiable function over a
 change structure. We will see the details of how to differentiate Datalog
-semantics in section \ref{sec:datalogDifferentiability}.
+semantics in \cref{sec:datalogDifferentiability}.
 
 TODO: I had to use the minus to get something generic for $\Delta F_1$ - that's
 a bit unsatisfying, is there something better? We can also use ``the change that
@@ -1130,7 +1136,7 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
   \end{equation}
   Then $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$. Conversely
   if $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$ then
-  it satisfies equation \ref{eqn:fixcondition}.
+  it satisfies \cref{eqn:fixcondition}.
   
   In particular, this means that 
   if the operator $\fixpoint$ is defined over $\Delta A$, we can define:
@@ -1142,19 +1148,19 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
   of $f \cplus \change{f}$.
 \end{thm}
 \begin{proof}
-  Let $\change{w} \in \Delta A$ satisfy equation \ref{eqn:fixcondition}. Then
+  Let $\change{w} \in \Delta A$ satisfy \cref{eqn:fixcondition}. Then
   \begin{itemize}
   \item[ ]
     $
     (f \cplus \change{f})(\fixpoint_A(f) \cplus \change{w})
     $
-  \item[=]\{ by \ref{prop:incrementalization} \}\\
+  \item[=]\{ by \cref{prop:incrementalization} \}\\
     $
     f(\fixpoint_A(f))
     \cplus
     \theadjustment(f, \change{f})(\change{w})
     $
-  \item[=]\{ rolling the fixpoint and equation \ref{eqn:fixcondition} \}\\
+  \item[=]\{ rolling the fixpoint and \cref{eqn:fixcondition} \}\\
     $
     \fixpoint_A(f)
     \cplus
@@ -1204,7 +1210,7 @@ However, we can get a true derivative if we are working with least fixpoints.
 
   Now, let $D_{max} \defeq \bigvee \{D \mid D \textrm{ is a derivative of }
   \fixpoint_A \}$. This exists, since $\changes{A}$ is a complete lattice, and
-  is itself a derivative by \ref{prop:supDerivatives}.
+  is itself a derivative by \cref{prop:supDerivatives}.
 
   Then, since 
   $\theadjustment(f, \change{f})(D(f, \change{f}))$ is a
@@ -1267,8 +1273,8 @@ the conditions.
 \end{prop}
 \begin{proof}
   Largely trivial. Continuity of $\cplus$ follows from
-  \ref{prop:monotoneContinuous}; and we take $\derive{\ev}_2$ from
-  \ref{prop:evDerivatives} as our derivative of $\ev$, which is monotone 
+  \cref{prop:monotoneContinuous}; and we take $\derive{\ev}_2$ from
+  \cref{prop:evDerivatives} as our derivative of $\ev$, which is monotone 
   since $\derive{(f \cplus \change{f})}$ and $\cplus$ are monotone.
 \end{proof}
 
@@ -1363,7 +1369,7 @@ is quite bad:
 $$\derive{f}(a, \change{a}) = f(a \cplus \change{a}) \cminus f(a)$$
 Naively computed, this requires \emph{more} work than evaluating $f(a \cplus \change{a})$ directly!
 
-However, \ref{cor:booleanCharacterization} gives us a range of derivatives to
+However, \cref{cor:booleanCharacterization} gives us a range of derivatives to
 choose from, and we can optimize within that range to find one that satisfies
 our constraints.
 
@@ -1371,7 +1377,7 @@ In the case of Datalog, the change ordering on the change structure also
 corresponds to the size of the derivative as a pair of relations. The minimal
 derivative contains precisely the elements that are newly added or removed,
 whereas the maximal derivative contains all the elements that have \emph{ever}
-been added or removed. This means that \ref{cor:booleanCharacterization} allows
+been added or removed. This means that \cref{cor:booleanCharacterization} allows
 us to \emph{approximate} the most precise derivative while still being
 guaranteed that the result is sound.\footnote{The idea of using an approximation
 to the precise derivative, and a soundness condition, appears in \textcite{bancilhon1986amateur}.}
@@ -1461,7 +1467,7 @@ Putting this together, we get two results.
   Datalog program semantics can be evaluated incrementally.
 \end{thm}
 \begin{proof}
-  Corollary of \ref{corollary:diffFP} and \ref{corollary:consqDiff}.
+  Corollary of \cref{corollary:diffFP} and \cref{corollary:consqDiff}.
 \end{proof}
 
 This is a generalization of semi-naive evaluation.
@@ -1471,7 +1477,7 @@ This is a generalization of semi-naive evaluation.
   Datalog program semantics can be incrementally updated with changes to non-recursive relations.
 \end{thm}
 \begin{proof}
-  Corollary of \ref{thm:leastFixpointDiff} and \ref{corollary:consqDiff}.
+  Corollary of \cref{thm:leastFixpointDiff} and \cref{corollary:consqDiff}.
 \end{proof}
 
 This is a generalization of the view-update problem, including recursive relations.
@@ -1498,7 +1504,7 @@ evaluation for those subterms, and not for anything else.
 Note that this does not say anything about monotonicity. New term constructs may
 be required to be monotonic if they are to participate in recursion, but we are
 interested in derivatives even for non-monotonic terms because they allow us to
-use \ref{thm:diffUpdate}.
+use \cref{thm:diffUpdate}.
 
 This is important in practice for Semmle's variant of Datalog, which includes
 aggregation and other primitives with interesting derivatives.
@@ -1529,11 +1535,11 @@ are equivalent. This gives us the following correspondences:
 \end{itemize}
 
 Our equivalent to \citeauthor{cai2014changes}'s ``Incrementalization'' lemma
-(\ref{prop:incrementalization}) is an important lemma for us as well - it is used
-crucially in \ref{sec:fixpointDerivatives}. However, the incremental computation part of
+(\cref{prop:incrementalization}) is an important lemma for us as well - it is used
+crucially in \cref{sec:fixpointDerivatives}. However, the incremental computation part of
 the lemma simply follows from the fact that we are using the derivative of the
 evaluation map - any derivative will do. It is then a further fact that we can
-find actual definitions for this derivative (\ref{prop:evDerivatives}).
+find actual definitions for this derivative (\cref{prop:evDerivatives}).
 
 \citeauthor{cai2014changes} assert that the reason they use their function changes instead of pointwise
 changes as the primitive notion is that a function change has access to more
@@ -1613,7 +1619,7 @@ There is existing literature on incremental updates to relational algebra
 expressions. In particular \textcite{griffin1997improved} following
 \textcite{qian1991incremental} shows the essential insight that it is necessary to
 track both an ``upwards'' and a ``downwards'' difference, and produces a set of
-rules that look quite similar to those we derive in \ref{thm:concreteDatalog}.
+rules that look quite similar to those we derive in \cref{thm:concreteDatalog}.
 
 Where our presentation improves over \citeauthor{griffin1997improved} is mainly in
 the genericity of the presentation. Our machinery works for a wider variety of
@@ -1622,18 +1628,18 @@ to produce the result. In addition, it is easy to see how to extend the proofs
 to cover additional language constructs.
 
 \citeauthor{griffin1997improved} are interested in \emph{minimal} changes. These correspond to
-minimal derivatives in the sense of \ref{cor:booleanCharacterization}. However,
+minimal derivatives in the sense of \cref{cor:booleanCharacterization}. However,
 while minimality (or proximity to minimality) is desirable (since it decreases
 the size of the derivatives as relations), it is important to be able to trade
 it off against other considerations. For example, at
-Semmle we use the derivatives given in \ref{thm:concreteDatalog}, which are not minimal.
+Semmle we use the derivatives given in \cref{thm:concreteDatalog}, which are not minimal.
 
 There are some inessential points of difference as well: we work on Datalog,
 rather than relational algebra; and we use set semantics rather than bag
 semantics. This is largely a matter of convenience: Datalog is an easier
 language to work with, and set semantics allows a much wider range of valid
 simplifications. However, all the same machinery applies to relational algebra
-with bag semantics, it is simply necessary to produce a valid version of \ref{thm:concreteDatalog}.
+with bag semantics, it is simply necessary to produce a valid version of \cref{thm:concreteDatalog}.
 
 We also solve the problem of updating \emph{recursive} expressions. As far as we
 know, this is unsolved in general. Most of the attempts to solve it have
