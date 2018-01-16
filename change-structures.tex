@@ -271,10 +271,6 @@ Thinness gives us uniqueness of derivatives:
   the set of differentiable functions between $A$ and $B$ as $A \difffunc B$.
 \end{defn}
 
-MARIO: I think we should move all the discusion of S-acts to the final section
-on related work.
-
-
 \begin{prop}[Products]
   Let $A = \cstruct{A}{\changes{A}}{\cplus}$ and $B =
   \cstruct{B}{\changes{B}}{\cpluss}$ be change structures.
@@ -617,6 +613,8 @@ A common structure which we want to compute changes on is a poset. For this
 section we shall assume that all of our base sets are posets.
 
 \subsubsection{Orders from change sets}
+
+MPJ: I think we should move this to the category theory section.
 
 Whenever the change set is a monoid, 
 there is a natural preorder on the base set of a change structure, given by reachability
@@ -1023,12 +1021,6 @@ superposition of $L_\vee \superpose L_\wedge$.
   Now $\splus^\ast$ gives an action-preserving injection from $(L \times
   L)^\ast$ to $(L \times L)$. The reverse direction is simply the singleton map.
 \end{proof}
-
-MARIO: Can we do this for lattices? Heyting algebras?
-
-MPJ: I don't think so - I've pointed out where we use which assumptions. Heyting
-algebras only have one of the de Morgan rules, the other introduces a double negation which I
-think would block us. 
 
 We can think of $L_\superpose$ as tracking changes as pairs of ``upwards'' and
 ``downwards'' changes, where the monoid action simply applies both.
