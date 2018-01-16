@@ -1,7 +1,7 @@
 % Toggle comments for preamble and topmatter to typeset in ACM style
 
-\input{preamble-standard}
-%\input{preamble-acm}
+%\input{preamble-standard}
+\input{preamble-acm}
 
 \usepackage{amsmath}
 \usepackage{amsthm}
@@ -18,8 +18,9 @@
 
 \begin{document}
 
-\input{topmatter-standard}
-%\input{topmatter-acm}
+
+%\input{topmatter-standard}
+\input{topmatter-acm}
 
 \title{Something about change structures}
 
@@ -68,13 +69,17 @@ The major contributions of this paper are:
 \begin{itemize}
   \item A generalised definition of change structures and derivatives
     (\cref{sec:change-structures}).
-  \item A description of the algebraic properties of change structures (\cref{sec:algebra}), including
-    a definition of function changes that allows them to form a Cartesian closed
-    category.
-  \item A description of the properties of change structures over posets
-    (\cref{sec:moreStructures}), including theorems that characterize the range of
+  \item A description of the categorical properties of change structures, including
+    several useful direct constructions (\cref{sec:category}).
+  \item A description of the properties of change structures over several
+    additional kinds of structures, including theorems that characterize the range of
     possible derivatives available, and conditions under which compound change
-    structures may admit derivatives.
+    structures may admit derivatives (\cref{sec:moreStructures}).
+  \item Two results relating to fixpoint calculations: incremental computation
+    of fixpoints, and incremental updates of fixpoint expressions (\cref{sec:fixpoints}).
+  \item Applications of the above machinery to incremental computation and
+    update of Datalog programs, with the ability to handle arbitrary additional
+    language constructs, including negation and aggregation (\cref{sec:datalog}).
 \end{itemize}
 
 \section{Change structures}
@@ -235,6 +240,11 @@ of functions.
 
 \subsection{Thin change structures}
 
+As in \textcite{cai2014changes}, multiple changes may represent the difference
+between two elements. This is true for many change structures, but the change
+structures for which there \emph{is} only one such change are particularly
+well-behaved, so it's worth naming them.
+
 \begin{defn}[Thin change structures]
   A change structure is \textit{thin} if whenever $a \cplus \change{a}
   = a \cplus \change{b}$ for some $a \in A$, it is the case that $\change{a} = \change{b}$.
@@ -247,12 +257,13 @@ Many change structures are not thin, for example $F_2$.
   \begin{itemize}
     \item $A$ is thin.
     \item The monoid action is free.
-    MARIO: What notion of equalizer is this?
-    \item The equalizer of any two elements is empty.
+    \item If $A$ has a minus operator $\cminus$, then $(a \cplus \change{a})
+      \cminus a = \change{a}$.
   \end{itemize}
 \end{prop}
 
 Thinness gives us uniqueness of derivatives:
+
 \begin{prop}
   Let $B$ be a thin change structure, and $f: A \rightarrow B$. Then $f$ has at
   most one derivative.
@@ -262,7 +273,7 @@ Thinness gives us uniqueness of derivatives:
 \end{prop}
 
 \section{The category of change structures}
-\label{sec:algebra}
+\label{sec:category}
 
 \begin{defn}[Category of change structures]
   We define the category $\cat{CStruct}$ of change structures. The objects are
@@ -272,8 +283,7 @@ Thinness gives us uniqueness of derivatives:
 
 \subsection{Equivalence with PreOrd}
 
-Whenever the change set is a monoid, 
-there is a natural preorder on the base set of a change structure, given by reachability
+There is a natural preorder on the base set of a change structure, given by reachability
  under the action:
 \begin{defn}[Reachability order]
   $a \reachOrder b$ iff there is a $\change{a} \in \changes{A}$ such that $a \cplus
@@ -282,7 +292,7 @@ there is a natural preorder on the base set of a change structure, given by reac
 
 The reachability order of a complete change structure on $A$ is precisely the trivial relation
 $A \times A$. Conversely, any such change structure is necessarily complete. The correspondence
-between a change structure and its corresponding reachability preorder actually gives rise to
+between a change structure and its corresponding reachability preorder gives rise to
 a faithful functor $Reach : \cat{CStruct} \rightarrow \cat{PreOrd}$ that acts as the identity
 on morphisms.
 
@@ -334,6 +344,8 @@ $A_\leq$. This gives rise to a (full and faithful) functor $\{\_\}_\leq : \cat{P
 Since $\cat{PreOrd}$ is a reflective subcategory of $\cat{Set}$, this gives us a proof
 of the existence of limits and colimits in $\cat{CStruct}$.
 
+MPJ: and exponentials? or do we actually need the constructive proof of that?
+
 \begin{corollary}
   The category $\cat{CStruct}$ has all limits, colimits and exponential objects. 
 \end{corollary}
@@ -382,10 +394,8 @@ practical computation.
   As before, it suffices to prove that the universal map $[f_1, f_2]$ in $\cat{Set}$ is a differentiable
   map from $\cstruct{A + B}{\changes{A} \times \changes{B}}{\cplusvee}$ into $Y$. It's easy to see 
   that the following morphism is a derivative:
-  \begin{align*}
-    [f_1, f_2]' (i_1 a, (\change{a}, \change{b})) \defeq f_1'(a, \change{a})\\
-    [f_1, f_2]' (i_2 b, (\change{a}, \change{b})) \defeq f_2'(b, \change{b})\\
-  \end{align*}
+  $$[f_1, f_2]' (i_1 a, (\change{a}, \change{b})) \defeq f_1'(a, \change{a})$$
+  $$[f_1, f_2]' (i_2 b, (\change{a}, \change{b})) \defeq f_2'(b, \change{b})$$
 \end{proof}
 
 MPJ: do we have a proof that Cai's formulation doesn't give a CCC? That would be
@@ -424,13 +434,13 @@ incrementalization lemma. You can use the same derivative of $\curry{f}$. Bah.
 
   Then
   \begin{itemize}
-    \item[ ]$\ev((f, a) \cplus (\change{f}, \change{a})$
-    \item[=]$\ev((f \cplus \change{f}, a \cplus \change{a})$
+    \item[ ]$\ev((f, a) \cplus (\change{f}, \change{a}))$
+    \item[=]$\ev((f \cplus \change{f}, a \cplus \change{a}))$
     \item[=]\{ definition of $\ev$ \}\\
       $(f \cplus \change{f})(a \cplus \change{a})$
     \item[=]\{ definition of $\changes{(A \rightarrow B)}$ \}\\
       $f(a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})$
-    \item[=]\{ definition of $\changes{(A \rightarrow B)}$ \}\\
+    \item[=]\{ $f$ is differentiable \}\\
       $f(a) \cplus \derive{f}(a, \change{a}) \cplus \change{f}(a \cplus \change{a})$
     \item[=]\{ monoid action property \}\\
       $f(a) \cplus \left[ \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})\right]$
@@ -733,8 +743,8 @@ they will always be full derivatives as well.
 
 \subsubsection{Ascending and descending change structures}
 
-Sub- and sup-derivatives alone are not quite enough to allow us to make
-functions fully differentiable. We need some additional power.
+Having sub- and sup-derivatives alone is not quite enough to ensure that all
+functions are differentiable. We need some additional power.
 
 \begin{defn}[Ascending and descending change structures]
   A change structure $A$ is \textit{ascending} if $a \leq b$ implies $a
@@ -820,7 +830,7 @@ Complete partial orders give us a notion of \emph{continuity} of functions.
 \begin{defn}[Continuity]
 \label{defn:continuity}
   Let $f: A \rightarrow B$ be a function, and $A$ and $B$ be a
-  complete lattices. Then $f$ is \textit{continuous} if for any directed $D \subseteq A$,
+  complete lattices. Then $f$ is \textit{continuous} if for any $D \subseteq A$,
   $$f(\bigvee_D a) = \bigvee_D f(a)$$
 \end{defn}
 
@@ -917,7 +927,7 @@ superposition of $L_\vee \superpose L_\wedge$.
         \right)
         \vee s
       \right)$
-    \item[=]\{ distributing $\vee$ over $\wedge$, applying both de Morgan rules \}\\
+    \item[=]\{ distributing $\vee$ over $\wedge$, applying de Morgan rules \}\\
       $
       \left(
         \left(
@@ -975,6 +985,10 @@ superposition of $L_\vee \superpose L_\wedge$.
     \item[=]$a \twist (p, q) \twist (r, s)$
   \end{itemize}
 
+
+  MPJ: this bit is wrong now that we're using $+$ in the definition of
+  superpositions. Might just say it's obvious.
+  
   Now $\splus^\ast$ gives an action-preserving injection from $(L \times
   L)^\ast$ to $(L \times L)$. The reverse direction is simply the singleton map.
 \end{proof}
@@ -985,7 +999,7 @@ definition is much more usable than $L_\vee \superpose L_\wedge$, because we
 only need to track pairs of changes, rather than sequences, which makes a big
 difference in practice.
 
-Boolean algebras also have clean definitions for maximal and minimal minus
+Boolean algebras also have concrete definitions for maximal and minimal minus
 operators.
 
 \begin{prop}
@@ -1018,6 +1032,7 @@ This makes \cref{thm:derivativeCharacterization} actually usable in practice, as
 we have concrete definitions for our bounds (which, again, we will make use of in \cref{sec:datalogDifferentiability}).
 
 \section{Fixpoints}
+\label{sec:fixpoints}
 
 \subsection{Incremental computation of fixpoints}
 
@@ -1105,9 +1120,14 @@ $$\fixpoint (\lambda X . F(E \cplus \change{E}, X))$$
 That is, we are applying a change to the function whose fixpoint we are taking.
 
 In Datalog this would allow us to update a recursively defined relation given an
-update to a non-recursive dependency of it, such as the base database. In the
-traditional databases literature, this amounts to a solution to the ``recursive
-view update problem''.
+update to a non-recursive dependency of it, such as the base database.
+
+For example, we might want to take the archetypal transitive closure relation
+
+$$tc(x, y) \leftarrow e(x, y)$$
+$$tc(x, y) \leftarrow e(x, z), tc(z, y)$$
+
+and update it by changing the base relation $e$.
 
 However, this requires us to have a derivative for the fixpoint operator $\fixpoint$.
 
@@ -1129,17 +1149,14 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
     \item $\derive{\ev}$ be a derivative of the evaluation map
   \end{itemize}
 
-  Suppose a change $\change{w} \in \Delta A$ satisfies
+  Then a change $\change{w} \in \Delta A$ satisfies
   the equation:
   \begin{equation}\label{eqn:fixcondition}
     \change{w} = \theadjustment(f, \change{f})(\change{w})
   \end{equation}
-  Then $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$. Conversely
-  if $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$ then
-  it satisfies \cref{eqn:fixcondition}.
+  if and only if $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$.
   
-  In particular, this means that 
-  if the operator $\fixpoint$ is defined over $\Delta A$, we can define:
+  In particular, if the operator $\fixpoint$ is defined over $\Delta A$, we can define:
   $$
   \derive{\fixpoint_A}(f, \change{f}) \defeq
   \fixpoint_{\changes{A}}(\theadjustment(f, \change{f}))
@@ -1171,8 +1188,8 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
   follows from reversing the direction of the proof.
 \end{proof}
 
-This is not enough give us a true derivative, because we are merely
-assured that $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ computes \emph{a} fixpoint, not necessarily
+This is not enough to give us a true derivative, because we have only shown 
+that $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ computes \emph{a} fixpoint, not necessarily
 the same one computed by $\fixpoint_A{(f \cplus \change{f})}$.
 
 However, we can get a true derivative if we are working with least fixpoints.
@@ -1192,7 +1209,7 @@ However, we can get a true derivative if we are working with least fixpoints.
       with respect to $\change{a}$
   \end{itemize}
 
-  then $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a least
+  Then $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a least
   fixpoint of $f \cplus \change{f}$ and therefore $\derive{\fixpoint_A}$ is a derivative of $\fixpoint_A$.
 \end{thm}
 \begin{proof}
@@ -1208,8 +1225,8 @@ However, we can get a true derivative if we are working with least fixpoints.
   That is, $\theadjustment(f, \change{f})(D(f, \change{f}))$ is also a
   derivative of $\fixpoint_A$.
 
-  Now, let $D_{max} \defeq \bigvee \{D \mid D \textrm{ is a derivative of }
-  \fixpoint_A \}$. This exists, since $\changes{A}$ is a complete lattice, and
+  Now, let $$D_{max} \defeq \bigvee \{D \mid D \textrm{ is a derivative of }
+  \fixpoint_A \}$$. This exists, since $\changes{A}$ is a complete lattice, and
   is itself a derivative by \cref{prop:supDerivatives}.
 
   Then, since 
@@ -1513,7 +1530,9 @@ aggregation and other primitives with interesting derivatives.
 
 \subsection{Change structures}
 
-\subsubsection{Cai et al.'s change structures}
+\subsubsection{Change structures}
+
+MPJ: the title of this will be less redundant once we call ours something else
 
 The seminal paper in this area is \textcite{cai2014changes}. We use the notions
 defined in that excellent paper heavily, but we deviate in two regards: the use of
@@ -1525,7 +1544,7 @@ changes.
 
 Our notion of function changes is different to \citeauthor{cai2014changes}'s,
 because we consider changes of functions to be what \citeauthor{cai2014changes} describe as
-\textit{pointwise changes}. As they point out, you can reconstruct their
+\textit{pointwise changes}.~\footcite[See][section 2.2]{cai2014changes} As they point out, you can reconstruct their
 function changes from pointwise changes and derivatives, so the two formulations
 are equivalent. This gives us the following correspondences:
 \begin{itemize}
@@ -1543,15 +1562,20 @@ find actual definitions for this derivative (\cref{prop:evDerivatives}).
 
 \citeauthor{cai2014changes} assert that the reason they use their function changes instead of pointwise
 changes as the primitive notion is that a function change has access to more
-information, and so is easier to optimize. In contrast, we find that pointwise
-changes are simpler from a theoretical point of view, and (at least in our
-implementations for Datalog) are not significantly harder to compute. Indeed,
-there is nothing preventing a ``plugin'' for \citeauthor{cai2014changes}'s system providing the
-ability to create both function changes and pointwise changes depending on which
-is easier to work with.
+information, and so is easier to optimize. In contrast, we have not found pointwise changes to be
+significantly harder to work with in practice, or more difficult to compute (at least in our implementations
+in Datalog). Furthermore, pointwise changes are simpler from a theoretical point of view, and correspond to the
+exponentials that we get from the categorical equivalence with $\cat{PreOrd}$. 
+
+However, this is largely an issue of presentation: if it turned out that it was
+significantly easier to work with function changes rather than pointwise
+changes, then there is nothing preventing a ``plugin'' for \citeauthor{cai2014changes}'s system providing the
+ability to create either or both.
 
 The equivalence of our presentations means that our work should be compatible
-with ILC.
+with ILC. In particular, this is likely to be of interest for languages like
+Datafun (see \cref{sec:embeddingDatalog} below) which embed Datlog or logic programming behaviour within a broader
+programming context.
 
 Our function changes do not need to be dependently typed, so we do not need a
 dependently typed formulation for the cases we have been considering. However,
@@ -1610,8 +1634,12 @@ monotone functions.
 The earliest explication of semi-naive evaluation as a derivative process
 appears in \textcite{bancilhon1986naive}. The idea of using an approximate derivative
 and the requisite soundness condition appears as a throwaway comment in
-\textcite{bancilhon1986amateur}, although as far as we know nobody has since
+\textcite{bancilhon1986amateur}, and as far as we know nobody has since
 developed that approach. 
+
+As far as we know, traditional semi-naive is generally considered the state of
+the art in incremental Datalog evaluation, and there are no strategies that
+accommodate additional (recursive) language features such as aggregates.
 
 \subsubsection{Incremental updates}
 
@@ -1651,6 +1679,7 @@ make heavy use of recursion.
 WRITE MORE HERE
 
 \subsubsection{Embedding Datalog}
+\label{sec:embeddingDatalog}
 
 Datafun (\textcite{arntz2016datafun}) is a functional programming language that embeds
 Datalog, allowing significant improvements in genericity, such as the use of
