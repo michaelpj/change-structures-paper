@@ -1527,6 +1527,7 @@ aggregation and other primitives with interesting derivatives.
 \subsection{Change actions}
 
 \subsubsection{Change structures}
+\label{sec:relatedChangeStructures}
 
 The seminal paper in this area is \textcite{cai2014changes}. We use the notions
 defined in that excellent paper heavily, but we deviate in three regards: the
@@ -1537,9 +1538,11 @@ We have omitted minus operators from our definition because
 there are many interesting change actions that are not complete and so cannot 
 have a minus operator (for example, $\mathbb{Z}_3$ does, but $\mathbb{Z}_1$ does
 not). Where we can find a change structure with a minus operator, often we are
-forced to use unwieldy representations for change sets. For example, the change actions described before on sets and lists are clearly
+forced to use unwieldy representations for change sets, and
+\citeauthor{cai2014changes} cite this as their reason for using a dependently
+typed type of changes. For example, the change actions described before on sets and lists are clearly
 useful for incremental computation on streams, yet they do not admit minus operators - instead, one would
-be forced to work with e.g. multisets admitting negative arities, as \textcite{cai2014changes} do.
+be forced to work with e.g. multisets admitting negative arities, as \citeauthor{cai2014changes} do.
 
 Our notion of function changes is different to \citeauthor{cai2014changes}'s,
 because we consider changes of functions to be what \citeauthor{cai2014changes} describe as
@@ -1588,32 +1591,26 @@ with ILC. In particular, this is likely to be of interest for languages like
 Datafun (see \cref{sec:embeddingDatalog} below) which embed Datlog or logic programming behaviour within a broader
 programming context.
 
-Our function changes do not need to be dependently typed, so we do not need a
-dependently typed formulation for the cases we have been considering. However,
-if we want to extend this formulation to differential geometry we will need
-dependently typed changes, since the type of the tangent space is
-dependent on the point at which the tangents are taken.
+Since we do not require a minus operator to always be defined, we do not need
+our changes to depend on the value being changed. However,
+if we want to extend our formalism to synthetic differential geometry we \emph{will} need
+dependently typed changes, since the type of the tangent space at a point is
+dependent on the point.
 
-In fact, a slightly different dependently-typed formulation seems promising, since it would allow us
-to draw out a 2-categorical interpretation of change actions. For example, if
-we consider our base set as a category, with changes $\Delta_a^b$ between $a$
-and $b$ as morphisms between $a$ and $b$, then a function is
-differentiable iff it is a functor on that category (i.e. provides a change in
-$\Delta_{f(a)}^{f(b)}$). 
+In fact, a slightly different dependently-typed formulation arises if we consider changes
+to be indexed \emph{both} by the source and the target. This corresponds to 
+thinking of our base set as a category, with changes $\Delta_a^b$ between $a$
+and $b$ as morphisms between $a$ and $b$. In this interpretation, a function is
+differentiable iff it is a functor (i.e. takes a change in $\Delta_a^b$ to one in
+$\Delta_{f(a)}^{f(b)}$). Function changes also have an interpretation as natural
+transformation.
 
-While this is a promising direction, it wasn't necessary for the material in
-this paper, and would have complicated the exposition significantly, so we opted
-to leave it for future work.
-
-\citeauthor{cai2014changes} also introduce a useful notion of
-\textit{self-maintainability}. A derivative is self-maintainable if it does not
-make use of its first argument, and so only depends on the change to the
-argument. This makes the derivatives significantly easier to compute. In the
-Datalog context, this corresponds to the rule being \textit{linear}, and leads
-to much simpler derivatives. The
-``independence'' property that self-maintainability provides seems likely to be
-useful for parallelizing incremental computation, and we think this notion
-deserves further study.
+This approach seems promising, although it introduces some
+interesting additional restrictions (functoriality implies $\derive{f}(\change{a} \splus \change{b}) =
+\derive{f}(\change{a}) \splus \derive{f}(\change{b})$; naturality of function
+changes implies that
+the two derivatives from \cref{prop:evDerivatives} are equal). These seem
+reasonable, but we don't know exactly what the consequences would be.
 
 \subsubsection{S-acts}
 
@@ -1722,6 +1719,30 @@ higher-order functions. Since we have directly defined a change action and
 derivative operator for Datalog, our work could be used as a ``plugin'' in the sense
 of \citeauthor{cai2014changes}, allowing Datafun to compute its internal fixpoints
 incrementally, but also allowing Datafun expressions to be fully incrementally updated.
+
+\section{Conclusions and future work}
+
+We have presented change actions and their properties, and provided novel
+strategies for incrementally evaluating fixpoints and the semantics of Datalog.
+
+Our work opens several avenues for future investigation.
+
+Firstly, the abstract definition of change actions could be extended to the
+dependently-typed version as gestured towards in
+\cref{sec:relatedChangeStructures}. We believe this might smooth over many of
+the technical difficulties, and also provide a structure that is compatible with
+synthetic differential geometry.
+
+MPJ: mention the integration/integral curves stuff?
+
+Secondly, the theory of change actions on domains could be developed. Since
+domains are commonly used to define programming language semantics, this could
+open up opportunities for incremental evaluation of many programming languages,
+even those that not fit into the model of \citeauthor{cai2014changes}'s ILC.
+
+Finally, combining our concrete Datalog derivatives with a system similar to ILC
+in a language such as Datafun would be an exciting proof of the compositional
+power of this approach.
 
 \printbibliography
 
