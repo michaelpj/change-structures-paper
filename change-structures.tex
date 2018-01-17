@@ -182,25 +182,21 @@ Many other notions in computer science can be naturally understood in terms of c
 and database updates, files and \textit{diff}s, Git repositories and commits, even video compression
 algorithms that encode a frame as a series of changes to the previous frame.
 
-\subsection{Minus operators and completeness}
+\subsection{Complete change actions and minus operators}
 
-\textcite{cai2014changes} include a ``minus operator'' in their definition of change actions. 
+Complete change actions are an important class of change actions, because they
+have changes between \emph{any} two values in the base set.
+
+\begin{defn}[Complete change actions]
+  A change action is \textit{complete} if for any $a, b \in A$, there is
+  a change $\change{a} \in \changes{A}$ such that $a \cplus \change{a} = b$.
+\end{defn}
+
+Complete change actions have convenient ``minus operators'' that allow us to
+compute the difference between two values.
 
 \begin{defn}[Minus operator]
   A \textit{minus operator} is a function $\cminus: A \times A \rightarrow \changes{A}$ such that $a \cplus (b \cminus a) = b$.
-\end{defn}
-
-We have omitted minus operators from our definition because
-there are many interesting change actions that do not have them (for example,
-$\mathbb{Z}_3$ does, but $\mathbb{Z}_1$ does not). Indeed, requiring change actions to provide
-a minus operator is overly restrictive, and would often force one to adopt unwieldy representations
-for change sets (for example, the change actions described before on sets and lists are clearly
-useful for incremental computation on streams, yet they do not admit minus operators - instead, one would
-be forced to work with e.g. multisets admitting negative arities, as \textcite{cai2014changes} do).
-
-\begin{defn}[Completeness]
-  A change action is \textit{complete} if for any $a, b \in A$, there is
-  a change $\change{a} \in \changes{A}$ such that $a \cplus \change{a} = b$.
 \end{defn}
 
 \begin{prop}[Completeness equivalences]
@@ -1520,12 +1516,17 @@ aggregation and other primitives with interesting derivatives.
 MPJ: the title of this will be less redundant once we call ours something else
 
 The seminal paper in this area is \textcite{cai2014changes}. We use the notions
-defined in that excellent paper heavily, but we deviate in two regards: the use of
-dependent types, and the nature of function changes.
+defined in that excellent paper heavily, but we deviate in three regards: the
+inclusion of minus operators, the nature of function changes, and the use of
+dependent types.
 
-These two issues are linked, because part of the reason that \citeauthor{cai2014changes} need
-dependently typed changes is in order to handle their notion of function
-changes.
+We have omitted minus operators from our definition because
+there are many interesting change actions that do not have them (for example,
+$\mathbb{Z}_3$ does, but $\mathbb{Z}_1$ does not). Indeed, requiring change actions to provide
+a minus operator is overly restrictive, and would often force one to adopt unwieldy representations
+for change sets (for example, the change actions described before on sets and lists are clearly
+useful for incremental computation on streams, yet they do not admit minus operators - instead, one would
+be forced to work with e.g. multisets admitting negative arities, as \textcite{cai2014changes} do).
 
 Our notion of function changes is different to \citeauthor{cai2014changes}'s,
 because we consider changes of functions to be what \citeauthor{cai2014changes} describe as
