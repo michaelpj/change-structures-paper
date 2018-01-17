@@ -34,13 +34,13 @@
   well as incremental update of (recursive) Datalog programs.
 \end{abstract}
 
-\title{Something about change structures}
+\title{Something about change actions}
 
 \maketitle
 
 \section{Introduction}
 
-The paper of \textcite{cai2014changes} defines compelling notions
+\textcite{cai2014changes} defines compelling notions
 of change structure and derivative, and use them to provide a composable framework for
 evaluating incremental lambda calculus programs provided you have a ``plugin'' for the
 primitive operations of your program.
@@ -66,14 +66,14 @@ notion of derivative that will encompass differential geometry as well.
 
 The major contributions of this paper are:
 \begin{itemize}
-  \item A generalised definition of change structures and derivatives
-    (\cref{sec:change-structures}).
-  \item A description of the categorical properties of change structures, including
+  \item A generalisation of change structures to \textit{change actions} and derivatives
+    (\cref{sec:changeActions}).
+  \item A description of the categorical properties of change actions, including
     several useful direct constructions (\cref{sec:category}).
-  \item A description of the properties of change structures over several
+  \item A description of the properties of change actions over several
     additional kinds of structures, including theorems that characterize the range of
     possible derivatives available, and conditions under which compound change
-    structures may admit derivatives (\cref{sec:moreStructures}).
+    actions may admit derivatives (\cref{sec:moreStructures}).
   \item Two results relating to fixpoint calculations: incremental computation
     of fixpoints, and incremental updates of fixpoint expressions (\cref{sec:fixpoints}).
   \item Applications of the above machinery to incremental computation and
@@ -81,40 +81,17 @@ The major contributions of this paper are:
     language constructs, including negation and aggregation (\cref{sec:datalog}).
 \end{itemize}
 
-\section{Change structures}
-\label{sec:change-structures}
+\section{Change actions}
+\label{sec:changeActions}
 
-MARIO: Should we pick a different name to distinguish them from Cai-style change structures?
-
-MPJ: Not sure. I do really like ``change structure'', and I think they're
-similar, but perhaps we should use a different name. Forward algebra? Change action?
-
-MARIO: I've been calling them ``forward algebras'', but the specific name is not particularly
-important. I would definitely like to have a different name, especially since we often contrast the two.
-
-MPJ: I propose ``change action'', since we're emphasising the monoid action
-connection. Really, I think they're just semigroup/monoid actions with a more
-general notion of morphism.
-
-MARIO: Can we use something that references the monoid? Like `monoid system' or
-`monoid algebra' or `monoid thingamajig'? So we can talk about group systems, vector
-space systems and similar.
-I'd just call them monoid actions, but that usually refers to the function itself, not
-the whole thing.
-
-MPJ: I do like the idea of just calling them monoid actions, but I think having
-a different name is useful because e.g. it gives us something to call our
-category, which has some additional assumptions on morphisms that aren't
-standard for monoid actions.
-
-\begin{defn}[Change structures]
-  A \textit{change structure} is defined as:
+\begin{defn}[Change actions]
+  A \textit{change action} is defined as:
 
   $$\mathcal{A} \defeq \cstruct{A}{\changes{A}}{\cplus}$$
 
   where $A$ is a set, $(\changes{A}, \splus, \mzero)$ is a monoid, and $\cplus$ gives a monoid action on $A$.
 
-  We will call $A$ the base set, and $\changes{A}$ the change set of the change structure.
+  We will call $A$ the base set, and $\changes{A}$ the change set of the change action.
 \end{defn}
 
 Elements in the change set represent changes that can be made to elements in the
@@ -124,11 +101,11 @@ fact inessential: given any set with an action on the base set, we can take the
 free monoid over the action set to obtain a monoid action.
 
 The fact that the change set is a monoid action reveals the heart of the
-change structure definition: the change set is a representation of a
+change action definition: the change set is a representation of a
 \textit{transformation monoid} over the base set, with the monoid
 operation simply being composition.
 
-The primary motivation for change structures is that they let us define
+The primary motivation for change actions is that they let us define
 \texit{derivatives} for functions.
 
 \begin{defn}[Derivatives]
@@ -171,9 +148,9 @@ they satisfy the standard chain rule.
   derivative for $(g \circ f)$.
 \end{proof}
 
-Here are some recurring examples of changes structures:
+Here are some recurring examples of changes actions:
 \begin{itemize}
-  \item $A_\discrete \defeq \cstruct{A}{\emptyset}{\emptyset}$, the discrete change structure on any base set.
+  \item $A_\discrete \defeq \cstruct{A}{\emptyset}{\emptyset}$, the discrete change action on any base set.
   \item $A_\Rightarrow \defeq \cstruct{A}{A\Rightarrow A}{\ev}$, where $A
     \Rightarrow A$ denotes the exponential object and $\ev$ is the evaluation map.
   \item $A_\leq \defeq \cstruct{A}{\leq}{ev_\leq}$, where $\leq$ is some
@@ -186,49 +163,49 @@ Here are some recurring examples of changes structures:
   \item $F_2 \defeq$ integers modulo 2 with addition.
 \end{itemize}
 
-Indeed, any monoid $(A, \splus)$ can be seen as a change structure $\cstruct{A}{A}{\splus}$. In particular,
-for any change structure $\cstruct{A}{\changes{A}}{\cplus}$,
-$\cstruct{\changes{A}}{\changes{A}}{\splus}$ is also a change structure. Many practical change structures
+Indeed, any monoid $(A, \splus)$ can be seen as a change action $\cstruct{A}{A}{\splus}$. In particular,
+for any change action $\cstruct{A}{\changes{A}}{\cplus}$,
+$\cstruct{\changes{A}}{\changes{A}}{\splus}$ is also a change action. Many practical change actions
 can be constructed in this way:
 \begin{itemize}
   \item $[A]$, the type of lists (or streams) of elements of type $A$, is a monoid under
-  concatenation. Hence it defines a change structure $\cstruct{[A]}{[A]}{\doubleplus}$.
+  concatenation. Hence it defines a change action $\cstruct{[A]}{[A]}{\doubleplus}$.
   \item $\{A\}$, the type of sets, is a monoid under either set union or intersection,
-  and thus it defines change structures $\cstruct{\{A\}}{\{A\}}{\cup},\cstruct{\{A\}}{\{A\}}{\cap}$
+  and thus it defines change actions $\cstruct{\{A\}}{\{A\}}{\cup},\cstruct{\{A\}}{\{A\}}{\cap}$
 \end{itemize}
 
-Many other notions in computer science can be naturally understood in terms of change structures, e.g. databases
+Many other notions in computer science can be naturally understood in terms of change actions, e.g. databases
 and database updates, files and \textit{diff}s, Git repositories and commits, even video compression
 algorithms that encode a frame as a series of changes to the previous frame.
 
 \subsection{Minus operators and completeness}
 
-\textcite{cai2014changes} include a ``minus operator'' in their definition of change structures. 
+\textcite{cai2014changes} include a ``minus operator'' in their definition of change actions. 
 
 \begin{defn}[Minus operator]
   A \textit{minus operator} is a function $\cminus: A \times A \rightarrow \changes{A}$ such that $a \cplus (b \cminus a) = b$.
 \end{defn}
 
 We have omitted minus operators from our definition because
-there are many interesting change structures that do not have them (for example,
-$\mathbb{Z}_3$ does, but $\mathbb{Z}_1$ does not). Indeed, requiring change structures to provide
+there are many interesting change actions that do not have them (for example,
+$\mathbb{Z}_3$ does, but $\mathbb{Z}_1$ does not). Indeed, requiring change actions to provide
 a minus operator is overly restrictive, and would often force one to adopt unwieldy representations
-for change sets (for example, the change structures described before on sets and lists are clearly
+for change sets (for example, the change actions described before on sets and lists are clearly
 useful for incremental computation on streams, yet they do not admit minus operators - instead, one would
 be forced to work with e.g. multisets admitting negative arities, as \textcite{cai2014changes} do).
 
 \begin{defn}[Completeness]
-  A change structure is \textit{complete} if for any $a, b \in A$, there is
+  A change action is \textit{complete} if for any $a, b \in A$, there is
   a change $\change{a} \in \changes{A}$ such that $a \cplus \change{a} = b$.
 \end{defn}
 
 \begin{prop}[Completeness equivalences]
-  Let $A$ be a change structure. Then the following are equivalent:
+  Let $A$ be a change action. Then the following are equivalent:
   \begin{itemize}
     \item $A$ is complete.
     \item The monoid action is transitive.
     \item There is a minus operator on $A$.
-    \item Any function from any change structure into $A$ is differentiable.
+    \item Any function from any change action into $A$ is differentiable.
   \end{itemize}
 \end{prop}
 
@@ -241,22 +218,22 @@ of functions.
   $$\derive{f}_\cminus(a, \change{a}) \defeq f(a \cplus \change{a}) \cminus f(a)$$
 \end{defn}
 
-\subsection{Thin change structures}
+\subsection{Thin change actions}
 
 As in \textcite{cai2014changes}, multiple changes may represent the difference
-between two elements. This is true for many change structures, but the change
-structures for which there \emph{is} only one such change are particularly
+between two elements. This is true for many change actions, but the change
+actions for which there \emph{is} only one such change are particularly
 well-behaved, so it's worth naming them.
 
-\begin{defn}[Thin change structures]
-  A change structure is \textit{thin} if whenever $a \cplus \change{a}
+\begin{defn}[Thin change actions]
+  A change action is \textit{thin} if whenever $a \cplus \change{a}
   = a \cplus \change{b}$ for some $a \in A$, it is the case that $\change{a} = \change{b}$.
 \end{defn}
 
-Many change structures are not thin, for example $F_2$.
+Many change actions are not thin, for example $F_2$.
 
 \begin{prop}[Thin equivalences]
-  Let $A$ be a change structure. Then the following are equivalent.
+  Let $A$ be a change action. Then the following are equivalent.
   \begin{itemize}
     \item $A$ is thin.
     \item The monoid action is free.
@@ -268,34 +245,34 @@ Many change structures are not thin, for example $F_2$.
 Thinness gives us uniqueness of derivatives:
 
 \begin{prop}
-  Let $B$ be a thin change structure, and $f: A \rightarrow B$. Then $f$ has at
+  Let $B$ be a thin change action, and $f: A \rightarrow B$. Then $f$ has at
   most one derivative.
 
   Conversely, if $\textrm{id}: B \rightarrow B$ has exactly one derivative, then
   $B$ is thin.
 \end{prop}
 
-\section{The category of change structures}
+\section{The category of change actions}
 \label{sec:category}
 
-\begin{defn}[Category of change structures]
-  We define the category $\cat{CStruct}$ of change structures. The objects are
-  change structures and the morphisms are differentiable functions. We denote
+\begin{defn}[Category of change actions]
+  We define the category $\cat{CStruct}$ of change actions. The objects are
+  change actions and the morphisms are differentiable functions. We denote
   the set of differentiable functions between $A$ and $B$ as $A \difffunc B$.
 \end{defn}
 
 \subsection{Equivalence with PreOrd}
 
-There is a natural preorder on the base set of a change structure, given by reachability
+There is a natural preorder on the base set of a change actions, given by reachability
  under the action:
 \begin{defn}[Reachability order]
   $a \reachOrder b$ iff there is a $\change{a} \in \changes{A}$ such that $a \cplus
   \change{a} = b$.
 \end{defn}
 
-The reachability order of a complete change structure on $A$ is precisely the trivial relation
-$A \times A$. Conversely, any such change structure is necessarily complete. The correspondence
-between a change structure and its corresponding reachability preorder gives rise to
+The reachability order of a complete change action on $A$ is precisely the trivial relation
+$A \times A$. Conversely, any such change action is necessarily complete. The correspondence
+between a change action and its corresponding reachability preorder gives rise to
 a faithful functor $Reach : \cat{CStruct} \rightarrow \cat{PreOrd}$ that acts as the identity
 on morphisms.
 
@@ -305,16 +282,16 @@ on morphisms.
 \end{prop}
 
 \begin{corollary}
-  Two change structures are isomorphic iff their posets under the reachability
+  Two change actions are isomorphic iff their posets under the reachability
   order are isomorphic.
 \end{corollary}
 
 \begin{corollary}
-  Any function from a discrete change structure or into a complete change
-  structure is differentiable.
+  Any function from a discrete change action or into a complete change
+  action is differentiable.
 \end{corollary}
 
-Conversely, any preorder $\leq$ on some set $A$ induces the corresponding change structure
+Conversely, any preorder $\leq$ on some set $A$ induces the corresponding change action
 $A_\leq$. This gives rise to a (full and faithful) functor $\{\_\}_\leq : \cat{PreOrd} \rightarrow \cat{CStruct}$
 
 \begin{thm}[Equivalence to $\cat{PreOrd}$]
@@ -325,7 +302,7 @@ $A_\leq$. This gives rise to a (full and faithful) functor $\{\_\}_\leq : \cat{P
   On one hand, if $U$ is a preorder, it's trivial to check that $Reach (\{U\}_\leq) = U$.
 
   On the other hand, we need to find a natural isomorphism between $\{\_\}_\leq \circ Reach$
-  and the identity functor. First, we note that the base set for the change structure $\{Reach(A)\}$ is
+  and the identity functor. First, we note that the base set for the change action $\{Reach(A)\}$ is
   the same as the base set for $A$. We claim that the desired natural isomorphism is given by the
   the identity on the base sets. It remains to prove that the identities
   $id_A : A \rightarrow \{Reach(A)\}$ and $id_{\reachOrder} : \{Reach(A)\} \rightarrow A$
@@ -363,13 +340,13 @@ practical computation.
 
 \begin{prop}[Products]
   Let $A = \cstruct{A}{\changes{A}}{\cplus}$ and $B =
-  \cstruct{B}{\changes{B}}{\cpluss}$ be change structures.
+  \cstruct{B}{\changes{B}}{\cpluss}$ be change actions.
 
   Then $A \times B \defeq \cstruct{A \times B}{\changes{A} \times
   \changes{B}}{\cplus \times \cpluss}$ is their categorical product.
 \end{prop}
 \begin{proof}
-  Let $Y$ be a change structure, and $f_1: Y \rightarrow A$, $f_2: Y
+  Let $Y$ be a change action, and $f_1: Y \rightarrow A$, $f_2: Y
   \rightarrow B$ be morphisms.
 
   Then the product morphism in $\cat{Set}$, $\pair{f_1}{f_2}$ is the product
@@ -383,7 +360,7 @@ practical computation.
 
 \begin{prop}[Coproducts]
   Let $A = \cstruct{A}{\changes{A}}{\cplus}$ and $B =
-  \cstruct{B}{\changes{B}}{\cpluss}$ be change structures.
+  \cstruct{B}{\changes{B}}{\cpluss}$ be change actions.
 
   Then $A + B \defeq \cstruct{A + B}{\changes{A} \times
   \changes{B}}{\cplusvee}$ is their categorical coproduct, with $\cplusvee$ defined as:
@@ -391,7 +368,7 @@ practical computation.
   $$i_2 b \cplusvee (\change{a}, \change{b}) \defeq \iota_2 (b \cplus \change{b})$$
 \end{prop}
 \begin{proof}
-  Let $Y$ be a change structure, and $f_1 : A \rightarrow Y$, $f_2 : B
+  Let $Y$ be a change action, and $f_1 : A \rightarrow Y$, $f_2 : B
   \rightarrow Y$ be differentiable maps.
 
   As before, it suffices to prove that the universal map $[f_1, f_2]$ in $\cat{Set}$ is a differentiable
@@ -410,14 +387,14 @@ incrementalization lemma. You can use the same derivative of $\curry{f}$. Bah.
 
 \begin{prop}[Exponentials]
 \label{prop:exponentials}
-  Let $A_\cplus$ and $B_\cpluss$ be change structures
+  Let $A_\cplus$ and $B_\cpluss$ be change actions
 
   Then $\cstruct{A \difffunc B}{A
     \rightarrow \changes{B}}{\lambda d. \lambda f. \lambda a. f(a) \cpluss
-    d(a)}$ is a change structure on $A \difffunc B$ and the exponential object.
+    d(a)}$ is a change action on $A \difffunc B$ and the exponential object.
 
-  The monoid structure on $A \rightarrow \changes{B}$ is the monoid
-  structure on $\changes{B}$ lifted pointwise, so we will typically reuse the
+  The monoid action on $A \rightarrow \changes{B}$ is the monoid
+  action on $\changes{B}$ lifted pointwise, so we will typically reuse the
   change operator for $B$ for $A \rightarrow \changes{B}$.
 \end{prop}
 \begin{proof}
@@ -521,30 +498,30 @@ Conveniently, our proof of \cref{prop:exponentials} gives us actual derivatives 
   similar but begins by taking the derivative of $f \cplus \change{f}$.
 \end{proof}
 
-\subsection{The category of thin change structures}
+\subsection{The category of thin change actions}
 
 \begin{prop}
-  The product $A \times B$ of change structures $A$ and $B$ is thin if and only if both $A$ and $B$ are.
+  The product $A \times B$ of change actions $A$ and $B$ is thin if and only if both $A$ and $B$ are.
   Furthermore, whenever $A$ and $B$ are complete, then so is $A \times B$.
 
-  The exponential object $A \Rightarrow B$ of change structures $A$ and $B$ is thin if $B$ is. 
+  The exponential object $A \Rightarrow B$ of change actions $A$ and $B$ is thin if $B$ is. 
   Furthermore, whenever $B$ is complete, then so is $A \Rightarrow B$.
 \end{prop}
 
-Thus, the category of thin change structures is Cartesian closed as well.
+Thus, the category of thin change actions is Cartesian closed as well.
 
-\subsection{Ordering change structures}
+\subsection{Ordering change actions}
 
-We can put an order on the change structures for a given base set as follows:
+We can put an order on the change actions for a given base set as follows:
 
-\begin{defn}[Change structure ordering]
+\begin{defn}[Change action ordering]
   $A_\cplus \fineOrder A_\cpluss$ iff $\textrm{id}: A_\cplus \rightarrow A_\cpluss$ is differentiable.
 \end{defn}
 
 Transitivity of the order follows from the chain rule, and reflexivity is trivial.
 
 This ordering is useful because it gives us a natural sense of the ``fineness''
-of a change structure, much like the corresponding version in topology.
+of a change action, much like the corresponding version in topology.
 
 \begin{prop}
   If $f: A_\cplus \rightarrow B_\cpluss$ is differentiable, then
@@ -556,8 +533,8 @@ of a change structure, much like the corresponding version in topology.
   \end{itemize}
 \end{prop}
 
-That is, functions remain differentiable if the source change structure becomes
-coarser, or the target change structure becomes finer (again, mirroring topology).
+That is, functions remain differentiable if the source change action becomes
+coarser, or the target change action becomes finer (again, mirroring topology).
 
 Furthermore, $\fineOrder$ also gives a fineness ordering on the reachability orders.
 
@@ -567,12 +544,12 @@ Furthermore, $\fineOrder$ also gives a fineness ordering on the reachability ord
 
 \subsection{Superpositions}
 
-As well as combining change structures entire, we can combine two different
-change structures on the same underlying set.
+As well as combining change actions entire, we can combine two different
+change actions on the same underlying set.
 
 \begin{defn}[Superposition]
   Let $A_\cplus = \cstruct{A}{\changes{A}_\cplus}{\cplus}$ and $A_\cpluss =
-  \cstruct{A}{\changes{A}_\cpluss}{\cpluss}$ be change structures.
+  \cstruct{A}{\changes{A}_\cpluss}{\cpluss}$ be change actions.
 
   Then the \textit{superposition} of $A_\cplus$ and $A_\cpluss$ is defined as:
   $$A_\cplus \superpose A_\cpluss \defeq \cstruct{A}{
@@ -586,12 +563,12 @@ set has a monoid structure: $\cstruct{A}{(\changes{A}_\cplus +
 the free extension to finite sequences.
 
 In some cases we may be able to find a more compact representation of the
-superposition change structure, for example $\mathbb{Z}_1 \superpose \mathbb{Z}_2$ is 
+superposition change action, for example $\mathbb{Z}_1 \superpose \mathbb{Z}_2$ is 
 isomorphic to $\mathbb{Z}_3$. The following result shows one way of finding such representations which
 we have found helpful in practice:
 
 \begin{prop}
-  Let $\changes{A}_\cplus, \cplus$ and $\changes{A}_\cpluss, \cpluss$ be two different change structures on
+  Let $\changes{A}_\cplus, \cplus$ and $\changes{A}_\cpluss, \cpluss$ be two different change action on
   a set $A$. Suppose there exists a function
   $\wr : \changes{A}_\cplus \times \changes{A}_\cpluss \rightarrow \changes{A}_\cplus$ satisfying for
   all $a \in A$:
@@ -601,7 +578,7 @@ we have found helpful in practice:
   $$
 
   Then $\cstruct{A}{\changes{A}_\cplus \times \changes{A}_\cpluss}{\cplussym{\wedge}}$
-  is a change structurewith monoidal structure given by:
+  is a change action monoidal structure given by:
   $$
     (\change{a}, \change{b}) + (\change{c}, \change{d}) \defeq 
     (\change{a} + \wr(\change{c}, \change{b}), \change{b} + \change{d})
@@ -613,7 +590,7 @@ we have found helpful in practice:
 \end{prop}
 
 Superposition is a useful construction, because it gives us the coarsest
-change structure finer than its components.
+change action finer than its components.
 
 \begin{corollary}
   $A_\cplus \superpose A_\cpluss$ is the least upper bound of $A_\cplus$ and $A_\cpluss$ with respect to $\fineOrder$.
@@ -634,19 +611,19 @@ change structure finer than its components.
   $$
 \end{proof}
 
-This gives us a join-semilattice for change structures on a given set.
+This gives us a join-semilattice for change actions on a given set.
 
-\begin{thm}[Change structure semilattice]
-  Change structures on a base set $A$ form a bounded join-semilattice 
+\begin{thm}[Change action semilattice]
+  Change actions on a base set $A$ form a bounded join-semilattice 
   ordered by $\fineOrder$, with the least element given by
   $A_\discrete$, and the join operation given by $\superpose$.
 \end{thm}
 
-All functions into a complete change structure are differentiable, so any
-complete change structures on $A$ will be maximal elements of the lattice, while
-the discrete change structure provides a minimal element.
+All functions into a complete change action are differentiable, so any
+complete change actions on $A$ will be maximal elements of the lattice, while
+the discrete change action provides a minimal element.
 
-\section{Change structures over other structures}
+\section{Change actions over other structures}
 \label{sec:moreStructures}
 
 \subsection{Posets}
@@ -677,7 +654,7 @@ Both sup- and sub-derivatives satisfy the chain rule, in the following sense:
   $$\derive{g}(f(a)) \circ \derive{f}(a)$$ is a subderivative of $g \circ f$
 \end{prop}
 
-Some change structures always have sub- or sup-derivatives: for example every function
+Some change actions always have sub- or sup-derivatives: for example every function
 into $\mathbb{Z}_1$ is sup-differentiable, and every function into $\mathbb{Z}_2$ is 
 sub-differentiable.
 
@@ -693,14 +670,14 @@ consider any bounded lattice with the change set $\{ \lambda k . \bot, \lambda k
  bottom), and a sup-derivative (mapping everything to top), but in most cases
  these are not true derivatives.
 
-Secondly, if the base set of a change structure is a poset, then this gives us a natural
+Secondly, if the base set of a change action is a poset, then this gives us a natural
 order on the change set.
 
 \begin{defn}[Change order]
   $\change{a} \changeOrder \change{b}$ iff for all $a \in A$ it is the case that $a \cplus \change{a} \leq a \cplus \change{b}$.
 \end{defn}
 
-If the change structure is thin, then the order is antisymmetric, and a
+If the change action is thin, then the order is antisymmetric, and a
 full partial order.
 
 Having a monotonic order on the changes is very useful.
@@ -744,24 +721,24 @@ although the condition of the theorem only requires the bounds to be sub- and
 sup-derivatives, the conclusion of the theorem also applies to the bounds, so
 they will always be full derivatives as well.
 
-\subsubsection{Ascending and descending change structures}
+\subsubsection{Ascending and descending change actions}
 
 Having sub- and sup-derivatives alone is not quite enough to ensure that all
 functions are differentiable. We need some additional power.
 
-\begin{defn}[Ascending and descending change structures]
-  A change structure $A$ is \textit{ascending} if $a \leq b$ implies $a
+\begin{defn}[Ascending and descending change actions]
+  A change action $A$ is \textit{ascending} if $a \leq b$ implies $a
   \reachOrder b$.
 
-  A change structure $A$ is \textit{descending} if $a \leq b$ implies $b
+  A change action $A$ is \textit{descending} if $a \leq b$ implies $b
   \reachOrder a$.
 \end{defn}
 
-Intuitively, an ascending change structure is one where you can produce
+Intuitively, an ascending change action is one where you can produce
 arbitrary changes that follow the partial order.
 
 \begin{thm}
-  Let $A$, $B$ be a change structures, $f: A \rightarrow B$ be a function. Then
+  Let $A$, $B$ be a change actions, $f: A \rightarrow B$ be a function. Then
   any of the following are sufficient for $f$ to be differentiable.
   \begin{itemize}
     \item $B$ is ascending, and $f$ is sub-differentiable.
@@ -770,8 +747,8 @@ arbitrary changes that follow the partial order.
   \end{itemize}
 \end{thm}
 
-In particular, we can construct change structures where functions are
-differentiable by superposing multiple change structures that have some of the
+In particular, we can construct change actions where functions are
+differentiable by superposing multiple change actions that have some of the
 properties that we want.
 
 For example, $\mathbb{Z}_1$ is ascending (and has sup-derivatives), and
@@ -782,7 +759,7 @@ $\mathbb{Z}_2$ is descending (and has sub-derivatives), so $\mathbb{Z}_1
 
 TODO: this section isn't very elegant
 
-If we have a minus operator, then our change structure is complete and all
+If we have a minus operator, then our change action is complete and all
 functions are differentiable. However, there may still be multiple derivatives
 for a given function, and we can distinguish them using our order on the change
 set.
@@ -806,11 +783,11 @@ produce.
 \end{prop}
 
 This then gives us a full characterisation of the derivatives on a complete
-change structure.
+change action.
 
 \begin{thm}[Characterization of derivatives]
 \label{thm:derivativeCharacterization}
-  Let $A$ be a change structure and $B$ be a complete change structure, let
+  Let $A$ be a change action and $B$ be a complete change action, let
   $f: A \rightarrow B$ be a function, and let $\subderiveM{f}$ and
   $\supderiveM{f}$ be minimal and maximal derivatives of $f$, respectively.
   Then the derivatives of $f$ are precisely
@@ -872,10 +849,10 @@ We mention another well known fact which will be useful later.
 
 \begin{defn}
   Let $L$ be a join-semilattice. Then $L_\vee \defeq \cstruct{L}{L}{\vee}$ is a change
-  structure on $L$.
+  action on $L$.
 
   Similarly, if $L$ is a meet-semilattice, then $L_\wedge \defeq \cstruct{L}{L}{\wedge}$ is a change
-  structure on $L$.
+  action on $L$.
 \end{defn}
 
 \begin{prop}
@@ -887,11 +864,11 @@ We mention another well known fact which will be useful later.
   \end{itemize}
 \end{prop}
 
-As usual, the superposition change structure is difficult to work with, since it
+As usual, the superposition change action is difficult to work with, since it
 consists of sequences of ``upwards'' and ``downwards'' changes. However, it
 makes precise the intuition that we can ``glue together'' the ``upwards'' change
-structure for joins and the ``downwards'' change structure for meets into a
-complete change structure for the full lattice.
+action for joins and the ``downwards'' change action for meets into a
+complete change action for the full lattice.
 
 \subsection{Boolean algebras}
 
@@ -1018,8 +995,8 @@ all the derivatives on Boolean algebras:
 
 \begin{corollary}
 \label{cor:booleanCharacterization}
-  Let $L$ be a Boolean algebra with the $L_\superpose$ change structure, $A$ be
-  a change structure, and $f: A \rightarrow
+  Let $L$ be a Boolean algebra with the $L_\superpose$ change action, $A$ be
+  a change action, and $f: A \rightarrow
   L$ a function. Then the derivatives of $f$ are precisely those functions
   $\derive{f}$ such that
   $$
@@ -1054,7 +1031,7 @@ The canonical solution to this problem is ``semi-naive evaluation'', which
 attempts to derive only the new facts at each iteration. However, ``semi-naive''
 as traditionally presented has some warts, and
 the following theorem provides a generalization of it to any differentiable function over a
-change structure. We will see the details of how to differentiate Datalog
+change action. We will see the details of how to differentiate Datalog
 semantics in \cref{sec:datalogDifferentiability}.
 
 TODO: I had to use the minus to get something generic for $\Delta F_1$ - that's
@@ -1063,7 +1040,7 @@ maps everything to $F_1$'', if we have that.
 
 \begin{thm}[Incremental computation of iterated function applications]
 \label{thm:diffIter}
-  Let $L$ be a change structure, $x \in L$, and $f: L \rightarrow L$ be differentiable. Define $F_i$ as follows:
+  Let $L$ be a change action, $x \in L$, and $f: L \rightarrow L$ be differentiable. Define $F_i$ as follows:
 
   \begin{eqnarray*}
   F_0 & = & x\\
@@ -1145,7 +1122,7 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
 \label{thm:fixpointDiff}
   Let 
   \begin{itemize}
-    \item $A$ be a change structure
+    \item $A$ be a change action
     \item$\fixpoint_A : (A \rightarrow A) \rightarrow A$ be a fixpoint operator
     \item $f: A \rightarrow A$ be a differentiable function
     \item $\change{f} \in \changes{(A \rightarrow A)}$ be a change to $f$
@@ -1201,7 +1178,7 @@ However, we can get a true derivative if we are working with least fixpoints.
 \label{thm:leastFixpointDiff}
   Let 
   \begin{itemize}
-    \item $A$ be a change structure 
+    \item $A$ be a change action 
     \item $A, \changes{A}$ be cpos
     \item$\fixpoint_A : (A \rightarrow A) \rightarrow A$ be a differentiable
       least fixpoint operator
@@ -1268,7 +1245,7 @@ the conditions.
 \begin{prop}
   Let
   \begin{itemize}
-    \item $A$ be a complete change structure, and a cpo satisfying the ACC
+    \item $A$ be a complete change action, and a cpo satisfying the ACC
     \item $\changes{A}$ be ordered according to $\changeOrder$, and a cpo
       satisfying the ACC
     \item $f: A \rightarrow A$ be differentiable and monotone
@@ -1380,11 +1357,11 @@ interested in calculating the semantics faster if it exists.
 
 In order to apply the machinery we have developed, we need the semantics $\denote{\_}$ to
 be differentiable. However, it is a function on Boolean algebras, and we know
-that the $L_\superpose$ change structure is complete, so in fact we know that
+that the $L_\superpose$ change action is complete, so in fact we know that
 $\denote{\_}$ must be differentiable.
 
 However, this does not mean that we have a \emph{good} derivative for
-$\denote{\_}$. The derivative that we know we have for complete change structures
+$\denote{\_}$. The derivative that we know we have for complete change actions
 is quite bad:
 $$\derive{f}(a, \change{a}) = f(a \cplus \change{a}) \cminus f(a)$$
 Naively computed, this requires \emph{more} work than evaluating $f(a \cplus \change{a})$ directly!
@@ -1393,7 +1370,7 @@ However, \cref{cor:booleanCharacterization} gives us a range of derivatives to
 choose from, and we can optimize within that range to find one that satisfies
 our constraints.
 
-In the case of Datalog, the change ordering on the change structure also
+In the case of Datalog, the change ordering on the change action also
 corresponds to the size of the derivative as a pair of relations. The minimal
 derivative contains precisely the elements that are newly added or removed,
 whereas the maximal derivative contains all the elements that have \emph{ever}
@@ -1531,7 +1508,7 @@ aggregation and other primitives with interesting derivatives.
 
 \section{Related work}
 
-\subsection{Change structures}
+\subsection{Change actions}
 
 \subsubsection{Change structures}
 
@@ -1587,7 +1564,7 @@ dependently typed changes, since the type of the tangent space is
 dependent on the point at which the tangents are taken.
 
 In fact, a slightly different dependently-typed formulation seems promising, since it would allow us
-to draw out a 2-categorical interpretation of change structures. For example, if
+to draw out a 2-categorical interpretation of change actions. For example, if
 we consider our base set as a category, with changes $\Delta_a^b$ between $a$
 and $b$ as morphisms between $a$ and $b$, then a function is
 differentiable iff it is a functor on that category (i.e. provides a change in
@@ -1619,7 +1596,7 @@ That is, we use $\derive{f}$ to transform the action element into the new
 monoid, whereas in $\cat{SAct}$ it simply remains the same.
 
 In fact, $\cat{SAct}$ is a subcategory of $\cat{CStruct}$, where we only
-consider change structures with change set $S$, and the only functions are those
+consider change actions with change set $S$, and the only functions are those
 whose derivative is $\lambda a. \lambda d. d$.
 
 \subsubsection{Derivatives of fixpoints}
@@ -1686,7 +1663,7 @@ WRITE MORE HERE
 
 Datafun (\textcite{arntz2016datafun}) is a functional programming language that embeds
 Datalog, allowing significant improvements in genericity, such as the use of
-higher-order functions. Since we have directly defined a change structure and
+higher-order functions. Since we have directly defined a change action and
 derivative operator for Datalog, our work could be used as a ``plugin'' in the sense
 of \citeauthor{cai2014changes}, allowing Datafun to compute its internal fixpoints
 incrementally, but also allowing Datafun expressions to be fully incrementally updated.
