@@ -1081,9 +1081,9 @@ $f(F_{i+1})$
 \end{itemize}
 \end{proof}
 
-\begin{corollary}[Differential computation of fixed points]
+\begin{corollary}[Differential computation of fixpoints]
 \label{corollary:diffFP}
-  Fixed points of differentiable functions which can be calculated by repeated
+  Fixpoints of differentiable functions which can be calculated by repeated
   function application can also be calculated incrementally.
 \end{corollary}
 
@@ -1092,7 +1092,7 @@ $f(F_{i+1})$
 
 The previous section has shown us how to use derivatives to compute fixpoints
 more efficiently, but we might also want to take the derivative of a fixpoint
-itself. The typical case for this will be where we have some fixed point
+itself. The typical case for this will be where we have some fixpoint
 $$\fixpoint (\lambda X . F(E, X))$$
 and we now wish to apply a change to $E$ and compute
 $$\fixpoint (\lambda X . F(E \cplus \change{E}, X))$$
