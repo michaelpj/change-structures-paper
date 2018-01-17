@@ -40,29 +40,39 @@
 
 \section{Introduction}
 
-\textcite{cai2014changes} defines compelling notions
-of change structure and derivative, and use them to provide a composable framework for
-evaluating incremental lambda calculus programs provided you have a ``plugin'' for the
-primitive operations of your program.
+Often when we compute the value of a function, we are not only interested in the
+result we get, but also in being able to (efficiently) update the result when
+the input changes. 
+
+This is the setting in which incremental computation is studied. Recently,
+\textcite{cai2014changes} have given a compelling account
+of \textit{change structures} and \textit{derivatives}, and used them to provide
+a composable framework for incrementally evaluating lambda calculus programs.
 
 This provides an excellent foundation for using change structures, but there are
-many questions remaining about change structures themselves. What are their
-algebraic properties? Can we define change structures on more varied kinds of
-structures? What are the interactions with orders on the base set?
+some pressing questions:
+\begin{itemize}
+  \item Can we extend the concepts to cover a broader range of structures?
+    The requirements for being a change structure are stringent enough that they
+    prevent many useful structures in computer science from having nice change structures.
+  \item Can we say anything about the abstract structure of change structures as
+    a class? Being able to easily compose new change structures using standard
+    constructions would be very helpful for targeting new domains.
+  \item Can we perform incremental computation on fixpoints? Fixpoints are a
+    common construction in programming language semantics to handle recursion,
+    and so it would be desirable to be able to compute and update them incrementally.
+\end{itemize}
 
-There are two major motivational targets for this exercise. The first is
-lattices. Incremental computation is especially attractive for database or logic
-programming languages (Datalog, SQL, etc.), where it can produce drastically
-smaller results than naive evaluation. We therefore want to understand
-incremental computation in its most general form on lattices, so that we have
-maximum flexibility when bringing it to bear on a particular application. For
-applications to Datalog in particular, see (cite forthcoming paper, or perhaps
-my arxiv preprint).
-
-The calculus of differential geometry is significantly more abstract than real
-calculus. The connection to change structures is still tenuous, but there are
-telling similarities, and it is our eventual goal to find a sufficiently general
-notion of derivative that will encompass differential geometry as well.
+The major motivational target for this exercise is incremental computation over
+lattices and Boolean algebras. Incremental computation is especially attractive
+for database or logic programming languages, where it can
+produce drastically time and space savings over re-evaluation. Our particular
+interest here is in Datalog, which makes heavy use of recursion, and hence needs
+a good treatment of fixpoints. Moreover, an
+account of incremental computation for such languages that is compatible with
+the approach of \textcite{cai2014changes} opens exciting prospects for embedding
+languages like Datalog seamlessly into larger incremental computations
+\footcite[See][]{arntz2016datafun}.
 
 The major contributions of this paper are:
 \begin{itemize}
@@ -1512,8 +1522,6 @@ aggregation and other primitives with interesting derivatives.
 \subsection{Change actions}
 
 \subsubsection{Change structures}
-
-MPJ: the title of this will be less redundant once we call ours something else
 
 The seminal paper in this area is \textcite{cai2014changes}. We use the notions
 defined in that excellent paper heavily, but we deviate in three regards: the
