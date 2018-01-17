@@ -128,36 +128,8 @@ change structure definition: the change set is a representation of a
 \textit{transformation monoid} over the base set, with the monoid
 operation simply being composition.
 
-Here are some recurring examples of changes structures:
-\begin{itemize}
-  \item $A_\discrete \defeq \cstruct{A}{\emptyset}{\emptyset}$, the discrete change structure on any base set.
-  \item $A_\Rightarrow \defeq \cstruct{A}{A\Rightarrow A}{\ev}$, where $A
-    \Rightarrow A$ denotes the exponential object and $\ev$ is the evaluation map.
-  \item $A_\leq \defeq \cstruct{A}{\leq}{ev_\leq}$, where $\leq$ is some
-    transitive relation on $A$ and $ev_\leq$ denotes
-    conditional application, i.e. $ev_\leq(a, (b, c))$ is equal to $c$ if $a = b$, and $a$ otherwise. Composition of changes is obtained
-    by transitivity of $\leq$.
-  \item $\mathbb{Z}_1 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{+}$
-  \item $\mathbb{Z}_2 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{-}$
-  \item $\mathbb{Z}_3 \defeq \cstruct{\mathbb{Z}}{\mathbb{Z}}{+}$
-  \item $F_2 \defeq$ integers modulo 2 with addition.
-\end{itemize}
-Indeed, any monoid $(A, \splus)$ can be seen as a change structure $\cstruct{A}{A}{\splus}$. In particular,
-for any change structure $\cstruct{A}{\changes{A}}{\cplus}$,
-$\cstruct{\changes{A}}{\changes{A}}{\splus}$ is also a change structure. Many practical change structures
-can be constructed in this way:
-\begin{itemize}
-  \item $[A]$, the type of lists of elements of type $A$, is a monoid under
-  list concatenation. Hence it defines a change structure $\cstruct{[A]}{[A]}{\doubleplus}$.
-  \item $\{A\}$, the type of sets, is a monoid under either set union or intersection,
-  and thus it defines change structures $\cstruct{\{A\}}{\{A\}}{\cup},\cstruct{\{A\}}{\{A\}}{\cap}$
-\end{itemize}
-
-Many other notions in computer science can be naturally understood in terms of change structures, e.g. databases
-and database updates, files and \textit{diff}s, Git repositories and commits, even video compression
-algorithms that encode a frame as a series of changes to the previous frame.
-
-Given change structures and functions between them, we have a natural notion of a derivative, following \textcite{cai2014changes}:
+The primary motivation for change structures is that they let us define
+\texit{derivatives} for functions.
 
 \begin{defn}[Derivatives]
   A \textit{derivative} of a function $f: A_\cplus \rightarrow B_\cpluss$ is a function $\derive{f}: A \times \changes{A} \rightarrow
@@ -169,6 +141,15 @@ Given change structures and functions between them, we have a natural notion of 
 
 Derivatives need not be unique, in general, so we will speak of ``a''
 derivative. 
+
+Derivatives capture the essence of incremental computation: given the value of a
+function at a point, and a change to that point, they tell you how to compute
+the new value of the function.
+
+The choice of the name ``derivative'' is also not a coincidence. While these
+derivatives do not look quite like derivatives in real analysis, they \emph{do}
+bear a strong resemblance to derivatives in other areas (such as synthetic differential geometry), and
+they satisfy the standard chain rule.
 
 \begin{thm}[The Chain Rule]
   Let $f: A_\cplus \rightarrow B_\cpluss$, $g: B_\cpluss \rightarrow C_\cplusss$ be differentiable functions. Then $g \circ f$ is also
@@ -190,12 +171,35 @@ derivative.
   derivative for $(g \circ f)$.
 \end{proof}
 
-Why call this the ``chain rule''? It doesn't have quite the same structure as
-the chain rule in real calculus ($\derive{(g \circ f)}(x) = (\derive{g} \circ f)
-(x) \cdot \derive{f}(x)$), but it does have the same structure as the chain rule
-from differential geometry ($\derive{(g \circ f)}(x, \textbf{v}) = \derive{g}
-(f(x), \derive{f}(x, \textbf{v}))$), which will turn out to be a recurring
-connection. 
+Here are some recurring examples of changes structures:
+\begin{itemize}
+  \item $A_\discrete \defeq \cstruct{A}{\emptyset}{\emptyset}$, the discrete change structure on any base set.
+  \item $A_\Rightarrow \defeq \cstruct{A}{A\Rightarrow A}{\ev}$, where $A
+    \Rightarrow A$ denotes the exponential object and $\ev$ is the evaluation map.
+  \item $A_\leq \defeq \cstruct{A}{\leq}{ev_\leq}$, where $\leq$ is some
+    transitive relation on $A$ and $ev_\leq$ denotes
+    conditional application, i.e. $ev_\leq(a, (b, c))$ is equal to $c$ if $a = b$, and $a$ otherwise. Composition of changes is obtained
+    by transitivity of $\leq$.
+  \item $\mathbb{Z}_1 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{+}$
+  \item $\mathbb{Z}_2 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{-}$
+  \item $\mathbb{Z}_3 \defeq \cstruct{\mathbb{Z}}{\mathbb{Z}}{+}$
+  \item $F_2 \defeq$ integers modulo 2 with addition.
+\end{itemize}
+
+Indeed, any monoid $(A, \splus)$ can be seen as a change structure $\cstruct{A}{A}{\splus}$. In particular,
+for any change structure $\cstruct{A}{\changes{A}}{\cplus}$,
+$\cstruct{\changes{A}}{\changes{A}}{\splus}$ is also a change structure. Many practical change structures
+can be constructed in this way:
+\begin{itemize}
+  \item $[A]$, the type of lists (or streams) of elements of type $A$, is a monoid under
+  concatenation. Hence it defines a change structure $\cstruct{[A]}{[A]}{\doubleplus}$.
+  \item $\{A\}$, the type of sets, is a monoid under either set union or intersection,
+  and thus it defines change structures $\cstruct{\{A\}}{\{A\}}{\cup},\cstruct{\{A\}}{\{A\}}{\cap}$
+\end{itemize}
+
+Many other notions in computer science can be naturally understood in terms of change structures, e.g. databases
+and database updates, files and \textit{diff}s, Git repositories and commits, even video compression
+algorithms that encode a frame as a series of changes to the previous frame.
 
 \subsection{Minus operators and completeness}
 
@@ -394,7 +398,7 @@ practical computation.
   map from $\cstruct{A + B}{\changes{A} \times \changes{B}}{\cplusvee}$ into $Y$. It's easy to see 
   that the following morphism is a derivative:
   $$[f_1, f_2]' (i_1 a, (\change{a}, \change{b})) \defeq f_1'(a, \change{a})$$
-  $$[f_1, f_2]' (i_2 b, (\change{a}, \change{b})) \defeq f_2'(b, \change{b})$$
+  $$[f_1, f_2]''' (i_2 b, (\change{a}, \change{b})) \defeq f_2'(b, \change{b})$$
 \end{proof}
 
 MPJ: do we have a proof that Cai's formulation doesn't give a CCC? That would be
