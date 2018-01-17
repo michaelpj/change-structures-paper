@@ -106,7 +106,7 @@ change action definition: the change set is a representation of a
 operation simply being composition.
 
 The primary motivation for change actions is that they let us define
-\texit{derivatives} for functions.
+\textit{derivatives} for functions.
 
 \begin{defn}[Derivatives]
   A \textit{derivative} of a function $f: A_\cplus \rightarrow B_\cpluss$ is a function $\derive{f}: A \times \changes{A} \rightarrow
@@ -117,7 +117,11 @@ The primary motivation for change actions is that they let us define
 \end{defn}
 
 Derivatives need not be unique, in general, so we will speak of ``a''
-derivative. 
+derivative.\footnote{In several places we will need to pick an arbitrary
+  derivative for some construction. In general this needs the Axiom of Choice,
+  but in most practical cases we will want to have a computable derivative
+  operator for our domain, which alleviates the problem. In addition, thin
+  change actions (\cref{sec:thin}) have unique derivatives.}
 
 Derivatives capture the essence of incremental computation: given the value of a
 function at a point, and a change to that point, they tell you how to compute
@@ -219,6 +223,7 @@ of functions.
 \end{defn}
 
 \subsection{Thin change actions}
+\label{sec:thin}
 
 As in \textcite{cai2014changes}, multiple changes may represent the difference
 between two elements. This is true for many change actions, but the change
