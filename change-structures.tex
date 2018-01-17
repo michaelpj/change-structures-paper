@@ -71,8 +71,8 @@ interest here is in Datalog, which makes heavy use of recursion, and hence needs
 a good treatment of fixpoints. Moreover, an
 account of incremental computation for such languages that is compatible with
 the approach of \textcite{cai2014changes} opens exciting prospects for embedding
-languages like Datalog seamlessly into larger incremental computations
-\footcite[See][]{arntz2016datafun}.
+languages like Datalog seamlessly into larger incremental computations.
+\footcite[See][]{arntz2016datafun}
 
 The major contributions of this paper are:
 \begin{itemize}
@@ -1225,7 +1225,7 @@ However, we can get a true derivative if we are working with least fixpoints.
   derivative, it is less than $D_{max}$. Hence $D_{max}$ is a prefix point of
   $\theadjustment(f, \change{f})$.
 
-  Since $\derive{\ev}$ is monotone, so is $\theadjustment(f, \change{f})$, and
+  Since $\derive{\ev}$ is monotone, $\theadjustment(f, \change{f})$ is also monotone, and
   hence $\fixpoint_{\changes{A}}(\theadjustment(f, \change{f}))$ is also the
   least prefix point of $\theadjustment(f, \change{f})$, and hence it is less
   than $D_{max}$.
@@ -1298,15 +1298,20 @@ again (which will itself require a fixpoint computation).
 \section{Datalog}
 \label{sec:datalog}
 
-Datalog is a well-known, simple logic programming language. It is also a textbook
+Datalog is a well-known, simple, logic programming language. It is also a textbook
 example of the need for incremental computation, as its semantics rely on
-bottom-up computation of a least fixpoint.
+bottom-up computation of a least fixpoint.\footcite[See][part D]{abiteboul1995foundations}
 
 There is an extensive existing literature on incremental computation of Datalog
 (CITES), but the aim of this section is to argue that by viewing the computation
 of Datalog semantics as composed of differentiable functions we can give a
 bring the machinery that we've developed so far to bear, and give an elegant,
 flexible account of incremental evaluation.
+
+The work in this section has been applied to Semmle's commercial Datalog
+implementation \parencites{semmleWebsite}{avgustinov2016ql}{sereni2008adding}{schafer2010type}.
+As is it includes some non-standard features, the flexibility and composability
+of the approach has been vital, since existing techniques were not applicable.
 
 Firstly, however, we must show that we can see the semantics of Datalog in terms
 of elements that we know how to handle: Boolean algebras and fixpoints.
@@ -1399,7 +1404,7 @@ terms.\footnote{Indeed, if this process is occurring in an optimizing compiler,
   beneficial, since as we will see the initial terms may be quite complex.}
 
 This does give us additional constraints that the derivative terms must satisfy:
-for example, we may need to preserve safety or range restriction in order to be
+for example, we may need to pre
 able to evaluate them; and we may wish to pick terms that will be easy or cheap
 for our evaluation engine to evaluate, even if the results are larger.
 
