@@ -1534,16 +1534,17 @@ inclusion of minus operators, the nature of function changes, and the use of
 dependent types.
 
 We have omitted minus operators from our definition because
-there are many interesting change actions that do not have them (for example,
-$\mathbb{Z}_3$ does, but $\mathbb{Z}_1$ does not). Indeed, requiring change actions to provide
-a minus operator is overly restrictive, and would often force one to adopt unwieldy representations
-for change sets (for example, the change actions described before on sets and lists are clearly
+there are many interesting change actions that are not complete and so cannot 
+have a minus operator (for example, $\mathbb{Z}_3$ does, but $\mathbb{Z}_1$ does
+not). Where we can find a change structure with a minus operator, often we are
+forced to use unwieldy representations for change sets. For example, the change actions described before on sets and lists are clearly
 useful for incremental computation on streams, yet they do not admit minus operators - instead, one would
-be forced to work with e.g. multisets admitting negative arities, as \textcite{cai2014changes} do).
+be forced to work with e.g. multisets admitting negative arities, as \textcite{cai2014changes} do.
 
 Our notion of function changes is different to \citeauthor{cai2014changes}'s,
 because we consider changes of functions to be what \citeauthor{cai2014changes} describe as
-\textit{pointwise changes}.~\footcite[See][section 2.2]{cai2014changes} As they point out, you can reconstruct their
+\textit{pointwise differences} (for the subsequent paragraphs we shall adopt
+their terminology).~\footcite[See][section 2.2]{cai2014changes} As they point out, you can reconstruct their
 function changes from pointwise changes and derivatives, so the two formulations
 are equivalent. This gives us the following correspondences:
 \begin{itemize}
@@ -1560,11 +1561,22 @@ evaluation map - any derivative will do. It is then a further fact that we can
 find actual definitions for this derivative (\cref{prop:evDerivatives}).
 
 \citeauthor{cai2014changes} assert that the reason they use their function changes instead of pointwise
-changes as the primitive notion is that a function change has access to more
-information, and so is easier to optimize. In contrast, we have not found pointwise changes to be
+differences as the primitive notion is that a function change has access to more
+information, and so is easier to optimize. In contrast, we have not found pointwise differences to be
 significantly harder to work with in practice, or more difficult to compute (at least in our implementations
-in Datalog). Furthermore, pointwise changes are simpler from a theoretical point of view, and correspond to the
-exponentials that we get from the categorical equivalence with $\cat{PreOrd}$. 
+in Datalog).
+
+We have two reasons to prefer using pointwise differences to function changes:
+\begin{itemize}
+  \item Pointwise differences are simpler from a theoretical point of view, and
+    correspond to the exponentials that we get from the categorical equivalence with $\cat{PreOrd}$. 
+  \item We can take pointwise differences of non-differentiable
+    functions.\footnote{The fact that function changes imply differentiability
+      of a function follows from \textcite[][Theorem 2.10]{cai2014changes}, and
+      the fact that all change actions have a zero change.} This
+    is of somewhat limited usefulness in the material we have presented, but for
+    example allows us to apply \cref{thm:fixpointDiff} to non-differentiable functions.
+\end{itemize}
 
 However, this is largely an issue of presentation: if it turned out that it was
 significantly easier to work with function changes rather than pointwise
@@ -1633,11 +1645,11 @@ monotone functions.
 The earliest explication of semi-naive evaluation as a derivative process
 appears in \textcite{bancilhon1986naive}. The idea of using an approximate derivative
 and the requisite soundness condition appears as a throwaway comment in
-\textcite{bancilhon1986amateur}, and as far as we know nobody has since
+\textcite[][section 3.2.2]{bancilhon1986amateur}, and as far as we know nobody has since
 developed that approach. 
 
 As far as we know, traditional semi-naive is generally considered the state of
-the art in incremental Datalog evaluation, and there are no strategies that
+the art in incremental, bottom-up, Datalog evaluation, and there are no strategies that
 accommodate additional (recursive) language features such as aggregates.
 
 \subsubsection{Incremental updates}
@@ -1673,9 +1685,23 @@ know, this is unsolved in general. Most of the attempts to solve it have
 focussed on Datalog rather than relational algebra, since Datalog is designed to
 make heavy use of recursion. 
 
-\textcite{gupta1995maintenance} has a good summary of the approaches so far.
+Several approaches
+\parencites{gupta1993maintaining}{harrison1992maintenance}
+make use of a common tactic: one can get to the new fixed
+point by starting from \emph{any} point below it, and then iterating the
+semantics again to fixpoint. The approach, then, is to find a way to delete as
+few tuples as possible to get below the new fixpoint, and then iterate again
+(possibly using an incremental version of the semantics).
 
-WRITE MORE HERE
+This is a perfectly reasonable approach, and given a good, domain-specific,
+means of getting below the fixpoint, they can be quite efficient (likely more
+efficient than our method). The main defect of these approaches is that they
+\emph{are} domain specific, and hence inflexible with respect to changes in the
+language or structure, whereas our approach is quite generic.
+
+Other approaches \parencites{dong2000incremental}{urpi1992method} consider only
+restricted subsets of Datalog, or incur other substantial constraints, and our results
+are thus significantly more general.
 
 \subsubsection{Embedding Datalog}
 \label{sec:embeddingDatalog}
