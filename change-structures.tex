@@ -1605,6 +1605,16 @@ While this is a promising direction, it wasn't necessary for the material in
 this paper, and would have complicated the exposition significantly, so we opted
 to leave it for future work.
 
+\citeauthor{cai2014changes} also introduce a useful notion of
+\textit{self-maintainability}. A derivative is self-maintainable if it does not
+make use of its first argument, and so only depends on the change to the
+argument. This makes the derivatives significantly easier to compute. In the
+Datalog context, this corresponds to the rule being \textit{linear}, and leads
+to much simpler derivatives. The
+``independence'' property that self-maintainability provides seems likely to be
+useful for parallelizing incremental computation, and we think this notion
+deserves further study.
+
 \subsubsection{S-acts}
 
 S-acts and their categorical structure have received a fair amount of attention
