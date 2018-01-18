@@ -8,11 +8,15 @@
 \usepackage{amssymb}
 \usepackage{mathtools}
 \usepackage{stmaryrd}
-\usepackage{biblatex}
+\usepackage{biblatex}[natbib=true]
 \usepackage{hyperref}
 \usepackage{cleveref}
 
 \input{notation}
+
+\newif\ifproofs
+% Comment out to disable proofs
+\proofstrue
 
 \addbibresource{paper.bib}
 
@@ -71,8 +75,8 @@ interest here is in Datalog, which makes heavy use of recursion, and hence needs
 a good treatment of fixpoints. Moreover, an
 account of incremental computation for such languages that is compatible with
 the approach of \textcite{cai2014changes} opens exciting prospects for embedding
-languages like Datalog seamlessly into larger incremental computations.
-\footcite[See][]{arntz2016datafun}
+languages like Datalog seamlessly into larger incremental computations
+\autocite[See][]{arntz2016datafun}.
 
 The major contributions of this paper are:
 \begin{itemize}
@@ -149,6 +153,7 @@ they satisfy the standard chain rule.
    or, in curried form
    $$\derive{(g \circ f)}(x)(\change{x}) = \derive{g}(f(x)) \circ \derive{f}(x)$$
 \end{thm}
+\ifproofs
 \begin{proof}
   By equivalence:
   \begin{itemize}
@@ -161,6 +166,7 @@ they satisfy the standard chain rule.
   Therefore $\derive{g}\left(f(x), \derive{f}(x, \change{x})\right)$ is a
   derivative for $(g \circ f)$.
 \end{proof}
+\fi
 
 Here are some recurring examples of changes actions:
 \begin{itemize}
@@ -309,6 +315,7 @@ $A_\leq$. This gives rise to a (full and faithful) functor $\{\_\}_\leq : \cat{P
   The functor $Reach$ from $\cat{CStruct}$ to $\cat{PreOrd}$ together with the 
   functor $\{\_\}_\leq$ in the opposite direction form an equivalence of categories.
 \end{thm}
+\ifproofs
 \begin{proof}
   On one hand, if $U$ is a preorder, it's trivial to check that $Reach (\{U\}_\leq) = U$.
 
@@ -329,8 +336,8 @@ $A_\leq$. This gives rise to a (full and faithful) functor $\{\_\}_\leq : \cat{P
   $$
     \derive{id}_{\reachOrder}(a, (a, b)) \defeq \change{}_{(a, b)}
   $$
-  MARIO: the axiom of choice strikes again...
 \end{proof}
+\fi
 
 Since $\cat{PreOrd}$ is a reflective subcategory of $\cat{Set}$, this gives us a proof
 of the existence of limits and colimits in $\cat{CStruct}$.
@@ -356,6 +363,7 @@ practical computation.
   Then $A \times B \defeq \cstruct{A \times B}{\changes{A} \times
   \changes{B}}{\cplus \times \cpluss}$ is their categorical product.
 \end{prop}
+\ifproofs
 \begin{proof}
   Let $Y$ be a change action, and $f_1: Y \rightarrow A$, $f_2: Y
   \rightarrow B$ be morphisms.
@@ -368,6 +376,7 @@ practical computation.
   Commutativity and uniqueness follow from the corresponding properties of the
   product in the $\cat{Set}$.
 \end{proof}
+\fi
 
 \begin{prop}[Coproducts]
   Let $A = \cstruct{A}{\changes{A}}{\cplus}$ and $B =
@@ -378,6 +387,7 @@ practical computation.
   $$i_1 a \cplusvee (\change{a}, \change{b}) \defeq \iota_1 (a \cplus \change{a})$$
   $$i_2 b \cplusvee (\change{a}, \change{b}) \defeq \iota_2 (b \cplus \change{b})$$
 \end{prop}
+\ifproofs
 \begin{proof}
   Let $Y$ be a change action, and $f_1 : A \rightarrow Y$, $f_2 : B
   \rightarrow Y$ be differentiable functions.
@@ -388,6 +398,7 @@ practical computation.
   $$[f_1, f_2]' (i_1 a, (\change{a}, \change{b})) \defeq f_1'(a, \change{a})$$
   $$[f_1, f_2]''' (i_2 b, (\change{a}, \change{b})) \defeq f_2'(b, \change{b})$$
 \end{proof}
+\fi
 
 MPJ: do we have a proof that Cai's formulation doesn't give a CCC? That would be
 nice.
@@ -408,6 +419,7 @@ incrementalization lemma. You can use the same derivative of $\curry{f}$. Bah.
   action on $\changes{B}$ lifted pointwise, so we will typically reuse the
   change operator for $B$ for $A \rightarrow \changes{B}$.
 \end{prop}
+\ifproofs
 \begin{proof}
   Since we are working over $\cat{Set}$, we can use the definitions of $\ev$ and
   $\curry{f}$ from $\cat{Set}$:
@@ -461,6 +473,7 @@ incrementalization lemma. You can use the same derivative of $\curry{f}$. Bah.
   Therefore $\derive{\curry{f}}$ is a derivative for $\curry{f}$, so $\curry{f}$
   is differentiable.
 \end{proof}
+\fi
 
 MARIO: nice proof, I'm a bit worried about the $f'$, though, since there may be more than one,
 and I feel like we need the axiom of choice to ``pick'' a $f'$ for every $f$.
@@ -504,10 +517,12 @@ Conveniently, our proof of \cref{prop:exponentials} gives us actual derivatives 
 
   is a derivative for the evaluation map.
 \end{prop}
+\ifproofs
 \begin{proof}
   The first is shown in the proof of \cref{prop:exponentials}, the second is
   similar but begins by taking the derivative of $f \cplus \change{f}$.
 \end{proof}
+\fi
 
 \subsection{The category of thin change actions}
 
@@ -606,6 +621,7 @@ change action finer than its components.
 \begin{corollary}
   $A_\cplus \superpose A_\cpluss$ is the least upper bound of $A_\cplus$ and $A_\cpluss$ with respect to $\fineOrder$.
 \end{corollary}
+\ifproofs
 \begin{proof}
   The derivative of $id_1: A_\cplus \rightarrow (A_\cplus \superpose
   A_\cpluss)$ is given by $\derive{id_1}(a, \change{a}) \defeq 
@@ -621,6 +637,7 @@ change action finer than its components.
     \sum_i (\derive{id}(a, \change{a_i}) + \derive{id}(a, \change{b_i}))
   $$
 \end{proof}
+\fi
 
 This gives us a join-semilattice for change actions on a given set.
 
@@ -704,6 +721,7 @@ Having a monotone order on the changes is very useful.
   $$h \changeOrder \subderive{f}$$
   Then $h$ is also a sub-derivative for $f$.
 \end{thm}
+\ifproofs
 \begin{proof}
   We prove the first case:
   \begin{itemize}
@@ -716,6 +734,7 @@ Having a monotone order on the changes is very useful.
 
   The proof for the other case is symmetric.
 \end{proof}
+\fi
 
 \begin{thm}[Sandwich lemma]
   \label{thm:sandwich}
@@ -805,9 +824,11 @@ change action.
   the functions $\derive{f}$ such that
   $$\subderiveM{f} \changeOrder \derive{f} \changeOrder \supderiveM{f}$$
 \end{thm}
+\ifproofs
 \begin{proof}
   Follows easily from \cref{thm:sandwich} and minimality/maximality.
 \end{proof}
+\fi
 
 This theorem gives us leeway when trying to pick a derivative: we can pick out the
 bounds, and that tells us how much ``wiggle room'' we have. This is helpful
@@ -834,6 +855,7 @@ In particular, if $\cplus$ is continuous then we can take suprema of sets of der
   in its second argument. Then for any set $D$ of derivatives of $f$, $\bigvee
   D$ is also a derivative.
 \end{prop}
+\ifproofs
 \begin{proof}
   We show the derivative property directly.
   \begin{itemize}
@@ -847,6 +869,7 @@ In particular, if $\cplus$ is continuous then we can take suprema of sets of der
       $f(a \cplus \change{a})$
   \end{itemize}
 \end{proof}
+\fi
 
 We mention another well known fact which will be useful later.
 
@@ -896,6 +919,7 @@ superposition of $L_\vee \superpose L_\wedge$.
 
   Then $L_\superpose$ is isomorphic to $L_\vee \superpose L_\wedge$.
 \end{prop}
+\ifproofs
 \begin{proof}
   First we show that the monoid action property holds:
   \begin{itemize}
@@ -983,6 +1007,7 @@ superposition of $L_\vee \superpose L_\wedge$.
   Now $\splus^\ast$ gives an action-preserving injection from $(L \times
   L)^\ast$ to $(L \times L)$. The reverse direction is simply the singleton function.
 \end{proof}
+\fi
 
 We can think of $L_\superpose$ as tracking changes as pairs of ``upwards'' and
 ``downwards'' changes, where the monoid action simply applies both. This
@@ -1066,6 +1091,7 @@ maps everything to $F_1$'', if we have that.
   $$f^i(x) = F_i$$
 \end{thm}
 
+\ifproofs
 \begin{proof}
 We proceed inductively, proving that $F_{i+2} = f(F_{i+1})$
 
@@ -1091,6 +1117,7 @@ $
 $f(F_{i+1})$
 \end{itemize}
 \end{proof}
+\fi
 
 \begin{corollary}[Differential computation of fixpoints]
 \label{corollary:diffFP}
@@ -1155,6 +1182,7 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
   thus $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a fixpoint 
   of $f \cplus \change{f}$.
 \end{thm}
+\ifproofs
 \begin{proof}
   Let $\change{w} \in \Delta A$ satisfy \cref{eqn:fixcondition}. Then
   \begin{itemize}
@@ -1178,6 +1206,7 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
   Hence $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$. The converse
   follows from reversing the direction of the proof.
 \end{proof}
+\fi
 
 This is not enough to give us a true derivative, because we have only shown 
 that $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ computes \emph{a} fixpoint, not necessarily
@@ -1203,6 +1232,7 @@ However, we can get a true derivative if we are working with least fixpoints.
   Then $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a least
   fixpoint of $f \cplus \change{f}$ and therefore $\derive{\fixpoint_A}$ is a derivative of $\fixpoint_A$.
 \end{thm}
+\ifproofs
 \begin{proof}
   Suppose that $D$ is a derivative of $\fixpoint_A$, and hence $\fixpoint_A(f) \cplus D(f,
   \change{f})$ is the least fixpoint of $f \cplus \change{f}$. 
@@ -1245,6 +1275,7 @@ However, we can get a true derivative if we are working with least fixpoints.
   Therefore $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f}) =
   \fixpoint_A(f \cplus \change{f})$, so $\derive{\fixpoint_A}$ is a derivative of $\fixpoint_A$
 \end{proof}
+\fi
 
 The requirements of this theorem may seem onerous. However, usually when we are
 working with least fixpoints in a computational setting, we are interested in
@@ -1279,12 +1310,14 @@ the conditions.
 
   And therefore $\derive{\fixpoint_A}$ is a derivative of $\fixpoint_A$.
 \end{prop}
+\ifproofs
 \begin{proof}
   Largely trivial. Continuity of $\cplus$ follows from
   \cref{prop:monotoneContinuous}; and we take $\derive{\ev}_2$ from
   \cref{prop:evDerivatives} as our derivative of $\ev$, which is monotone 
   since $\derive{(f \cplus \change{f})}$ and $\cplus$ are monotone.
 \end{proof}
+\fi
 
 The requirement that $\changes{A}$ be a cpo satisfying the ACC is still awkward, but is easily
 shown to be true on Boolean algebras with $L_\superpose$ (so long as the base
@@ -1300,7 +1333,7 @@ again (which will itself require a fixpoint computation).
 
 Datalog is a well-known, simple, logic programming language. It is also a textbook
 example of the need for incremental computation, as its semantics rely on
-bottom-up computation of a least fixpoint.\footcite[See][part D]{abiteboul1995foundations}
+bottom-up computation of a least fixpoint \autocite[See][part D]{abiteboul1995foundations}.
 
 There is an extensive existing literature on incremental computation of Datalog
 (CITES), but the aim of this section is to argue that by viewing the computation
@@ -1309,7 +1342,7 @@ bring the machinery that we've developed so far to bear, and give an elegant,
 flexible account of incremental evaluation.
 
 The work in this section has been applied to Semmle's commercial Datalog
-implementation \parencites{semmleWebsite}{avgustinov2016ql}{sereni2008adding}{schafer2010type}.
+implementation \autocites{semmleWebsite}{avgustinov2016ql}{sereni2008adding}{schafer2010type}.
 As is it includes some non-standard features, the flexibility and composability
 of the approach has been vital, since existing techniques were not applicable.
 
@@ -1451,9 +1484,11 @@ specifics of the evaluation engine. Here is one possibility.\footnote{These are
   \downdiff(\exists x.T) & \defeq & \exists x.\downdiff T \wedge \neg \exists x.\bothdiff T
   \end{eqnarray*}
 \end{thm}
+\ifproofs
 \begin{proof}
   Long, tedious structural induction. Maybe in an appendix?
 \end{proof}
+\fi
 
 There is a symmetry between the cases for $\wedge$ and $\vee$ between $\updiff$
 and $\downdiff$, but the cases for $\exists$ look quite different. 
@@ -1479,9 +1514,11 @@ Putting this together, we get two results.
 \label{thm:diffEval}
   Datalog program semantics can be evaluated incrementally.
 \end{thm}
+\ifproofs
 \begin{proof}
   Corollary of \cref{corollary:diffFP} and \cref{corollary:consqDiff}.
 \end{proof}
+\fi
 
 This is a generalization of semi-naive evaluation.
 
@@ -1489,9 +1526,11 @@ This is a generalization of semi-naive evaluation.
 \label{thm:diffUpdate}
   Datalog program semantics can be incrementally updated with changes to non-recursive relations.
 \end{thm}
+\ifproofs
 \begin{proof}
   Corollary of \cref{thm:leastFixpointDiff} and \cref{corollary:consqDiff}.
 \end{proof}
+\fi
 
 This is a generalization of the view-update problem, including recursive relations.
 
@@ -1547,7 +1586,7 @@ be forced to work with e.g. multisets admitting negative arities, as \citeauthor
 Our notion of function changes is different to \citeauthor{cai2014changes}'s,
 because we consider changes of functions to be what \citeauthor{cai2014changes} describe as
 \textit{pointwise differences} (for the subsequent paragraphs we shall adopt
-their terminology).~\footcite[See][section 2.2]{cai2014changes} As they point out, you can reconstruct their
+their terminology) \autocite[See][section 2.2]{cai2014changes}. As they point out, you can reconstruct their
 function changes from pointwise changes and derivatives, so the two formulations
 are equivalent. This gives us the following correspondences:
 \begin{itemize}
@@ -1621,7 +1660,7 @@ S-acts $\cat{SAct}$: the objects of $\cat{SAct}$ all maintain the same monoid
 structure, whereas we are interested in changing both the base set \emph{and} the structure of the act.
 
 There are similarities: if we compare the definition of a $\cat{SAct}$ ``act-preserving''
-homeomorphism \footcite[See][]{kilp2000monoids} we can see that the structure is
+homeomorphism \autocite[See][]{kilp2000monoids} we can see that the structure is
 quite similar to the definition of differentiability:
 
 $$f(a \splus s) = f(a) \splus s$$
@@ -1693,7 +1732,7 @@ focussed on Datalog rather than relational algebra, since Datalog is designed to
 make heavy use of recursion. 
 
 Several approaches
-\parencites{gupta1993maintaining}{harrison1992maintenance}
+\autocites{gupta1993maintaining}{harrison1992maintenance}
 make use of a common tactic: one can get to the new fixed
 point by starting from \emph{any} point below it, and then iterating the
 semantics again to fixpoint. The approach, then, is to find a way to delete as
@@ -1706,7 +1745,7 @@ efficient than our method). The main defect of these approaches is that they
 \emph{are} domain specific, and hence inflexible with respect to changes in the
 language or structure, whereas our approach is quite generic.
 
-Other approaches \parencites{dong2000incremental}{urpi1992method} consider only
+Other approaches \autocites{dong2000incremental}{urpi1992method} consider only
 restricted subsets of Datalog, or incur other substantial constraints, and our results
 are thus significantly more general.
 
