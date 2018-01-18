@@ -398,13 +398,6 @@ practical computation.
 \end{proof}
 \fi
 
-MPJ: do we have a proof that Cai's formulation doesn't give a CCC? That would be
-nice.
-
-MPJ: actually, I think they *do* form a CCC: you just use the function change
-argument to get the derivative of of ev, and then it works by their
-incrementalization lemma. You can use the same derivative of $\curry{f}$. Bah.
-
 \begin{prop}[Exponentials]
 \label{prop:exponentials}
   Let $\cstr{A}_\cplus$ and $\cstr{B}_\cpluss$ be change actions
@@ -906,7 +899,7 @@ superposition of $\cstr{L}_\vee \superpose \cstr{L}_\wedge$.
 \end{prop}
 \ifproofs
 \begin{proof}
-  First we show that the monoid action property holds:
+  We show that the monoid action property holds:
   \begin{itemize}
     \item[ ]$a \twist \left[(p, q) \splus (r, s)\right]$
     \item[=]$a \twist ((p \wedge \neg q) \vee r, (q \wedge \neg r) \vee s)$
@@ -984,13 +977,6 @@ superposition of $\cstr{L}_\vee \superpose \cstr{L}_\wedge$.
       $
     \item[=]$a \twist (p, q) \twist (r, s)$
   \end{itemize}
-
-
-  MPJ: this bit is wrong now that we're using $+$ in the definition of
-  superpositions. Might just say it's obvious.
-  
-  Now $\splus^\ast$ gives an action-preserving injection from $(L \times
-  L)^\ast$ to $(L \times L)$. The reverse direction is simply the singleton function.
 \end{proof}
 \fi
 
