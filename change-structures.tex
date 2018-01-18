@@ -28,10 +28,10 @@
 \begin{abstract}
   Incremental computation has recently been studied using the concept of a
   \textit{derivative} of a program. This general notion allows updating programs
-  based on changes in their inputs
+  based on changes in their inputs.
 
   We generalise the notion of derivative, and study its categorical
-  properties. We develop the resulting machinery on a variety of common structures
+  properties. We develop the theory for a variety of common structures
   in computer science, including partial orders, lattices, and Boolean algebras.
 
   This culminates in a generic and compositional account of incremental evaluation of Datalog, as
@@ -84,13 +84,13 @@ The major contributions of this paper are:
     (\cref{sec:changeActions}).
   \item A description of the categorical properties of change actions, including
     several useful direct constructions (\cref{sec:category}).
-  \item A description of the properties of change actions over several
-    additional kinds of structures, including theorems that characterize the range of
+  \item A description of the properties of change actions over 
+    additional structures, including theorems that characterize the range of
     possible derivatives available, and conditions under which compound change
     actions may admit derivatives (\cref{sec:moreStructures}).
   \item Two results relating to fixpoint calculations: incremental computation
     of fixpoints, and incremental updates of fixpoint expressions (\cref{sec:fixpoints}).
-  \item Applications of the above machinery to incremental computation and
+  \item Generalized incremental computation and
     update of Datalog programs, with the ability to handle arbitrary additional
     language constructs, including negation and aggregation (\cref{sec:datalog}).
 \end{itemize}
@@ -101,7 +101,7 @@ The major contributions of this paper are:
 \begin{defn}[Change actions]
   A \textit{change action} is defined as:
 
-  $$\mathcal{A} \defeq \cstruct{A}{\changes{A}}{\cplus}$$
+  $$\cstr{A} \defeq \cstruct{A}{\changes{A}}{\cplus}$$
 
   where $A$ is a set, $(\changes{A}, \splus, \mzero)$ is a monoid, and $\cplus$ gives a monoid action on $A$.
 
@@ -123,7 +123,7 @@ The primary motivation for change actions is that they let us define
 \textit{derivatives} for functions.
 
 \begin{defn}[Derivatives]
-  A \textit{derivative} of a function $f: A_\cplus \rightarrow B_\cpluss$ is a function $\derive{f}: A \times \changes{A} \rightarrow
+  A \textit{derivative} of a function $f: \cstr{A}_\cplus \rightarrow \cstr{B}_\cpluss$ is a function $\derive{f}: A \times \changes{A} \rightarrow
   \changes{B}$ such that
   $$f(a \cplus \change{a}) = f(a) \cpluss \derive{f}(a, \change{a})$$
 
@@ -147,7 +147,7 @@ bear a strong resemblance to derivatives in other areas (such as synthetic diffe
 they satisfy the standard chain rule.
 
 \begin{thm}[The Chain Rule]
-  Let $f: A_\cplus \rightarrow B_\cpluss$, $g: B_\cpluss \rightarrow C_\cplusss$ be differentiable functions. Then $g \circ f$ is also
+  Let $f: \cstr{A}_\cplus \rightarrow \cstr{B}_\cpluss$, $g: \cstr{B}_\cpluss \rightarrow \cstr{C}_\cplusss$ be differentiable functions. Then $g \circ f$ is also
   differentiable, with derivative given by
    $$\derive{(g \circ f)}(x, \change{x}) = \derive{g}\left(f(x), \derive{f}(x, \change{x})\right)$$
    or, in curried form
@@ -170,17 +170,17 @@ they satisfy the standard chain rule.
 
 Here are some recurring examples of changes actions:
 \begin{itemize}
-  \item $A_\discrete \defeq \cstruct{A}{\emptyset}{\emptyset}$, the discrete change action on any base set.
-  \item $A_\Rightarrow \defeq \cstruct{A}{A\Rightarrow A}{\ev}$, where $A
+  \item $\cstr{A}_\discrete \defeq \cstruct{A}{\emptyset}{\emptyset}$, the discrete change action on any base set.
+  \item $\cstr{A}_\Rightarrow \defeq \cstruct{A}{A\Rightarrow A}{\ev}$, where $A
     \Rightarrow A$ denotes the exponential object and $\ev$ is the evaluation map.
-  \item $A_\leq \defeq \cstruct{A}{\leq}{ev_\leq}$, where $\leq$ is some
+  \item $\cstr{A}_\leq \defeq \cstruct{A}{\leq}{ev_\leq}$, where $\leq$ is some
     transitive relation on $A$ and $ev_\leq$ denotes
     conditional application, i.e. $ev_\leq(a, (b, c))$ is equal to $c$ if $a = b$, and $a$ otherwise. Composition of changes is obtained
     by transitivity of $\leq$.
-  \item $\mathbb{Z}_1 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{+}$
-  \item $\mathbb{Z}_2 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{-}$
-  \item $\mathbb{Z}_3 \defeq \cstruct{\mathbb{Z}}{\mathbb{Z}}{+}$
-  \item $F_2 \defeq$ integers modulo 2 with addition.
+  \item $\cstr{\mathbb{Z}}_1 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{+}$
+  \item $\cstr{\mathbb{Z}}_2 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{-}$
+  \item $\cstr{\mathbb{Z}}_3 \defeq \cstruct{\mathbb{Z}}{\mathbb{Z}}{+}$
+  \item $\cstr{F}_2 \defeq$ integers modulo 2 with addition.
 \end{itemize}
 
 Indeed, any monoid $(A, \splus)$ can be seen as a change action $\cstruct{A}{A}{\splus}$. In particular,
@@ -216,12 +216,12 @@ compute the difference between two values.
 \end{defn}
 
 \begin{prop}[Completeness equivalences]
-  Let $A$ be a change action. Then the following are equivalent:
+  Let $\cstr{A}$ be a change action. Then the following are equivalent:
   \begin{itemize}
-    \item $A$ is complete.
+    \item $\cstr{A}$ is complete.
     \item The monoid action is transitive.
-    \item There is a minus operator on $A$.
-    \item Any function from any change action into $A$ is differentiable.
+    \item There is a minus operator on $\cstr{A}$.
+    \item Any function from any change action into $\cstr{A}$ is differentiable.
   \end{itemize}
 \end{prop}
 
@@ -247,14 +247,14 @@ well-behaved, so it's worth naming them.
   = a \cplus \change{b}$ for some $a \in A$, it is the case that $\change{a} = \change{b}$.
 \end{defn}
 
-Many change actions are not thin, for example $F_2$.
+Many change actions are not thin, for example $\cstr{F}_2$.
 
 \begin{prop}[Thin equivalences]
-  Let $A$ be a change action. Then the following are equivalent.
+  Let $\cstr{A}$ be a change action. Then the following are equivalent.
   \begin{itemize}
-    \item $A$ is thin.
+    \item $\cstr{A}$ is thin.
     \item The monoid action is free.
-    \item If $A$ has a minus operator $\cminus$, then $(a \cplus \change{a})
+    \item If $\cstr{A}$ has a minus operator $\cminus$, then $(a \cplus \change{a})
       \cminus a = \change{a}$.
   \end{itemize}
 \end{prop}
@@ -262,10 +262,10 @@ Many change actions are not thin, for example $F_2$.
 Thinness gives us uniqueness of derivatives:
 
 \begin{prop}
-  Let $B$ be a thin change action, and $f: A \rightarrow B$. Then $f$ has at
+  Let $\cstr{B}$ be a thin change action, and $f: \cstr{A} \rightarrow \cstr{B}$. Then $f$ has at
   most one derivative.
 
-  Conversely, if $\textrm{id}: B \rightarrow B$ has exactly one derivative, then
+  Conversely, if $\textrm{id}: \cstr{B} \rightarrow \cstr{B}$ has exactly one derivative, then
   $B$ is thin.
 \end{prop}
 
@@ -275,7 +275,7 @@ Thinness gives us uniqueness of derivatives:
 \begin{defn}[Category of change actions]
   We define the category $\cat{CStruct}$ of change actions. The objects are
   change actions and the morphisms are differentiable functions. We denote
-  the set of differentiable functions between $A$ and $B$ as $A \difffunc B$.
+  the set of differentiable functions between $\cstr{A}$ and $\cstr{B}$ as $\cstr{A} \difffunc \cstr{B}$.
 \end{defn}
 
 \subsection{Equivalence with PreOrd}
@@ -287,7 +287,7 @@ There is a natural preorder on the base set of a change actions, given by reacha
   \change{a} = b$.
 \end{defn}
 
-The reachability order of a complete change action on $A$ is precisely the trivial relation
+The reachability order of a complete change action on $\cstr{A}$ is precisely the trivial relation
 $A \times A$. Conversely, any such change action is necessarily complete. The correspondence
 between a change action and its corresponding reachability preorder gives rise to
 a faithful functor $Reach : \cat{CStruct} \rightarrow \cat{PreOrd}$ that acts as the identity
@@ -309,7 +309,7 @@ on morphisms.
 \end{corollary}
 
 Conversely, any preorder $\leq$ on some set $A$ induces the corresponding change action
-$A_\leq$. This gives rise to a (full and faithful) functor $\{\_\}_\leq : \cat{PreOrd} \rightarrow \cat{CStruct}$
+$\cstr{A}_\leq$. This gives rise to a (full and faithful) functor $\{\_\}_\leq : \cat{PreOrd} \rightarrow \cat{CStruct}$
 
 \begin{thm}[Equivalence to $\cat{PreOrd}$]
   The functor $Reach$ from $\cat{CStruct}$ to $\cat{PreOrd}$ together with the 
@@ -321,9 +321,9 @@ $A_\leq$. This gives rise to a (full and faithful) functor $\{\_\}_\leq : \cat{P
 
   On the other hand, we need to find a natural isomorphism between $\{\_\}_\leq \circ Reach$
   and the identity functor. First, we note that the base set for the change action $\{Reach(A)\}$ is
-  the same as the base set for $A$. We claim that the desired natural isomorphism is given by the
+  the same as the base set for $\cstr{A}$. We claim that the desired natural isomorphism is given by the
   the identity on the base sets. It remains to prove that the identities
-  $id_A : A \rightarrow \{Reach(A)\}$ and $id_{\reachOrder} : \{Reach(A)\} \rightarrow A$
+  $id_A : \cstr{A} \rightarrow \{Reach(A)\}$ and $id_{\reachOrder} : \{Reach(A)\} \rightarrow \cstr{A}$
   is indeed differentiable in both directions.
 
   On one direction, a derivative is given by
@@ -340,9 +340,7 @@ $A_\leq$. This gives rise to a (full and faithful) functor $\{\_\}_\leq : \cat{P
 \fi
 
 Since $\cat{PreOrd}$ is a reflective subcategory of $\cat{Set}$, this gives us a proof
-of the existence of limits and colimits in $\cat{CStruct}$.
-
-MPJ: and exponentials? or do we actually need the constructive proof of that?
+of the existence of limits, colimits, and exponentials in $\cat{CStruct}$.
 
 \begin{corollary}
   The category $\cat{CStruct}$ has all limits, colimits and exponential objects. 
@@ -357,16 +355,16 @@ gained by going via $\cat{PreOrd}$, which is important for using them in
 practical computation.
 
 \begin{prop}[Products]
-  Let $A = \cstruct{A}{\changes{A}}{\cplus}$ and $B =
+  Let $\cstr{A} = \cstruct{A}{\changes{A}}{\cplus}$ and $\cstr{B} =
   \cstruct{B}{\changes{B}}{\cpluss}$ be change actions.
 
-  Then $A \times B \defeq \cstruct{A \times B}{\changes{A} \times
+  Then $\cstr{A} \times \cstr{B} \defeq \cstruct{A \times B}{\changes{A} \times
   \changes{B}}{\cplus \times \cpluss}$ is their categorical product.
 \end{prop}
 \ifproofs
 \begin{proof}
-  Let $Y$ be a change action, and $f_1: Y \rightarrow A$, $f_2: Y
-  \rightarrow B$ be morphisms.
+  Let $\cstr{Y}$ be a change action, and $f_1: \cstr{Y} \rightarrow \cstr{A}$, $f_2: \cstr{Y}
+  \rightarrow \cstr{B}$ be morphisms.
 
   Then the product morphism in $\cat{Set}$, $\pair{f_1}{f_2}$ is the product
   morphism in $\cat{CStruct}$. It can easily be
@@ -379,18 +377,18 @@ practical computation.
 \fi
 
 \begin{prop}[Coproducts]
-  Let $A = \cstruct{A}{\changes{A}}{\cplus}$ and $B =
+  Let $\cstr{A} = \cstruct{A}{\changes{A}}{\cplus}$ and $\cstr{B} =
   \cstruct{B}{\changes{B}}{\cpluss}$ be change actions.
 
-  Then $A + B \defeq \cstruct{A + B}{\changes{A} \times
+  Then $\cstr{A} + \cstr{B} \defeq \cstruct{A + B}{\changes{A} \times
   \changes{B}}{\cplusvee}$ is their categorical coproduct, with $\cplusvee$ defined as:
   $$i_1 a \cplusvee (\change{a}, \change{b}) \defeq \iota_1 (a \cplus \change{a})$$
   $$i_2 b \cplusvee (\change{a}, \change{b}) \defeq \iota_2 (b \cplus \change{b})$$
 \end{prop}
 \ifproofs
 \begin{proof}
-  Let $Y$ be a change action, and $f_1 : A \rightarrow Y$, $f_2 : B
-  \rightarrow Y$ be differentiable functions.
+  Let $\cstr{Y}$ be a change action, and $f_1 : \cstr{A} \rightarrow \cstr{Y}$, $f_2 : \cstr{B}
+  \rightarrow \cstr{Y}$ be differentiable functions.
 
   As before, it suffices to prove that the universal function $[f_1, f_2]$ in $\cat{Set}$ is a differentiable
   function from $\cstruct{A + B}{\changes{A} \times \changes{B}}{\cplusvee}$ into $Y$. It's easy to see 
@@ -409,11 +407,11 @@ incrementalization lemma. You can use the same derivative of $\curry{f}$. Bah.
 
 \begin{prop}[Exponentials]
 \label{prop:exponentials}
-  Let $A_\cplus$ and $B_\cpluss$ be change actions
+  Let $\cstr{A}_\cplus$ and $\cstr{B}_\cpluss$ be change actions
 
-  Then $\cstruct{A \difffunc B}{A
+  Then $\cstruct{\cstr{A} \difffunc \cstr{B}}{A
     \rightarrow \changes{B}}{\lambda d. \lambda f. \lambda a. f(a) \cpluss
-    d(a)}$ is a change action on $A \difffunc B$ and the exponential object.
+    d(a)}$ is a change action on $\cstr{A} \difffunc \cstr{B}$ and the exponential object.
 
   The monoid action on $A \rightarrow \changes{B}$ is the monoid
   action on $\changes{B}$ lifted pointwise, so we will typically reuse the
@@ -475,24 +473,11 @@ incrementalization lemma. You can use the same derivative of $\curry{f}$. Bah.
 \end{proof}
 \fi
 
-MARIO: nice proof, I'm a bit worried about the $f'$, though, since there may be more than one,
-and I feel like we need the axiom of choice to ``pick'' a $f'$ for every $f$.
-
-MPJ: there's only one $f$ here - we only need AoC if we're doing *arbitrary*
-choices for *infinitely* many $f$s.
-
-MARIO: I'm referring to the proof of exponentials - in order to define $\derive{ev}$ you
-need it to pick a $\derive{f}$ for each $f$.
-
-MPJ: oh I see - yes, perhaps. I think that's likely to be a problem in a number
-of places. (I don't particularly mind the AoC, especially since we don't care
-about constructing this thing)
-
 Derivatives of the evaluation map correspond to incremental evaluation of functions:
 
 \begin{prop}[Incrementalization]
 \label{prop:incrementalization}
-  Let $f: A \rightarrow B$, $a \in A$, $\change{a} \in
+  Let $f: \cstr{A} \rightarrow \cstr{B}$, $a \in A$, $\change{a} \in
   \changes{A}$, $\change{f} \in \changes{(A \rightarrow B)}$, and let
   $\derive{\ev}$ be a derivative of the evaluation map.
 
@@ -504,7 +489,7 @@ Conveniently, our proof of \cref{prop:exponentials} gives us actual derivatives 
 
 \begin{prop}[Derivatives of the evaluation map]
 \label{prop:evDerivatives}
-  Let $f: A \rightarrow B$, $a \in A$, $\change{a} \in
+  Let $f: \cstr{A} \rightarrow \cstr{B}$, $a \in A$, $\change{a} \in
   \changes{A}$, $\change{f} \in \changes{(A \rightarrow B)}$.
 
   Then if $f$ is differentiable
@@ -527,11 +512,11 @@ Conveniently, our proof of \cref{prop:exponentials} gives us actual derivatives 
 \subsection{The category of thin change actions}
 
 \begin{prop}
-  The product $A \times B$ of change actions $A$ and $B$ is thin if and only if both $A$ and $B$ are.
-  Furthermore, whenever $A$ and $B$ are complete, then so is $A \times B$.
+  The product $\cstr{A} \times \cstr{B}$ of change actions $\cstr{A}$ and $\cstr{B}$ is thin if and only if both $\cstr{A}$ and $\cstr{B}$ are.
+  Furthermore, whenever $\cstr{A}$ and $\cstr{B}$ are complete, then so is $\cstr{A} \times \cstr{B}$.
 
-  The exponential object $A \Rightarrow B$ of change actions $A$ and $B$ is thin if $B$ is. 
-  Furthermore, whenever $B$ is complete, then so is $A \Rightarrow B$.
+  The exponential object $\cstr{A} \Rightarrow \cstr{B}$ of change actions $\cstr{A}$ and $\cstr{B}$ is thin if $\cstr{B}$ is. 
+  Furthermore, whenever $\cstr{B}$ is complete, then so is $\cstr{A} \Rightarrow \cstr{B}$.
 \end{prop}
 
 Thus, the category of thin change actions is Cartesian closed as well.
@@ -541,7 +526,7 @@ Thus, the category of thin change actions is Cartesian closed as well.
 We can put an order on the change actions for a given base set as follows:
 
 \begin{defn}[Change action ordering]
-  $A_\cplus \fineOrder A_\cpluss$ iff $\textrm{id}: A_\cplus \rightarrow A_\cpluss$ is differentiable.
+  $\cstr{A}_\cplus \fineOrder \cstr{A}_\cpluss$ iff $\textrm{id}: \cstr{A}_\cplus \rightarrow \cstr{A}_\cpluss$ is differentiable.
 \end{defn}
 
 Transitivity of the order follows from the chain rule, and reflexivity is trivial.
@@ -550,12 +535,12 @@ This ordering is useful because it gives us a natural sense of the ``fineness''
 of a change action, much like the corresponding version in topology.
 
 \begin{prop}
-  If $f: A_\cplus \rightarrow B_\cpluss$ is differentiable, then
+  If $f: \cstr{A}_\cplus \rightarrow \cstr{B}_\cpluss$ is differentiable, then
   \begin{itemize}
-    \item if $A_\cplusss \fineOrder A_\cplus$ then $f: A_\cplusss \rightarrow
-      B_\cpluss$ is differentiable.
-    \item if $B_\cplus \fineOrder B_\cplusss$ then $f: A_\cplus \rightarrow
-      B_\cplusss$ is differentiable.
+    \item if $\cstr{A}_\cplusss \fineOrder \cstr{A}_\cplus$ then $f: \cstr{A}_\cplusss \rightarrow
+      \cstr{B}_\cpluss$ is differentiable.
+    \item if $\cstr{B}_\cplus \fineOrder \cstr{B}_\cplusss$ then $f: \cstr{A}_\cplus \rightarrow
+      \cstr{B}_\cplusss$ is differentiable.
   \end{itemize}
 \end{prop}
 
@@ -565,7 +550,7 @@ coarser, or the target change action becomes finer (again, mirroring topology).
 Furthermore, $\fineOrder$ also gives a fineness ordering on the reachability orders.
 
 \begin{prop}
-  If $a \reachOrder b$ in $A_\cplus$ and $A_\cplus \fineOrder A_\cpluss$, then $a \reachOrder b$ in $A_\cpluss$.
+  If $a \reachOrder b$ in $\cstr{A}_\cplus$ and $\cstr{A}_\cplus \fineOrder \cstr{A}_\cpluss$, then $a \reachOrder b$ in $\cstr{A}_\cpluss$.
 \end{prop}
 
 \subsection{Superpositions}
@@ -574,11 +559,11 @@ As well as combining change actions entire, we can combine two different
 change actions on the same underlying set.
 
 \begin{defn}[Superposition]
-  Let $A_\cplus = \cstruct{A}{\changes{A}_\cplus}{\cplus}$ and $A_\cpluss =
+  Let $\cstr{A}_\cplus = \cstruct{A}{\changes{A}_\cplus}{\cplus}$ and $\cstr{A}_\cpluss =
   \cstruct{A}{\changes{A}_\cpluss}{\cpluss}$ be change actions.
 
-  Then the \textit{superposition} of $A_\cplus$ and $A_\cpluss$ is defined as:
-  $$A_\cplus \superpose A_\cpluss \defeq \cstruct{A}{
+  Then the \textit{superposition} of $\cstr{A}_\cplus$ and $\cstr{A}_\cpluss$ is defined as:
+  $$\cstr{A}_\cplus \superpose \cstr{A}_\cpluss \defeq \cstruct{A}{
     (\changes{A}_\cplus \times \changes{A}_\cpluss)^\ast}{(\cplus + \cpluss)^\ast}$$
   where $X^\ast$ denotes the set of finite sequences of elements $X$.
 \end{defn}
@@ -589,14 +574,14 @@ set has a monoid structure: $\cstruct{A}{(\changes{A}_\cplus +
 the free extension to finite sequences.
 
 In some cases we may be able to find a more compact representation of the
-superposition change action, for example $\mathbb{Z}_1 \superpose \mathbb{Z}_2$ is 
-isomorphic to $\mathbb{Z}_3$. The following result shows one way of finding such representations which
+superposition change action, for example $\cstr{\mathbb{Z}}_1 \superpose \cstr{\mathbb{Z}}_2$ is 
+isomorphic to $\cstr{\mathbb{Z}}_3$. The following result shows one way of finding such representations which
 we have found helpful in practice:
 
 \begin{prop}
-  Let $\changes{A}_\cplus, \cplus$ and $\changes{A}_\cpluss, \cpluss$ be two different change action on
+  Let $\cstr{A}_\cplus$ and $\cstr{A}_\cpluss$ be two different change action on
   a set $A$. Suppose there exists a function
-  $\wr : \changes{A}_\cplus \times \changes{A}_\cpluss \rightarrow \changes{A}_\cplus$ satisfying for
+  $\wr : \cstr{A}_\cplus \times \cstr{A}_\cpluss \rightarrow \cstr{A}_\cplus$ satisfying for
   all $a \in A$:
   $$
     a \cplus \change{a} \cpluss \change{b} \cplus \change{c}
@@ -619,18 +604,18 @@ Superposition is a useful construction, because it gives us the coarsest
 change action finer than its components.
 
 \begin{corollary}
-  $A_\cplus \superpose A_\cpluss$ is the least upper bound of $A_\cplus$ and $A_\cpluss$ with respect to $\fineOrder$.
+  $\cstr{A}_\cplus \superpose \cstr{A}_\cpluss$ is the least upper bound of $\cstr{A}_\cplus$ and $\cstr{A}_\cpluss$ with respect to $\fineOrder$.
 \end{corollary}
 \ifproofs
 \begin{proof}
-  The derivative of $id_1: A_\cplus \rightarrow (A_\cplus \superpose
-  A_\cpluss)$ is given by $\derive{id_1}(a, \change{a}) \defeq 
-  i_1(\change{a})$, and similarly for $id_2$ on the other side. Hence $A_\cplus \superpose A_\cpluss$ 
-  is an upper bound of $A_\cplus$ and $A_\cpluss$.
+  The derivative of $id_1: \cstr{A}_\cplus \rightarrow (\cstr{A}_\cplus \superpose
+  \cstr{A}_\cpluss)$ is given by $\derive{id_1}(a, \change{a}) \defeq 
+  i_1(\change{a})$, and similarly for $id_2$ on the other side. Hence $\cstr{A}_\cplus \superpose \cstr{A}_\cpluss$ 
+  is an upper bound of $\cstr{A}_\cplus$ and $\cstr{A}_\cpluss$.
 
-  Let $A_\cplusss$ be greater than $A_\cplus$ and $A_\cpluss$.
+  Let $\cstr{A}_\cplusss$ be greater than $\cstr{A}_\cplus$ and $\cstr{A}_\cpluss$.
   Then a
-  derivative of $id: (A_\cplus \superpose A_\cpluss) \rightarrow A_\cplusss$ is
+  derivative of $id: (\cstr{A}_\cplus \superpose \cstr{A}_\cpluss) \rightarrow \cstr{A}_\cplusss$ is
   given by :
   $$
   \derive{id}(a, (\change{a_i}, \change{b_i})) \defeq 
@@ -644,7 +629,7 @@ This gives us a join-semilattice for change actions on a given set.
 \begin{thm}[Change action semilattice]
   Change actions on a base set $A$ form a bounded join-semilattice 
   ordered by $\fineOrder$, with the least element given by
-  $A_\discrete$, and the join operation given by $\superpose$.
+  $\cstr{A}_\discrete$, and the join operation given by $\superpose$.
 \end{thm}
 
 All functions into a complete change action are differentiable, so any
@@ -664,7 +649,7 @@ section we shall assume that all of our base sets are posets.
 Firstly, we can define ``approximations'' to derivatives from both sides.
 
 \begin{defn}
-  Let $f: A_\cplus \rightarrow B_\cpluss$ be a function. Then a \textit{sup-derivative}
+  Let $f: \cstr{A}_\cplus \rightarrow \cstr{B}_\cpluss$ be a function. Then a \textit{sup-derivative}
   of $f$ is a function $\supderive{f}$ such that
   $$f(a \cplus \change{a}) \leq f(a) \cpluss \supderive{f}(a, \change{a})$$
   
@@ -677,13 +662,13 @@ Firstly, we can define ``approximations'' to derivatives from both sides.
 
 Both sup- and sub-derivatives satisfy the chain rule, in the following sense: 
 \begin{prop}[Chain rule for sub-derivatives]
-  let $f : A_\cplus \rightarrow B_\cpluss$ and $g : B_\cpluss \rightarrow C_\cplusss$ be
+  let $f : \cstr{A}_\cplus \rightarrow \cstr{B}_\cpluss$ and $g : \cstr{B}_\cpluss \rightarrow \cstr{C}_\cplusss$ be
   sub-differentiable functions with sub-derivatives $f', g'$ respectively. Then
   $$\derive{g}(f(a)) \circ \derive{f}(a)$$ is a subderivative of $g \circ f$
 \end{prop}
 
 Some change actions always have sub- or sup-derivatives: for example every function
-into $\mathbb{Z}_1$ is sup-differentiable, and every function into $\mathbb{Z}_2$ is 
+into $\cstr{\mathbb{Z}}_1$ is sup-differentiable, and every function into $\cstr{\mathbb{Z}}_2$ is 
 sub-differentiable.
 
 \begin{prop}
@@ -711,7 +696,7 @@ full partial order.
 Having a monotone order on the changes is very useful.
 
 \begin{thm}
-  Let $f: A \rightarrow B$ be a function, and let $\changeOrder$ be a preorder on $\changes{B}$ such that $\cplus$ is monotone with
+  Let $f: \cstr{A} \rightarrow \cstr{B}$ be a function, and let $\changeOrder$ be a preorder on $\changes{B}$ such that $\cplus$ is monotone with
   respect to it. Then let $\supderive{f}$ be a sub-derivative for $f$, and $h: A \times
   \changes{A} \rightarrow \changes{B}$ be a function such that
   $$\supderive{f} \changeOrder h$$
@@ -757,10 +742,10 @@ Having sub- and sup-derivatives alone is not quite enough to ensure that all
 functions are differentiable. We need some additional power.
 
 \begin{defn}[Ascending and descending change actions]
-  A change action $A$ is \textit{ascending} if $a \leq b$ implies $a
+  A change action $\cstr{A}$ is \textit{ascending} if $a \leq b$ implies $a
   \reachOrder b$.
 
-  A change action $A$ is \textit{descending} if $a \leq b$ implies $b
+  A change action $\cstr{A}$ is \textit{descending} if $a \leq b$ implies $b
   \reachOrder a$.
 \end{defn}
 
@@ -768,12 +753,12 @@ Intuitively, an ascending change action is one where you can produce
 arbitrary changes that follow the partial order.
 
 \begin{thm}
-  Let $A$, $B$ be a change actions, $f: A \rightarrow B$ be a function. Then
+  Let $\cstr{A}$, $\cstr{B}$ be a change actions, $f: \cstr{A} \rightarrow \cstr{B}$ be a function. Then
   any of the following are sufficient for $f$ to be differentiable.
   \begin{itemize}
-    \item $B$ is ascending, and $f$ is sub-differentiable.
-    \item $B$ is descending, and $f$ is sup-differentiable.
-    \item $B$ is ascending, descending, and has a minimal or maximal element.
+    \item $\cstr{B}$ is ascending, and $f$ is sub-differentiable.
+    \item $\cstr{B}$ is descending, and $f$ is sup-differentiable.
+    \item $\cstr{B}$ is ascending, descending, and has a minimal or maximal element.
   \end{itemize}
 \end{thm}
 
@@ -781,9 +766,9 @@ In particular, we can construct change actions where functions are
 differentiable by superposing multiple change actions that have some of the
 properties that we want.
 
-For example, $\mathbb{Z}_1$ is ascending (and has sup-derivatives), and
-$\mathbb{Z}_2$ is descending (and has sub-derivatives), so $\mathbb{Z}_1
-\superpose \mathbb{Z}_2 = \mathbb{Z}_3$ has derivatives.
+For example, $\cstr{\mathbb{Z}}_1$ is ascending (and has sup-derivatives), and
+$\cstr{\mathbb{Z}}_2$ is descending (and has sub-derivatives), so $\cstr{\mathbb{Z}}_1
+\superpose \cstr{\mathbb{Z}}_2 = \cstr{\mathbb{Z}}_3$ has derivatives.
 
 \subsubsection{Maximal and minimal derivatives}
 
@@ -817,8 +802,8 @@ change action.
 
 \begin{thm}[Characterization of derivatives]
 \label{thm:derivativeCharacterization}
-  Let $A$ be a change action and $B$ be a complete change action, let
-  $f: A \rightarrow B$ be a function, and let $\subderiveM{f}$ and
+  Let $\cstr{A}$ and $\cstr{B}$ be a change actions, let
+  $f: \cstr{A} \rightarrow \cstr{B}$ be a function, and let $\subderiveM{f}$ and
   $\supderiveM{f}$ be minimal and maximal derivatives of $f$, respectively.
   Then the derivatives of $f$ are precisely
   the functions $\derive{f}$ such that
@@ -850,7 +835,7 @@ In particular, if $\cplus$ is continuous then we can take suprema of sets of der
 
 \begin{prop}
 \label{prop:supDerivatives}
-  Let $f: A_\cplus \rightarrow B_\cpluss$ be differentiable, $B$ and
+  Let $f: \cstr{A}_\cplus \rightarrow \cstr{B}_\cpluss$ be differentiable, $B$ and
   $\changes{B}$ be cpos, and suppose that $\cpluss$ is continuous
   in its second argument. Then for any set $D$ of derivatives of $f$, $\bigvee
   D$ is also a derivative.
@@ -882,19 +867,19 @@ We mention another well known fact which will be useful later.
 \subsection{Lattices}
 
 \begin{defn}
-  Let $L$ be a join-semilattice. Then $L_\vee \defeq \cstruct{L}{L}{\vee}$ is a change
+  Let $L$ be a join-semilattice. Then $\cstr{L}_\vee \defeq \cstruct{L}{L}{\vee}$ is a change
   action on $L$.
 
-  Similarly, if $L$ is a meet-semilattice, then $L_\wedge \defeq \cstruct{L}{L}{\wedge}$ is a change
+  Similarly, if $L$ is a meet-semilattice, then $\cstr{L}_\wedge \defeq \cstruct{L}{L}{\wedge}$ is a change
   action on $L$.
 \end{defn}
 
 \begin{prop}
   All of the following hold
   \begin{itemize}
-    \item $L_\vee$ is ascending and has sup-derivatives.
-    \item $L_\wedge$ is descending and has sub-derivatives.
-    \item $L_\vee \superpose L_\wedge$ has derivatives.
+    \item $\cstr{L}_\vee$ is ascending and has sup-derivatives.
+    \item $\cstr{L}_\wedge$ is descending and has sub-derivatives.
+    \item $\cstr{L}_\vee \superpose \cstr{L}_\wedge$ has derivatives.
   \end{itemize}
 \end{prop}
 
@@ -907,17 +892,17 @@ complete change action for the full lattice.
 \subsection{Boolean algebras}
 
 Boolean algebras give us a much more compact representation for the
-superposition of $L_\vee \superpose L_\wedge$.
+superposition of $\cstr{L}_\vee \superpose \cstr{L}_\wedge$.
 
 \begin{prop}
   Let $L$ be a Boolean algebra. Define
-  $$L_\superpose \defeq \cstruct{L}{L \times L}{\twist}$$
+  $$\cstr{L}_\superpose \defeq \cstruct{L}{L \times L}{\twist}$$
   where
   $$a \twist (p, q) \defeq (a \vee p) \wedge \neg q$$
   and the monoid operator is
   $$(p, q) \splus (r, s) \defeq ((p \wedge \neg q) \vee r, (q \wedge \neg r) \vee s)$$
 
-  Then $L_\superpose$ is isomorphic to $L_\vee \superpose L_\wedge$.
+  Then $\cstr{L}_\superpose$ is isomorphic to $\cstr{L}_\vee \superpose \cstr{L}_\wedge$.
 \end{prop}
 \ifproofs
 \begin{proof}
@@ -1009,9 +994,9 @@ superposition of $L_\vee \superpose L_\wedge$.
 \end{proof}
 \fi
 
-We can think of $L_\superpose$ as tracking changes as pairs of ``upwards'' and
+We can think of $\cstr{L}_\superpose$ as tracking changes as pairs of ``upwards'' and
 ``downwards'' changes, where the monoid action simply applies both. This
-definition is much more usable than $L_\vee \superpose L_\wedge$, because we
+definition is much more usable than $\cstr{L}_\vee \superpose \cstr{L}_\wedge$, because we
 only need to track pairs of changes, rather than sequences, which makes a big
 difference in practice.
 
@@ -1031,7 +1016,7 @@ all the derivatives on Boolean algebras:
 
 \begin{corollary}
 \label{cor:booleanCharacterization}
-  Let $L$ be a Boolean algebra with the $L_\superpose$ change action, $A$ be
+  Let $L$ be a Boolean algebra with the $\cstr{L}_\superpose$ change action, $A$ be
   a change action, and $f: A \rightarrow
   L$ a function. Then the derivatives of $f$ are precisely those functions
   $\derive{f}$ such that
@@ -1070,13 +1055,9 @@ the following theorem provides a generalization of it to any differentiable func
 change action. We will see the details of how to differentiate Datalog
 semantics in \cref{sec:datalogDifferentiability}.
 
-TODO: I had to use the minus to get something generic for $\Delta F_1$ - that's
-a bit unsatisfying, is there something better? We can also use ``the change that
-maps everything to $F_1$'', if we have that.
-
 \begin{thm}[Incremental computation of iterated function applications]
 \label{thm:diffIter}
-  Let $L$ be a change action, $x \in L$, and $f: L \rightarrow L$ be differentiable. Define $F_i$ as follows:
+  Let $\cstr{L}$ be a complete change action, $x \in L$, and $f: \cstr{L} \rightarrow \cstr{L}$ be differentiable. Define $F_i$ as follows:
 
   \begin{eqnarray*}
   F_0 & = & x\\
@@ -1160,9 +1141,9 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
 \label{thm:fixpointDiff}
   Let 
   \begin{itemize}
-    \item $A$ be a change action
-    \item$\fixpoint_A : (A \rightarrow A) \rightarrow A$ be a fixpoint operator
-    \item $f: A \rightarrow A$ be a differentiable function
+    \item $\cstr{A}$ be a change action
+    \item$\fixpoint_A : (\cstr{A} \rightarrow \cstr{A}) \rightarrow \cstr{A}$ be a fixpoint operator
+    \item $f: \cstr{A} \rightarrow \cstr{A}$ be a differentiable function
     \item $\change{f} \in \changes{(A \rightarrow A)}$ be a change to $f$
     \item $\derive{\ev}$ be a derivative of the evaluation map
   \end{itemize}
@@ -1218,12 +1199,12 @@ However, we can get a true derivative if we are working with least fixpoints.
 \label{thm:leastFixpointDiff}
   Let 
   \begin{itemize}
-    \item $A$ be a change action 
+    \item $\cstr{A}$ be a change action 
     \item $A, \changes{A}$ be cpos
-    \item$\fixpoint_A : (A \rightarrow A) \rightarrow A$ be a differentiable
+    \item$\fixpoint_A : (\cstr{A} \rightarrow \cstr{A}) \rightarrow \cstr{A}$ be a differentiable
       least fixpoint operator
     \item $\cplus$ be monotone with respect to the order on $\changes{A}$, and continuous
-    \item $f: A \rightarrow A$ be a differentiable function
+    \item $f: \cstr{A} \rightarrow \cstr{A}$ be a differentiable function
     \item $\change{f} \in \changes{(A \rightarrow A)}$ be a change to $f$
     \item $\derive{\ev}$ be a derivative of the evaluation map which is monotone
       with respect to $\change{a}$
@@ -1287,10 +1268,10 @@ the conditions.
 \begin{prop}
   Let
   \begin{itemize}
-    \item $A$ be a complete change action, and a cpo satisfying the ACC
+    \item $\cstr{A}$ be a complete change action, and a cpo satisfying the ACC
     \item $\changes{A}$ be ordered according to $\changeOrder$, and a cpo
       satisfying the ACC
-    \item $f: A \rightarrow A$ be differentiable and monotone
+    \item $f: \cstr{A} \rightarrow \cstr{A}$ be differentiable and monotone
     \item $\change{f} \in \changes{(A \rightarrow A)}$ be a change to $f$
     \item$f \cplus \change{f}$ be differentiable and monotone, with a monotone derivative.
   \end{itemize}
@@ -1320,7 +1301,7 @@ the conditions.
 \fi
 
 The requirement that $\changes{A}$ be a cpo satisfying the ACC is still awkward, but is easily
-shown to be true on Boolean algebras with $L_\superpose$ (so long as the base
+shown to be true on Boolean algebras with $\cstr{L}_\superpose$ (so long as the base
 algebra also satisfies the ACC).
 
 Computing the derivative still requires computing a fixpoint (over the change
@@ -1406,7 +1387,7 @@ interested in calculating the semantics faster if it exists.
 
 In order to apply the machinery we have developed, we need the semantics $\denote{\_}$ to
 be differentiable. However, it is a function on Boolean algebras, and we know
-that the $L_\superpose$ change action is complete, so in fact we know that
+that the $\cstr{L}_\superpose$ change action is complete, so in fact we know that
 $\denote{\_}$ must be differentiable.
 
 However, this does not mean that we have a \emph{good} derivative for
@@ -1433,8 +1414,8 @@ maximal and minimal minus operators are actually representable as pairs of terms
 in our Datalog, and so we can compute the derivative via a pair of terms that
 satisfy those bounds, allowing us to reuse our machinery for evaluating Datalog
 terms.\footnote{Indeed, if this process is occurring in an optimizing compiler,
-  the derivative terms can themselves be optimized as well. This is likely to be
-  beneficial, since as we will see the initial terms may be quite complex.}
+  the derivative terms can themselves be optimized. This is likely to be
+  beneficial, since the initial terms may be quite complex.}
 
 This does give us additional constraints that the derivative terms must satisfy:
 for example, we may need to pre
@@ -1575,7 +1556,7 @@ dependent types.
 
 We have omitted minus operators from our definition because
 there are many interesting change actions that are not complete and so cannot 
-have a minus operator (for example, $\mathbb{Z}_3$ does, but $\mathbb{Z}_1$ does
+have a minus operator (for example, $\cstr{\mathbb{Z}}_3$ does, but $\cstr{\mathbb{Z}}_1$ does
 not). Where we can find a change structure with a minus operator, often we are
 forced to use unwieldy representations for change sets, and
 \citeauthor{cai2014changes} cite this as their reason for using a dependently
