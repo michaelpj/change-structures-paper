@@ -1,0 +1,19 @@
+fail_fast: false
+
+repos:
+-   repo: git://github.com/pre-commit/pre-commit-hooks
+    sha: v1.1.1
+    hooks:
+    - id: check-case-conflict
+    - id: check-executables-have-shebangs
+    - id: check-symlinks
+    - id: end-of-file-fixer
+    - id: mixed-line-ending
+    - id: sort-simple-yaml
+    - id: trailing-whitespace
+
+-   repo: git://github.com/Lucas-C/pre-commit-hooks
+    sha: v1.1.4
+    hooks:
+    -   id: forbid-crlf
+    -   id: forbid-tabs
