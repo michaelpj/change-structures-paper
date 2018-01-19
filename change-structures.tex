@@ -824,12 +824,22 @@ Directed-complete partial orders give us the well known notion of
   \begin{itemize}
     \item $A$ and $\changes{A}$ are dcpos.
     \item $\cplus$ and $\splus$ are Scott-continuous in both arguments.
-    \item $\bot \cplus \bot = \bot$
   \end{itemize}
 \end{defn}
 
-We then have the following lemma (which is just a re-statement of a well-known
+\begin{corollary}
+  \label{cor:bottomPlusBottom}
+  Let $\cstr{A}$ be a continuous change structure. Then $\bot_A \cplus
+  \bot_{\changes{A}} = \bot_A$.
+\end{corollary}
+\begin{proof}
+  $\bot_{\changes{A}} \leq \mzero$, therefore
+  $$\bot_A \leq \bot_A \cplus \bot_{\changes{A}} \leq \bot_A \cplus \mzero = \bot_A$$
+\end{proof}
+
+We also have the following lemma (which is just a re-statement of a well-known
 property of Scott-continuous functions, see e.g. \cite[Lemma~3.2.6]{abramsky1994domain}):
+
 \begin{prop}[Distributivity of limits across arguments]
   \label{prop:distributivityLimit}
   A function $f : A \times B \rightarrow C$ is continuous iff it is continuous in each variable separately.
@@ -846,7 +856,7 @@ A direct corollary of this property is the following result, reminiscent of a we
   a derivative of $\sqcup_{i \in I} \{ f_i \}$.
 \end{corollary}
 \begin{proof}
-  It suffices to apply \cref{prop:distributivityLimit} to the directed families $\{ f_i(a) \}$ and 
+  It suffices to apply $\cplus$ and \cref{prop:distributivityLimit} to the directed families $\{ f_i(a) \}$ and 
   $\{ \derive{f_i}(a, \change{a}) \}$.
 \end{proof}
 
@@ -1186,56 +1196,62 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
 \end{proof}
 \fi
 
-TODO: work on flow, move some of this into a proof section
-
 This is not enough to give us a true derivative, because we have only shown 
 that $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ computes \emph{a} fixpoint, not necessarily
 the same one computed by $\fixpoint_A{(f \cplus \change{f})}$.
 
-However, under reasonable conditions, we can indeed obtain a true derivative of a least fixpoint operator.
-In order to do this, we will restrict ourselves to directed complete partial
-orders and continuous change actions.
+However, if we restrict ourselves to directed-complete partial orders and
+continuous change actions, then it becomes a true derivative.
 
-Consider now a continuous function $f : \cstr{A} \rightarrow \cstr{A}$, where $\cstr{A}$ is a continuous change action. Since $A$
-is a dcpo, a least fixpoint is guaranteed to exist and can be defined as:
+Consider a continuous function $f : \cstr{A} \rightarrow \cstr{A}$, where $\cstr{A}$ is a continuous change action. Since $A$
+is a dcpo, Kleene's Theorem tells us that a least fixpoint is guaranteed to exist and can be defined as:
 \begin{align*} 
-  \lfp f &\defeq \sqcup_{n \in \NN} \{ \iter_n \}\\
-  \iter_n f &\defeq f^n(\bot)
+  \iter_n, \lfp &: (A \rightarrow A) \rightarrow A\\
+  \iter_n f &\defeq f^n(\bot)\\
+  \lfp &\defeq \sqcup_{n \in \NN} \{ \iter_n \}
 \end{align*}
 
-Applying \cref{cor:diffContinuous}, it follows that we can construct a derivative of the operator $\lfp$
-as:
-  $$\derive{\lfp} \defeq \sqcup_{n \in \NN} \{ \derive{\iter_n} \}$$
-provided we can find a derivative of each iteration map $\iter'_n$ such that the resulting 
-set $\{ \derive{\iter_n} \}$ is directed.
+Applying \cref{cor:diffContinuous}, it follows that if we can find a derivative of each iteration map $\derive{\iter_n}$ such that the resulting 
+set $\{ \derive{\iter_n} \}$ is directed, then $\sqcup_{n \in \NN}
+\{\derive{\iter_n} \}$ is a derivative of $\lfp$.
+
+We therefore begin by constructing derivatives of $\iter_n$
 
 \begin{prop}[Derivatives of iteration maps]
-  The maps $\iter_n$ sending a (differentiable) function $f : \cstr{A} \rightarrow \cstr{A}$ to the element
-  $f^n(a)$ are differentiable and one of their derivatives can be defined inductively by:
+  $\iter_n$ is differentiable and a derivative is given by:
   \begin{align*}
-    \derive{\iter_0} (f, \change{f}) &\defeq \bot\\
+    \derive{\iter_n} &: (A \rightarrow A) \rightarrow \changes{(A \rightarrow A)} \rightarrow \changes{A}\\
+    \derive{\iter_0} (f, \change{f}) &\defeq \bot_{\changes{A}}\\
     \derive{\iter_{n+1}} (f, \change{f}) &\defeq \derive{\ev}((f, \iter_n(f)), (\change{f}, \derive{\iter_n}(f, \change{f})))
   \end{align*}
-  Or, equivalently:
-  \begin{align*}
-    \nextiter (a, \change{a}) &\defeq (f(a), \derive{\ev}((f, a), (\change{f}, \change{a})))\\
-    \iter'_{n+1}(f, \change{f}) &\defeq \pi_2 (\nextiter(\iter_n(f), \iter'_n(f, \change{f})))
-  \end{align*}
 \end{prop}
+\begin{proof}
+  The base case follows from \cref{cor:bottomPlusBottom}.
 
-From the definition of $\derive{\iter}$, it follows immediately that whenever $\derive{\ev}$ 
-is monotonic, then the set $\{ \derive{\iter}_i \}$ is directed. If they are
-continuous, its least upper bound can furthermore be computed simply as:
-\begin{align*}
-  \sqcup_{i \in \NN} \{ \derive{\iter_i} \} &= \pi_2 (\lfp(\nextiter))\\
-            &= \lfp(\lambda\ \change{a}. \derive{\ev}((f, \lfp f), (\change{f}, \change{a})))\\
-            &= \lfp(\theadjustment(f, \change{f}))\\
-            &= \derive{\lfp}(f, \change{f})
-\end{align*}
+  For the inductive step:
+  \begin{itemize}
+    \item[ ]$\iter_{n+1}(f \cplus \change{f})$
+    \item[=]$(f \cplus \change{f})(\iter_{n}(f \cplus \change{f}))$
+    \item[=]\{ induction \}\\
+      $
+      (f \cplus \change{f})(
+        \iter_{n}(f)
+        \cplus \derive{\iter_{n}}(f, \change{f})
+      )
+      $
+    \item[=]\{ by \cref{prop:incrementalization} \}\\
+      $
+      f(\iter_n(f)) \cplus \derive{\ev}((f, \iter_{n}(f)), (\change{f},
+      \derive{\iter_{n}}(f, \change{f})))
+      $
+    \item[=]$
+      \iter_{n+1}(f) \cplus \derive{\iter_{n+1}}(f, \change{f})))
+      $
+  \end{itemize}
+\end{proof}
 
-(using \ref{prop:factoringFixpoints})
+This gives us enough to prove that our derivative really is a derivative:
 
-The previous results can be summarised as:
 \begin{thm}[Derivatives of least fixpoint operators]
   Let 
   \begin{itemize}
@@ -1243,119 +1259,38 @@ The previous results can be summarised as:
     \item $f : \cstr{A} \rightarrow \cstr{A}$ be a continuous, differentiable function
     \item $f' : A \times \changes{A} \rightarrow \changes{A}$ be a continuous derivative of $f$
     \item $\change{f} : A \rightarrow \changes{A}$ be a function change
-    \item $\derive{\ev}$ be a monotone derivative of the evaluation map
+    \item $\derive{\ev}$ be a continuous derivative of the evaluation map
   \end{itemize}
   Then $\derive{\lfp}$ is a derivative of $\lfp$.
 \end{thm}
-
-\begin{thm}[Derivatives of least fixpoints]
-\label{thm:leastFixpointDiff}
-  Let 
-  \begin{itemize}
-    \item $\cstr{A}$ be a change action 
-    \item $A, \changes{A}$ be cpos
-    \item$\fixpoint_A : (\cstr{A} \rightarrow \cstr{A}) \rightarrow \cstr{A}$ be a differentiable
-      least fixpoint operator
-    \item $\cplus$ be monotone with respect to the order on $\changes{A}$, and continuous
-    \item $f: \cstr{A} \rightarrow \cstr{A}$ be a differentiable function
-    \item $\change{f} \in \changes{(A \rightarrow A)}$ be a change to $f$
-    \item $\derive{\ev}$ be a derivative of the evaluation map which is monotone
-      with respect to $\change{a}$
-  \end{itemize}
-
-  Then $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a least
-  fixpoint of $f \cplus \change{f}$ and therefore $\derive{\fixpoint_A}$ is a derivative of $\fixpoint_A$.
-\end{thm}
-\ifproofs
 \begin{proof}
-  Suppose that $D$ is a derivative of $\fixpoint_A$, and hence $\fixpoint_A(f) \cplus D(f,
-  \change{f})$ is the least fixpoint of $f \cplus \change{f}$. 
-  Since $D$ is a derivative of $\fixpoint_A$, it follows that 
-  \begin{itemize}
-    \item[ ]$\fixpoint_A (f \cplus \change{f})$
-    \item[=]$\fixpoint_A(f) \cplus D(f, \change{f})$
-    \item[=]$\fixpoint_A(f) \cplus \theadjustment(f, \change{f})(D(f, \change{f}))$
-  \end{itemize}
+  We can write our recursive definition of $\derive{\iter}$ as a recurrence relation:
+  \begin{align*}
+    \nextiter_{f, \change{f}} &: (A, \changes{A}) \rightarrow (A, \changes{A})\\
+    \nextiter_{f, \change{f}} (a, \change{a}) &\defeq (f(a), \derive{\ev}((f, a), (\change{f}, \change{a})))\\
+    \derive{\iter_{n+1}}(f, \change{f}) &\defeq \pi_2 (\nextiter_{f, \change{f}}(\iter_n(f), \iter'_n(f, \change{f})))
+  \end{align*}
 
-  That is, $\theadjustment(f, \change{f})(D(f, \change{f}))$ is also a
-  derivative of $\fixpoint_A$.
+  $\nextiter_{f, \change{f}}$ is continuous if $\derive{\ev}$ is.
 
-  Now, let $$D_{max} \defeq \bigvee \{D \mid D \textrm{ is a derivative of }
-  \fixpoint_A \}$$. This exists, since $\changes{A}$ is a complete lattice, and
-  is itself a derivative by \cref{prop:supDerivatives}.
-
-  Then, since 
-  $\theadjustment(f, \change{f})(D(f, \change{f}))$ is a
-  derivative, it is less than $D_{max}$. Hence $D_{max}$ is a prefix point of
-  $\theadjustment(f, \change{f})$.
-
-  Since $\derive{\ev}$ is monotone, $\theadjustment(f, \change{f})$ is also monotone, and
-  hence $\fixpoint_{\changes{A}}(\theadjustment(f, \change{f}))$ is also the
-  least prefix point of $\theadjustment(f, \change{f})$, and hence it is less
-  than $D_{max}$.
-
-  And so 
+  From the definition of $\derive{\iter_n}$, it follows immediately that whenever $\derive{\ev}$ 
+  is continuous, then the set $\{ \derive{\iter}_n \}$ is directed. Hence:
   \begin{itemize}
     \item[ ]
-      $\fixpoint_A(f \cplus \change{f})$
-    \item[$\leq$]\{ $\fixpoint_A$ is a least fixpoint \}\\
-      $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$
-    \item[$\leq$]\{ monotonicity of $\cplus$ \}\\
-      $\fixpoint_A(f) \cplus D_{max}(f, \change{f})$
-    \item[=]\{ $D_{max}$ is a derivative \}\\
-      $\fixpoint_A(f \cplus \change{f})$
+      $\sqcup_{i \in \NN} \{ \derive{\iter_i} \}(f, \change{f})$
+    \item[=]
+      $\pi_2 (\lfp(\nextiter_{f, \change{f}}))$
+    \item[=]\{ by \cref{prop:factoringFixpoints}, and the definition of $\nextiter$ \}\\
+      $\pi_2 (\lfp(f), \lfp (\lambda\ \change{a}. \derive{\ev}((f, \lfp f), (\change{f}, \change{a}))))$
+    \item[=]
+      $\lfp(\theadjustment(f, \change{f}))$
+    \item[=]
+      $\derive{\lfp}(f, \change{f})$
   \end{itemize}
-
-  Therefore $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f}) =
-  \fixpoint_A(f \cplus \change{f})$, so $\derive{\fixpoint_A}$ is a derivative of $\fixpoint_A$
 \end{proof}
-\fi
 
-The requirements of this theorem may seem onerous. However, usually when we are
-working with least fixpoints in a computational setting, we are interested in
-being able to compute them by using Kleene's Theorem and iterating from $\bot$.
-That means our base set is going to be a cpo satisfying the ACC, and our
-functions are going to be monotone. In this setting, it's much easier to satisfy
-the conditions.
-
-\begin{prop}
-  Let
-  \begin{itemize}
-    \item $\cstr{A}$ be a complete change action, and a cpo satisfying the ACC
-    \item $\changes{A}$ be ordered according to $\changeOrder$, and a cpo
-      satisfying the ACC
-    \item $f: \cstr{A} \rightarrow \cstr{A}$ be differentiable and monotone
-    \item $\change{f} \in \changes{(A \rightarrow A)}$ be a change to $f$
-    \item$f \cplus \change{f}$ be differentiable and monotone, with a monotone derivative.
-  \end{itemize}
-
-  TODO: would be nice to have some condition which implied that $\derive{(f
-    \cplus \change{f})}$ was monotone rather than having to stipulate it.
-
-  Then
-  \begin{itemize}
-    \item The least fixpoint operator $\fixpoint_A$ exists for $f$ and $f \cplus
-      \change{f}$ and is differentiable
-    \item The least fixpoint operator $\fixpoint_{\changes{A}}$ exists for
-      $\theadjustment(f, \change{f})$
-    \item $\cplus$ is continuous and monotone
-    \item There is a monotone derivative of $\ev$
-  \end{itemize}
-
-  And therefore $\derive{\fixpoint_A}$ is a derivative of $\fixpoint_A$.
-\end{prop}
-\ifproofs
-\begin{proof}
-  Largely trivial. Continuity of $\cplus$ follows from
-  \cref{prop:monotoneContinuous}; and we take $\derive{\ev}_2$ from
-  \cref{prop:evDerivatives} as our derivative of $\ev$, which is monotone 
-  since $\derive{(f \cplus \change{f})}$ and $\cplus$ are monotone.
-\end{proof}
-\fi
-
-The requirement that $\changes{A}$ be a cpo satisfying the ACC is still awkward, but is easily
-shown to be true on Boolean algebras with $\cstr{L}_\superpose$ (so long as the base
-algebra also satisfies the ACC).
+The requirements of this theorem are somewhat constraining, but are easily shown
+to be true for Boolean algebras with $\cstr{L}_\superpose$ (CHECK THIS CAREFULLY).
 
 Computing the derivative still requires computing a fixpoint (over the change
 lattice), but this may still be significantly less expensive than the
