@@ -1,14 +1,14 @@
-{ 
-  pkgs ? (import <nixpkgs> {}), 
-  stdenv ? pkgs.stdenv, 
-  texlive ? pkgs.texlive, 
-  biber ? pkgs.biber, 
+{
+  pkgs ? (import <nixpkgs> {}),
+  stdenv ? pkgs.stdenv,
+  texlive ? pkgs.texlive,
+  biber ? pkgs.biber,
   ghostscript ? pkgs.ghostscript
 }:
 
 let
-  tex = texlive.combine { 
-    inherit (texlive) 
+  tex = texlive.combine {
+    inherit (texlive)
     scheme-small
     collection-bibtexextra
     collection-latex
@@ -18,7 +18,7 @@ let
     collection-fontsrecommended
     collection-mathscience
     acmart
-    bibtex biblatex 
+    bibtex biblatex
     latexmk;
   };
 in

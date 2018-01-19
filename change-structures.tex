@@ -5,13 +5,19 @@
 
 \usepackage{inputenc}[utf8]
 \usepackage{amsmath}
-\usepackage{amsthm}
 \usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{biblatex}[natbib=true]
+\usepackage{cleveref}
+\usepackage{etoolbox}
+\usepackage{hyperref}
 \usepackage{mathtools}
 \usepackage{stmaryrd}
-\usepackage{biblatex}[natbib=true]
-\usepackage{hyperref}
-\usepackage{cleveref}
+\usepackage{todonotes}
+
+\newcommand{\todoall}[1]{\todo[inline,color=black!30,author=All]{#1}}
+\newcommand{\todokcg}[1]{\todo[inline,color=pink!60,author=Katriel]{#1}}
+\newcommand{\todompj}[1]{\todo[inline,color=yellow!40,author=Michael]{#1}}
 
 \input{notation}
 
@@ -47,7 +53,7 @@
 
 Often when we compute the value of a function, we are not only interested in the
 result we get, but also in being able to (efficiently) update the result when
-the input changes. 
+the input changes.
 
 This is the setting in which incremental computation is studied. Recently,
 \textcite{cai2014changes} have given a compelling account
@@ -60,6 +66,7 @@ some pressing questions:
   \item Can we extend the concepts to cover a broader range of structures?
     The requirements for being a change structure are stringent enough that they
     prevent many useful structures in computer science from having nice change structures.
+    \todokcg{It would be nice to see a concrete example here.}
   \item Can we say anything about the abstract structure of change structures as
     a class? Being able to easily compose new change structures using standard
     constructions would be very helpful for targeting new domains.
@@ -85,7 +92,7 @@ The major contributions of this paper are:
     (\cref{sec:changeActions}).
   \item A description of the categorical properties of change actions, including
     several useful direct constructions (\cref{sec:category}).
-  \item A description of the properties of change actions over 
+  \item A description of the properties of change actions over
     additional structures, including theorems that characterize the range of
     possible derivatives available, and conditions under which compound change
     actions may admit derivatives (\cref{sec:moreStructures}).
@@ -313,7 +320,7 @@ Conversely, any preorder $\leq$ on some set $A$ induces the corresponding change
 $\cstr{A}_\leq$. This gives rise to a (full and faithful) functor $\{\_\}_\leq : \cat{PreOrd} \rightarrow \cat{CStruct}$
 
 \begin{thm}[Equivalence to $\cat{PreOrd}$]
-  The functor $Reach$ from $\cat{CStruct}$ to $\cat{PreOrd}$ together with the 
+  The functor $Reach$ from $\cat{CStruct}$ to $\cat{PreOrd}$ together with the
   functor $\{\_\}_\leq$ in the opposite direction form an equivalence of categories.
 \end{thm}
 \ifproofs
@@ -344,7 +351,7 @@ Since $\cat{PreOrd}$ is a reflective subcategory of $\cat{Set}$, this gives us a
 of the existence of limits, colimits, and exponentials in $\cat{CStruct}$.
 
 \begin{corollary}
-  The category $\cat{CStruct}$ has all limits, colimits and exponential objects. 
+  The category $\cat{CStruct}$ has all limits, colimits and exponential objects.
 \end{corollary}
 
 \subsection{Explicit constructions}
@@ -394,7 +401,7 @@ practical computation.
   \rightarrow \cstr{Y}$ be differentiable functions.
 
   As before, it suffices to prove that the universal function $[f_1, f_2]$ in $\cat{Set}$ is a differentiable
-  function from $\cstruct{A + B}{\changes{A} \times \changes{B}}{\cplusvee}$ into $Y$. It's easy to see 
+  function from $\cstruct{A + B}{\changes{A} \times \changes{B}}{\cplusvee}$ into $Y$. It's easy to see
   that the following morphism is a derivative:
   \begin{align*}
     \derive{[f_1, f_2]} (i_1 a, (\change{a}, \change{b})) &\defeq f_1'(a, \change{a})\\
@@ -426,13 +433,13 @@ practical computation.
     &\curry{f} : A \rightarrow (B \rightarrow C)\\
     &\curry{f}(a) \defeq \lambda b. f((a, b))\\
   \end{align*}
-  
+
   We merely need to show that they are differentiable: differentiability of $\curry{f}
   \times id$ follows from products; commutativity and
   uniqueness follow from the corresponding properties of the exponential object
   on $\cat{Set}$.
 
-  Let 
+  Let
   \begin{align*}
     &\derive{\ev} : ((A \rightarrow B) \times A) \times (\changes{(A \rightarrow B)} \times \changes{A}) \rightarrow \changes{A}\\
     &\derive{\ev}((f, a), (\change{f}, \change{a})) \defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})
@@ -454,14 +461,14 @@ practical computation.
       $\ev(f, a) \cplus \derive{\ev}((f, a), (\change{f}, \change{a}))$
   \end{itemize}
   Therefore $\derive{\ev}$ is a derivative for $\ev$, so $\ev$ is differentiable.
-  
+
   Let
   \begin{align*}
     &\derive{\curry{f}} : (A \times \changes{A}) \rightarrow \changes{(B \rightarrow C)}\\
     &\derive{\curry{f}}(a, \change{a}) \defeq \lambda b. \derive{f}((a, b),
       (\change{a}, \mzero))
   \end{align*}
-  
+
   Then
   \begin{itemize}
     \item[ ]$\curry{f}(a \cplus \change{a})$
@@ -489,7 +496,7 @@ Derivatives of the evaluation map correspond to incremental evaluation of functi
   \changes{A}$, $\change{f} \in \changes{(A \rightarrow B)}$, and let
   $\derive{\ev}$ be a derivative of the evaluation map.
 
-  Then 
+  Then
   $$(f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus \derive{\ev}((f, a), (\change{f}, \change{a}))$$
 \end{prop}
 
@@ -504,7 +511,7 @@ Conveniently, our proof of \cref{prop:exponentials} gives us actual derivatives 
   $$\derive{\ev}_1 \defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})$$
 
   is a derivative for the evaluation map.
-  
+
   Or, if $f \cplus \change{f}$ is differentiable
   $$\derive{\ev}_2 \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})$$
 
@@ -523,7 +530,7 @@ Conveniently, our proof of \cref{prop:exponentials} gives us actual derivatives 
   The product $\cstr{A} \times \cstr{B}$ of change actions $\cstr{A}$ and $\cstr{B}$ is thin if and only if both $\cstr{A}$ and $\cstr{B}$ are.
   Furthermore, whenever $\cstr{A}$ and $\cstr{B}$ are complete, then so is $\cstr{A} \times \cstr{B}$.
 
-  The exponential object $\cstr{A} \Rightarrow \cstr{B}$ of change actions $\cstr{A}$ and $\cstr{B}$ is thin if $\cstr{B}$ is. 
+  The exponential object $\cstr{A} \Rightarrow \cstr{B}$ of change actions $\cstr{A}$ and $\cstr{B}$ is thin if $\cstr{B}$ is.
   Furthermore, whenever $\cstr{B}$ is complete, then so is $\cstr{A} \Rightarrow \cstr{B}$.
 \end{prop}
 
@@ -582,7 +589,7 @@ set has a monoid structure: $\cstruct{A}{(\changes{A}_\cplus +
 the free extension to finite sequences.
 
 In some cases we may be able to find a more compact representation of the
-superposition change action, for example $\cstr{\mathbb{Z}}_1 \superpose \cstr{\mathbb{Z}}_2$ is 
+superposition change action, for example $\cstr{\mathbb{Z}}_1 \superpose \cstr{\mathbb{Z}}_2$ is
 isomorphic to $\cstr{\mathbb{Z}}_3$. The following result shows one way of finding such representations which
 we have found helpful in practice:
 
@@ -599,7 +606,7 @@ we have found helpful in practice:
   Then $\cstruct{A}{\changes{A}_\cplus \times \changes{A}_\cpluss}{\cplussym{\wedge}}$
   is a change action monoidal structure given by:
   $$
-    (\change{a}, \change{b}) + (\change{c}, \change{d}) \defeq 
+    (\change{a}, \change{b}) + (\change{c}, \change{d}) \defeq
     (\change{a} + \wr(\change{c}, \change{b}), \change{b} + \change{d})
   $$
   and action $\cplussym{\wedge}$ defined as:
@@ -617,8 +624,8 @@ change action finer than its components.
 \ifproofs
 \begin{proof}
   The derivative of $id_1: \cstr{A}_\cplus \rightarrow (\cstr{A}_\cplus \superpose
-  \cstr{A}_\cpluss)$ is given by $\derive{id_1}(a, \change{a}) \defeq 
-  i_1(\change{a})$, and similarly for $id_2$ on the other side. Hence $\cstr{A}_\cplus \superpose \cstr{A}_\cpluss$ 
+  \cstr{A}_\cpluss)$ is given by $\derive{id_1}(a, \change{a}) \defeq
+  i_1(\change{a})$, and similarly for $id_2$ on the other side. Hence $\cstr{A}_\cplus \superpose \cstr{A}_\cpluss$
   is an upper bound of $\cstr{A}_\cplus$ and $\cstr{A}_\cpluss$.
 
   Let $\cstr{A}_\cplusss$ be greater than $\cstr{A}_\cplus$ and $\cstr{A}_\cpluss$.
@@ -629,7 +636,7 @@ change action finer than its components.
   TODO: This is wrong now we're doing superposition with a sum rather than a
   product. Maybe it was easier with the product...
   $$
-  \derive{id}(a, (\change{a_i}, \change{b_i})) \defeq 
+  \derive{id}(a, (\change{a_i}, \change{b_i})) \defeq
     \sum_i (\derive{id}(a, \change{a_i}) + \derive{id}(a, \change{b_i}))
   $$
 \end{proof}
@@ -638,7 +645,7 @@ change action finer than its components.
 This gives us a join-semilattice for change actions on a given set.
 
 \begin{thm}[Change action semilattice]
-  Change actions on a base set $A$ form a bounded join-semilattice 
+  Change actions on a base set $A$ form a bounded join-semilattice
   ordered by $\fineOrder$, with the least element given by
   $\cstr{A}_\discrete$, and the join operation given by $\superpose$.
 \end{thm}
@@ -665,15 +672,14 @@ Posets allow us to define ``approximations'' to derivatives from both sides.
   Let $f: \cstr{A}_\cplus \rightarrow \cstr{B}_\cpluss$ be a function. Then a \emph{sup-derivative}
   of $f$ is a function $\supderive{f}$ such that
   $$f(a \cplus \change{a}) \leq f(a) \cpluss \supderive{f}(a, \change{a})$$
-  
-  Similarly, a \emph{sub-derivative} of $f$ is a function $\subderive{f}$ such that 
+  Similarly, a \emph{sub-derivative} of $f$ is a function $\subderive{f}$ such that
   $$f(a \cplus \change{a}) \geq f(a) \cpluss \subderive{f}(a, \change{a})$$
 
   A function with a sup-derivative is sup-differentiable, and a function with a
   sub-derivative is sub-differentiable.
 \end{defn}
 
-Both sup- and sub-derivatives satisfy the chain rule, in the following sense: 
+Both sup- and sub-derivatives satisfy the chain rule, in the following sense:
 \begin{prop}[Chain rule for sub-derivatives]
   let $f : \cstr{A}_\cplus \rightarrow \cstr{B}_\cpluss$ and $g : \cstr{B}_\cpluss \rightarrow \cstr{C}_\cplusss$ be
   sub-differentiable functions with sub-derivatives $f', g'$ respectively. Then
@@ -681,7 +687,7 @@ Both sup- and sub-derivatives satisfy the chain rule, in the following sense:
 \end{prop}
 
 Some change actions always have sub- or sup-derivatives: for example every function
-into $\cstr{\mathbb{Z}}_1$ is sup-differentiable, and every function into $\cstr{\mathbb{Z}}_2$ is 
+into $\cstr{\mathbb{Z}}_1$ is sup-differentiable, and every function into $\cstr{\mathbb{Z}}_2$ is
 sub-differentiable.
 
 \begin{prop}
@@ -715,7 +721,7 @@ Having a monotone order on the changes is very useful.
   $$\supderive{f} \changeOrder h$$
   Then $h$ is also a sup-derivative for $f$.
 
-  Similarly, if $\subderive{f}$ is a sup-derivative for $f$ such that 
+  Similarly, if $\subderive{f}$ is a sup-derivative for $f$ such that
   $$h \changeOrder \subderive{f}$$
   Then $h$ is also a sub-derivative for $f$.
 \end{thm}
@@ -796,7 +802,7 @@ set.
 \end{defn}
 
 This orders our minus operators according to the size of the changes they
-produce. 
+produce.
 
 \begin{prop}
   If $\cminus_1 \minusOrder \cminus_2$ then
@@ -877,7 +883,7 @@ A direct corollary of this property is the following result, reminiscent of a we
 \end{corollary}
 \ifproofs
 \begin{proof}
-  It suffices to apply $\cplus$ and \cref{prop:distributivityLimit} to the directed families $\{ f_i(a) \}$ and 
+  It suffices to apply $\cplus$ and \cref{prop:distributivityLimit} to the directed families $\{ f_i(a) \}$ and
   $\{ \derive{f_i}(a, \change{a}) \}$.
 \end{proof}
 \fi
@@ -971,7 +977,7 @@ superposition of $\cstr{L}_\vee \superpose \cstr{L}_\wedge$.
       $
       \left(
         \left(
-          \left(  
+          \left(
             a \vee p
           \right)
           \wedge
@@ -981,7 +987,7 @@ superposition of $\cstr{L}_\vee \superpose \cstr{L}_\wedge$.
         \right)
         \vee r
       \right)
-      \wedge 
+      \wedge
       \left(
         \neg q \vee r
       \right)
@@ -992,7 +998,7 @@ superposition of $\cstr{L}_\vee \superpose \cstr{L}_\wedge$.
       $
       \left(
         \left(
-          \left(  
+          \left(
             a \vee p
           \right)
           \wedge
@@ -1011,7 +1017,7 @@ superposition of $\cstr{L}_\vee \superpose \cstr{L}_\wedge$.
       $
       \left(
         \left(
-          \left(  
+          \left(
             a \vee p
           \right)
           \wedge
@@ -1112,7 +1118,7 @@ semantics in \cref{sec:datalogDifferentiability}.
   \Delta F_{i+2} &= \derive{f}(F_i, \Delta F_{i+1}) \\
   \end{align*}
 
-  Then 
+  Then
   $$f^i(x) = F_i$$
 \end{thm}
 
@@ -1137,7 +1143,7 @@ $
 \item[=]
 $
 f(F_i \cplus \Delta F_{i+1})
-$ 
+$
 \item[=]
 $f(F_{i+1})$
 \end{itemize}
@@ -1187,7 +1193,7 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
 
 \begin{thm}[Derivatives of fixpoints]
 \label{thm:fixpointDiff}
-  Let 
+  Let
   \begin{itemize}
     \item $\cstr{A}$ be a change action
     \item $\fixpoint_A : (\cstr{A} \rightarrow \cstr{A}) \rightarrow \cstr{A}$ be a fixpoint operator
@@ -1202,12 +1208,12 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
     \change{w} = \adjust(f, \change{f})(\change{w})
   \end{equation}
   if and only if $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$.
-  
+
   In particular, if the operator $\fixpoint$ is defined over $\Delta A$, we can define:
   $$
   \derive{\fixpoint_A}(f, \change{f}) \defeq \fixpoint_{\changes{A}}(\adjust(f, \change{f}))
   $$
-  thus $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a fixpoint 
+  thus $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a fixpoint
   of $f \cplus \change{f}$.
 \end{thm}
 \ifproofs
@@ -1236,7 +1242,7 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
 \end{proof}
 \fi
 
-This is not enough to give us a true derivative, because we have only shown 
+This is not enough to give us a true derivative, because we have only shown
 that $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ computes \emph{a} fixpoint, not necessarily
 the same one computed by $\fixpoint_A{(f \cplus \change{f})}$.
 
@@ -1247,13 +1253,13 @@ least fixpoints anyway.
 
 Consider a continuous function $f : \cstr{A} \rightarrow \cstr{A}$, where $\cstr{A}$ is a continuous change action. Since $A$
 is a dcpo, Kleene's Theorem tells us that a least fixpoint is guaranteed to exist and can be defined as:
-\begin{align*} 
+\begin{align*}
   &\iter_n, \lfp : (A \rightarrow A) \rightarrow A\\
   &\iter_n f \defeq f^n(\bot)\\
   &\lfp \defeq \sqcup_{n \in \NN} \{ \iter_n \}
 \end{align*}
 
-Applying \cref{cor:diffContinuous}, it follows that if we can find a derivative of each iteration map $\derive{\iter_n}$ such that the resulting 
+Applying \cref{cor:diffContinuous}, it follows that if we can find a derivative of each iteration map $\derive{\iter_n}$ such that the resulting
 set $\{ \derive{\iter_n} \}$ is directed, then $\sqcup_{n \in \NN}
 \{\derive{\iter_n} \}$ is a derivative of $\lfp$.
 
@@ -1298,7 +1304,7 @@ This gives us enough to prove that our derivative really is a derivative:
 
 \begin{thm}[Derivatives of least fixpoint operators]
   \label{thm:leastFixpointDiff}
-  Let 
+  Let
   \begin{itemize}
     \item $\cstr{A}$ be a continuous change action
     \item $f : \cstr{A} \rightarrow \cstr{A}$ be a continuous, differentiable function
@@ -1322,7 +1328,7 @@ This gives us enough to prove that our derivative really is a derivative:
   $\derive{\iter_n}$ and $\nextiter_{f, \change{f}}$ are continuous (and hence monotone) since $\derive{\ev}$ is.
 
   Hence the set $\{ \derive{\iter}_n \}$ is directed, and so $\sqcup_{i \in \NN}
-  \{ \derive{\iter_i} \}$ is indeed a derivative for $\lfp$. 
+  \{ \derive{\iter_i} \}$ is indeed a derivative for $\lfp$.
 
   We now show that it is equivalent to $\derive{\lfp}$:
   \begin{itemize}
@@ -1377,7 +1383,7 @@ closed-world assumption to solve this.
 
 \begin{defn}[Closed-world assumption and negation]
   There exists a universal relation $\universalRel$.
-  
+
   Negation on relations is defined as $$\neg R \defeq \universalRel \setminus R$$
 \end{defn}
 
@@ -1408,7 +1414,7 @@ That is, given a value for the program, we pass in all the relations
 to the denotation of each predicate, to get a new product of relations.
 
 \begin{defn}[Program semantics]
-  The semantics of a program $\mathcal{P}$ is defined to be 
+  The semantics of a program $\mathcal{P}$ is defined to be
   $$\denote{\mathcal{P}} \defeq \lfp_{\Rel^n}(\consq)$$
   and may be calculated by repeated application of $\consq$ to $\bot$.
 \end{defn}
@@ -1471,18 +1477,18 @@ specifics of the evaluation engine. Here is one possibility.\footnote{These are
   $\updiff: \Term \rightarrow \changes{\Rel^n} \rightarrow \changes{Rel}$ and
   $\downdiff: \Term \rightarrow \changes{\Rel^n} \rightarrow \changes{Rel}$, such
   that $\updiff \times \downdiff$ is a derivative for Datalog term semantics.
-  
+
   Let $$\diamond X \defeq X \twist (\updiff X, \downdiff X)$$ in the following.
 
   TODO: make the references to the argument changes more obvious
-  
+
   \begin{align*}
   \updiff\bot &\defeq \bot\\
   \updiff\top &\defeq \bot\\
   \updiff R &\defeq \updiff R\\
   \updiff(T\vee U) &\defeq \updiff T \vee \updiff U\\
-  \updiff(T\wedge U) &\defeq (\updiff T\wedge \bothdiff U) 
-                           \vee 
+  \updiff(T\wedge U) &\defeq (\updiff T\wedge \bothdiff U)
+                           \vee
                            (\updiff U \wedge \bothdiff T)\\
   \updiff(\neg T) &\defeq \downdiff T\\
   \updiff(\exists x.T) &\defeq \exists x.\updiff T\\
@@ -1490,8 +1496,8 @@ specifics of the evaluation engine. Here is one possibility.\footnote{These are
   \downdiff\bot &\defeq \bot\\
   \downdiff\top &\defeq \bot\\
   \downdiff R &\defeq \downdiff R\\
-  \downdiff(T\vee U) &\defeq (\downdiff T \wedge \neg \bothdiff U) 
-                           \vee 
+  \downdiff(T\vee U) &\defeq (\downdiff T \wedge \neg \bothdiff U)
+                           \vee
                            (\downdiff U \wedge \neg \bothdiff T)\\
   \downdiff(T\wedge U) &\defeq (\downdiff T\wedge U) \vee (T \wedge \downdiff U)\\
   \downdiff(\neg T) &\defeq \updiff T\\
@@ -1505,7 +1511,7 @@ specifics of the evaluation engine. Here is one possibility.\footnote{These are
 \fi
 
 There is a symmetry between the cases for $\wedge$ and $\vee$ between $\updiff$
-and $\downdiff$, but the cases for $\exists$ look quite different. 
+and $\downdiff$, but the cases for $\exists$ look quite different.
 This is because we have chosen a dialect of Datalog without a primitive universal quantifier.
 If we did have one, its cases would be dual to those for $\exists$, namely:
 \begin{align*}
@@ -1535,7 +1541,7 @@ Putting this together, we get two results.
 \fi
 
 This is a generalization of semi-naive evaluation to use any derivative for the
-term semantics. 
+term semantics.
 
 \begin{thm}[Differential update of Datalog semantics]
 \label{thm:diffUpdate}
@@ -1589,7 +1595,7 @@ inclusion of minus operators, the nature of function changes, and the use of
 dependent types.
 
 We have omitted minus operators from our definition because
-there are many interesting change actions that are not complete and so cannot 
+there are many interesting change actions that are not complete and so cannot
 have a minus operator (for example, $\cstr{\mathbb{Z}}_3$ does, but $\cstr{\mathbb{Z}}_1$ does
 not). Where we can find a change structure with a minus operator, often we are
 forced to use unwieldy representations for change sets, and
@@ -1626,7 +1632,7 @@ in Datalog).
 We have two reasons to prefer using pointwise differences to function changes:
 \begin{itemize}
   \item Pointwise differences are simpler from a theoretical point of view, and
-    correspond to the exponentials that we get from the categorical equivalence with $\cat{PreOrd}$. 
+    correspond to the exponentials that we get from the categorical equivalence with $\cat{PreOrd}$.
   \item We can take pointwise differences of non-differentiable
     functions.\footnote{The fact that function changes imply differentiability
       of a function follows from \textcite[][Theorem 2.10]{cai2014changes}, and
@@ -1652,7 +1658,7 @@ dependently typed changes, since the type of the tangent space at a point is
 dependent on the point.
 
 In fact, a slightly different dependently-typed formulation arises if we consider changes
-to be indexed \emph{both} by the source and the target. This corresponds to 
+to be indexed \emph{both} by the source and the target. This corresponds to
 thinking of our base set as a category, with changes $\Delta_a^b$ between $a$
 and $b$ as morphisms between $a$ and $b$. In this interpretation, a function is
 differentiable iff it is a functor (i.e. takes a change in $\Delta_a^b$ to one in
@@ -1707,7 +1713,7 @@ The earliest explication of semi-naive evaluation as a derivative process
 appears in \textcite{bancilhon1986naive}. The idea of using an approximate derivative
 and the requisite soundness condition appears as a throwaway comment in
 \textcite[][section 3.2.2]{bancilhon1986amateur}, and as far as we know nobody has since
-developed that approach. 
+developed that approach.
 
 As far as we know, traditional semi-naive is generally considered the state of
 the art in incremental, bottom-up, Datalog evaluation, and there are no strategies that
@@ -1744,7 +1750,7 @@ with bag semantics, it is simply necessary to produce a valid version of \cref{t
 We also solve the problem of updating \emph{recursive} expressions. As far as we
 know, this is unsolved in general. Most of the attempts to solve it have
 focussed on Datalog rather than relational algebra, since Datalog is designed to
-make heavy use of recursion. 
+make heavy use of recursion.
 
 Several approaches
 \autocites{gupta1993maintaining}{harrison1992maintenance}
