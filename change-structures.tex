@@ -3,6 +3,7 @@
 %\input{preamble-standard}
 \input{preamble-acm}
 
+\usepackage{inputenc}[utf8]
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{amssymb}
@@ -27,7 +28,7 @@
 
 \begin{abstract}
   Incremental computation has recently been studied using the concept of a
-  \textit{derivative} of a program. This general notion allows updating programs
+  \emph{derivative} of a program. This general notion allows updating programs
   based on changes in their inputs.
 
   We generalise the notion of derivative, and study its categorical
@@ -50,7 +51,7 @@ the input changes.
 
 This is the setting in which incremental computation is studied. Recently,
 \textcite{cai2014changes} have given a compelling account
-of \textit{change structures} and \textit{derivatives}, and used them to provide
+of \emph{change structures} and \emph{derivatives}, and used them to provide
 a composable framework for incrementally evaluating lambda calculus programs.
 
 This provides an excellent foundation for using change structures, but there are
@@ -80,7 +81,7 @@ languages like Datalog seamlessly into larger incremental computations
 
 The major contributions of this paper are:
 \begin{itemize}
-  \item A generalisation of change structures to \textit{change actions} and derivatives
+  \item A generalisation of change structures to \emph{change actions} and derivatives
     (\cref{sec:changeActions}).
   \item A description of the categorical properties of change actions, including
     several useful direct constructions (\cref{sec:category}).
@@ -93,13 +94,13 @@ The major contributions of this paper are:
   \item Generalized incremental computation and
     update of Datalog programs, with the ability to handle arbitrary additional
     language constructs, including negation and aggregation (\cref{sec:datalog}).
-\end{itemize}
+  \end{itemize}
 
 \section{Change actions}
 \label{sec:changeActions}
 
 \begin{defn}[Change actions]
-  A \textit{change action} is defined as:
+  A \emph{change action} is defined as:
 
   $$\cstr{A} \defeq \cstruct{A}{\changes{A}}{\cplus}$$
 
@@ -116,18 +117,18 @@ free monoid over the action set to obtain a monoid action.
 
 The fact that the change set is a monoid action reveals the heart of the
 change action definition: the change set is a representation of a
-\textit{transformation monoid} over the base set, with the monoid
+\emph{transformation monoid} over the base set, with the monoid
 operation simply being composition.
 
 The primary motivation for change actions is that they let us define
-\textit{derivatives} for functions.
+\emph{derivatives} for functions.
 
 \begin{defn}[Derivatives]
-  A \textit{derivative} of a function $f: \cstr{A}_\cplus \rightarrow \cstr{B}_\cpluss$ is a function $\derive{f}: A \times \changes{A} \rightarrow
+  A \emph{derivative} of a function $f: \cstr{A}_\cplus \rightarrow \cstr{B}_\cpluss$ is a function $\derive{f}: A \times \changes{A} \rightarrow
   \changes{B}$ such that
   $$f(a \cplus \change{a}) = f(a) \cpluss \derive{f}(a, \change{a})$$
 
-  A function which has a derivative is called \textit{differentiable}.
+  A function which has a derivative is called \emph{differentiable}.
 \end{defn}
 
 Derivatives need not be unique, in general, so we will speak of ``a''
@@ -195,7 +196,7 @@ can be constructed in this way:
 \end{itemize}
 
 Many other notions in computer science can be naturally understood in terms of change actions, e.g. databases
-and database updates, files and \textit{diff}s, Git repositories and commits, even video compression
+and database updates, files and \emph{diff}s, Git repositories and commits, even video compression
 algorithms that encode a frame as a series of changes to the previous frame.
 
 \subsection{Complete change actions and minus operators}
@@ -204,7 +205,7 @@ Complete change actions are an important class of change actions, because they
 have changes between \emph{any} two values in the base set.
 
 \begin{defn}[Complete change actions]
-  A change action is \textit{complete} if for any $a, b \in A$, there is
+  A change action is \emph{complete} if for any $a, b \in A$, there is
   a change $\change{a} \in \changes{A}$ such that $a \cplus \change{a} = b$.
 \end{defn}
 
@@ -212,7 +213,7 @@ Complete change actions have convenient ``minus operators'' that allow us to
 compute the difference between two values.
 
 \begin{defn}[Minus operator]
-  A \textit{minus operator} is a function $\cminus: A \times A \rightarrow \changes{A}$ such that $a \cplus (b \cminus a) = b$.
+  A \emph{minus operator} is a function $\cminus: A \times A \rightarrow \changes{A}$ such that $a \cplus (b \cminus a) = b$.
 \end{defn}
 
 \begin{prop}[Completeness equivalences]
@@ -243,7 +244,7 @@ actions for which there \emph{is} only one such change are particularly
 well-behaved, so it's worth naming them.
 
 \begin{defn}[Thin change actions]
-  A change action is \textit{thin} if whenever $a \cplus \change{a}
+  A change action is \emph{thin} if whenever $a \cplus \change{a}
   = a \cplus \change{b}$ for some $a \in A$, it is the case that $\change{a} = \change{b}$.
 \end{defn}
 
@@ -569,7 +570,7 @@ change actions on the same underlying set.
   Let $\cstr{A}_\cplus = \cstruct{A}{\changes{A}_\cplus}{\cplus}$ and $\cstr{A}_\cpluss =
   \cstruct{A}{\changes{A}_\cpluss}{\cpluss}$ be change actions.
 
-  Then the \textit{superposition} of $\cstr{A}_\cplus$ and $\cstr{A}_\cpluss$ is defined as:
+  Then the \emph{superposition} of $\cstr{A}_\cplus$ and $\cstr{A}_\cpluss$ is defined as:
   $$\cstr{A}_\cplus \superpose \cstr{A}_\cpluss \defeq \cstruct{A}{
     (\changes{A}_\cplus + \changes{A}_\cpluss)^\ast}{(\cplus + \cpluss)^\ast}$$
   where $X^\ast$ denotes the set of finite sequences of elements $X$.
@@ -661,11 +662,11 @@ finally to Boolean algebras.
 Posets allow us to define ``approximations'' to derivatives from both sides.
 
 \begin{defn}
-  Let $f: \cstr{A}_\cplus \rightarrow \cstr{B}_\cpluss$ be a function. Then a \textit{sup-derivative}
+  Let $f: \cstr{A}_\cplus \rightarrow \cstr{B}_\cpluss$ be a function. Then a \emph{sup-derivative}
   of $f$ is a function $\supderive{f}$ such that
   $$f(a \cplus \change{a}) \leq f(a) \cpluss \supderive{f}(a, \change{a})$$
   
-  Similarly, a \textit{sub-derivative} of $f$ is a function $\subderive{f}$ such that 
+  Similarly, a \emph{sub-derivative} of $f$ is a function $\subderive{f}$ such that 
   $$f(a \cplus \change{a}) \geq f(a) \cpluss \subderive{f}(a, \change{a})$$
 
   A function with a sup-derivative is sup-differentiable, and a function with a
@@ -754,10 +755,10 @@ Having sub- and sup-derivatives alone is not quite enough to ensure that all
 functions are differentiable. We need some additional power.
 
 \begin{defn}[Ascending and descending change actions]
-  A change action $\cstr{A}$ is \textit{ascending} if $a \leq b$ implies $a
+  A change action $\cstr{A}$ is \emph{ascending} if $a \leq b$ implies $a
   \reachOrder b$.
 
-  A change action $\cstr{A}$ is \textit{descending} if $a \leq b$ implies $b
+  A change action $\cstr{A}$ is \emph{descending} if $a \leq b$ implies $b
   \reachOrder a$.
 \end{defn}
 
@@ -833,11 +834,11 @@ others, as we will see in \cref{sec:datalogDifferentiability}.
 \subsection{Directed-complete partial orders}
 
 Directed-complete partial orders give us the well known notion of
-\textit{Scott-continuity}. We define of \textit{continuous} change actions,
+\emph{Scott-continuity}. We define of \emph{continuous} change actions,
 which are well-behaved with respect to continuity.
 
 \begin{defn}[Continuous change actions]
-  A change action $\cstr{A}$ is \textit{continuous} if
+  A change action $\cstr{A}$ is \emph{continuous} if
   \begin{itemize}
     \item $A$ and $\changes{A}$ are dcpos.
     \item $\cplus$ and $\splus$ are Scott-continuous in both arguments.
@@ -1599,14 +1600,14 @@ be forced to work with e.g. multisets admitting negative arities, as \citeauthor
 
 Our notion of function changes is different to \citeauthor{cai2014changes}'s,
 because we consider changes of functions to be what \citeauthor{cai2014changes} describe as
-\textit{pointwise differences} (for the subsequent paragraphs we shall adopt
+\emph{pointwise differences} (for the subsequent paragraphs we shall adopt
 their terminology) \autocite[See][section 2.2]{cai2014changes}. As they point out, you can reconstruct their
 function changes from pointwise changes and derivatives, so the two formulations
 are equivalent. This gives us the following correspondences:
 \begin{itemize}
-  \item Our \textit{derivatives of the
-      evaluation map} are \citeauthor{cai2014changes}'s \textit{function changes}
-  \item Our \textit{function changes} are \citeauthor{cai2014changes}'s \textit{pointwise differences}
+  \item Our \emph{derivatives of the
+      evaluation map} are \citeauthor{cai2014changes}'s \emph{function changes}
+  \item Our \emph{function changes} are \citeauthor{cai2014changes}'s \emph{pointwise differences}
 \end{itemize}
 
 Our equivalent to \citeauthor{cai2014changes}'s ``Incrementalization'' lemma
