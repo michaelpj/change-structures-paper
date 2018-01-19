@@ -1,16 +1,18 @@
 result
 
-**/auto
 **/*.aux
 **/*.bbl
+**/*.bcf
 **/*.blg
+**/*.dvi
 **/*.fdb_latexmk
 **/*.fls
 **/*.fmt
 **/*.log
 **/*.out
 **/*.pdf
-**/*.dvi
 **/*.synctex.gz
+**/*.xml
+**/auto
 
 **/_region_*
