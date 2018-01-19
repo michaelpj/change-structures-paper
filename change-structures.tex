@@ -418,7 +418,7 @@ practical computation.
   \begin{align*}
     &\ev : ((A \rightarrow B) \times A) \rightarrow B\\
     &\ev((f, a)) \defeq f(a)\\
-    &\curry : (A \times B \rightarrow C) \times A \rightarrow (B \rightarrow C)\\
+    &\curry{f} : A \rightarrow (B \rightarrow C)\\
     &\curry{f}(a) \defeq \lambda b. f((a, b))\\
   \end{align*}
   
@@ -451,8 +451,11 @@ practical computation.
   Therefore $\derive{\ev}$ is a derivative for $\ev$, so $\ev$ is differentiable.
   
   Let
-  $$\derive{\curry{f}}(a, \change{a}) \defeq \lambda b. \derive{f}((a, b),
-  (\change{a}, \mzero))$$
+  \begin{align*}
+    &\derive{\curry{f}} : (A \times \changes{A}) \rightarrow \changes{(B \rightarrow C)}\\
+    &\derive{\curry{f}}(a, \change{a}) \defeq \lambda b. \derive{f}((a, b),
+      (\change{a}, \mzero))
+  \end{align*}
   
   Then
   \begin{itemize}
@@ -1176,7 +1179,7 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
   Let 
   \begin{itemize}
     \item $\cstr{A}$ be a change action
-    \item$\fixpoint_A : (\cstr{A} \rightarrow \cstr{A}) \rightarrow \cstr{A}$ be a fixpoint operator
+    \item $\fixpoint_A : (\cstr{A} \rightarrow \cstr{A}) \rightarrow \cstr{A}$ be a fixpoint operator
     \item $f: \cstr{A} \rightarrow \cstr{A}$ be a differentiable function
     \item $\change{f} \in \changes{(A \rightarrow A)}$ be a change to $f$
     \item $\derive{\ev}$ be a derivative of the evaluation map
@@ -1300,9 +1303,9 @@ This gives us enough to prove that our derivative really is a derivative:
   relation over both the derivative and the value of $iter_n$ itself, extracting
   the former at the end:
   \begin{align*}
-    \nextiter_{f, \change{f}} &: (A, \changes{A}) \rightarrow (A, \changes{A})\\
-    \nextiter_{f, \change{f}} (a, \change{a}) &\defeq (f(a), \derive{\ev}((f, a), (\change{f}, \change{a})))\\
-    \derive{\iter_{n+1}}(f, \change{f}) &\defeq \pi_2 (\nextiter_{f, \change{f}}(\iter_n(f), \iter'_n(f, \change{f})))
+    &\nextiter_{f, \change{f}} : (A, \changes{A}) \rightarrow (A, \changes{A})\\
+    &\nextiter_{f, \change{f}} (a, \change{a}) \defeq (f(a), \derive{\ev}((f, a), (\change{f}, \change{a})))\\
+    &\derive{\iter_{n+1}}(f, \change{f}) \defeq \pi_2 (\nextiter_{f, \change{f}}(\iter_n(f), \iter'_n(f, \change{f})))
   \end{align*}
 
   $\derive{\iter_n}$ and $\nextiter_{f, \change{f}}$ are continuous (and hence monotone) since $\derive{\ev}$ is.
