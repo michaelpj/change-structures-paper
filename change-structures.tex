@@ -817,7 +817,8 @@ others, as we will see in \cref{sec:datalogDifferentiability}.
 \subsection{Directed-complete partial orders}
 
 Directed-complete partial orders give us the well known notion of
-\textit{Scott-continuity}. We will 
+\textit{Scott-continuity}. We define of \textit{continuous} change actions,
+which are well-behaved with respect to continuity.
 
 \begin{defn}[Continuous change actions]
   A change action $\cstr{A}$ is \textit{continuous} if
@@ -832,10 +833,12 @@ Directed-complete partial orders give us the well known notion of
   Let $\cstr{A}$ be a continuous change structure. Then $\bot_A \cplus
   \bot_{\changes{A}} = \bot_A$.
 \end{corollary}
+\ifproofs
 \begin{proof}
   $\bot_{\changes{A}} \leq \mzero$, therefore
   $$\bot_A \leq \bot_A \cplus \bot_{\changes{A}} \leq \bot_A \cplus \mzero = \bot_A$$
 \end{proof}
+\fi
 
 We also have the following lemma (which is just a re-statement of a well-known
 property of Scott-continuous functions, see e.g. \cite[Lemma~3.2.6]{abramsky1994domain}):
@@ -855,12 +858,16 @@ A direct corollary of this property is the following result, reminiscent of a we
   Then, if for every $i \in I$ is the case that $f'_i$ is a derivative of $f_i$, then $\sqcup_{i \in I} \{ f'_i \}$ is
   a derivative of $\sqcup_{i \in I} \{ f_i \}$.
 \end{corollary}
+\ifproofs
 \begin{proof}
   It suffices to apply $\cplus$ and \cref{prop:distributivityLimit} to the directed families $\{ f_i(a) \}$ and 
   $\{ \derive{f_i}(a, \change{a}) \}$.
 \end{proof}
+\fi
 
-We also state the following additional corollary, which will be useful later:
+We also state the following additional fixpoint lemma. This is a specialization of
+Becik's Theorem\autocite[][section 10.1]{winskel1993formal}, but it has a straightforward direct proof.
+
 \begin{prop}[Factoring of fixpoints]
   \label{prop:factoringFixpoints}
   Let $f : A \rightarrow A$ and $g: A \times B \rightarrow B$ be continuous, and let
@@ -868,6 +875,7 @@ We also state the following additional corollary, which will be useful later:
   Then
   $$\lfp(h) = (\lfp f, \lfp(g(\lfp(f))))$$
 \end{prop}
+\ifproofs
 \begin{proof}
   Let $$p(b) = (\lfp f, g(\lfp(f), b))$$
   Then $h(h^i(\bot)) \leq p(p^i(\bot)))$ (by simple induction), and so by continuity
@@ -877,6 +885,7 @@ We also state the following additional corollary, which will be useful later:
 
   Hence $\lfp(h) = \lfp(p) = (\lfp f, \lfp(g(\lfp(f))))$.
 \end{proof}
+\fi
 
 \subsection{Lattices}
 
@@ -1137,10 +1146,9 @@ and update it by changing the base relation $e$.
 
 However, this requires us to have a derivative for the fixpoint operator $\fixpoint$.
 
-\newcommand{\theadjustment}{\operatorname{adjust}}
-
 \begin{defn}
-  $$\theadjustment(f, \change{f}) \defeq \lambda\ \change{a} . \derive{\ev}((f,
+  Let $\derive{\ev}$ be a derivative of the evaluation map. Then we define
+  $$\adjust(f, \change{f}) \defeq \lambda\ \change{a} . \derive{\ev}((f,
   \fixpoint_A(f), (\change{f}, \change{a})))$$
 \end{defn}
 
@@ -1158,14 +1166,13 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
   Then a change $\change{w} \in \Delta A$ satisfies
   the equation:
   \begin{equation}\label{eqn:fixcondition}
-    \change{w} = \theadjustment(f, \change{f})(\change{w})
+    \change{w} = \adjust(f, \change{f})(\change{w})
   \end{equation}
   if and only if $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$.
   
   In particular, if the operator $\fixpoint$ is defined over $\Delta A$, we can define:
   $$
-  \derive{\fixpoint_A}(f, \change{f}) \defeq
-  \fixpoint_{\changes{A}}(\theadjustment(f, \change{f}))
+  \derive{\fixpoint_A}(f, \change{f}) \defeq \fixpoint_{\changes{A}}(\adjust(f, \change{f}))
   $$
   thus $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a fixpoint 
   of $f \cplus \change{f}$.
@@ -1182,7 +1189,7 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
     $
     f(\fixpoint_A(f))
     \cplus
-    \theadjustment(f, \change{f})(\change{w})
+    \adjust(f, \change{f})(\change{w})
     $
   \item[=]\{ rolling the fixpoint and \cref{eqn:fixcondition} \}\\
     $
@@ -1201,7 +1208,9 @@ that $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ computes \emph{
 the same one computed by $\fixpoint_A{(f \cplus \change{f})}$.
 
 However, if we restrict ourselves to directed-complete partial orders and
-continuous change actions, then it becomes a true derivative.
+continuous change actions, then it becomes a true derivative. This is not too
+onerous a restriction, since this is the setting in which we normally compute
+least fixpoints anyway.
 
 Consider a continuous function $f : \cstr{A} \rightarrow \cstr{A}$, where $\cstr{A}$ is a continuous change action. Since $A$
 is a dcpo, Kleene's Theorem tells us that a least fixpoint is guaranteed to exist and can be defined as:
@@ -1225,6 +1234,7 @@ We therefore begin by constructing derivatives of $\iter_n$
     \derive{\iter_{n+1}} (f, \change{f}) &\defeq \derive{\ev}((f, \iter_n(f)), (\change{f}, \derive{\iter_n}(f, \change{f})))
   \end{align*}
 \end{prop}
+\ifproofs
 \begin{proof}
   The base case follows from \cref{cor:bottomPlusBottom}.
 
@@ -1232,7 +1242,7 @@ We therefore begin by constructing derivatives of $\iter_n$
   \begin{itemize}
     \item[ ]$\iter_{n+1}(f \cplus \change{f})$
     \item[=]$(f \cplus \change{f})(\iter_{n}(f \cplus \change{f}))$
-    \item[=]\{ induction \}\\
+    \item[=]\{ by induction \}\\
       $
       (f \cplus \change{f})(
         \iter_{n}(f)
@@ -1249,10 +1259,12 @@ We therefore begin by constructing derivatives of $\iter_n$
       $
   \end{itemize}
 \end{proof}
+\fi
 
 This gives us enough to prove that our derivative really is a derivative:
 
 \begin{thm}[Derivatives of least fixpoint operators]
+  \label{thm:leastFixpointDiff}
   Let 
   \begin{itemize}
     \item $\cstr{A}$ be a continuous change action
@@ -1263,18 +1275,23 @@ This gives us enough to prove that our derivative really is a derivative:
   \end{itemize}
   Then $\derive{\lfp}$ is a derivative of $\lfp$.
 \end{thm}
+\ifproofs
 \begin{proof}
-  We can write our recursive definition of $\derive{\iter}$ as a recurrence relation:
+  We can write our recursive definition of $\derive{\iter}$ as a recurrence
+  relation over both the derivative and the value of $iter_n$ itself, extracting
+  the former at the end:
   \begin{align*}
     \nextiter_{f, \change{f}} &: (A, \changes{A}) \rightarrow (A, \changes{A})\\
     \nextiter_{f, \change{f}} (a, \change{a}) &\defeq (f(a), \derive{\ev}((f, a), (\change{f}, \change{a})))\\
     \derive{\iter_{n+1}}(f, \change{f}) &\defeq \pi_2 (\nextiter_{f, \change{f}}(\iter_n(f), \iter'_n(f, \change{f})))
   \end{align*}
 
-  $\nextiter_{f, \change{f}}$ is continuous if $\derive{\ev}$ is.
+  $\derive{\iter_n}$ and $\nextiter_{f, \change{f}}$ are continuous (and hence monotone) since $\derive{\ev}$ is.
 
-  From the definition of $\derive{\iter_n}$, it follows immediately that whenever $\derive{\ev}$ 
-  is continuous, then the set $\{ \derive{\iter}_n \}$ is directed. Hence:
+  Hence the set $\{ \derive{\iter}_n \}$ is directed, and so $\sqcup_{i \in \NN}
+  \{ \derive{\iter_i} \}$ is indeed a derivative for $\lfp$. 
+
+  We now show that it is equivalent to $\derive{\lfp}$:
   \begin{itemize}
     \item[ ]
       $\sqcup_{i \in \NN} \{ \derive{\iter_i} \}(f, \change{f})$
@@ -1283,14 +1300,12 @@ This gives us enough to prove that our derivative really is a derivative:
     \item[=]\{ by \cref{prop:factoringFixpoints}, and the definition of $\nextiter$ \}\\
       $\pi_2 (\lfp(f), \lfp (\lambda\ \change{a}. \derive{\ev}((f, \lfp f), (\change{f}, \change{a}))))$
     \item[=]
-      $\lfp(\theadjustment(f, \change{f}))$
+      $\lfp(\adjust(f, \change{f}))$
     \item[=]
       $\derive{\lfp}(f, \change{f})$
   \end{itemize}
 \end{proof}
-
-The requirements of this theorem are somewhat constraining, but are easily shown
-to be true for Boolean algebras with $\cstr{L}_\superpose$ (CHECK THIS CAREFULLY).
+\fi
 
 Computing the derivative still requires computing a fixpoint (over the change
 lattice), but this may still be significantly less expensive than the
