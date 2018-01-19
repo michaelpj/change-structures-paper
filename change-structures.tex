@@ -393,8 +393,8 @@ practical computation.
   As before, it suffices to prove that the universal function $[f_1, f_2]$ in $\cat{Set}$ is a differentiable
   function from $\cstruct{A + B}{\changes{A} \times \changes{B}}{\cplusvee}$ into $Y$. It's easy to see 
   that the following morphism is a derivative:
-  $$[f_1, f_2]' (i_1 a, (\change{a}, \change{b})) \defeq f_1'(a, \change{a})$$
-  $$[f_1, f_2]''' (i_2 b, (\change{a}, \change{b})) \defeq f_2'(b, \change{b})$$
+  $$\derive{[f_1, f_2]} (i_1 a, (\change{a}, \change{b})) \defeq f_1'(a, \change{a})$$
+  $$\derive{[f_1, f_2]} (i_2 b, (\change{a}, \change{b})) \defeq f_2'(b, \change{b})$$
 \end{proof}
 \fi
 
@@ -415,8 +415,12 @@ practical computation.
   Since we are working over $\cat{Set}$, we can use the definitions of $\ev$ and
   $\curry{f}$ from $\cat{Set}$:
 
-  $$\ev(f, a) \defeq f(a)$$
-  $$\curry{f}(a) \defeq \lambda b. f((a, b))$$
+  \begin{align*}
+    &\ev : ((A \rightarrow B) \times A) \rightarrow B\\
+    &\ev((f, a)) \defeq f(a)\\
+    &\curry : (A \times B \rightarrow C) \times A \rightarrow (B \rightarrow C)\\
+    &\curry{f}(a) \defeq \lambda b. f((a, b))\\
+  \end{align*}
   
   We merely need to show that they are differentiable: differentiability of $\curry{f}
   \times id$ follows from products; commutativity and
@@ -424,7 +428,10 @@ practical computation.
   on $\cat{Set}$.
 
   Let 
-  $$\derive{\ev}((f, a), (\change{f}, \change{a})) \defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})$$
+  \begin{align*}
+    &\derive{\ev} : ((A \rightarrow B) \times A) \times (\changes{(A \rightarrow B)} \times \changes{A}) \rightarrow \changes{A}\\
+    &\derive{\ev}((f, a), (\change{f}, \change{a})) \defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})
+  \end{align*}
 
   Then
   \begin{itemize}
@@ -1071,18 +1078,27 @@ the following theorem provides a generalization of it to any differentiable func
 change action. We will see the details of how to differentiate Datalog
 semantics in \cref{sec:datalogDifferentiability}.
 
+% Proof using derivative of iter wrt n - not sure if this would be better?
+%\begin{itemize}
+  %\item[ ]$\iter_f(n + m)$
+  %\item[=]$f(\iter_f((n-1) + m))$
+  %\item[=]$f(\iter_f(n-1) \cplus \derive{\iter_f}(\iter_f(n-1), m))$
+  %\item[=]$f(\iter_f(n-1)) \cplus \derive{f}(\iter_f(n-1), \derive{\iter_f}(\iter_f(n-1), m))$
+  %\item[=]$\iter_f(n) \cplus \derive{f}(\iter_f(n-1), \derive{\iter_f}(\iter_f(n-1), m))$
+%\end{itemize}
+
 \begin{thm}[Incremental computation of iterated function applications]
 \label{thm:diffIter}
   Let $\cstr{L}$ be a complete change action, $x \in L$, and $f: \cstr{L} \rightarrow \cstr{L}$ be differentiable. Define $F_i$ as follows:
 
-  \begin{eqnarray*}
-  F_0 & = & x\\
-  \Delta F_0 & = & \mzero \\
-  F_1 & = & f(F_0)\\
-  \Delta F_1 & = & F_1 \cminus F_0 \\
-  F_{i+2} & = & F_{i+1} \cplus \Delta F_{i+2} \\
-  \Delta F_{i+2} & = & \derive{f}(F_i, \Delta F_{i+1}) \\
-  \end{eqnarray*}
+  \begin{align*}
+  F_0 &= x\\
+  \Delta F_0 &= \mzero \\
+  F_1 &= f(F_0)\\
+  \Delta F_1 &= F_1 \cminus F_0 \\
+  F_{i+2} &= F_{i+1} \cplus \Delta F_{i+2} \\
+  \Delta F_{i+2} &= \derive{f}(F_i, \Delta F_{i+1}) \\
+  \end{align*}
 
   Then 
   $$f^i(x) = F_i$$
@@ -1148,8 +1164,11 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
 
 \begin{defn}
   Let $\derive{\ev}$ be a derivative of the evaluation map. Then we define
-  $$\adjust(f, \change{f}) \defeq \lambda\ \change{a} . \derive{\ev}((f,
-  \fixpoint_A(f), (\change{f}, \change{a})))$$
+  \begin{align*}
+    &\adjust : (A \rightarrow A) \times \changes{(A \rightarrow A)} \rightarrow (\changes{A} \rightarrow \changes{A})\\
+    &\adjust(f, \change{f}) \defeq \lambda\ \change{a} . \derive{\ev}((f,
+    \fixpoint_A(f), (\change{f}, \change{a})))
+  \end{align*}
 \end{defn}
 
 \begin{thm}[Derivatives of fixpoints]
@@ -1215,9 +1234,9 @@ least fixpoints anyway.
 Consider a continuous function $f : \cstr{A} \rightarrow \cstr{A}$, where $\cstr{A}$ is a continuous change action. Since $A$
 is a dcpo, Kleene's Theorem tells us that a least fixpoint is guaranteed to exist and can be defined as:
 \begin{align*} 
-  \iter_n, \lfp &: (A \rightarrow A) \rightarrow A\\
-  \iter_n f &\defeq f^n(\bot)\\
-  \lfp &\defeq \sqcup_{n \in \NN} \{ \iter_n \}
+  &\iter_n, \lfp : (A \rightarrow A) \rightarrow A\\
+  &\iter_n f \defeq f^n(\bot)\\
+  &\lfp \defeq \sqcup_{n \in \NN} \{ \iter_n \}
 \end{align*}
 
 Applying \cref{cor:diffContinuous}, it follows that if we can find a derivative of each iteration map $\derive{\iter_n}$ such that the resulting 
@@ -1229,9 +1248,9 @@ We therefore begin by constructing derivatives of $\iter_n$
 \begin{prop}[Derivatives of iteration maps]
   $\iter_n$ is differentiable and a derivative is given by:
   \begin{align*}
-    \derive{\iter_n} &: (A \rightarrow A) \rightarrow \changes{(A \rightarrow A)} \rightarrow \changes{A}\\
-    \derive{\iter_0} (f, \change{f}) &\defeq \bot_{\changes{A}}\\
-    \derive{\iter_{n+1}} (f, \change{f}) &\defeq \derive{\ev}((f, \iter_n(f)), (\change{f}, \derive{\iter_n}(f, \change{f})))
+    &\derive{\iter_n} : (A \rightarrow A) \times \changes{(A \rightarrow A)} \rightarrow \changes{A}\\
+    &\derive{\iter_0} (f, \change{f}) \defeq \bot_{\changes{A}}\\
+    &\derive{\iter_{n+1}} (f, \change{f}) \defeq \derive{\ev}((f, \iter_n(f)), (\change{f}, \derive{\iter_n}(f, \change{f})))
   \end{align*}
 \end{prop}
 \ifproofs
@@ -1353,14 +1372,14 @@ This makes $\Rel$ into a Boolean algebra.
 \begin{defn}[Term semantics]
   A Datalog term $T$ denotes a function from its free relation variables to
   $\Rel$, $\denote{\_} : \Term \rightarrow \Rel^n \rightarrow \Rel$
-  \begin{eqnarray*}
-    \denote{R_i}(\overline{X}) &\defeq& \overline{X}[i] \\
-    \denote{T \wedge U}(\overline{X}) &\defeq& \denote{T}(\overline{X}) \cap  \denote{U}(\overline{X})\\
-    \denote{T \vee U}(\overline{X}) &\defeq& \denote{T}(\overline{X}) \cup  \denote{U}(\overline{X})\\
-    \denote{\exists x. T}(\overline{X}) &\defeq& \pi_x(\denote{T}(\overline{X}))\\
-    \denote{\neg T}(\overline{X}) &\defeq& \neg \denote{T}(\overline{X})\\
-    \denote{x=y}(\overline{X}) &\defeq& \Delta(x, y) \text{ where } \Delta \text{ is the diagonal relation }
-  \end{eqnarray*}
+  \begin{align*}
+    \denote{R_i}(\overline{X}) &\defeq \overline{X}[i] \\
+    \denote{T \wedge U}(\overline{X}) &\defeq \denote{T}(\overline{X}) \cap  \denote{U}(\overline{X})\\
+    \denote{T \vee U}(\overline{X}) &\defeq \denote{T}(\overline{X}) \cup  \denote{U}(\overline{X})\\
+    \denote{\exists x. T}(\overline{X}) &\defeq \pi_x(\denote{T}(\overline{X}))\\
+    \denote{\neg T}(\overline{X}) &\defeq \neg \denote{T}(\overline{X})\\
+    \denote{x=y}(\overline{X}) &\defeq \Delta(x, y) \text{ where } \Delta \text{ is the diagonal relation }
+  \end{align*}
 \end{defn}
 
 Since $\Rel$ is a Boolean algebra, and so is $\Rel^n$, the denotation
@@ -1444,29 +1463,27 @@ specifics of the evaluation engine. Here is one possibility.\footnote{These are
 
   TODO: make the references to the argument changes more obvious
   
-  \begin{eqnarray*}
-  \updiff\bot & \defeq & \bot\\
-  \updiff\top & \defeq & \bot\\
-  \updiff R & \defeq & \updiff R\\
-  \updiff(T\vee U) & \defeq & \updiff T \vee \updiff U\\
-  \updiff(T\wedge U) & \defeq & (\updiff T\wedge \bothdiff U) 
+  \begin{align*}
+  \updiff\bot &\defeq \bot\\
+  \updiff\top &\defeq \bot\\
+  \updiff R &\defeq \updiff R\\
+  \updiff(T\vee U) &\defeq \updiff T \vee \updiff U\\
+  \updiff(T\wedge U) &\defeq (\updiff T\wedge \bothdiff U) 
                            \vee 
                            (\updiff U \wedge \bothdiff T)\\
-  \updiff(\neg T) & \defeq & \downdiff T\\
-  \updiff(\exists x.T) & \defeq & \exists x.\updiff T
-  \end{eqnarray*}
-
-  \begin{eqnarray*}
-  \downdiff\bot & \defeq & \bot\\
-  \downdiff\top & \defeq & \bot\\
-  \downdiff R & \defeq & \downdiff R\\
-  \downdiff(T\vee U) & \defeq & (\downdiff T \wedge \neg \bothdiff U) 
+  \updiff(\neg T) &\defeq \downdiff T\\
+  \updiff(\exists x.T) &\defeq \exists x.\updiff T\\
+    \\
+  \downdiff\bot &\defeq \bot\\
+  \downdiff\top &\defeq \bot\\
+  \downdiff R &\defeq \downdiff R\\
+  \downdiff(T\vee U) &\defeq (\downdiff T \wedge \neg \bothdiff U) 
                            \vee 
                            (\downdiff U \wedge \neg \bothdiff T)\\
-  \downdiff(T\wedge U) & \defeq & (\downdiff T\wedge U) \vee (T \wedge \downdiff U)\\
-  \downdiff(\neg T) & \defeq & \updiff T\\
-  \downdiff(\exists x.T) & \defeq & \exists x.\downdiff T \wedge \neg \exists x.\bothdiff T
-  \end{eqnarray*}
+  \downdiff(T\wedge U) &\defeq (\downdiff T\wedge U) \vee (T \wedge \downdiff U)\\
+  \downdiff(\neg T) &\defeq \updiff T\\
+  \downdiff(\exists x.T) &\defeq \exists x.\downdiff T \wedge \neg \exists x.\bothdiff T
+  \end{align*}
 \end{thm}
 \ifproofs
 \begin{proof}
@@ -1478,10 +1495,10 @@ There is a symmetry between the cases for $\wedge$ and $\vee$ between $\updiff$
 and $\downdiff$, but the cases for $\exists$ look quite different. 
 This is because we have chosen a dialect of Datalog without a primitive universal quantifier.
 If we did have one, its cases would be dual to those for $\exists$, namely:
-\begin{eqnarray*}
-\updiff(\forall x.T) & = & \exists x. \updiff T \wedge \forall x. \bothdiff T\\
-\downdiff(\forall x.T) & = & \forall x. \downdiff T
-\end{eqnarray*}
+\begin{align*}
+\updiff(\forall x.T) &= \exists x. \updiff T \wedge \forall x. \bothdiff T\\
+\downdiff(\forall x.T) &= \forall x. \downdiff T
+\end{align*}
 
 We can easily extend a derivative for the term semantics to a derivative for $\consq$.
 
