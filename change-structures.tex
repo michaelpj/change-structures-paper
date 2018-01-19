@@ -106,6 +106,13 @@ The major contributions of this paper are:
 \section{Change actions}
 \label{sec:changeActions}
 
+\todokcg{This is a bit of an abrupt change. A less-expert reader (cough cough) might like to have
+  this jump a bit cushioned with some motivation: why do we make this definition and what is it
+  intuitively describing? What is the previous definition of a change set, and how does this
+  differ?}
+
+\todokcg{You should use the align* environment for equations or you get super janky spacing.}
+
 \begin{defn}[Change actions]
   A \emph{change action} is defined as:
 
@@ -116,16 +123,20 @@ The major contributions of this paper are:
   We will call $A$ the base set, and $\changes{A}$ the change set of the change action.
 \end{defn}
 
-Elements in the change set represent changes that can be made to elements in the
-base set, with the monoid action being the operation that ``applies'' the
-change. The requirement that the change set be a monoid is convenient but in
-fact inessential: given any set with an action on the base set, we can take the
-free monoid over the action set to obtain a monoid action.
+Elements in the change set represent changes that can be made to elements in the base set, with the
+monoid action being the operation that ``applies'' the change. \todokcg{I think the observation
+  (that you can just take the free monoid) distracts a bit from the intuition here and would perhaps
+  be better as a footnote} The requirement that the change set be a monoid is convenient but in fact
+inessential: given any set with an action on the base set, we can take the free monoid over the
+action set to obtain a monoid action.
 
 The fact that the change set is a monoid action reveals the heart of the
 change action definition: the change set is a representation of a
 \emph{transformation monoid} over the base set, with the monoid
 operation simply being composition.
+
+\todokcg{I have no idea what a transformation monoid is, so this is perhaps less illuminating for me
+  than might be hoped.}
 
 The primary motivation for change actions is that they let us define
 \emph{derivatives} for functions.
@@ -136,6 +147,7 @@ The primary motivation for change actions is that they let us define
   $$f(a \cplus \change{a}) = f(a) \cpluss \derive{f}(a, \change{a})$$
 
   A function which has a derivative is called \emph{differentiable}.
+\todokcg{You haven't defined $\cstr{A}_\cplus, \cstr{B}_\cpluss, \changes{A}, \text{ or }\changes{B}$}
 \end{defn}
 
 Derivatives need not be unique, in general, so we will speak of ``a''
@@ -149,7 +161,8 @@ Derivatives capture the essence of incremental computation: given the value of a
 function at a point, and a change to that point, they tell you how to compute
 the new value of the function.
 
-The choice of the name ``derivative'' is also not a coincidence. While these
+\todokcg{I think this is clear}
+\sout{The choice of the name ``derivative'' is also not a coincidence.} While these
 derivatives do not look quite like derivatives in real analysis, they \emph{do}
 bear a strong resemblance to derivatives in other areas (such as synthetic differential geometry), and
 they satisfy the standard chain rule.
@@ -161,6 +174,8 @@ they satisfy the standard chain rule.
    or, in curried form
    $$\derive{(g \circ f)}(x)(\change{x}) = \derive{g}(f(x)) \circ \derive{f}(x)$$
 \end{thm}
+\todokcg{I think you certainly don't need this proof here. Stick it in an appendix and say ``by
+  arithmetic'' here.}
 \ifproofs
 \begin{proof}
   By equivalence:
@@ -176,7 +191,9 @@ they satisfy the standard chain rule.
 \end{proof}
 \fi
 
-Here are some recurring examples of changes actions:
+\todokcg{I don't think you need quite this many examples. Pick one simple one, one medium one and
+  one wat one.}
+Here are some recurring examples of change actions:
 \begin{itemize}
   \item $\cstr{A}_\discrete \defeq \cstruct{A}{\emptyset}{\emptyset}$, the discrete change action on any base set.
   \item $\cstr{A}_\Rightarrow \defeq \cstruct{A}{A\Rightarrow A}{\ev}$, where $A
@@ -185,6 +202,7 @@ Here are some recurring examples of changes actions:
     transitive relation on $A$ and $ev_\leq$ denotes
     conditional application, i.e. $ev_\leq(a, (b, c))$ is equal to $c$ if $a = b$, and $a$ otherwise. Composition of changes is obtained
     by transitivity of $\leq$.
+    \todokcg{Why is this conditional \emph{application}?}
   \item $\cstr{\mathbb{Z}}_1 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{+}$
   \item $\cstr{\mathbb{Z}}_2 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{-}$
   \item $\cstr{\mathbb{Z}}_3 \defeq \cstruct{\mathbb{Z}}{\mathbb{Z}}{+}$
