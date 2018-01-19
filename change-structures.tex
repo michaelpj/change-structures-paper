@@ -3,14 +3,21 @@
 %\input{preamble-standard}
 \input{preamble-acm}
 
+\usepackage[utf8]{inputenc}
 \usepackage{amsmath}
-\usepackage{amsthm}
 \usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{biblatex}[natbib=true]
+\usepackage{cleveref}
+\usepackage{etoolbox}
+\usepackage{hyperref}
 \usepackage{mathtools}
 \usepackage{stmaryrd}
-\usepackage{biblatex}[natbib=true]
-\usepackage{hyperref}
-\usepackage{cleveref}
+\usepackage{todonotes}
+
+\newcommand{\todoall}[1]{\todo[inline,color=black!30,author=All]{#1}}
+\newcommand{\todokcg}[1]{\todo[inline,color=pink!60,author=Katriel]{#1}}
+\newcommand{\todompj}[1]{\todo[inline,color=yellow!40,author=Michael]{#1}}
 
 \input{notation}
 
@@ -59,6 +66,7 @@ some pressing questions:
   \item Can we extend the concepts to cover a broader range of structures?
     The requirements for being a change structure are stringent enough that they
     prevent many useful structures in computer science from having nice change structures.
+    \todokcg{It would be nice to see a concrete example here.}
   \item Can we say anything about the abstract structure of change structures as
     a class? Being able to easily compose new change structures using standard
     constructions would be very helpful for targeting new domains.
