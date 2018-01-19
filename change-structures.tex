@@ -237,7 +237,7 @@ of functions.
 \subsection{Thin change actions}
 \label{sec:thin}
 
-As in \textcite{cai2014changes}, multiple changes may represent the difference
+There can be multiple changes representing the difference
 between two elements. This is true for many change actions, but the change
 actions for which there \emph{is} only one such change are particularly
 well-behaved, so it's worth naming them.
@@ -382,8 +382,10 @@ practical computation.
 
   Then $\cstr{A} + \cstr{B} \defeq \cstruct{A + B}{\changes{A} \times
   \changes{B}}{\cplusvee}$ is their categorical coproduct, with $\cplusvee$ defined as:
-  $$i_1 a \cplusvee (\change{a}, \change{b}) \defeq \iota_1 (a \cplus \change{a})$$
-  $$i_2 b \cplusvee (\change{a}, \change{b}) \defeq \iota_2 (b \cplus \change{b})$$
+  \begin{align*}
+    i_1 a \cplusvee (\change{a}, \change{b}) &\defeq \iota_1 (a \cplus \change{a})\\
+    i_2 b \cplusvee (\change{a}, \change{b}) &\defeq \iota_2 (b \cplus \change{b})
+  \end{align*}
 \end{prop}
 \ifproofs
 \begin{proof}
@@ -393,8 +395,10 @@ practical computation.
   As before, it suffices to prove that the universal function $[f_1, f_2]$ in $\cat{Set}$ is a differentiable
   function from $\cstruct{A + B}{\changes{A} \times \changes{B}}{\cplusvee}$ into $Y$. It's easy to see 
   that the following morphism is a derivative:
-  $$\derive{[f_1, f_2]} (i_1 a, (\change{a}, \change{b})) \defeq f_1'(a, \change{a})$$
-  $$\derive{[f_1, f_2]} (i_2 b, (\change{a}, \change{b})) \defeq f_2'(b, \change{b})$$
+  \begin{align*}
+    \derive{[f_1, f_2]} (i_1 a, (\change{a}, \change{b})) &\defeq f_1'(a, \change{a})\\
+    \derive{[f_1, f_2]} (i_2 b, (\change{a}, \change{b})) &\defeq f_2'(b, \change{b})
+  \end{align*}
 \end{proof}
 \fi
 
@@ -645,14 +649,16 @@ the discrete change action provides a minimal element.
 \section{Change actions over other structures}
 \label{sec:moreStructures}
 
-\subsection{Posets}
+We are aiming to work over Boolean algebras with fixpoints, which is where we
+will interpret Datalog. We will work up to that gradually, adding power as we
+progress from posets, to directed-complete partial orders, to lattices, and
+finally to Boolean algebras.
 
-A common structure which we want to compute changes on is a poset. For this
-section we shall assume that all of our base sets are posets.
+\subsection{Posets}
 
 \subsubsection{Approximate derivatives}
 
-Firstly, we can define ``approximations'' to derivatives from both sides.
+Posets allow us to define ``approximations'' to derivatives from both sides.
 
 \begin{defn}
   Let $f: \cstr{A}_\cplus \rightarrow \cstr{B}_\cpluss$ be a function. Then a \textit{sup-derivative}
@@ -1031,8 +1037,10 @@ operators.
 
 \begin{prop}
   Let $L$ be a Boolean algebra. Then
-  $$a \cminus_\bot b = (a \wedge \neg b, b)$$
-  $$a \cminus_\top b = (a, b \wedge \neg a)$$
+  \begin{align*}
+    a \cminus_\bot b &= (a \wedge \neg b, b)\\
+    a \cminus_\top b &= (a, b \wedge \neg a)
+  \end{align*}
 
   define minimal and maximal minus operators.
 \end{prop}
@@ -1341,8 +1349,8 @@ Datalog is a well-known, simple, logic programming language. It is also a textbo
 example of the need for incremental computation, as its semantics rely on
 bottom-up computation of a least fixpoint \autocite[See][part D]{abiteboul1995foundations}.
 
-There is an extensive existing literature on incremental computation of Datalog
-(CITES), but the aim of this section is to argue that by viewing the computation
+There is an extensive existing literature on incremental computation of Datalog,
+but the aim of this section is to argue that by viewing the computation
 of Datalog semantics as composed of differentiable functions we can give a
 bring the machinery that we've developed so far to bear, and give an elegant,
 flexible account of incremental evaluation.
@@ -1524,7 +1532,8 @@ Putting this together, we get two results.
 \end{proof}
 \fi
 
-This is a generalization of semi-naive evaluation.
+This is a generalization of semi-naive evaluation to use any derivative for the
+term semantics. 
 
 \begin{thm}[Differential update of Datalog semantics]
 \label{thm:diffUpdate}
@@ -1536,7 +1545,7 @@ This is a generalization of semi-naive evaluation.
 \end{proof}
 \fi
 
-This is a generalization of the view-update problem, including recursive relations.
+This is a generalization of the view-update problem for Datalog, including recursive views.
 
 \subsection{Extensions to Datalog}
 
