@@ -1097,8 +1097,8 @@ $f(F_{i+1})$
 \label{sec:fixpointDerivatives}
 
 The previous section has shown us how to use derivatives to compute fixpoints
-more efficiently, but we might also want to take the derivative of a fixpoint
-itself. The typical case for this will be where we have some fixpoint
+more efficiently, but we might also want to take the derivative of the fixpoint
+operator itself. The typical case for this will be where we have some fixpoint
 $$\fixpoint (\lambda X . F(E, X))$$
 and we now wish to apply a change to $E$ and compute
 $$\fixpoint (\lambda X . F(E \cplus \change{E}, X))$$
@@ -1180,7 +1180,88 @@ This is not enough to give us a true derivative, because we have only shown
 that $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ computes \emph{a} fixpoint, not necessarily
 the same one computed by $\fixpoint_A{(f \cplus \change{f})}$.
 
-However, we can get a true derivative if we are working with least fixpoints.
+However, under reasonable conditions, we can indeed obtain a true derivative of a least fixpoint operator.
+In order to do this, we will restrict ourselves to directed complete partial orders and change actions that
+are compatible with them, i.e. we will assume $A$ and $\changes{A}$ to be dcpos and the maps $\cplus, +$ to
+be (Scott) continuous in both arguments. For brevity, we will say that a change action is continuous whenever
+it satisfies these properties. We will also assume that, in any continuous change action, it is
+the case that $\bot \cplus \bot = \bot$.
+
+The niceties of such a setting become manifest in the following lemma (which is just a re-statement of a well-known
+property of Scott-continuous functions, see e.g. \cite[Lemma~3.2.6]{abramsky1994domain}):
+\begin{lemma}[Distributivity of limits for changes]
+  \label{cor:distributivityLimit}
+  Let $\hat A$ be a continuous change action as described before, and let $\{a_i\}, \{\delta_i\}$ be $I$-indexed
+  directed families of elements of $A$ and $\changes{A}$ respectively. Then 
+  $\sqcup_{i \in I} \{ a_i \cplus \delta_i \} = (\sqcup_{j \in I} \{ a_j \}) \cplus (\sqcup_{k \in I}) \{ \delta_k \}$
+\end{lemma}
+
+A direct corollary of this property is the following result, reminiscent of a well-known theorem of calculus:
+\begin{corollary}[Continuity of differentiation]
+  \label{cor:diffContinuous}
+  Let $\hat A, \hat B$ to be change actions, with $\hat B$ continuous and let $\{f_i\}$ and $\{f'_i\}$ be
+  $I$-indexed directed families of functions in $A \rightarrow B$ and $A \times \changes{A} \rightarrow \changes{B}$.
+
+  Then, if for every $i \in I$ it is the case that $f'_i$ is a derivative of $f_i$, then $\sqcup_{i \in I} \{ f'_i \}$ is
+  a derivative of $\sqcup_{i \in I} \{ f_i \}$.
+\end{corollary}
+\begin{proof}
+  It suffices to apply \cref{cor:distributivityLimit} to the directed families $\{ f_i(a) \}$ and 
+  $\{ f'_i(a, \change{a}) \}$.
+\end{proof}
+
+Consider now a continuous function $f : A \rightarrow A$, where $\hat A$ is a continuous change action. Since $A$
+is a dcpo, a least fixpoint is guaranteed to exist and can be obtained as $\lfp f = (\sqcup_{n \in \NN} \{ f_n \})(\bot)$,
+i.e. the least fixpoint operator can be defined by:
+\begin{align*} 
+  \lfp f &\defeq \sqcup_{n \in \NN} \{ \iter_n \}\\
+  \iter_n f &\defeq f^n(\bot)
+\end{align*}
+
+Applying \cref{cor:diffContinuous}, it follows that we can construct a derivative of the operator $\lfp$
+as:
+\begin{align*}
+  \lfp' (f, \change{f}) \defeq \sqcup_{n \in \NN} \{ \iter'_n(f, \change{f}) \}
+\end{align*}
+provided one can find a derivative of each iteration map $\iter'_n$ such that the resulting 
+set $\{ \iter'_n \}$ is directed.
+
+\begin{lemma}[Derivatives of iteration maps]
+  The maps $\iter_n$ sending a (differentiable) function $f : A \rightarrow A$ to the element
+  $f^n(a)$ are differentiable and one of their derivatives can be defined inductively by:
+  \begin{align*}
+    \iter'_0 (f, \change{f}) &\defeq \bot\\
+    \iter'_{n+1} (f, \change{f}) &\defeq f'(\iter_n(f), \iter'_n(f, \change{f}))\\
+         & ~~~~+ \change{f}(\iter_n(f) \cplus \iter'_n(f, \change{f}))
+  \end{align*}
+  Or, equivalently:
+  \begin{align*}
+    \nextiter (a, \delta) &\defeq (f(a), f'(a, \delta) + \change{f}(a \cplus \delta))\\
+    \iter'_{n+1}(f, \change{f}) &\defeq \nextiter(\iter_n(f), \iter'_n(f, \change{f})) 
+  \end{align*}
+\end{lemma}
+From the definition of $\iter'$, it follows immediately that whenever $f'$ and $\change{f}$
+are monotonic, then the the set $\{ \iter'_i \}$ is directed. If they are
+continuous, its least upper bound can furthermore be computed simply as:
+$$
+  \sqcup_{i \in \NN} \{ \iter'_i \} = \pi_2 (\lfp(\nextiter))
+$$
+
+The previous results can be summarised as:
+\begin{thm}[Derivatives of least fixpoint operators]
+  Let 
+  \begin{itemize}
+    \item $\hat A$ be a continuous change action
+    \item $f : A \rightarrow A$ be a continuous, differentiable function
+    \item $f' : A \times \changes{A} \rightarrow \changes{A}$ be a continuous derivative of $f$
+    \item $\change{f} : A \rightarrow \changes{A}$ be a continuous function change
+  \end{itemize}
+  Then 
+  \begin{align*}
+  \lfp (f \cplus \change{f}) &= \lfp(f) \\
+                             &\cplus \pi_2 (\lfp(\nextiter))
+  \end{align*}
+\end{thm}
 
 \begin{thm}[Derivatives of least fixpoints]
 \label{thm:leastFixpointDiff}
