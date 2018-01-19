@@ -868,7 +868,7 @@ A direct corollary of this property is the following result, reminiscent of a we
 
 \begin{corollary}[Continuity of differentiation]
   \label{cor:diffContinuous}
-  Let $\cstr{A}, \cstr{B}$ to be change actions, with $\cstr{B}$ continuous and let $\{f_i\}$ and $\{f'_i\}$ be
+  Let $\cstr{A}, \cstr{B}$ be change actions, with $\cstr{B}$ continuous and let $\{f_i\}$ and $\{f'_i\}$ be
   $I$-indexed directed families of functions in $A \rightarrow B$ and $A \times \changes{A} \rightarrow \changes{B}$.
 
   Then, if for every $i \in I$ is the case that $f'_i$ is a derivative of $f_i$, then $\sqcup_{i \in I} \{ f'_i \}$ is
@@ -1166,8 +1166,10 @@ update to a non-recursive dependency of it, such as the base database.
 
 For example, we might want to take the archetypal transitive closure relation
 
-$$tc(x, y) \leftarrow e(x, y)$$
-$$tc(x, y) \leftarrow e(x, z), tc(z, y)$$
+\begin{align*}
+  tc(x, y) &\leftarrow e(x, y)\\
+  tc(x, y) &\leftarrow e(x, z), tc(z, y)
+\end{align*}
 
 and update it by changing the base relation $e$.
 
@@ -1451,8 +1453,7 @@ terms.\footnote{Indeed, if this process is occurring in an optimizing compiler,
   beneficial, since the initial terms may be quite complex.}
 
 This does give us additional constraints that the derivative terms must satisfy:
-for example, we may need to pre
-able to evaluate them; and we may wish to pick terms that will be easy or cheap
+for example, we need to be able to evaluate them; and we may wish to pick terms that will be easy or cheap
 for our evaluation engine to evaluate, even if the results are larger.
 
 The upshot of these considerations is that the optimal choice of derivatives is likely
