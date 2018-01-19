@@ -3,6 +3,7 @@
 %\input{preamble-standard}
 \input{preamble-acm}
 
+\usepackage[normalem]{ulem}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -37,12 +38,18 @@
   \textit{derivative} of a program. This general notion allows updating programs
   based on changes in their inputs.
 
+  \todokcg{\emph{emph} is the latex-standard way of emphasising (in case for example you want to
+    emphasise something in an environment where text is italicised).}
+  \todokcg{``Updating programs'' is a bit wrong. I suggest: ``derivative of a program: the change in
+    the output of a program for a given change in its input.''}
+
   We generalise the notion of derivative, and study its categorical
   properties. We develop the theory for a variety of common structures
   in computer science, including partial orders, lattices, and Boolean algebras.
 
   This culminates in a generic and compositional account of incremental evaluation of Datalog, as
   well as incremental update of (recursive) Datalog programs.
+  \todokcg{Do you intend there to be a difference between \emph{evaluation} and \emph{update}?}
 \end{abstract}
 
 \title{Something about change actions}
@@ -55,7 +62,9 @@ Often when we compute the value of a function, we are not only interested in the
 result we get, but also in being able to (efficiently) update the result when
 the input changes.
 
-This is the setting in which incremental computation is studied. Recently,
+\todokcg{Too many words below. Also, reasonable people differ but I generally try to omit opinions
+  (``compelling'') when citing other people.}
+\sout{This is the setting in which incremental computation is studied.} Recently,
 \textcite{cai2014changes} have given a compelling account
 of \textit{change structures} and \textit{derivatives}, and used them to provide
 a composable framework for incrementally evaluating lambda calculus programs.
@@ -70,12 +79,15 @@ some pressing questions:
   \item Can we say anything about the abstract structure of change structures as
     a class? Being able to easily compose new change structures using standard
     constructions would be very helpful for targeting new domains.
+    \todokcg{Perhaps ``the class of change structures as a mathematical object in its own right''?
+      Lots of ``structure''s}
   \item Can we perform incremental computation on fixpoints? Fixpoints are a
     common construction in programming language semantics to handle recursion,
     and so it would be desirable to be able to compute and update them incrementally.
 \end{itemize}
 
-The major motivational target for this exercise is incremental computation over
+\todokcg{I suggest deleting below and sed s/fixpoints/fixpoints, lattices and Boolean algebras/}
+\noindent \sout{The major motivational target for this exercise is }incremental computation over
 lattices and Boolean algebras. Incremental computation is especially attractive
 for database or logic programming languages, where it can
 produce drastically time and space savings over re-evaluation. Our particular
@@ -85,23 +97,30 @@ account of incremental computation for such languages that is compatible with
 the approach of \textcite{cai2014changes} opens exciting prospects for embedding
 languages like Datalog seamlessly into larger incremental computations
 \autocite[See][]{arntz2016datafun}.
+\todokcg{Why is this citation wacky?}
 
-The major contributions of this paper are:
-\begin{itemize}
-  \item A generalisation of change structures to \textit{change actions} and derivatives
-    (\cref{sec:changeActions}).
-  \item A description of the categorical properties of change actions, including
-    several useful direct constructions (\cref{sec:category}).
-  \item A description of the properties of change actions over
-    additional structures, including theorems that characterize the range of
-    possible derivatives available, and conditions under which compound change
-    actions may admit derivatives (\cref{sec:moreStructures}).
-  \item Two results relating to fixpoint calculations: incremental computation
-    of fixpoints, and incremental updates of fixpoint expressions (\cref{sec:fixpoints}).
-  \item Generalized incremental computation and
-    update of Datalog programs, with the ability to handle arbitrary additional
-    language constructs, including negation and aggregation (\cref{sec:datalog}).
-\end{itemize}
+\paragraph{Contributions}
+\mbox{}\todokcg{I think it's good to keep these down to three and write them in the active voice. As
+  written they were a bit fluffly\textemdash{}you want a reader to think ``oh I see, this is why
+  this is useful and important.''}
+
+\noindent We generalise change structures to \textit{change actions} and derivatives, based on a
+novel category-theoretic foundation (\Cref{sec:changeActions,sec:category}).
+
+\medskip\noindent We extend the theory to cover our new definitions, proving sufficient conditions
+for the existence of derivatives. Our results extend to include incremental computation of fixpoints
+and fixpoint expressions (\Cref{sec:moreStructures,sec:fixpoints}).
+
+\medskip\noindent We apply our results to the Datalog logic programming language, providing generic
+techniques to perform incremental computation and updates of Datalog programs. We include arbitrary
+additional language constructs including negation and aggregation, showing that our results can be
+directly applies to real Datalog programs (\Cref{sec:datalog}).
+
+\todokcg{``arbitrary'' seems awfully strong here...}
+\todokcg{I like to think of myself as a bit applied so I would like to see a practical justification
+  here. (E.g., ``as an example we apply our incremental techniques to a simple Datalog
+  implementation of FOO, giving a ONE MILLION TIMES performance improvement''.) But that might not
+  be right for wherever this paper is going.}
 
 \section{Change actions}
 \label{sec:changeActions}
