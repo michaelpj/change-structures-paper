@@ -3,6 +3,7 @@
 %\input{preamble-standard}
 \input{preamble-acm}
 
+\usepackage[normalem]{ulem}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -12,6 +13,7 @@
 \usepackage{etoolbox}
 \usepackage{hyperref}
 \usepackage{mathtools}
+\usepackage{microtype}
 \usepackage{stmaryrd}
 \usepackage{todonotes}
 
@@ -225,6 +227,9 @@ and database updates, files and \textit{diff}s, Git repositories and commits, ev
 algorithms that encode a frame as a series of changes to the previous frame.
 
 \subsection{Complete change actions and minus operators}
+
+\todokcg{I would get rid of all the defn environments and just write in plaintext. It's hard to
+  follow the story here.}
 
 Complete change actions are an important class of change actions, because they
 have changes between \emph{any} two values in the base set.
