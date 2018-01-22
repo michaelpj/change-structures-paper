@@ -18,6 +18,7 @@
 \newcommand{\todoall}[1]{\todo[inline,color=black!30,author=All]{#1}}
 \newcommand{\todokcg}[1]{\todo[inline,color=pink!60,author=Katriel]{#1}}
 \newcommand{\todompj}[1]{\todo[inline,color=yellow!40,author=Michael]{#1}}
+\newcommand{\todomario}[1]{\todo[inline,color=yellow!40,author=Mario]{#1}}
 
 \input{notation}
 
@@ -56,51 +57,51 @@ result we get, but also in being able to (efficiently) update the result when
 the input changes.
 
 This is the setting in which incremental computation is studied. Recently,
-\textcite{cai2014changes} have given a compelling account
+\textcite{cai2014changes} have given an account of incremental computation using
 of \emph{change structures} and \emph{derivatives}, and used them to provide
 a composable framework for incrementally evaluating lambda calculus programs.
 
-This provides an excellent foundation for using change structures, but there are
-some pressing questions:
+This provides an excellent foundation for \emph{using} change structures, but there are
+some questions about the approach itself:
 \begin{itemize}
   \item Can we extend the concepts to cover a broader range of structures?
     The requirements for being a change structure are stringent enough that they
-    prevent many useful structures in computer science from having nice change structures.
-    \todokcg{It would be nice to see a concrete example here.}
+    prevent many useful structures in computer science (such as streams) from
+    having nice change structures.
   \item Can we say anything about the class of change structures in its own right?  
-    Being able to easily compose new change structures using standard
-    constructions would be very helpful for targeting new domains.
-  \item Can we perform incremental computation on fixpoints? Fixpoints are a
-    common construction in programming language semantics to handle recursion,
-    and so it would be desirable to be able to compute and update them incrementally.
+    If we can easily compose new change structures using standard
+    constructions like sums and products then it is much easier to apply the
+    techniques to new types of data.
+  \item Can we perform incremental computation on fixpoints? Fixpoints are
+    commonly used in the semantics of programming languages to implement recursion,
+    and so we would like to be able to compute and update them incrementally.
 \end{itemize}
 
-Incremental computation is especially attractive
-for database or logic programming languages, where it can
-produce drastically time and space savings over re-evaluation. Our particular
-interest here is in Datalog, which makes heavy use of recursion, and hence needs
-a good treatment of fixpoints. Moreover, an
-account of incremental computation for such languages that is compatible with
-the approach of \textcite{cai2014changes} opens exciting prospects for embedding
-languages like Datalog seamlessly into larger incremental computations
+These are mostly theoretical questions, but we also have a very practical
+application in mind: the computation of the semantics of Datalog (with
+extensions). The research in this paper was carried out at Semmle, which
+makes heavy use of a commercial Datalog implementation
+\autocites{semmleWebsite}{avgustinov2016ql}{sereni2008adding}{schafer2010type}.
+Semmle's implementation includes some non-standard features, such as
+parity-stratified negation and recursive aggregates, and so traditional
+approaches to incremental computation of Datalog are not applicable.
+
+Moreover, an account of incremental computation
+for languages like Datalog which is compatible with the approach of
+\textcite{cai2014changes} opens exciting prospects for embedding
+such languages seamlessly into larger incremental computations
 \autocite[See][]{arntz2016datafun}.
 
 The major contributions of this paper are:
 \begin{itemize}
-  \item A generalisation of change structures to \emph{change actions} and derivatives
-    (\cref{sec:changeActions}).
-  \item A description of the categorical properties of change actions, including
-    several useful direct constructions (\cref{sec:category}).
-  \item A description of the properties of change actions over
-    additional structures, including theorems that characterize the range of
-    possible derivatives available, and conditions under which compound change
-    actions may admit derivatives (\cref{sec:moreStructures}).
-  \item Two results relating to fixpoint calculations: incremental computation
-    of fixpoints, and incremental updates of fixpoint expressions (\cref{sec:fixpoints}).
-  \item Generalized incremental computation and
-    update of Datalog programs, with the ability to handle arbitrary additional
+  \item We generalize change structures to \emph{change actions} 
+    (\cref{sec:changeActions}), and explore their categorical properties (\cref{sec:category}).
+  \item We derive theorems showing both how to incrementally compute fixpoints,
+    and how to update already evaluated fixpoint expressions (\cref{sec:fixpoints}). 
+  \item We generalize the incremental computation and
+    update of Datalog semantics, showing how to gracefully handle additional
     language constructs, including negation and aggregation (\cref{sec:datalog}).
-  \end{itemize}
+\end{itemize}
 
 \section{Change actions}
 \label{sec:changeActions}
@@ -1151,12 +1152,7 @@ There is an extensive existing literature on incremental computation of Datalog,
 but the aim of this section is to argue that by viewing the computation
 of Datalog semantics as composed of differentiable functions we can give a
 bring the machinery that we've developed so far to bear, and give an elegant,
-flexible account of incremental evaluation.
-
-The work in this section has been applied to Semmle's commercial Datalog
-implementation \autocites{semmleWebsite}{avgustinov2016ql}{sereni2008adding}{schafer2010type}.
-As is it includes some non-standard features, the flexibility and composability
-of the approach has been vital, since existing techniques were not applicable.
+flexible account of incremental evaluation. 
 
 Firstly, however, we must show that we can see the semantics of Datalog in terms
 of elements that we know how to handle: Boolean algebras and fixpoints.
