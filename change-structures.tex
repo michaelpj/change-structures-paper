@@ -68,7 +68,7 @@ some questions about the approach itself:
     The requirements for being a change structure are stringent enough that they
     prevent many useful structures in computer science (such as streams) from
     having nice change structures.
-  \item Can we say anything about the class of change structures in its own right?  
+  \item Can we say anything about the class of change structures in its own right?
     If we can easily compose new change structures using standard
     constructions like sums and products then it is much easier to apply the
     techniques to new types of data.
@@ -94,10 +94,10 @@ such languages seamlessly into larger incremental computations
 
 The major contributions of this paper are:
 \begin{itemize}
-  \item We generalize change structures to \emph{change actions} 
+  \item We generalize change structures to \emph{change actions}
     (\cref{sec:changeActions}), and explore their categorical properties (\cref{sec:category}).
   \item We derive theorems showing both how to incrementally compute fixpoints,
-    and how to update already evaluated fixpoint expressions (\cref{sec:fixpoints}). 
+    and how to update already evaluated fixpoint expressions (\cref{sec:fixpoints}).
   \item We generalize the incremental computation and
     update of Datalog semantics, showing how to gracefully handle additional
     language constructs, including negation and aggregation (\cref{sec:datalog}).
@@ -426,14 +426,12 @@ practical computation.
 \begin{proof}
   Since we are working over $\cat{Set}$, we can use the definitions of $\ev$ and
   $\curry{f}$ from $\cat{Set}$:
-
   \begin{align*}
     &\ev : ((A \rightarrow B) \times A) \rightarrow B\\
     &\ev((f, a)) \defeq f(a)\\
     &\curry{f} : A \rightarrow (B \rightarrow C)\\
     &\curry{f}(a) \defeq \lambda b. f((a, b))\\
   \end{align*}
-
   We merely need to show that they are differentiable: differentiability of $\curry{f}
   \times id$ follows from products; commutativity and
   uniqueness follow from the corresponding properties of the exponential object
@@ -446,20 +444,15 @@ practical computation.
   \end{align*}
 
   Then
-  \begin{itemize}
-    \item[ ]$\ev((f, a) \cplus (\change{f}, \change{a}))$
-    \item[=]$\ev((f \cplus \change{f}, a \cplus \change{a}))$
-    \item[=]\{ definition of $\ev$ \}\\
-      $(f \cplus \change{f})(a \cplus \change{a})$
-    \item[=]\{ definition of $\changes{(A \rightarrow B)}$ \}\\
-      $f(a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})$
-    \item[=]\{ $f$ is differentiable \}\\
-      $f(a) \cplus \derive{f}(a, \change{a}) \cplus \change{f}(a \cplus \change{a})$
-    \item[=]\{ monoid action property \}\\
-      $f(a) \cplus \left[ \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})\right]$
-    \item[=]\{ definition of $\derive{\ev}$ \}\\
-      $\ev(f, a) \cplus \derive{\ev}((f, a), (\change{f}, \change{a}))$
-  \end{itemize}
+  \begin{align*}
+    &\ev((f, a) \cplus (\change{f}, \change{a}))\\
+    =&\ev((f \cplus \change{f}, a \cplus \change{a}))\\
+    =&(f \cplus \change{f})(a \cplus \change{a}) \tag{definition of $\ev$}\\
+    =&f(a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})\tag{definition of $\changes{(A \rightarrow B)}$}\\
+    =&f(a) \cplus \derive{f}(a, \change{a}) \cplus \change{f}(a \cplus \change{a})\tag{$f$ is differentiable}\\
+    =&f(a) \cplus \left[ \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})\right]\tag{monoid action}\\
+    =&\ev(f, a) \cplus \derive{\ev}((f, a), (\change{f}, \change{a}))\tag{definition of $\derive{\ev}$}\\
+  \end{align*}
   Therefore $\derive{\ev}$ is a derivative for $\ev$, so $\ev$ is differentiable.
 
   Let
@@ -470,18 +463,14 @@ practical computation.
   \end{align*}
 
   Then
-  \begin{itemize}
-    \item[ ]$\curry{f}(a \cplus \change{a})$
-    \item[=]\{ definition of $\curry{f}$ \}\\
-      $\lambda b. f((a \cplus \change{a}, b))$
-    \item[=] $\lambda b. f((a, b) \cplus (\change{a}, \mzero))$
-    \item[=]\{ since $f$ is differentiable \}\\
-      $\lambda b. f((a, b)) \cplus \derive{f}((a, b), (\change{a}, \mzero))$
-    \item[=]\{ definition of $\changes{(A \rightarrow B)}$ \}\\
-      $(\lambda b. f((a, b))) \cplus (\lambda b. \derive{f}((a, b), (\change{a}, \mzero)))$
-    \item[=]\{ definition of $\derive{\curry{f}}$ \}\\
-      $\curry{f}(a) \cplus \derive{\curry{f}}(a, \change{a})$
-  \end{itemize}
+  \begin{align*}
+    &\curry{f}(a \cplus \change{a})\\
+      =&\lambda b. f((a \cplus \change{a}, b))\tag{definition of $\curry{f}$}\\
+      =&\lambda b. f((a, b) \cplus (\change{a}, \mzero))\\
+      =&\lambda b. f((a, b)) \cplus \derive{f}((a, b), (\change{a}, \mzero))\tag{since $f$ is differentiable}\\
+      =&(\lambda b. f((a, b))) \cplus (\lambda b. \derive{f}((a, b), (\change{a}, \mzero)))\tag{definition of $\changes{(A \rightarrow B)}$}\\
+      =&\curry{f}(a) \cplus \derive{\curry{f}}(a, \change{a})\tag{definition of $\derive{\curry{f}}$}\\
+  \end{align*}
 
   Therefore $\derive{\curry{f}}$ is a derivative for $\curry{f}$, so $\curry{f}$
   is differentiable.
@@ -827,7 +816,7 @@ We can think of $\cstr{L}_\superpose$ as tracking changes as pairs of ``upwards'
 ``downwards'' changes, where the monoid action simply applies both.\footnote{We
   can, in fact, make it precise that $\cstr{L}_\superpose$ is an ``upwards''
   and ``downwards'' change action glued together, but here it is simpler to
-  just go directly to the useful change action.}  
+  just go directly to the useful change action.}
 
 Boolean algebras also have concrete definitions for maximal and minimal minus
 operators.
@@ -1152,7 +1141,7 @@ There is an extensive existing literature on incremental computation of Datalog,
 but the aim of this section is to argue that by viewing the computation
 of Datalog semantics as composed of differentiable functions we can give a
 bring the machinery that we've developed so far to bear, and give an elegant,
-flexible account of incremental evaluation. 
+flexible account of incremental evaluation.
 
 Firstly, however, we must show that we can see the semantics of Datalog in terms
 of elements that we know how to handle: Boolean algebras and fixpoints.
