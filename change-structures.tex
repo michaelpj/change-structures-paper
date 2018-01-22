@@ -538,6 +538,8 @@ Thus, the category of thin change actions is Cartesian closed as well.
 
 \subsection{Ordering change actions}
 
+\todompj{Cut?}
+
 We can put an order on the change actions for a given base set as follows:
 
 \begin{defn}[Change action ordering]
@@ -913,6 +915,7 @@ semantics in \cref{sec:datalogDifferentiability}.
     &\derive{\iter_f}(n+1, m) \defeq \derive{f}(\iter_f(n), \derive{\iter_f}(n, m))
   \end{align*}
 \end{prop}
+\ifproofs
 \begin{proof}
   By induction on $n$. We show the inductive step.
   \begin{itemize}
@@ -925,6 +928,7 @@ semantics in \cref{sec:datalogDifferentiability}.
       $\iter_f(n+1) \cplus \derive{f}(\iter_f(n), \derive{\iter_f}(n, m))$
   \end{itemize}
 \end{proof}
+\fi
 
 We can then compute $\derive{\iter_f(n)}$ along with $\iter_f(n)$ via mutual recursion.
 We want to do this by computing a fixpoint, so we can rewrite it as a recurrence
@@ -940,6 +944,7 @@ relation:
 
   Then $\lfp(f) = \pi_1(\lfp(\nextiter_f))$.
 \end{thm}
+\ifproofs
 \begin{proof}
   $\nextiter$ is continuous, since $\cplus$ and $\derive{f}$ are. 
   \begin{itemize}
@@ -951,11 +956,13 @@ relation:
       $\lfp(\iter_f) = \sqcup_{n \in \NN} \iter_f(n) = \pi_1 (\lfp(\nextiter_f))$
   \end{itemize}
 \end{proof}
+\fi
 
 This gives us a way to compute our fixpoint incrementally, by adding successive
 changes to our accumulator until we reach fixpoint.
 
 OLD VERSION
+\todompj{Decide whether to use this or the new version}
 
 \begin{thm}[Incremental computation of iterated function applications]
 \label{thm:diffIter}
@@ -1324,7 +1331,7 @@ specifics of the evaluation engine. Here is one possibility.\footnote{These are
 
   Let $$\diamond X \defeq X \twist (\updiff X, \downdiff X)$$ in the following.
 
-  TODO: make the references to the argument changes more obvious
+  \todompj{Make the references to the argument changes more obvious}
 
   \begin{align*}
   \updiff\bot &\defeq \bot\\
