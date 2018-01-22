@@ -34,15 +34,15 @@
 
 \begin{abstract}
   Incremental computation has recently been studied using the concept of a
-  \emph{derivative} of a program. This general notion allows updating programs
-  based on changes in their inputs.
+  \emph{derivative} of a program. This general notion allows updating the output
+  of programs based on changes in their inputs.
 
   We generalise the notion of derivative, and study its categorical
   properties. We develop the theory for a variety of common structures
   in computer science, including partial orders, lattices, and Boolean algebras.
 
-  This culminates in a generic and compositional account of incremental evaluation of Datalog, as
-  well as incremental update of (recursive) Datalog programs.
+  This culminates in a generic and compositional account of incremental \emph{evaluation} of Datalog, as
+  well as incremental \emph{update} of evaluated Datalog programs.
 \end{abstract}
 
 \title{Something about change actions}
@@ -67,16 +67,15 @@ some pressing questions:
     The requirements for being a change structure are stringent enough that they
     prevent many useful structures in computer science from having nice change structures.
     \todokcg{It would be nice to see a concrete example here.}
-  \item Can we say anything about the abstract structure of change structures as
-    a class? Being able to easily compose new change structures using standard
+  \item Can we say anything about the class of change structures in its own right?  
+    Being able to easily compose new change structures using standard
     constructions would be very helpful for targeting new domains.
   \item Can we perform incremental computation on fixpoints? Fixpoints are a
     common construction in programming language semantics to handle recursion,
     and so it would be desirable to be able to compute and update them incrementally.
 \end{itemize}
 
-The major motivational target for this exercise is incremental computation over
-lattices and Boolean algebras. Incremental computation is especially attractive
+Incremental computation is especially attractive
 for database or logic programming languages, where it can
 produce drastically time and space savings over re-evaluation. Our particular
 interest here is in Datalog, which makes heavy use of recursion, and hence needs
@@ -568,141 +567,19 @@ Furthermore, $\fineOrder$ also gives a fineness ordering on the reachability ord
   If $a \reachOrder b$ in $\cstr{A}_\cplus$ and $\cstr{A}_\cplus \fineOrder \cstr{A}_\cpluss$, then $a \reachOrder b$ in $\cstr{A}_\cpluss$.
 \end{prop}
 
-\subsection{Superpositions}
-
-As well as combining change actions entire, we can combine two different
-change actions on the same underlying set.
-
-\begin{defn}[Superposition]
-  Let $\cstr{A}_\cplus = \cstruct{A}{\changes{A}_\cplus}{\cplus}$ and $\cstr{A}_\cpluss =
-  \cstruct{A}{\changes{A}_\cpluss}{\cpluss}$ be change actions.
-
-  Then the \emph{superposition} of $\cstr{A}_\cplus$ and $\cstr{A}_\cpluss$ is defined as:
-  $$\cstr{A}_\cplus \superpose \cstr{A}_\cpluss \defeq \cstruct{A}{
-    (\changes{A}_\cplus + \changes{A}_\cpluss)^\ast}{(\cplus + \cpluss)^\ast}$$
-  where $X^\ast$ denotes the set of finite sequences of elements $X$.
-\end{defn}
-
-Here we have used the ``trick'' mentioned earlier to ensure that our change
-set has a monoid structure: $\cstruct{A}{(\changes{A}_\cplus +
-  \changes{A}_\cpluss)}{\star}$ does not have a monoid structure, so we take
-the free extension to finite sequences.
-
-In some cases we may be able to find a more compact representation of the
-superposition change action, for example $\cstr{\mathbb{Z}}_1 \superpose \cstr{\mathbb{Z}}_2$ is
-isomorphic to $\cstr{\mathbb{Z}}_3$. The following result shows one way of finding such representations which
-we have found helpful in practice:
-
-\begin{prop}
-  Let $\cstr{A}_\cplus$ and $\cstr{A}_\cpluss$ be two different change action on
-  a set $A$. Suppose there exists a function
-  $\wr : \cstr{A}_\cplus \times \cstr{A}_\cpluss \rightarrow \cstr{A}_\cplus$ satisfying for
-  all $a \in A$:
-  $$
-    a \cplus \change{a} \cpluss \change{b} \cplus \change{c}
-    = a \cplus (\change{a} + \wr(\change{c},\change{b})) \cpluss \change{b}
-  $$
-
-  Then $\cstruct{A}{\changes{A}_\cplus \times \changes{A}_\cpluss}{\cplussym{\wedge}}$
-  is a change action monoidal structure given by:
-  $$
-    (\change{a}, \change{b}) + (\change{c}, \change{d}) \defeq
-    (\change{a} + \wr(\change{c}, \change{b}), \change{b} + \change{d})
-  $$
-  and action $\cplussym{\wedge}$ defined as:
-  $$
-    a \cplussym{\wedge} (\change{a}, \change{b}) \defeq a \cplus \change{a} \cpluss \change{b}
-  $$
-\end{prop}
-
-Superposition is a useful construction, because it gives us the coarsest
-change action finer than its components.
-
-\begin{corollary}
-  $\cstr{A}_\cplus \superpose \cstr{A}_\cpluss$ is the least upper bound of $\cstr{A}_\cplus$ and $\cstr{A}_\cpluss$ with respect to $\fineOrder$.
-\end{corollary}
-\ifproofs
-\begin{proof}
-  The derivative of $id_1: \cstr{A}_\cplus \rightarrow (\cstr{A}_\cplus \superpose
-  \cstr{A}_\cpluss)$ is given by $\derive{id_1}(a, \change{a}) \defeq
-  i_1(\change{a})$, and similarly for $id_2$ on the other side. Hence $\cstr{A}_\cplus \superpose \cstr{A}_\cpluss$
-  is an upper bound of $\cstr{A}_\cplus$ and $\cstr{A}_\cpluss$.
-
-  Let $\cstr{A}_\cplusss$ be greater than $\cstr{A}_\cplus$ and $\cstr{A}_\cpluss$.
-  Then a
-  derivative of $id: (\cstr{A}_\cplus \superpose \cstr{A}_\cpluss) \rightarrow \cstr{A}_\cplusss$ is
-  given by :
-
-  TODO: This is wrong now we're doing superposition with a sum rather than a
-  product. Maybe it was easier with the product...
-  $$
-  \derive{id}(a, (\change{a_i}, \change{b_i})) \defeq
-    \sum_i (\derive{id}(a, \change{a_i}) + \derive{id}(a, \change{b_i}))
-  $$
-\end{proof}
-\fi
-
-This gives us a join-semilattice for change actions on a given set.
-
-\begin{thm}[Change action semilattice]
-  Change actions on a base set $A$ form a bounded join-semilattice
-  ordered by $\fineOrder$, with the least element given by
-  $\cstr{A}_\discrete$, and the join operation given by $\superpose$.
-\end{thm}
-
-All functions into a complete change action are differentiable, so any
-complete change actions on $A$ will be maximal elements of the lattice, while
-the discrete change action provides a minimal element.
-
 \section{Change actions over other structures}
 \label{sec:moreStructures}
 
 We are aiming to work over Boolean algebras with fixpoints, which is where we
 will interpret Datalog. We will work up to that gradually, adding power as we
-progress from posets, to directed-complete partial orders, to lattices, and
+progress from posets, to directed-complete partial orders, and
 finally to Boolean algebras.
 
 \subsection{Posets}
 
-\subsubsection{Approximate derivatives}
+\subsubsection{Ordering changes}
 
-Posets allow us to define ``approximations'' to derivatives from both sides.
-
-\begin{defn}
-  Let $f: \cstr{A}_\cplus \rightarrow \cstr{B}_\cpluss$ be a function. Then a \emph{sup-derivative}
-  of $f$ is a function $\supderive{f}$ such that
-  $$f(a \cplus \change{a}) \leq f(a) \cpluss \supderive{f}(a, \change{a})$$
-  Similarly, a \emph{sub-derivative} of $f$ is a function $\subderive{f}$ such that
-  $$f(a \cplus \change{a}) \geq f(a) \cpluss \subderive{f}(a, \change{a})$$
-
-  A function with a sup-derivative is sup-differentiable, and a function with a
-  sub-derivative is sub-differentiable.
-\end{defn}
-
-Both sup- and sub-derivatives satisfy the chain rule, in the following sense:
-\begin{prop}[Chain rule for sub-derivatives]
-  let $f : \cstr{A}_\cplus \rightarrow \cstr{B}_\cpluss$ and $g : \cstr{B}_\cpluss \rightarrow \cstr{C}_\cplusss$ be
-  sub-differentiable functions with sub-derivatives $f', g'$ respectively. Then
-  $$\derive{g}(f(a)) \circ \derive{f}(a)$$ is a subderivative of $g \circ f$
-\end{prop}
-
-Some change actions always have sub- or sup-derivatives: for example every function
-into $\cstr{\mathbb{Z}}_1$ is sup-differentiable, and every function into $\cstr{\mathbb{Z}}_2$ is
-sub-differentiable.
-
-\begin{prop}
-  If $\derive{f}$ is both a sub- and sup-derivative of $f$, then it is a derivative of $f$.
-\end{prop}
-
-Note that this is not the same as saying that if $f$ is both sub- and
-sup-differentiable, then it is differentiable. The functions which provide the
-sub- and sup-derivatives must coincide for that to be the case. For example,
-consider any bounded lattice with the change set $\{ \lambda k . \bot, \lambda k
- . \top \}$. Then any function has a sub-derivative (mapping everything to
- bottom), and a sup-derivative (mapping everything to top), but in most cases
- these are not true derivatives.
-
-Secondly, if the base set of a change action is a poset, then this gives us a natural
+If the base set of a change action is a poset, then this gives us a natural
 order on the change set.
 
 \begin{defn}[Change order]
@@ -714,80 +591,18 @@ full partial order.
 
 Having a monotone order on the changes is very useful.
 
-\begin{thm}
-  Let $f: \cstr{A} \rightarrow \cstr{B}$ be a function, and let $\changeOrder$ be a preorder on $\changes{B}$ such that $\cplus$ is monotone with
-  respect to it. Then let $\supderive{f}$ be a sub-derivative for $f$, and $h: A \times
-  \changes{A} \rightarrow \changes{B}$ be a function such that
-  $$\supderive{f} \changeOrder h$$
-  Then $h$ is also a sup-derivative for $f$.
-
-  Similarly, if $\subderive{f}$ is a sup-derivative for $f$ such that
-  $$h \changeOrder \subderive{f}$$
-  Then $h$ is also a sub-derivative for $f$.
-\end{thm}
-\ifproofs
-\begin{proof}
-  We prove the first case:
-  \begin{itemize}
-    \item[ ]$\supderive{f}(a, \change{a}) \changeOrder h(a, \change{a})$
-    \item[$\Rightarrow$]\{ by monotonicity \}\\
-      $f(a) \cplus \supderive{f}(a, \change{a}) \leq f(a) \cplus h(a, \change{a})$
-    \item[$\Rightarrow$]\{ sup-derivative property \}\\
-      $f(a \cplus \change{a}) \leq f(a) \cplus h(a, \change{a})$
-  \end{itemize}
-
-  The proof for the other case is symmetric.
-\end{proof}
-\fi
-
 \begin{thm}[Sandwich lemma]
   \label{thm:sandwich}
-  Let $\supderive{f}$ be a sup-derivative for $f$, $\subderive{f}$ be a sub-derivative for $f$, $\changeOrder$ be a preorder on $\changes{B}$ such that $\cplus$ is monotone with
+  Let $\supderive{f}$ and $\subderive{f}$ be a derivatives for $f$, $\changeOrder$ be a preorder on $\changes{B}$ such that $\cplus$ is monotone with
   respect to it, and $g$ be such that
 
   $$\supderive{f} \changeOrder g \changeOrder \subderive{f}$$
 
   Then $g$ is a derivative for $f$.
 \end{thm}
-
-In particular, this applies if $g$ and $h$ are themselves derivatives. Moreover,
-although the condition of the theorem only requires the bounds to be sub- and
-sup-derivatives, the conclusion of the theorem also applies to the bounds, so
-they will always be full derivatives as well.
-
-\subsubsection{Ascending and descending change actions}
-
-Having sub- and sup-derivatives alone is not quite enough to ensure that all
-functions are differentiable. We need some additional power.
-
-\begin{defn}[Ascending and descending change actions]
-  A change action $\cstr{A}$ is \emph{ascending} if $a \leq b$ implies $a
-  \reachOrder b$.
-
-  A change action $\cstr{A}$ is \emph{descending} if $a \leq b$ implies $b
-  \reachOrder a$.
-\end{defn}
-
-Intuitively, an ascending change action is one where you can produce
-arbitrary changes that follow the partial order.
-
-\begin{thm}
-  Let $\cstr{A}$, $\cstr{B}$ be a change actions, $f: \cstr{A} \rightarrow \cstr{B}$ be a function. Then
-  any of the following are sufficient for $f$ to be differentiable.
-  \begin{itemize}
-    \item $\cstr{B}$ is ascending, and $f$ is sub-differentiable.
-    \item $\cstr{B}$ is descending, and $f$ is sup-differentiable.
-    \item $\cstr{B}$ is ascending, descending, and has a minimal or maximal element.
-  \end{itemize}
-\end{thm}
-
-In particular, we can construct change actions where functions are
-differentiable by superposing multiple change actions that have some of the
-properties that we want.
-
-For example, $\cstr{\mathbb{Z}}_1$ is ascending (and has sup-derivatives), and
-$\cstr{\mathbb{Z}}_2$ is descending (and has sub-derivatives), so $\cstr{\mathbb{Z}}_1
-\superpose \cstr{\mathbb{Z}}_2 = \cstr{\mathbb{Z}}_3$ has derivatives.
+\begin{proof}
+  Trivial.
+\end{proof}
 
 \subsubsection{Maximal and minimal derivatives}
 
@@ -910,35 +725,9 @@ Becik's Theorem\autocite[][section 10.1]{winskel1993formal}, but it has a straig
 \end{proof}
 \fi
 
-\subsection{Lattices}
-
-\begin{defn}
-  Let $L$ be a join-semilattice. Then $\cstr{L}_\vee \defeq \cstruct{L}{L}{\vee}$ is a change
-  action on $L$.
-
-  Similarly, if $L$ is a meet-semilattice, then $\cstr{L}_\wedge \defeq \cstruct{L}{L}{\wedge}$ is a change
-  action on $L$.
-\end{defn}
-
-\begin{prop}
-  All of the following hold
-  \begin{itemize}
-    \item $\cstr{L}_\vee$ is ascending and has sup-derivatives.
-    \item $\cstr{L}_\wedge$ is descending and has sub-derivatives.
-    \item $\cstr{L}_\vee \superpose \cstr{L}_\wedge$ has derivatives.
-  \end{itemize}
-\end{prop}
-
-As usual, the superposition change action is difficult to work with, since it
-consists of sequences of ``upwards'' and ``downwards'' changes. However, it
-makes precise the intuition that we can ``glue together'' the ``upwards'' change
-action for joins and the ``downwards'' change action for meets into a
-complete change action for the full lattice.
-
 \subsection{Boolean algebras}
 
-Boolean algebras give us a much more compact representation for the
-superposition of $\cstr{L}_\vee \superpose \cstr{L}_\wedge$.
+Boolean algebras have a nice complete change structure.
 
 \begin{prop}
   Let $L$ be a Boolean algebra. Define
@@ -948,7 +737,7 @@ superposition of $\cstr{L}_\vee \superpose \cstr{L}_\wedge$.
   and the monoid operator is
   $$(p, q) \splus (r, s) \defeq ((p \wedge \neg q) \vee r, (q \wedge \neg r) \vee s)$$
 
-  Then $\cstr{L}_\superpose$ is isomorphic to $\cstr{L}_\vee \superpose \cstr{L}_\wedge$.
+  Then $\cstr{L}_\superpose$ is a complete change action on $L$.
 \end{prop}
 \ifproofs
 \begin{proof}
@@ -1034,10 +823,7 @@ superposition of $\cstr{L}_\vee \superpose \cstr{L}_\wedge$.
 \fi
 
 We can think of $\cstr{L}_\superpose$ as tracking changes as pairs of ``upwards'' and
-``downwards'' changes, where the monoid action simply applies both. This
-definition is much more usable than $\cstr{L}_\vee \superpose \cstr{L}_\wedge$, because we
-only need to track pairs of changes, rather than sequences, which makes a big
-difference in practice.
+``downwards'' changes, where the monoid action simply applies both.
 
 Boolean algebras also have concrete definitions for maximal and minimal minus
 operators.
