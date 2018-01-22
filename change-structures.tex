@@ -4,6 +4,7 @@
 \input{preamble-acm}
 
 \usepackage{inputenc}[utf8]
+\usepackage[normalem]{ulem}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
@@ -12,6 +13,7 @@
 \usepackage{etoolbox}
 \usepackage{hyperref}
 \usepackage{mathtools}
+\usepackage{microtype}
 \usepackage{stmaryrd}
 \usepackage{todonotes}
 
@@ -68,7 +70,7 @@ some questions about the approach itself:
     The requirements for being a change structure are stringent enough that they
     prevent many useful structures in computer science (such as streams) from
     having nice change structures.
-  \item Can we say anything about the class of change structures in its own right?  
+  \item Can we say anything about the class of change structures in its own right?
     If we can easily compose new change structures using standard
     constructions like sums and products then it is much easier to apply the
     techniques to new types of data.
@@ -94,10 +96,10 @@ such languages seamlessly into larger incremental computations
 
 The major contributions of this paper are:
 \begin{itemize}
-  \item We generalize change structures to \emph{change actions} 
+  \item We generalize change structures to \emph{change actions}
     (\cref{sec:changeActions}), and explore their categorical properties (\cref{sec:category}).
   \item We derive theorems showing both how to incrementally compute fixpoints,
-    and how to update already evaluated fixpoint expressions (\cref{sec:fixpoints}). 
+    and how to update already evaluated fixpoint expressions (\cref{sec:fixpoints}).
   \item We generalize the incremental computation and
     update of Datalog semantics, showing how to gracefully handle additional
     language constructs, including negation and aggregation (\cref{sec:datalog}).
@@ -105,6 +107,13 @@ The major contributions of this paper are:
 
 \section{Change actions}
 \label{sec:changeActions}
+
+\todokcg{This is a bit of an abrupt change. A less-expert reader (cough cough) might like to have
+  this jump a bit cushioned with some motivation: why do we make this definition and what is it
+  intuitively describing? What is the previous definition of a change set, and how does this
+  differ?}
+
+\todokcg{You should use the align* environment for equations or you get super janky spacing.}
 
 \begin{defn}[Change actions]
   A \emph{change action} is defined as:
@@ -116,16 +125,20 @@ The major contributions of this paper are:
   We will call $A$ the base set, and $\changes{A}$ the change set of the change action.
 \end{defn}
 
-Elements in the change set represent changes that can be made to elements in the
-base set, with the monoid action being the operation that ``applies'' the
-change. The requirement that the change set be a monoid is convenient but in
-fact inessential: given any set with an action on the base set, we can take the
-free monoid over the action set to obtain a monoid action.
+Elements in the change set represent changes that can be made to elements in the base set, with the
+monoid action being the operation that ``applies'' the change. \todokcg{I think the observation
+  (that you can just take the free monoid) distracts a bit from the intuition here and would perhaps
+  be better as a footnote} The requirement that the change set be a monoid is convenient but in fact
+inessential: given any set with an action on the base set, we can take the free monoid over the
+action set to obtain a monoid action.
 
 The fact that the change set is a monoid action reveals the heart of the
 change action definition: the change set is a representation of a
 \emph{transformation monoid} over the base set, with the monoid
 operation simply being composition.
+
+\todokcg{I have no idea what a transformation monoid is, so this is perhaps less illuminating for me
+  than might be hoped.}
 
 The primary motivation for change actions is that they let us define
 \emph{derivatives} for functions.
@@ -136,6 +149,7 @@ The primary motivation for change actions is that they let us define
   $$f(a \cplus \change{a}) = f(a) \cpluss \derive{f}(a, \change{a})$$
 
   A function which has a derivative is called \emph{differentiable}.
+\todokcg{You haven't defined $\cstr{A}_\cplus, \cstr{B}_\cpluss, \changes{A}, \text{ or }\changes{B}$}
 \end{defn}
 
 Derivatives need not be unique, in general, so we will speak of ``a''
@@ -149,7 +163,8 @@ Derivatives capture the essence of incremental computation: given the value of a
 function at a point, and a change to that point, they tell you how to compute
 the new value of the function.
 
-The choice of the name ``derivative'' is also not a coincidence. While these
+\todokcg{I think this is clear}
+\sout{The choice of the name ``derivative'' is also not a coincidence.} While these
 derivatives do not look quite like derivatives in real analysis, they \emph{do}
 bear a strong resemblance to derivatives in other areas (such as synthetic differential geometry), and
 they satisfy the standard chain rule.
@@ -161,6 +176,8 @@ they satisfy the standard chain rule.
    or, in curried form
    $$\derive{(g \circ f)}(x)(\change{x}) = \derive{g}(f(x)) \circ \derive{f}(x)$$
 \end{thm}
+\todokcg{I think you certainly don't need this proof here. Stick it in an appendix and say ``by
+  arithmetic'' here.}
 \ifproofs
 \begin{proof}
   By equivalence:
@@ -176,7 +193,9 @@ they satisfy the standard chain rule.
 \end{proof}
 \fi
 
-Here are some recurring examples of changes actions:
+\todokcg{I don't think you need quite this many examples. Pick one simple one, one medium one and
+  one wat one.}
+Here are some recurring examples of change actions:
 \begin{itemize}
   \item $\cstr{A}_\discrete \defeq \cstruct{A}{\emptyset}{\emptyset}$, the discrete change action on any base set.
   \item $\cstr{A}_\Rightarrow \defeq \cstruct{A}{A\Rightarrow A}{\ev}$, where $A
@@ -185,6 +204,7 @@ Here are some recurring examples of changes actions:
     transitive relation on $A$ and $ev_\leq$ denotes
     conditional application, i.e. $ev_\leq(a, (b, c))$ is equal to $c$ if $a = b$, and $a$ otherwise. Composition of changes is obtained
     by transitivity of $\leq$.
+    \todokcg{Why is this conditional \emph{application}?}
   \item $\cstr{\mathbb{Z}}_1 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{+}$
   \item $\cstr{\mathbb{Z}}_2 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{-}$
   \item $\cstr{\mathbb{Z}}_3 \defeq \cstruct{\mathbb{Z}}{\mathbb{Z}}{+}$
@@ -207,6 +227,12 @@ and database updates, files and \emph{diff}s, Git repositories and commits, even
 algorithms that encode a frame as a series of changes to the previous frame.
 
 \subsection{Complete change actions and minus operators}
+
+\todokcg{I would get rid of all the defn environments and just write in plaintext. It's hard to
+  follow the story here.}
+
+\todokcg{I would get rid of all the defn environments and just write in plaintext. It's hard to
+  follow the story here.}
 
 Complete change actions are an important class of change actions, because they
 have changes between \emph{any} two values in the base set.
@@ -829,7 +855,7 @@ We can think of $\cstr{L}_\superpose$ as tracking changes as pairs of ``upwards'
 ``downwards'' changes, where the monoid action simply applies both.\footnote{We
   can, in fact, make it precise that $\cstr{L}_\superpose$ is an ``upwards''
   and ``downwards'' change action glued together, but here it is simpler to
-  just go directly to the useful change action.}  
+  just go directly to the useful change action.}
 
 Boolean algebras also have concrete definitions for maximal and minimal minus
 operators.
@@ -1219,7 +1245,7 @@ There is an extensive existing literature on incremental computation of Datalog,
 but the aim of this section is to argue that by viewing the computation
 of Datalog semantics as composed of differentiable functions we can give a
 bring the machinery that we've developed so far to bear, and give an elegant,
-flexible account of incremental evaluation. 
+flexible account of incremental evaluation.
 
 Firstly, however, we must show that we can see the semantics of Datalog in terms
 of elements that we know how to handle: Boolean algebras and fixpoints.
