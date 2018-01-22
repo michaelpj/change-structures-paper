@@ -866,6 +866,26 @@ we have concrete definitions for our bounds (which, again, we will make use of i
 \section{Fixpoints}
 \label{sec:fixpoints}
 
+In directed-complete partial orders we can define a least fixpoint operator $\lfp$ in terms of the
+iteration function $\iter$:
+\begin{align*}
+  &\lfp : (A \rightarrow A) \rightarrow A\\
+  &\lfp \defeq \sqcup_{n \in \NN} \{ \iter_n \}\\
+  &\iter : (A \rightarrow A) \times \NN \rightarrow A\\
+  &\iter(f, n) \defeq f^n(\bot)
+\end{align*}
+
+The iteration function is going to be the basis for everything in this section:
+we can differentiate it with respect to $n$, and this will give us a way to get
+to the next iteration incrementally; and we can differentiate it with respect to
+$f$, and this will give us a way to get from iterating $f$ to iterating $f
+\cplus \change{f}$.\footnote{The sharp-eyed reader may have noticed that we
+  could also differentiate $\iter$ with respect to the base point (which we have
+  given as just $\bot$).}
+
+To avoid confusion, we shall write $\iter_f$ when we are holding $f$ constant,
+and $iter_n$ when we are holding $n$ constant.
+
 \subsection{Incremental computation of fixpoints}
 
 Derivatives give us a technique for computing fixpoints incrementally. Kleene's
@@ -886,14 +906,56 @@ the following theorem provides a generalization of it to any differentiable func
 change action. We will see the details of how to differentiate Datalog
 semantics in \cref{sec:datalogDifferentiability}.
 
-% Proof using derivative of iter wrt n - not sure if this would be better?
-%\begin{itemize}
-  %\item[ ]$\iter_f(n + m)$
-  %\item[=]$f(\iter_f((n-1) + m))$
-  %\item[=]$f(\iter_f(n-1) \cplus \derive{\iter_f}(\iter_f(n-1), m))$
-  %\item[=]$f(\iter_f(n-1)) \cplus \derive{f}(\iter_f(n-1), \derive{\iter_f}(\iter_f(n-1), m))$
-  %\item[=]$\iter_f(n) \cplus \derive{f}(\iter_f(n-1), \derive{\iter_f}(\iter_f(n-1), m))$
-%\end{itemize}
+\begin{prop}[Derivative of the iteration map with respect to $n$]
+  Let $\cstr{A}$ be a complete change structure. Then $\iter_f$ is differentiable, and a derivative is given by:
+  \begin{align*}
+    &\derive{\iter_f}(0, m) \defeq \iter_f(m) \cminus \bot\\
+    &\derive{\iter_f}(n+1, m) \defeq \derive{f}(\iter_f(n), \derive{\iter_f}(n, m))
+  \end{align*}
+\end{prop}
+\begin{proof}
+  By induction on $n$. We show the inductive step.
+  \begin{itemize}
+    \item[ ]$\iter_f((n+1) + m)$
+    \item[=]\{ definition of $\iter_f$ \}\\
+      $f(\iter_f(n + m))$
+    \item[=]\{ by induction \}\\
+      $f(\iter_f(n) \cplus \derive{\iter_f}(n, m))$
+    \item[=]\{ $f$ is differentiable, definition of $\iter_f$ \}\\
+      $\iter_f(n+1) \cplus \derive{f}(\iter_f(n), \derive{\iter_f}(n, m))$
+  \end{itemize}
+\end{proof}
+
+We can then compute $\derive{\iter_f(n)}$ along with $\iter_f(n)$ via mutual recursion.
+We want to do this by computing a fixpoint, so we can rewrite it as a recurrence
+relation:
+\begin{align*}
+  &\nextiter_f : (A, \changes{A}) \rightarrow (A, \changes{A})\\
+  &\nextiter_f (a, \change{a}) \defeq (a \cplus \change{a}, \derive{f}(a, \change{a}))
+\end{align*}
+
+\begin{thm}[Incremental computation of fixpoints]
+  Let $\cstr{A}$ be a continuous change action, $f: \cstr{A} \rightarrow
+  \cstr{A}$ be continuous and differentiable.
+
+  Then $\lfp(f) = \pi_1(\lfp(\nextiter_f))$.
+\end{thm}
+\begin{proof}
+  $\nextiter$ is continuous, since $\cplus$ and $\derive{f}$ are. 
+  \begin{itemize}
+    \item[ ]$\iter_f(n) = \pi_1 (\nextiter_f^n(\bot))$
+    \item[$\Rightarrow$]$\sqcup_{n \in \NN} \iter_f(n) = \sqcup_{n \in \NN} \pi_1 (\nextiter_f^n(\bot))$
+    \item[$\Rightarrow$]\{ $\pi_1$ is continuous \}\\
+      $\sqcup_{n \in \NN} \iter_f(n) = \pi_1 \sqcup_{n \in \NN} (\nextiter_f^n(\bot))$
+    \item[$\Rightarrow$]\{ $\nextiter$ is continuous \}\\
+      $\lfp(\iter_f) = \sqcup_{n \in \NN} \iter_f(n) = \pi_1 (\lfp(\nextiter_f))$
+  \end{itemize}
+\end{proof}
+
+This gives us a way to compute our fixpoint incrementally, by adding successive
+changes to our accumulator until we reach fixpoint.
+
+OLD VERSION
 
 \begin{thm}[Incremental computation of iterated function applications]
 \label{thm:diffIter}
@@ -1041,21 +1103,14 @@ continuous change actions, then it becomes a true derivative. This is not too
 onerous a restriction, since this is the setting in which we normally compute
 least fixpoints anyway.
 
-Consider a continuous function $f : \cstr{A} \rightarrow \cstr{A}$, where $\cstr{A}$ is a continuous change action. Since $A$
-is a dcpo, Kleene's Theorem tells us that a least fixpoint is guaranteed to exist and can be defined as:
-\begin{align*}
-  &\iter_n, \lfp : (A \rightarrow A) \rightarrow A\\
-  &\iter_n f \defeq f^n(\bot)\\
-  &\lfp \defeq \sqcup_{n \in \NN} \{ \iter_n \}
-\end{align*}
-
-Applying \cref{cor:diffContinuous}, it follows that if we can find a derivative of each iteration map $\derive{\iter_n}$ such that the resulting
-set $\{ \derive{\iter_n} \}$ is directed, then $\sqcup_{n \in \NN}
+Applying \cref{cor:diffContinuous}, it follows that if we can find a derivative
+of each iteration map $\derive{\iter_n}$
+such that the resulting set $\{ \derive{\iter_n} \}$ is directed, then $\sqcup_{n \in \NN}
 \{\derive{\iter_n} \}$ is a derivative of $\lfp$.
 
-We therefore begin by constructing derivatives of $\iter_n$
+We therefore begin by constructing derivatives of $\iter_n$.
 
-\begin{prop}[Derivatives of iteration maps]
+\begin{prop}[Derivatives of the iteration map with respect to $f$]
   $\iter_n$ is differentiable and a derivative is given by:
   \begin{align*}
     &\derive{\iter_n} : (A \rightarrow A) \times \changes{(A \rightarrow A)} \rightarrow \changes{A}\\
@@ -1090,7 +1145,16 @@ We therefore begin by constructing derivatives of $\iter_n$
 \end{proof}
 \fi
 
-This gives us enough to prove that our derivative really is a derivative:
+As before, we can now compute $\derive{\iter_n}$ together with $\iter_n$ by
+mutual recursion. In fact, the recursion is not \emph{mutual}: $\iter_n$ does
+not depend on $\derive{\iter_n}$. However, writing it in this way makes it
+amenable to computation by fixpoint, and we shall see how to eliminate the
+recomputation of $\iter_n$ later.
+
+\begin{align*}
+  &\nextiter_{f, \change{f}} : (A, \changes{A}) \rightarrow (A, \changes{A})\\
+  &\nextiter_{f, \change{f}} (a, \change{a}) \defeq (f(a), \derive{\ev}((f, a), (\change{f}, \change{a})))
+\end{align*}
 
 \begin{thm}[Derivatives of least fixpoint operators]
   \label{thm:leastFixpointDiff}
@@ -1106,16 +1170,11 @@ This gives us enough to prove that our derivative really is a derivative:
 \end{thm}
 \ifproofs
 \begin{proof}
-  We can write our recursive definition of $\derive{\iter}$ as a recurrence
-  relation over both the derivative and the value of $iter_n$ itself, extracting
-  the former at the end:
-  \begin{align*}
-    &\nextiter_{f, \change{f}} : (A, \changes{A}) \rightarrow (A, \changes{A})\\
-    &\nextiter_{f, \change{f}} (a, \change{a}) \defeq (f(a), \derive{\ev}((f, a), (\change{f}, \change{a})))\\
-    &\derive{\iter_{n+1}}(f, \change{f}) \defeq \pi_2 (\nextiter_{f, \change{f}}(\iter_n(f), \iter'_n(f, \change{f})))
-  \end{align*}
+  We can write our mutually recursive definitions of $\derive{\iter_n}$ and
+  $\iter_n$ as a recurrence relation:
 
-  $\derive{\iter_n}$ and $\nextiter_{f, \change{f}}$ are continuous (and hence monotone) since $\derive{\ev}$ is.
+  $\derive{\iter_n}$ and $\nextiter_{f, \change{f}}$ are continuous since
+  $\derive{\ev}$ and $f$ are.
 
   Hence the set $\{ \derive{\iter}_n \}$ is directed, and so $\sqcup_{i \in \NN}
   \{ \derive{\iter_i} \}$ is indeed a derivative for $\lfp$.
