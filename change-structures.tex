@@ -109,7 +109,9 @@ The major contributions of this paper are:
 \begin{defn}[Change actions]
   A \emph{change action} is defined as:
 
-  $$\cstr{A} \defeq \cstruct{A}{\changes{A}}{\cplus}$$
+  \begin{displaymath}
+    \cstr{A} \defeq \cstruct{A}{\changes{A}}{\cplus}
+  \end{displaymath}
 
   where $A$ is a set, $(\changes{A}, \splus, \mzero)$ is a monoid, and $\cplus$ gives a monoid action on $A$.
 
@@ -133,7 +135,9 @@ The primary motivation for change actions is that they let us define
 \begin{defn}[Derivatives]
   A \emph{derivative} of a function $f: \cstr{A}_\cplus \rightarrow \cstr{B}_\cpluss$ is a function $\derive{f}: A \times \changes{A} \rightarrow
   \changes{B}$ such that
-  $$f(a \cplus \change{a}) = f(a) \cpluss \derive{f}(a, \change{a})$$
+  \begin{displaymath}
+    f(a \cplus \change{a}) = f(a) \cpluss \derive{f}(a, \change{a})
+  \end{displaymath}
 
   A function which has a derivative is called \emph{differentiable}.
 \end{defn}
@@ -157,9 +161,13 @@ they satisfy the standard chain rule.
 \begin{thm}[The Chain Rule]
   Let $f: \cstr{A}_\cplus \rightarrow \cstr{B}_\cpluss$, $g: \cstr{B}_\cpluss \rightarrow \cstr{C}_\cplusss$ be differentiable functions. Then $g \circ f$ is also
   differentiable, with derivative given by
-   $$\derive{(g \circ f)}(x, \change{x}) = \derive{g}\left(f(x), \derive{f}(x, \change{x})\right)$$
-   or, in curried form
-   $$\derive{(g \circ f)}(x)(\change{x}) = \derive{g}(f(x)) \circ \derive{f}(x)$$
+  \begin{displaymath}
+    \derive{(g \circ f)}(x, \change{x}) = \derive{g}\left(f(x), \derive{f}(x, \change{x})\right)
+  \end{displaymath}
+  or, in curried form
+  \begin{displaymath}
+    \derive{(g \circ f)}(x)(\change{x}) = \derive{g}(f(x)) \circ \derive{f}(x)
+  \end{displaymath}
 \end{thm}
 \ifproofs
 \begin{proof}
@@ -239,7 +247,9 @@ of functions.
 \begin{defn}[Minus derivative]
   Given a minus operator $\cminus$, we have a derivative for any function $f$,
   defined as
-  $$\derive{f}_\cminus(a, \change{a}) \defeq f(a \cplus \change{a}) \cminus f(a)$$
+  \begin{displaymath}
+    \derive{f}_\cminus(a, \change{a}) \defeq f(a \cplus \change{a}) \cminus f(a)
+  \end{displaymath}
 \end{defn}
 
 \subsection{Thin change actions}
@@ -335,15 +345,15 @@ $\cstr{A}_\leq$. This gives rise to a (full and faithful) functor $\{\_\}_\leq :
   is indeed differentiable in both directions.
 
   On one direction, a derivative is given by
-  $$
+  \begin{displaymath}
     \derive{id}_A(a, \change{a}) \defeq (a, a \cplus \change{a})
-  $$
+  \end{displaymath}
   Conversely, let $(a, b) \in \reachOrder$. By definition of $\reachOrder$, there is some
   $\change{}_{(a, b)} \in \changes{A}$ satisfying $a \cplus \change{}_{(a,b)} = b$. Hence we set the
   derivative to be
-  $$
+  \begin{displaymath}
     \derive{id}_{\reachOrder}(a, (a, b)) \defeq \change{}_{(a, b)}
-  $$
+  \end{displaymath}
 \end{proof}
 \fi
 
@@ -497,7 +507,10 @@ Derivatives of the evaluation map correspond to incremental evaluation of functi
   $\derive{\ev}$ be a derivative of the evaluation map.
 
   Then
-  $$(f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus \derive{\ev}((f, a), (\change{f}, \change{a}))$$
+  \begin{displaymath}
+    (f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus \derive{\ev}((f, a), (\change{f}, \change{a}))
+  \end{displaymath}
+
 \end{prop}
 
 Conveniently, our proof of \cref{prop:exponentials} gives us actual derivatives for the evaluation map:
@@ -508,12 +521,16 @@ Conveniently, our proof of \cref{prop:exponentials} gives us actual derivatives 
   \changes{A}$, $\change{f} \in \changes{(A \rightarrow B)}$.
 
   Then if $f$ is differentiable
-  $$\derive{\ev}_1 \defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})$$
-
+  \begin{displaymath}
+    \derive{\ev}_1 \defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})
+  \end{displaymath}
+  
   is a derivative for the evaluation map.
 
   Or, if $f \cplus \change{f}$ is differentiable
-  $$\derive{\ev}_2 \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})$$
+  \begin{displaymath}
+    \derive{\ev}_2 \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})
+  \end{displaymath}
 
   is a derivative for the evaluation map.
 \end{prop}
@@ -599,7 +616,9 @@ Having a monotone order on the changes is very useful.
   Let $\supderive{f}$ and $\subderive{f}$ be a derivatives for $f$, $\changeOrder$ be a preorder on $\changes{B}$ such that $\cplus$ is monotone with
   respect to it, and $g$ be such that
 
-  $$\supderive{f} \changeOrder g \changeOrder \subderive{f}$$
+  \begin{displaymath}
+    \supderive{f} \changeOrder g \changeOrder \subderive{f}
+  \end{displaymath}
 
   Then $g$ is a derivative for $f$.
 \end{thm}
@@ -642,7 +661,9 @@ change action.
   $\supderiveM{f}$ be minimal and maximal derivatives of $f$, respectively.
   Then the derivatives of $f$ are precisely
   the functions $\derive{f}$ such that
-  $$\subderiveM{f} \changeOrder \derive{f} \changeOrder \supderiveM{f}$$
+  \begin{displaymath}
+    \subderiveM{f} \changeOrder \derive{f} \changeOrder \supderiveM{f}
+  \end{displaymath}
 \end{thm}
 \ifproofs
 \begin{proof}
@@ -677,7 +698,9 @@ which are well-behaved with respect to continuity.
 \ifproofs
 \begin{proof}
   $\bot_{\changes{A}} \leq \mzero$, therefore
-  $$\bot_A \leq \bot_A \cplus \bot_{\changes{A}} \leq \bot_A \cplus \mzero = \bot_A$$
+  \begin{displaymath}
+    \bot_A \leq \bot_A \cplus \bot_{\changes{A}} \leq \bot_A \cplus \mzero = \bot_A
+  \end{displaymath}
 \end{proof}
 \fi
 
@@ -712,15 +735,24 @@ Becik's Theorem\autocite[][section 10.1]{winskel1993formal}, but it has a straig
 \begin{prop}[Factoring of fixpoints]
   \label{prop:factoringFixpoints}
   Let $f : A \rightarrow A$ and $g: A \times B \rightarrow B$ be continuous, and let
-  $$h(a, b) \defeq (f(a), g(a, b))$$
+  \begin{displaymath}
+    h(a, b) \defeq (f(a), g(a, b))
+  \end{displaymath}
   Then
-  $$\lfp(h) = (\lfp f, \lfp(g(\lfp(f))))$$
+  \begin{displaymath}
+    \lfp(h) = (\lfp f, \lfp(g(\lfp(f))))
+  \end{displaymath}
 \end{prop}
 \ifproofs
 \begin{proof}
-  Let $$p(b) = (\lfp f, g(\lfp(f), b))$$
+  Let
+  \begin{displaymath}
+    p(b) = (\lfp f, g(\lfp(f), b))
+  \end{displaymath}
   Then $h(h^i(\bot)) \leq p(p^i(\bot)))$ (by simple induction), and so by continuity
-  $$\lfp(h) = \sqcup_{i \in \NN} h^i(\bot) \leq \sqcup_{i \in \NN} p^i(\bot) = \lfp(p)$$
+  \begin{displaymath}
+    \lfp(h) = \sqcup_{i \in \NN} h^i(\bot) \leq \sqcup_{i \in \NN} p^i(\bot) = \lfp(p)
+  \end{displaymath}
 
   But $h(\lfp(p)) = \lfp(p)$, so $\lfp(h) \leq \lfp(p)$, since $\lfp(h)$ is least.
 
@@ -734,11 +766,17 @@ Boolean algebras have a nice complete change structure.
 
 \begin{prop}
   Let $L$ be a Boolean algebra. Define
-  $$\cstr{L}_\superpose \defeq \cstruct{L}{L \times L}{\twist}$$
+  \begin{displaymath}
+    \cstr{L}_\superpose \defeq \cstruct{L}{L \times L}{\twist}
+  \end{displaymath}
   where
-  $$a \twist (p, q) \defeq (a \vee p) \wedge \neg q$$
+  \begin{displaymath}
+    a \twist (p, q) \defeq (a \vee p) \wedge \neg q
+  \end{displaymath}
   and the monoid operator is
-  $$(p, q) \splus (r, s) \defeq ((p \wedge \neg q) \vee r, (q \wedge \neg r) \vee s)$$
+  \begin{displaymath}
+    (p, q) \splus (r, s) \defeq ((p \wedge \neg q) \vee r, (q \wedge \neg r) \vee s)
+  \end{displaymath}
 
   Then $\cstr{L}_\superpose$ is a complete change action on $L$.
 \end{prop}
@@ -853,13 +891,13 @@ all the derivatives on Boolean algebras:
   a change action, and $f: A \rightarrow
   L$ a function. Then the derivatives of $f$ are precisely those functions
   $\derive{f}$ such that
-  $$
-  f(a \cplus \change{a}) \cminus_\bot f(a)
-  \changeOrder
-  \derive{f}(a, \change{a})
-  \changeOrder
-  f(a \cplus \change{a}) \cminus_\top f(a)
-  $$
+  \begin{displaymath}
+    f(a \cplus \change{a}) \cminus_\bot f(a)
+    \changeOrder
+    \derive{f}(a, \change{a})
+    \changeOrder
+    f(a \cplus \change{a}) \cminus_\top f(a)
+  \end{displaymath}
 \end{corollary}
 
 This makes \cref{thm:derivativeCharacterization} actually usable in practice, as
@@ -981,7 +1019,9 @@ OLD VERSION
   \end{align*}
 
   Then
-  $$f^i(x) = F_i$$
+  \begin{displaymath}
+    f^i(x) = F_i
+  \end{displaymath}
 \end{thm}
 
 \ifproofs
@@ -1024,9 +1064,13 @@ $f(F_{i+1})$
 The previous section has shown us how to use derivatives to compute fixpoints
 more efficiently, but we might also want to take the derivative of the fixpoint
 operator itself. The typical case for this will be where we have some fixpoint
-$$\fixpoint (\lambda X . F(E, X))$$
+\begin{displaymath}
+  \fixpoint (\lambda X . F(E, X))
+\end{displaymath}
 and we now wish to apply a change to $E$ and compute
-$$\fixpoint (\lambda X . F(E \cplus \change{E}, X))$$
+\begin{displaymath}
+  \fixpoint (\lambda X . F(E \cplus \change{E}, X))
+\end{displaymath}
 
 That is, we are applying a change to the function whose fixpoint we are taking.
 
@@ -1074,9 +1118,9 @@ derivative we'll need to do a bit more work.
   if and only if $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$.
 
   In particular, if the operator $\fixpoint$ is defined over $\Delta A$, we can define:
-  $$
-  \derive{\fixpoint_A}(f, \change{f}) \defeq \fixpoint_{\changes{A}}(\adjust(f, \change{f}))
-  $$
+  \begin{displaymath}
+    \derive{\fixpoint_A}(f, \change{f}) \defeq \fixpoint_{\changes{A}}(\adjust(f, \change{f}))
+  \end{displaymath}
   thus $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a fixpoint
   of $f \cplus \change{f}$.
 \end{thm}
@@ -1236,7 +1280,10 @@ closed-world assumption to solve this.
 \begin{defn}[Closed-world assumption and negation]
   There exists a universal relation $\universalRel$.
 
-  Negation on relations is defined as $$\neg R \defeq \universalRel \setminus R$$
+  Negation on relations is defined as
+  \begin{displaymath}
+    \neg R \defeq \universalRel \setminus R
+  \end{displaymath}
 \end{defn}
 
 This makes $\Rel$ into a Boolean algebra.
@@ -1259,7 +1306,9 @@ functions of terms are functions between Boolean algebras.
 
 \begin{defn}[Immediate consequence operator]
   Given a program $\mathcal{P} = \overline{P}$, the immediate consequence operator $\consq: \Rel^n \rightarrow \Rel^n$ is defined as follows:
-  $$\consq(\overline{R}) = \overline{\denote{P_i}(\overline{R})}$$
+  \begin{displaymath}
+    \consq(\overline{R}) = \overline{\denote{P_i}(\overline{R})}
+  \end{displaymath}
 \end{defn}
 
 That is, given a value for the program, we pass in all the relations
@@ -1267,7 +1316,9 @@ to the denotation of each predicate, to get a new product of relations.
 
 \begin{defn}[Program semantics]
   The semantics of a program $\mathcal{P}$ is defined to be
-  $$\denote{\mathcal{P}} \defeq \lfp_{\Rel^n}(\consq)$$
+  \begin{displaymath}
+    \denote{\mathcal{P}} \defeq \lfp_{\Rel^n}(\consq)
+  \end{displaymath}
   and may be calculated by repeated application of $\consq$ to $\bot$.
 \end{defn}
 
@@ -1287,7 +1338,9 @@ $\denote{\_}$ must be differentiable.
 However, this does not mean that we have a \emph{good} derivative for
 $\denote{\_}$. The derivative that we know we have for complete change actions
 is quite bad:
-$$\derive{f}(a, \change{a}) = f(a \cplus \change{a}) \cminus f(a)$$
+\begin{displaymath}
+  \derive{f}(a, \change{a}) = f(a \cplus \change{a}) \cminus f(a)
+\end{displaymath}
 Naively computed, this requires \emph{more} work than evaluating $f(a \cplus \change{a})$ directly!
 
 However, \cref{cor:booleanCharacterization} gives us a range of derivatives to
@@ -1330,7 +1383,11 @@ specifics of the evaluation engine. Here is one possibility.\footnote{These are
   $\downdiff: \Term \rightarrow \changes{\Rel^n} \rightarrow \changes{Rel}$, such
   that $\updiff \times \downdiff$ is a derivative for Datalog term semantics.
 
-  Let $$\diamond X \defeq X \twist (\updiff X, \downdiff X)$$ in the following.
+  Let
+  \begin{displaymath}
+    \diamond X \defeq X \twist (\updiff X, \downdiff X)
+  \end{displaymath}
+  in the following.
 
   \todompj{Make the references to the argument changes more obvious}
 
@@ -1536,11 +1593,15 @@ There are similarities: if we compare the definition of a $\cat{SAct}$ ``act-pre
 homeomorphism \autocite[See][]{kilp2000monoids} we can see that the structure is
 quite similar to the definition of differentiability:
 
-$$f(a \splus s) = f(a) \splus s$$
+\begin{displaymath}
+  f(a \splus s) = f(a) \splus s
+\end{displaymath}
 
 as opposed to
 
-$$f(a \cplus s) = f(a) \cplus \derive{f}(a, s)$$
+\begin{displaymath}
+  f(a \cplus s) = f(a) \cplus \derive{f}(a, s)
+\end{displaymath}
 
 That is, we use $\derive{f}$ to transform the action element into the new
 monoid, whereas in $\cat{SAct}$ it simply remains the same.
