@@ -911,6 +911,7 @@ semantics in \cref{sec:datalogDifferentiability}.
 \begin{prop}[Derivative of the iteration map with respect to $n$]
   Let $\cstr{A}$ be a complete change structure. Then $\iter_f$ is differentiable, and a derivative is given by:
   \begin{align*}
+    &\derive{\iter_f}: \NN \times \changes{\NN} \rightarrow \changes{A}\\
     &\derive{\iter_f}(0, m) \defeq \iter_f(m) \cminus \bot\\
     &\derive{\iter_f}(n+1, m) \defeq \derive{f}(\iter_f(n), \derive{\iter_f}(n, m))
   \end{align*}
@@ -946,14 +947,16 @@ relation:
 \end{thm}
 \ifproofs
 \begin{proof}
-  $\nextiter$ is continuous, since $\cplus$ and $\derive{f}$ are. 
+  $\nextiter_f$ is continuous, since $\cplus$ and $\derive{f}$ are. 
   \begin{itemize}
-    \item[ ]$\iter_f(n) = \pi_1 (\nextiter_f^n(\bot))$
-    \item[$\Rightarrow$]$\sqcup_{n \in \NN} \iter_f(n) = \sqcup_{n \in \NN} \pi_1 (\nextiter_f^n(\bot))$
-    \item[$\Rightarrow$]\{ $\pi_1$ is continuous \}\\
-      $\sqcup_{n \in \NN} \iter_f(n) = \pi_1 \sqcup_{n \in \NN} (\nextiter_f^n(\bot))$
-    \item[$\Rightarrow$]\{ $\nextiter$ is continuous \}\\
-      $\lfp(\iter_f) = \sqcup_{n \in \NN} \iter_f(n) = \pi_1 (\lfp(\nextiter_f))$
+    \item[ ]
+      $\lfp(\iter_f)$
+    \item[=]$\sqcup_{n \in \NN} \iter_f(n)$
+    \item[=]$\sqcup_{n \in \NN} \pi_1 (\nextiter_f^n(\bot))$
+    \item[=]\{ $\pi_1$ is continuous \}\\
+      $\pi_1 (\sqcup_{n \in \NN} \nextiter_f^n(\bot))$
+    \item[=]\{ $\nextiter$ is continuous \}\\
+      $\pi_1 (\lfp(\nextiter_f))$
   \end{itemize}
 \end{proof}
 \fi
@@ -1039,7 +1042,9 @@ For example, we might want to take the archetypal transitive closure relation
 
 and update it by changing the base relation $e$.
 
-However, this requires us to have a derivative for the fixpoint operator $\fixpoint$.
+However, this requires us to have a derivative for the fixpoint operator
+$\fixpoint$. We can get quite close in the general case, but to get a precise
+derivative we'll need to do a bit more work.
 
 \begin{defn}
   Let $\derive{\ev}$ be a derivative of the evaluation map. Then we define
@@ -1050,7 +1055,7 @@ However, this requires us to have a derivative for the fixpoint operator $\fixpo
   \end{align*}
 \end{defn}
 
-\begin{thm}[Derivatives of fixpoints]
+\begin{thm}[Pseudo-derivatives of fixpoints]
 \label{thm:fixpointDiff}
   Let
   \begin{itemize}
@@ -1115,9 +1120,9 @@ of each iteration map $\derive{\iter_n}$
 such that the resulting set $\{ \derive{\iter_n} \}$ is directed, then $\sqcup_{n \in \NN}
 \{\derive{\iter_n} \}$ is a derivative of $\lfp$.
 
-We therefore begin by constructing derivatives of $\iter_n$.
+This corresponds to the other derivative of $\iter$ - this time with respect to $f$:
 
-\begin{prop}[Derivatives of the iteration map with respect to $f$]
+\begin{prop}[Derivative of the iteration map with respect to $f$]
   $\iter_n$ is differentiable and a derivative is given by:
   \begin{align*}
     &\derive{\iter_n} : (A \rightarrow A) \times \changes{(A \rightarrow A)} \rightarrow \changes{A}\\
@@ -1157,7 +1162,6 @@ mutual recursion. In fact, the recursion is not \emph{mutual}: $\iter_n$ does
 not depend on $\derive{\iter_n}$. However, writing it in this way makes it
 amenable to computation by fixpoint, and we shall see how to eliminate the
 recomputation of $\iter_n$ later.
-
 \begin{align*}
   &\nextiter_{f, \change{f}} : (A, \changes{A}) \rightarrow (A, \changes{A})\\
   &\nextiter_{f, \change{f}} (a, \change{a}) \defeq (f(a), \derive{\ev}((f, a), (\change{f}, \change{a})))
@@ -1177,9 +1181,6 @@ recomputation of $\iter_n$ later.
 \end{thm}
 \ifproofs
 \begin{proof}
-  We can write our mutually recursive definitions of $\derive{\iter_n}$ and
-  $\iter_n$ as a recurrence relation:
-
   $\derive{\iter_n}$ and $\nextiter_{f, \change{f}}$ are continuous since
   $\derive{\ev}$ and $f$ are.
 
