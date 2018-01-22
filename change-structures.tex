@@ -70,7 +70,7 @@ some questions about the approach itself:
     The requirements for being a change structure are stringent enough that they
     prevent many useful structures in computer science (such as streams) from
     having nice change structures.
-  \item Can we say anything about the class of change structures in its own right?  
+  \item Can we say anything about the class of change structures in its own right?
     If we can easily compose new change structures using standard
     constructions like sums and products then it is much easier to apply the
     techniques to new types of data.
@@ -96,10 +96,10 @@ such languages seamlessly into larger incremental computations
 
 The major contributions of this paper are:
 \begin{itemize}
-  \item We generalize change structures to \emph{change actions} 
+  \item We generalize change structures to \emph{change actions}
     (\cref{sec:changeActions}), and explore their categorical properties (\cref{sec:category}).
   \item We derive theorems showing both how to incrementally compute fixpoints,
-    and how to update already evaluated fixpoint expressions (\cref{sec:fixpoints}). 
+    and how to update already evaluated fixpoint expressions (\cref{sec:fixpoints}).
   \item We generalize the incremental computation and
     update of Datalog semantics, showing how to gracefully handle additional
     language constructs, including negation and aggregation (\cref{sec:datalog}).
@@ -227,6 +227,9 @@ and database updates, files and \emph{diff}s, Git repositories and commits, even
 algorithms that encode a frame as a series of changes to the previous frame.
 
 \subsection{Complete change actions and minus operators}
+
+\todokcg{I would get rid of all the defn environments and just write in plaintext. It's hard to
+  follow the story here.}
 
 \todokcg{I would get rid of all the defn environments and just write in plaintext. It's hard to
   follow the story here.}
@@ -850,7 +853,7 @@ We can think of $\cstr{L}_\superpose$ as tracking changes as pairs of ``upwards'
 ``downwards'' changes, where the monoid action simply applies both.\footnote{We
   can, in fact, make it precise that $\cstr{L}_\superpose$ is an ``upwards''
   and ``downwards'' change action glued together, but here it is simpler to
-  just go directly to the useful change action.}  
+  just go directly to the useful change action.}
 
 Boolean algebras also have concrete definitions for maximal and minimal minus
 operators.
@@ -1175,7 +1178,7 @@ There is an extensive existing literature on incremental computation of Datalog,
 but the aim of this section is to argue that by viewing the computation
 of Datalog semantics as composed of differentiable functions we can give a
 bring the machinery that we've developed so far to bear, and give an elegant,
-flexible account of incremental evaluation. 
+flexible account of incremental evaluation.
 
 Firstly, however, we must show that we can see the semantics of Datalog in terms
 of elements that we know how to handle: Boolean algebras and fixpoints.
