@@ -5,5 +5,5 @@ name: change-structures
 windows:
   - shell: nix-shell --run zsh
   - editor: nix-shell --run emacs
-  - compile: while inotifywait -e modify change-structures.tex notation.tex; do ./refresh.sh; done
-  - view: ./refresh.sh; evince change-structures.pdf
+  - compile: nix-shell --run "latexmk -pdf -pvc -view=none change-structures"
+  - view: evince change-structures.pdf
