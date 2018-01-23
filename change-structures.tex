@@ -7,7 +7,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
-\usepackage[natbib=true]{biblatex}
+\usepackage[safeinputenc,natbib=true]{biblatex}
 \usepackage{cleveref}
 \usepackage{etoolbox}
 \usepackage{hyperref}
@@ -497,7 +497,7 @@ practical computation.
     \item[ ]$f((a, b) \cplus (\change{a}, \change{b})$
     \item[=]\{ definition of $\cplus$ on products\}\\
     $f(a \cplus \change{a}, b \cplus \change{b})$
-    \item[=]\{ definition of $\curry$\}\\
+    \item[=]\{ definition of $\curry{f}$\}\\
     $\curry{f}(a \cplus \change{a}, b \cplus \change{b})$
     \item[=]\{ differentiability of $\curry{f}$\}\\
     $(\curry{f}(a) \cplus \derive{(\curry{f})}(a, \change{a}))(b \cplus \change{b})$
@@ -509,6 +509,7 @@ practical computation.
     $f(a, b) \cplus [ \derive{\curry{f}(a)}(b, \change{b}) \cdot \derive{(\curry{f})}(a, \change{a})_\Delta(\curry{f}(a), b \cplus \change{b}) ]$
   \end{itemize}
   \todomario{Add comments on commutators, completeness}
+\end{proof}
 
 Derivatives of the evaluation map correspond to incremental evaluation of functions:
 
