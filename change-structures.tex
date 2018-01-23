@@ -426,9 +426,11 @@ practical computation.
 \label{prop:exponentials}
   Let $\cstr{A}_\cplus$ and $\cstr{B}_\cpluss$ be change actions. We will say a map 
   $\change{f} : (\cstr{A} \difffunc \cstr{B}) \rightarrow (\cstr{A} \difffunc \cstr{B})$ 
-  to be \emph{pointwise $\reachOrder$-increasing} iff, for every $f : \cstr{A} \difffunc \cstr{B}$
+  is \emph{pointwise $\reachOrder$-increasing} iff, for every $f : \cstr{A} \difffunc \cstr{B}$
   and $a \in \cstr{A}$, it is the case that $f(a) \reachOrder \change{f}(f)(a)$.
   We will denote the set of pointwise $\reachOrder$-increasing functions by $\rightarrow_{\reachOrder}$.
+  \todompj{Why can't we just say ``monotone with respect to the reachability
+    order lifted to functions''?}
 
   Then $\cstruct{\cstr{A} \difffunc \cstr{B}}
     {(\cstr{A} \difffunc \cstr{B}) \rightarrow {\reachOrder} (\cstr{A} \difffunc \cstr{B})}
@@ -439,30 +441,36 @@ practical computation.
 \end{prop}
 \ifproofs
 \begin{proof}
-  First, we note that, if $f : \cstr{A} \difffunc \cstr{B}$, $\change{f} \in \changes{\cstr{A} \difffunc \cstr{B}}$
+  First, we note that, if $f : \cstr{A} \difffunc \cstr{B}$, $\change{f} \in \changes{(\cstr{A} \difffunc \cstr{B})}$
   and $a \in \cstr{A}$, since $\change{f}$ is pointwise $\reachOrder$-increasing, $\change{f}(f)(a)$ is reachable
   from $f(a)$, and thus there is some $\change{b} \in \changes{B}$ satisfying $f(a) \cplus \change{b} = \change{f}(f)(a)$.
   We will often abuse the notation and use $\change{f}_\Delta(f)(a)$ to refer such a change (although, in general, the Axiom
   of Choice is necessary to find such a $\change{b}$).
 
   \todomario{this is terrible and I hate it}
+  \todompj{Agreed}
+
   Furthermore, if $f, g : \cstr{A} \difffunc \cstr{B}$ and for all $a$ we have $f(a) \reachOrder g(a)$, then there exists
   some function change $\change{gf}$ sending $f$ to $g$ (it suffices to pick the change that maps $f$ to $g$ and every other
   differentiable map to itself).
 
   We are now ready to proceed with the proof. The evaluation map is, as expected, identical to its definition in $\cat{Set}$:
   \begin{align*}
-    \ev &: ((\cstr{A} \difffunc \cstr{B}) \times \cstr{A}) \rightarrow \cstr{B}\\
-    \ev((f, a)) &\defeq f(a)
+    &\ev : (\cstr{A} \difffunc \cstr{B}) \times \cstr{A} \rightarrow \cstr{B}\\
+    &\ev((f, a)) \defeq f(a)
   \end{align*}
 
   We need first to show that it is differentiable: this is straightforward to check. Indeed, suppose 
   $a \in \changes{A}, f : \cstr{A} \difffunc \cstr{B}, \change{a} \in \changes{A}, \change{f} \in \changes{(\cstr{A} \difffunc \cstr{B})}$.
   Then, for $f'$ an arbitrary derivative of $f$, let:
   \begin{align*}
-    \derive{\ev} : ((\cstr{A} \difffunc \cstr{B}) \times \cstr{A} \times \changes{(\cstr{A} \difffunc \cstr{B})} \times \changes{A}) \rightarrow \changes{B}
-    \derive{\ev}(f, a, \change{f}, \change{a}) \defeq \derive{f}(a, \change{a}) \cdot \change{f}_\Delta(f)(a \cplus \change{a})
+    &\derive{\ev} : (((\cstr{A} \difffunc \cstr{B}) \times \cstr{A}) \times (\changes{(\cstr{A} \difffunc \cstr{B})} \times \changes{A})) \rightarrow \changes{B}\\
+    &\derive{\ev}((f, a), (\change{f}, \change{a})) \defeq \derive{f}(a, \change{a}) \cdot \change{f}_\Delta(f)(a \cplus \change{a})
   \end{align*}
+
+  \todompj{Decide whether to present $\derive{\ev}$ throughout as taking four
+    arguments or two pairs}
+
   Then $\derive{\ev}$ is a derivative of the evaluation map $\ev$:
   \begin{itemize}
     \item[ ]$\ev((f, a) \cplus (\change{f}, \change{a}))$
@@ -475,7 +483,7 @@ practical computation.
     \item[=]\{ differentiability of $f$\}\\
     $f(a) \cplus [ f'(a, \change{a})\cdot \change{f}_\Delta(f)(a \cplus \change{a}) ]$
     \item[=]\{ definition of $\ev$\}\\
-    $\ev(f, a) \cplus \ev'(f, a, \change{f}, \change{a})$
+    $\ev(f, a) \cplus \ev'((f, a), (\change{f}, \change{a}))$
   \end{itemize}
 
   It remains to prove that a function $f : \cstr{A} \times \cstr{B} \rightarrow \cstr{C}$ is differentiable iff its curried
@@ -484,9 +492,11 @@ practical computation.
   \begin{itemize}
   \item[ ]$\curry{f}(a \cplus \change{a})$
   \item[=]$\lambda b . f(a \cplus \change{a}, b)$
-  \item[=]$\lambda b . f(a, b) \cplus \derive{f}((a, b), (\change{a}, 0))$
+  \item[=]$\lambda b . f(a, b) \cplus \derive{f}((a, b), (\change{a}, \mzero))$
   \item[=]$(\cplus \change{a}) \circ \lambda b . f(a)$
   \end{itemize}
+  \todompj{I don't follow the last step here}
+
   We note that $\curry{f}(a \cplus \change{a})$ is differentiable, and $\curry{f}(a)(b) \reachOrder \curry{f}(a \cplus \change{a})(b)$,
   hence there is some function change $\change{f}_{a, \change{a}}$ mapping $\curry{f}(a)$ to $\curry{f}(a \cplus \change{a})$. The map
   $\lambda a . \lambda \change{a} . \change{f}_{a, \change{a}}$ is, then, a derivative of $\curry{f}$.
@@ -494,18 +504,18 @@ practical computation.
   Conversely, suppose $\curry{f} : \cstr{A} \rightarrow \cstr{C}^{\cstr{B}}$ is differentiable, let $(a, b) \in \cstr{A} \times \cstr{B}$
   and let $(\change{a}, \change{b}) \in \changes{A} \times \changes{B}$. Then:
   \begin{itemize}
-    \item[ ]$f((a, b) \cplus (\change{a}, \change{b})$
+    \item[ ]$f((a, b) \cplus (\change{a}, \change{b}))$
     \item[=]\{ definition of $\cplus$ on products\}\\
-    $f(a \cplus \change{a}, b \cplus \change{b})$
+    $f((a \cplus \change{a}, b \cplus \change{b}))$
     \item[=]\{ definition of $\curry{f}$\}\\
-    $\curry{f}(a \cplus \change{a}, b \cplus \change{b})$
+    $\curry{f}(a \cplus \change{a})(b \cplus \change{b})$
     \item[=]\{ differentiability of $\curry{f}$\}\\
     $(\curry{f}(a) \cplus \derive{(\curry{f})}(a, \change{a}))(b \cplus \change{b})$
     \item[=]\{ $\derive{(\curry{f})}(a, \change{a})$ is pointwise $\reachOrder$-increasing \}\\
     $\curry{f}(a)(b \cplus \change{b}) \cplus \derive{(\curry{f})}(a, \change{a})_\Delta(\curry{f}(a), b \cplus \change{b})$
     \item[=]\{ differentiability of $\curry{f}(a)$\}\\
     $\curry{f}(a)(b) \cplus [ \derive{\curry{f}(a)}(b, \change{b}) \cdot \derive{(\curry{f})}(a, \change{a})_\Delta(\curry{f}(a), b \cplus \change{b}) ]$
-    \item[=]\{ definition of $\curry{f}$\}
+    \item[=]\{ definition of $\curry{f}$\}\\
     $f(a, b) \cplus [ \derive{\curry{f}(a)}(b, \change{b}) \cdot \derive{(\curry{f})}(a, \change{a})_\Delta(\curry{f}(a), b \cplus \change{b}) ]$
   \end{itemize}
   \todomario{Add comments on commutators, completeness}
