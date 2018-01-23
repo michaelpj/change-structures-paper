@@ -732,7 +732,7 @@ A direct corollary of this property is the following result, reminiscent of a we
 \fi
 
 We also state the following additional fixpoint lemma. This is a specialization of
-Becik's Theorem\autocite[][section 10.1]{winskel1993formal}, but it has a straightforward direct proof.
+Becik's Theorem \autocite[][section 10.1]{winskel1993formal}, but it has a straightforward direct proof.
 
 \begin{prop}[Factoring of fixpoints]
   \label{prop:factoringFixpoints}
@@ -923,23 +923,22 @@ and $\iter_n$ when we are holding $n$ constant.
 
 \subsection{Incremental computation of fixpoints}
 
-Derivatives give us a technique for computing fixpoints incrementally. Kleene's
-fixpoint theorem tells us that fixpoints exist for monotone functions on dcpos, and also gives us
-a simple procedure for computing them: start from $\bot$ and apply the function
-until there is no change. However, this can be woefully inefficient.
-
 In the Datalog literature, the approach of computing the fixpoint by bottom-up
 iteration is called ``naive evaluation''. Naive evaluation has the property that
 if it derives a fact at some iteration, it will derive that fact at each
 subsequent iteration as well. This is obviously wasteful, and can turn what
 should be a linear computation into a quadratic one.
 
-The canonical solution to this problem is ``semi-naive evaluation'', which
-attempts to derive only the new facts at each iteration. However, ``semi-naive''
-as traditionally presented has some warts, and
-the following theorem provides a generalization of it to any differentiable function over a
-change action. We will see the details of how to differentiate Datalog
-semantics in \cref{sec:datalogDifferentiability}.
+The traditional solution to this problem is ``semi-naive evaluation'', which
+attempts to derive only the new facts at each iteration \autocite[][section 13.1]{abiteboul1995foundations}. However, ``semi-naive''
+as traditionally presented requires a Datalog-specific proof, and is hard to
+extend to handle new language constructs. The following theorems provide a
+generalization of semi-naive evaluation to any differentiable function over a
+continuous change action. To apply this to the semantics of Datalog we will need
+to differentiate its semantics, and we will see the details of this in \cref{sec:datalogDifferentiability}.
+
+Since we are trying to incrementalize the iterative step, we start by taking the
+derivative of $\iter$ with respect to $n$.
 
 \begin{prop}[Derivative of the iteration map with respect to $n$]
   Let $\cstr{A}$ be a complete change structure. Then $\iter_f$ is differentiable, and a derivative is given by:
@@ -992,6 +991,9 @@ relation:
 This gives us a way to compute our fixpoint incrementally, by adding successive
 changes to our accumulator until we reach fixpoint.
 
+Note that we have \emph{not} taken the fixpoint of $\nextiter_f$, since it is
+not continuous. 
+
 \subsection{Derivatives of fixpoints}
 \label{sec:fixpointDerivatives}
 
@@ -1006,7 +1008,7 @@ and we now wish to apply a change to $E$ and compute
   \fixpoint (\lambda X . F(E \cplus \change{E}, X))
 \end{displaymath}
 
-That is, we are applying a change to the function whose fixpoint we are taking.
+This amounts to applying a change to the \emph{function} whose fixpoint we are taking.
 
 In Datalog this would allow us to update a recursively defined relation given an
 update to a non-recursive dependency of it, such as the base database.
@@ -1021,7 +1023,8 @@ For example, we might want to take the archetypal transitive closure relation
 and update it by changing the base relation $e$.
 
 However, this requires us to have a derivative for the fixpoint operator
-$\fixpoint$. We can get quite close in the general case, but to get a precise
+$\fixpoint$ with respect to the function which it takes the fixpoint of.
+We can get quite close in the general case, but to get a precise
 derivative we'll need to do a bit more work.
 
 \begin{defn}
@@ -1033,6 +1036,7 @@ derivative we'll need to do a bit more work.
     &\adjust : (A \rightarrow A) \times \changes{(A \rightarrow A)} \rightarrow (\changes{A} \rightarrow \changes{A})\\
     &\adjust(f, \change{f}) \defeq \lambda\ \change{a} . \derive{\ev}((f,
     \fixpoint_A(f), (\change{f}, \change{a})))\\
+    &\derive{\fixpoint_A} : (A \rightarrow A) \times \changes{(A \rightarrow A)} \rightarrow \changes{A}\\
     &\derive{\fixpoint_A}(f, \change{f}) \defeq \fixpoint_{\changes{A}}(\adjust(f, \change{f}))
   \end{align*}
 \end{defn}
@@ -1083,17 +1087,17 @@ that $\fixpoint(f) \cplus \derive{\fixpoint}(f, \change{f})$ computes \emph{a} f
 the same one computed by $\fixpoint{(f \cplus \change{f})}$.
 
 However, if we restrict ourselves to directed-complete partial orders, least
-fixpoints, and continuous change actions, then $\derive{\lfp}$ becomes a true derivative. This is not too
-onerous a restriction, since this is the setting in which we normally compute
-least fixpoints anyway.
+fixpoints, and continuous change actions, then $\derive{\lfp}$ \emph{is} a
+derivative of $\lfp$. This is not too onerous a restriction, since this is
+the setting in which we normally compute fixpoints anyway.
 
 Since $\lfp$ is characterized as the limit of a chain of functions,
 \cref{cor:diffContinuous} suggests a way to compute its derivative. If we can find a derivative
-of each iteration map $\derive{\iter_n}$
+$\derive{\iter_n}$ of each iteration map 
 such that the resulting set $\{ \derive{\iter_n} \}$ is directed, then $\sqcup_{n \in \NN}
-\{\derive{\iter_n} \}$ is a derivative of $\lfp$.
+\{\derive{\iter_n} \}$ will be a derivative of $\lfp$.
 
-This corresponds to the other derivative of $\iter$ - this time with respect to $f$:
+These correspond to the other derivative of $\iter$ - this time with respect to $f$.
 
 \begin{prop}[Derivative of the iteration map with respect to $f$]
   $\iter_n$ is differentiable and a derivative is given by:
@@ -1143,7 +1147,8 @@ recomputation of $\iter_n$ later.
     \item $f : \cstr{A} \rightarrow \cstr{A}$ be a continuous, differentiable function
     \item $f' : A \times \changes{A} \rightarrow \changes{A}$ be a continuous derivative of $f$
     \item $\change{f} : A \rightarrow \changes{A}$ be a function change
-    \item $\derive{\ev}$ be a continuous derivative of the evaluation map
+    \item $\derive{\ev}$ be a derivative of the evaluation map, continuous with
+      respect to $a$ and $\change{a}$.
   \end{itemize}
   Then $\derive{\lfp}$ is a derivative of $\lfp$.
 \end{thm}
