@@ -292,8 +292,7 @@ Thinness gives us uniqueness of derivatives:
 
 \begin{defn}[Category of change actions]
   We define the category $\cat{CStruct}$ of change actions. The objects are
-  change actions and the morphisms are differentiable functions. We denote
-  the set of differentiable functions between $\cstr{A}$ and $\cstr{B}$ as $\cstr{A} \difffunc \cstr{B}$.
+  change actions and the morphisms are differentiable functions. 
 \end{defn}
 
 \subsection{Equivalence with PreOrd}
@@ -425,8 +424,8 @@ practical computation.
 \begin{prop}[Exponentials]
 \label{prop:exponentials}
   Let $\cstr{A}_\cplus$ and $\cstr{B}_\cpluss$ be change actions. We will say a map 
-  $\change{f} : (\cstr{A} \difffunc \cstr{B}) \rightarrow (\cstr{A} \difffunc \cstr{B})$ 
-  is \emph{pointwise $\reachOrder$-increasing} iff, for every $f : \cstr{A} \difffunc \cstr{B}$
+  $\change{f} : (\cstr{A} \rightarrow \cstr{B}) \rightarrow (\cstr{A} \rightarrow \cstr{B})$ 
+  is \emph{pointwise $\reachOrder$-increasing} iff, for every $f : \cstr{A} \rightarrow \cstr{B}$
   and $a \in \cstr{A}$, it is the case that $f(a) \reachOrder \change{f}(f)(a)$.
   We will denote the set of pointwise $\reachOrder$-increasing functions by $\rightarrow_{\reachOrder}$.
   \todompj{Why can't we just say ``monotone with respect to the reachability
@@ -439,8 +438,8 @@ practical computation.
     always increasing, but only monotone if the change structure has a commutator, and this
     is why the previous proof failed.}
 
-  Then $\cstruct{\cstr{A} \difffunc \cstr{B}}
-    {(\cstr{A} \difffunc \cstr{B}) \rightarrow {\reachOrder} (\cstr{A} \difffunc \cstr{B})}
+  Then $\cstruct{\cstr{A} \rightarrow \cstr{B}}
+    {(\cstr{A} \rightarrow \cstr{B}) \rightarrow_{\reachOrder} (\cstr{A} \rightarrow \cstr{B})}
     {\lambda f . \lambda \change{f} . \change{f}(f)}$
   is a change action with base
   set $\cstr{A} \rightarrow \cstr{B}$, with monoidal structure given by function composition.
@@ -448,7 +447,7 @@ practical computation.
 \end{prop}
 \ifproofs
 \begin{proof}
-  First, we note that, if $f : \cstr{A} \difffunc \cstr{B}$, $\change{f} \in \changes{(\cstr{A} \difffunc \cstr{B})}$
+  First, we note that, if $f : \cstr{A} \rightarrow \cstr{B}$, $\change{f} \in \changes{(\cstr{A} \rightarrow \cstr{B})}$
   and $a \in \cstr{A}$, since $\change{f}$ is pointwise $\reachOrder$-increasing, $\change{f}(f)(a)$ is reachable
   from $f(a)$, and thus there is some $\change{b} \in \changes{B}$ satisfying $f(a) \cplus \change{b} = \change{f}(f)(a)$.
   We will often abuse the notation and use $\change{f}_\Delta(f)(a)$ to refer such a change (although, in general, the Axiom
@@ -457,21 +456,21 @@ practical computation.
   \todomario{this is terrible and I hate it}
   \todompj{Agreed}
 
-  Furthermore, if $f, g : \cstr{A} \difffunc \cstr{B}$ and for all $a$ we have $f(a) \reachOrder g(a)$, then there exists
+  Furthermore, if $f, g : \cstr{A} \rightarrow \cstr{B}$ and for all $a$ we have $f(a) \reachOrder g(a)$, then there exists
   some function change $\change{gf}$ sending $f$ to $g$ (it suffices to pick the change that maps $f$ to $g$ and every other
   differentiable map to itself).
 
   We are now ready to proceed with the proof. The evaluation map is, as expected, identical to its definition in $\cat{Set}$:
   \begin{align*}
-    &\ev : (\cstr{A} \difffunc \cstr{B}) \times \cstr{A} \rightarrow \cstr{B}\\
+    &\ev : (\cstr{A} \rightarrow \cstr{B}) \times \cstr{A} \rightarrow \cstr{B}\\
     &\ev((f, a)) \defeq f(a)
   \end{align*}
 
   We need first to show that it is differentiable: this is straightforward to check. Indeed, suppose 
-  $a \in \changes{A}, f : \cstr{A} \difffunc \cstr{B}, \change{a} \in \changes{A}, \change{f} \in \changes{(\cstr{A} \difffunc \cstr{B})}$.
+  $a \in \changes{A}, f : \cstr{A} \rightarrow \cstr{B}, \change{a} \in \changes{A}, \change{f} \in \changes{(\cstr{A} \rightarrow \cstr{B})}$.
   Then, for $f'$ an arbitrary derivative of $f$, let:
   \begin{align*}
-    &\derive{\ev} : (((\cstr{A} \difffunc \cstr{B}) \times \cstr{A}) \times (\changes{(\cstr{A} \difffunc \cstr{B})} \times \changes{A})) \rightarrow \changes{B}\\
+    &\derive{\ev} : (((\cstr{A} \rightarrow \cstr{B}) \times \cstr{A}) \times (\changes{(\cstr{A} \rightarrow \cstr{B})} \times \changes{A})) \rightarrow \changes{B}\\
     &\derive{\ev}((f, a), (\change{f}, \change{a})) \defeq \derive{f}(a, \change{a}) \cdot \change{f}_\Delta(f)(a \cplus \change{a})
   \end{align*}
 
@@ -483,7 +482,7 @@ practical computation.
     \item[ ]$\ev((f, a) \cplus (\change{f}, \change{a}))$
     \item[=]\{ definition of $\ev$\}\\
     $\ev(\change{f}(f), a \cplus \change{a})$
-    \item[=]\{ definition of $\changes{\cstr{A} \difffunc \cstr{B}}$\}\\
+    \item[=]\{ definition of $\changes{\cstr{A} \rightarrow \cstr{B}}$\}\\
     $\change{f}(f)(a \cplus \change{a})$
     \item[=]\{ $\change{f}$ is pointwise $\reachOrder$-increasing\}\\
     $f(a \cplus \change{a}) \cplus \change{f}_\Delta(f)(a \cplus \change{a})$
@@ -977,17 +976,15 @@ relation:
   Let $\cstr{A}$ be a continuous change action, $f: \cstr{A} \rightarrow
   \cstr{A}$ be continuous and differentiable.
 
-  Then $\lfp(f) = \pi_1(\lfp(\nextiter_f))$.
+  Then $\lfp(f) = \pi_1(\sqcup_{n \in \NN}(\nextiter_f^n(\bot)))$.
 \end{thm}
 \ifproofs
 \begin{proof}
-  $\nextiter_f$ is continuous, since $\cplus$ and $\derive{f}$ are. 
   \begin{align*}
     &\lfp(\iter_f)\\
     &=\sqcup_{n \in \NN} \iter_f(n)\\
     &=\sqcup_{n \in \NN} \pi_1 (\nextiter_f^n(\bot))\\
-    &=\pi_1 (\sqcup_{n \in \NN} \nextiter_f^n(\bot)) \tag{$\pi_1$ is continuous}\\
-    &=\pi_1 (\lfp(\nextiter_f)) \tag{$\nextiter$ is continuous, Kleene's Theorem}
+    &=\pi_1 (\sqcup_{n \in \NN} \nextiter_f^n(\bot)) \tag{$\pi_1$ is continuous}
   \end{align*}
 \end{proof}
 \fi
