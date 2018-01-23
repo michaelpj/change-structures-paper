@@ -623,9 +623,6 @@ Having a monotone order on the changes is very useful.
 
   Then $g$ is a derivative for $f$.
 \end{thm}
-\begin{proof}
-  Trivial.
-\end{proof}
 
 \subsubsection{Maximal and minimal derivatives}
 
@@ -929,8 +926,9 @@ subsequent iteration as well. This is obviously wasteful, and can turn what
 should be a linear computation into a quadratic one.
 
 The traditional solution to this problem is ``semi-naive evaluation'', which
-attempts to derive only the new facts at each iteration \autocite[][section 13.1]{abiteboul1995foundations}. However, ``semi-naive''
-as traditionally presented requires a Datalog-specific proof, and is hard to
+attempts to derive only the new facts at each iteration \autocite[][section
+13.1]{abiteboul1995foundations}.
+However, semi-naive as traditionally presented requires a Datalog-specific proof, and is hard to
 extend to handle new language constructs. The following theorems provide a
 generalization of semi-naive evaluation to any differentiable function over a
 continuous change action. To apply this to the semantics of Datalog we will need
@@ -965,7 +963,10 @@ relation:
 \begin{align*}
   &\nextiter_f : (A, \changes{A}) \rightarrow (A, \changes{A})\\
   &\nextiter_f (\bot, \bot) \defeq (\bot, f(\bot) \cminus \bot)\\
-  &\nextiter_f (a, \change{a}) \defeq (a \cplus \change{a}, \derive{f}(a, \change{a}))\\
+  &\nextiter_f (a, \change{a}) \defeq (a \cplus \change{a}, \derive{f}(a, \change{a}))
+\end{align*}
+Which has the property that
+\begin{align*}
   &\nextiter_f^n (\bot, \bot) = (\iter_f(n), \derive{\iter_f}(n, 1))
 \end{align*}
 
@@ -1128,15 +1129,20 @@ These correspond to the other derivative of $\iter$ - this time with respect to 
 \fi
 
 As before, we can now compute $\derive{\iter_n}$ together with $\iter_n$ by
-mutual recursion. In fact, the recursion is not \emph{mutual}: $\iter_n$ does
+mutual recursion. 
+\begin{align*}
+  &\nextiter_{f, \change{f}} : (A, \changes{A}) \rightarrow (A, \changes{A})\\
+  &\nextiter_{f, \change{f}} (a, \change{a}) \defeq (f(a), \derive{\ev}((f, a), (\change{f}, \change{a})))
+\end{align*}
+Which has the property that
+\begin{align*}
+  &\nextiter_{f, \change{f}}^n (\bot, \bot) = (\iter_n(f), \derive{\iter_n}(f, \change{f}))
+\end{align*}
+
+In fact, the recursion here is not \emph{mutual}: $\iter_n$ does
 not depend on $\derive{\iter_n}$. However, writing it in this way makes it
 amenable to computation by fixpoint, and we shall see how to eliminate the
 recomputation of $\iter_n$ later.
-\begin{align*}
-  &\nextiter_{f, \change{f}} : (A, \changes{A}) \rightarrow (A, \changes{A})\\
-  &\nextiter_{f, \change{f}} (a, \change{a}) \defeq (f(a), \derive{\ev}((f, a), (\change{f}, \change{a})))\\
-  &\nextiter_{f, \change{f}}^n (\bot, \bot) = (\iter_n(f), \derive{\iter_n}(f, \change{f}))
-\end{align*}
 
 \begin{thm}[Derivatives of least fixpoint operators]
   \label{thm:leastFixpointDiff}
