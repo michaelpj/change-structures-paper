@@ -190,27 +190,19 @@ they satisfy the standard chain rule.
 \fi
 
 Here are some recurring examples of changes actions:
-\todompj{Delete most of these}
 \begin{itemize}
-  \item $\cstr{A}_\discrete \defeq \cstruct{A}{\emptyset}{\emptyset}$, the discrete change action on any base set.
-  \item $\cstr{A}_\Rightarrow \defeq \cstruct{A}{A\Rightarrow A}{\ev}$, where $A
-    \Rightarrow A$ denotes the exponential object and $\ev$ is the evaluation map.
-  \item $\cstr{\mathbb{Z}}_1 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{+}$
-  \item $\cstr{\mathbb{Z}}_2 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{-}$
-  \item $\cstr{\mathbb{Z}}_3 \defeq \cstruct{\mathbb{Z}}{\mathbb{Z}}{+}$
-  \item $\cstr{F}_2 \defeq$ integers modulo 2 with addition.
+  \item $\cstr{A}_\discrete \defeq \cstruct{A}{\emptyset}{\emptyset}$ is the discrete change action on any base set.
+  \item $\cstr{A}_\Rightarrow \defeq \cstruct{A}{A^A}{\ev}$, where $A^A$ denotes the exponential object and $\ev$ is the evaluation map.
+  \item $[A]$, the type of lists (or streams) of elements of type $A$, has a
+    change structure over concatenation ($\doubleplus$): $\cstruct{[A]}{[A]}{\doubleplus}$.
+  \item $\{A\}$, the type of sets, has change actions $\cstruct{\{A\}}{\{A\}}{\cup}$, $\cstruct{\{A\}}{\{A\}}{\cap}$.
 \end{itemize}
 
-Indeed, any monoid $(A, \splus)$ can be seen as a change action $\cstruct{A}{A}{\splus}$. In particular,
+Indeed, any monoid $(A, \splus)$ can be seen as a change action
+$\cstruct{A}{A}{\splus}$, and the final two examples are instances of this. In particular,
 for any change action $\cstruct{A}{\changes{A}}{\cplus}$,
 $\cstruct{\changes{A}}{\changes{A}}{\splus}$ is also a change action. Many practical change actions
-can be constructed in this way:
-\begin{itemize}
-  \item $[A]$, the type of lists (or streams) of elements of type $A$, is a monoid under
-  concatenation. Hence it defines a change action $\cstruct{[A]}{[A]}{\doubleplus}$.
-  \item $\{A\}$, the type of sets, is a monoid under either set union or intersection,
-  and thus it defines change actions $\cstruct{\{A\}}{\{A\}}{\cup}$, $\cstruct{\{A\}}{\{A\}}{\cap}$
-\end{itemize}
+can be constructed in this way.
 
 Many other notions in computer science can be naturally understood in terms of change actions, e.g. databases
 and database updates, files and \emph{diff}s, Git repositories and commits, even video compression
@@ -267,7 +259,8 @@ well-behaved, so it's worth naming them.
   = a \cplus \change{b}$ for some $a \in A$, it is the case that $\change{a} = \change{b}$.
 \end{defn}
 
-Many change actions are not thin, for example $\cstr{F}_2$.
+Many change actions are not thin, for example $\cstruct{\NN}{\ZZ}{+}$ (as $0 + (-1)
+= 0 + (-2)$ in $\NN$).
 
 \begin{prop}[Thin equivalences]
   Let $\cstr{A}$ be a change action. Then the following are equivalent.
@@ -371,7 +364,7 @@ $\cat{CAct}$ and $\cat{PreOrd}$.
 \end{proof}
 \fi
 
-Since $\cat{PreOrd}$ is topological over $\cat{Set}$\autocite[][Chapter V]{adamek2004abstract}, 
+Since $\cat{PreOrd}$ is topological over $\cat{Set}$ \autocite[][Chapter V]{adamek2004abstract}, 
 (and hence complete and co-complete) and also an exponential ideal of $\cat{Cat}$
 (and hence Cartesian closed), this gives us a proof of the existence of limits, colimits, and exponentials in $\cat{CAct}$.
 
@@ -1439,7 +1432,7 @@ dependent types.
 
 We have omitted minus operators from our definition because
 there are many interesting change actions that are not complete and so cannot
-have a minus operator (for example, $\cstr{\mathbb{Z}}_3$ does, but $\cstr{\mathbb{Z}}_1$ does
+have a minus operator (for example, $\cstruct{\ZZ}{\ZZ}{+}$ does, but $\cstruct{\ZZ}{\NN}{+}$ does
 not). Where we can find a change structure with a minus operator, often we are
 forced to use unwieldy representations for change sets, and
 \citeauthor{cai2014changes} cite this as their reason for using a dependently
