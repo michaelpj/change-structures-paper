@@ -106,6 +106,14 @@ The major contributions of this paper are:
 \section{Change actions}
 \label{sec:changeActions}
 
+The core concept we will work with is a \emph{change action}. A change action is
+a set along with a set of \emph{changes} that can be ``applied'' to elements of
+the base set using an operator $\cplus$ (pronounced ``smush''). We also require
+some structure on the changes themselves: they must form a \emph{monoid action}
+on the base set.\footnote{The requirement that the change set be a monoid is convenient but in
+  fact inessential: given any set with an action on the base set, we can take the
+  free monoid over the action set to obtain a monoid action.}
+
 \begin{defn}[Change actions]
   A \emph{change action} is defined as:
 
@@ -115,19 +123,15 @@ The major contributions of this paper are:
 
   where $A$ is a set, $(\changes{A}, \splus, \mzero)$ is a monoid, and $\cplus$ gives a monoid action on $A$.
 
-  We will call $A$ the base set, and $\changes{A}$ the change set of the change action.
+  We will call $A$ the base set, and $\changes{A}$ the change set of the change
+  action. We may abbreviate $\cstruct{A}{\changes{A}}{\cplus}$ to $\cstr{A}_\cplus$.
 \end{defn}
 
-Elements in the change set represent changes that can be made to elements in the
-base set, with the monoid action being the operation that ``applies'' the
-change. The requirement that the change set be a monoid is convenient but in
-fact inessential: given any set with an action on the base set, we can take the
-free monoid over the action set to obtain a monoid action.
-
 The fact that the change set is a monoid action reveals the heart of the
-change action definition: the change set is a representation of a
-\emph{transformation monoid} over the base set, with the monoid
-operation simply being composition.
+change action definition: the change set represents a subset of the
+endofunctions on the base set which is closed under composition (a
+\emph{transformation monoid}). This shows that we can represent any closed structure of
+changes with a change action.
 
 The primary motivation for change actions is that they let us define
 \emph{derivatives} for functions.
@@ -185,6 +189,7 @@ they satisfy the standard chain rule.
 \fi
 
 Here are some recurring examples of changes actions:
+\todompj{Delete most of these}
 \begin{itemize}
   \item $\cstr{A}_\discrete \defeq \cstruct{A}{\emptyset}{\emptyset}$, the discrete change action on any base set.
   \item $\cstr{A}_\Rightarrow \defeq \cstruct{A}{A\Rightarrow A}{\ev}$, where $A
@@ -207,7 +212,7 @@ can be constructed in this way:
   \item $[A]$, the type of lists (or streams) of elements of type $A$, is a monoid under
   concatenation. Hence it defines a change action $\cstruct{[A]}{[A]}{\doubleplus}$.
   \item $\{A\}$, the type of sets, is a monoid under either set union or intersection,
-  and thus it defines change actions $\cstruct{\{A\}}{\{A\}}{\cup},\cstruct{\{A\}}{\{A\}}{\cap}$
+  and thus it defines change actions $\cstruct{\{A\}}{\{A\}}{\cup}$, $\cstruct{\{A\}}{\{A\}}{\cap}$
 \end{itemize}
 
 Many other notions in computer science can be naturally understood in terms of change actions, e.g. databases
@@ -474,9 +479,6 @@ practical computation.
     &\derive{\ev}((f, a), (\change{f}, \change{a})) \defeq \derive{f}(a, \change{a}) \cdot \change{f}_\Delta(f)(a \cplus \change{a})
   \end{align*}
 
-  \todompj{Decide whether to present $\derive{\ev}$ throughout as taking four
-    arguments or two pairs}
-
   Then $\derive{\ev}$ is a derivative of the evaluation map $\ev$:
   \begin{itemize}
     \item[ ]$\ev((f, a) \cplus (\change{f}, \change{a}))$
@@ -722,7 +724,7 @@ A direct corollary of this property is the following result, reminiscent of a we
   Let $\cstr{A}, \cstr{B}$ be change actions, with $\cstr{B}$ continuous and let $\{f_i\}$ and $\{f'_i\}$ be
   $I$-indexed directed families of functions in $A \rightarrow B$ and $A \times \changes{A} \rightarrow \changes{B}$.
 
-  Then, if for every $i \in I$ is the case that $f'_i$ is a derivative of $f_i$, then $\sqcup_{i \in I} \{ f'_i \}$ is
+  Then, if for every $i \in I$ is the case that $f''_i$ is a derivative of $f_i$, then $\sqcup_{i \in I} \{ f'_i \}$ is
   a derivative of $\sqcup_{i \in I} \{ f_i \}$.
 \end{corollary}
 \ifproofs
