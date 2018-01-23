@@ -988,7 +988,9 @@ We want to do this by computing a fixpoint, so we can rewrite it as a recurrence
 relation:
 \begin{align*}
   &\nextiter_f : (A, \changes{A}) \rightarrow (A, \changes{A})\\
-  &\nextiter_f (a, \change{a}) \defeq (a \cplus \change{a}, \derive{f}(a, \change{a}))
+  &\nextiter_f (\bot, \bot) \defeq (\bot, f(\bot) \cminus \bot)\\
+  &\nextiter_f (a, \change{a}) \defeq (a \cplus \change{a}, \derive{f}(a, \change{a}))\\
+  &\nextiter_f^n (\bot, \bot) = (\iter_f(n), \derive{\iter_f}(n, 1))
 \end{align*}
 
 \begin{thm}[Incremental computation of fixpoints]
@@ -1012,56 +1014,6 @@ relation:
 
 This gives us a way to compute our fixpoint incrementally, by adding successive
 changes to our accumulator until we reach fixpoint.
-
-OLD VERSION
-\todompj{Decide whether to use this or the new version}
-
-\begin{thm}[Incremental computation of iterated function applications]
-\label{thm:diffIter}
-  Let $\cstr{L}$ be a complete change action, $x \in L$, and $f: \cstr{L} \rightarrow \cstr{L}$ be differentiable. Define $F_i$ as follows:
-
-  \begin{align*}
-  F_0 &= x\\
-  \Delta F_0 &= \mzero \\
-  F_1 &= f(F_0)\\
-  \Delta F_1 &= F_1 \cminus F_0 \\
-  F_{i+2} &= F_{i+1} \cplus \Delta F_{i+2} \\
-  \Delta F_{i+2} &= \derive{f}(F_i, \Delta F_{i+1}) \\
-  \end{align*}
-
-  Then
-  \begin{displaymath}
-    f^i(x) = F_i
-  \end{displaymath}
-\end{thm}
-
-\ifproofs
-\begin{proof}
-We proceed inductively, proving that $F_{i+2} = f(F_{i+1})$
-
-\begin{itemize}
-\item[ ]$F_{i+2}$
-\item[=]
-$
-F_{i+1} \cplus \Delta F_{i+2}
-$
-\item[=]
-$
-F_{i+1} \cplus \derive{f}( F_i, \Delta F_{i+1})
-$
-\item[=] \{ by induction \}\\
-$
-f(F_i) \cplus \derive{f}(F_i, \Delta F_{i+1})
-$
-\item[=]
-$
-f(F_i \cplus \Delta F_{i+1})
-$
-\item[=]
-$f(F_{i+1})$
-\end{itemize}
-\end{proof}
-\fi
 
 \begin{corollary}[Differential computation of fixpoints]
 \label{corollary:diffFP}
@@ -1207,7 +1159,8 @@ amenable to computation by fixpoint, and we shall see how to eliminate the
 recomputation of $\iter_n$ later.
 \begin{align*}
   &\nextiter_{f, \change{f}} : (A, \changes{A}) \rightarrow (A, \changes{A})\\
-  &\nextiter_{f, \change{f}} (a, \change{a}) \defeq (f(a), \derive{\ev}((f, a), (\change{f}, \change{a})))
+  &\nextiter_{f, \change{f}} (a, \change{a}) \defeq (f(a), \derive{\ev}((f, a), (\change{f}, \change{a})))\\
+  &\nextiter_{f, \change{f}}^n (\bot, \bot) = (\iter_n(f), \derive{\iter_n}(f, \change{f}))
 \end{align*}
 
 \begin{thm}[Derivatives of least fixpoint operators]
