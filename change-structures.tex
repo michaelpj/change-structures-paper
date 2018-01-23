@@ -291,7 +291,7 @@ Thinness gives us uniqueness of derivatives:
 \label{sec:category}
 
 \begin{defn}[Category of change actions]
-  We define the category $\cat{CStruct}$ of change actions. The objects are
+  We define the category $\cat{CAct}$ of change actions. The objects are
   change actions and the morphisms are differentiable functions. 
 \end{defn}
 
@@ -307,7 +307,7 @@ There is a natural preorder on the base set of a change actions, given by reacha
 The reachability order of a complete change action on $\cstr{A}$ is precisely the trivial relation
 $A \times A$. Conversely, any such change action is necessarily complete. The correspondence
 between a change action and its corresponding reachability preorder gives rise to
-a faithful functor $Reach : \cat{CStruct} \rightarrow \cat{PreOrd}$ that acts as the identity
+a faithful functor $Reach : \cat{CAct} \rightarrow \cat{PreOrd}$ that acts as the identity
 on morphisms.
 
 \begin{prop}
@@ -326,10 +326,10 @@ on morphisms.
 \end{corollary}
 
 Conversely, any preorder $\leq$ on some set $A$ induces the corresponding change action
-$\cstr{A}_\leq$. This gives rise to a (full and faithful) functor $\{\_\}_\leq : \cat{PreOrd} \rightarrow \cat{CStruct}$
+$\cstr{A}_\leq$. This gives rise to a (full and faithful) functor $\{\_\}_\leq : \cat{PreOrd} \rightarrow \cat{CAct}$
 
 \begin{thm}[Equivalence to $\cat{PreOrd}$]
-  The functor $Reach$ from $\cat{CStruct}$ to $\cat{PreOrd}$ together with the
+  The functor $Reach$ from $\cat{CAct}$ to $\cat{PreOrd}$ together with the
   functor $\{\_\}_\leq$ in the opposite direction form an equivalence of categories.
 \end{thm}
 \ifproofs
@@ -359,15 +359,15 @@ $\cstr{A}_\leq$. This gives rise to a (full and faithful) functor $\{\_\}_\leq :
 Since $\cat{PreOrd}$ is topological over $\cat{Set}$\cite[Chapter~V]{adamek2004abstract}, 
 (and hence complete and co-complete) and also an exponential ideal of $\cat{Cat}$
 (and hence Cartesian closed),
-this gives us a proof of the existence of limits, colimits, and exponentials in $\cat{CStruct}$.
+this gives us a proof of the existence of limits, colimits, and exponentials in $\cat{CAct}$.
 
 \begin{corollary}
-  The category $\cat{CStruct}$ has all limits, colimits and exponential objects.
+  The category $\cat{CAct}$ has all limits, colimits and exponential objects.
 \end{corollary}
 
 \subsection{Explicit constructions}
 
-Having shown that $\cat{CStruct}$ is equivalent to $\cat{PreOrd}$ it may seem
+Having shown that $\cat{CAct}$ is equivalent to $\cat{PreOrd}$ it may seem
 redundant to give explicit constructions of some of the useful categorical
 notions. However, we can give constructions that are much nicer than the ones
 gained by going via $\cat{PreOrd}$, which is important for using them in
@@ -386,7 +386,7 @@ practical computation.
   \rightarrow \cstr{B}$ be morphisms.
 
   Then the product morphism in $\cat{Set}$, $\pair{f_1}{f_2}$ is the product
-  morphism in $\cat{CStruct}$. It can easily be
+  morphism in $\cat{CAct}$. It can easily be
   shown that $\pair{\derive{f_1}}{\derive{f_2}}$ is a derivative of $\pair{f_1}{f_2}$,
   hence $\pair{f_1}{f_2}$ is a morphism in $\cat{SAct}$.
 
@@ -1515,7 +1515,7 @@ reasonable, but we don't know exactly what the consequences would be.
 
 S-acts and their categorical structure have received a fair amount of attention
 over the years (\textcite{kilp2000monoids} is a good
-overview). However, there is a key difference between our $\cat{CStruct}$ and the category of
+overview). However, there is a key difference between our $\cat{CAct}$ and the category of
 S-acts $\cat{SAct}$: the objects of $\cat{SAct}$ all maintain the same monoid
 structure, whereas we are interested in changing both the base set \emph{and} the structure of the act.
 
@@ -1536,7 +1536,7 @@ as opposed to
 That is, we use $\derive{f}$ to transform the action element into the new
 monoid, whereas in $\cat{SAct}$ it simply remains the same.
 
-In fact, $\cat{SAct}$ is a subcategory of $\cat{CStruct}$, where we only
+In fact, $\cat{SAct}$ is a subcategory of $\cat{CAct}$, where we only
 consider change actions with change set $S$, and the only functions are those
 whose derivative is $\lambda a. \lambda d. d$.
 
