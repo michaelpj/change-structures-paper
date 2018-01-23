@@ -598,8 +598,6 @@ finally to Boolean algebras.
 
 \subsection{Posets}
 
-\subsubsection{Ordering changes}
-
 If the base set of a change action is a poset, then this gives us a natural
 order on the change set.
 
@@ -624,33 +622,8 @@ Having a monotone order on the changes is very useful.
   Then $g$ is a derivative for $f$.
 \end{thm}
 
-\subsubsection{Maximal and minimal derivatives}
-
-If we have a minus operator, then our change action is complete and all
-functions are differentiable. However, there may still be multiple derivatives
-for a given function, and we can distinguish them using our order on the change
-set.
-
-\begin{defn}[Minus ordering]
-  $\cminus_1 \minusOrder \cminus_2$ iff for all $a,b \in A$, $a \cminus_1 b
-  \changeOrder a \cminus_2 b$.
-\end{defn}
-
-This orders our minus operators according to the size of the changes they
-produce.
-
-\begin{prop}
-  If $\cminus_1 \minusOrder \cminus_2$ then
-  $\derive{f}_{\cminus_1} \changeOrder \derive{f}_{\cminus_2}$.
-\end{prop}
-
-\begin{prop}
-  If $\cminus$ is a minimal (maximal) minus operator, then $\derive{f}_\cminus$
-  is a minimal (maximal) derivative.
-\end{prop}
-
-This then gives us a full characterisation of the derivatives on a complete
-change action.
+If we have minimal and maximal derivatives then this gives us a full
+characterisation of all the derivatives for a function.
 
 \begin{thm}[Characterization of derivatives]
 \label{thm:derivativeCharacterization}
@@ -674,10 +647,29 @@ bounds, and that tells us how much ``wiggle room'' we have. This is helpful
 because some of the intermediary functions may be much easier to compute than
 others, as we will see in \cref{sec:datalogDifferentiability}.
 
+One way to get minimal and maximal derivatives is from minimal and maximal minus
+operators (if we are in a complete change action).
+
+\begin{defn}[Minus ordering]
+  $\cminus_1 \minusOrder \cminus_2$ iff for all $a,b \in A$, $a \cminus_1 b
+  \changeOrder a \cminus_2 b$.
+\end{defn}
+
+This implies an ordering on the corresponding derivatives: if $\cminus_1 \minusOrder \cminus_2$ then
+$\derive{f}_{\cminus_1} \changeOrder \derive{f}_{\cminus_2}$.
+
+Which gives us a correspondence between maximal minus operators and maximal derivatives.
+
+\begin{prop}
+  \label{prop:maximalMinusDerivatives}
+  If $\cminus$ is a minimal (maximal) minus operator with respect to
+  $\minusOrder$, then $\derive{f}_\cminus$ is a minimal (maximal) derivative.
+\end{prop}
+
 \subsection{Directed-complete partial orders}
 
 Directed-complete partial orders give us the well known notion of
-\emph{Scott-continuity}. We define of \emph{continuous} change actions,
+\emph{Scott-continuity}. We define \emph{continuous} change actions,
 which are well-behaved with respect to continuity.
 
 \begin{defn}[Continuous change actions]
@@ -714,7 +706,7 @@ A direct corollary of this property is the following result, reminiscent of a we
 
 \begin{corollary}[Continuity of differentiation]
   \label{cor:diffContinuous}
-  Let $\cstr{A}, \cstr{B}$ be change actions, with $\cstr{B}$ continuous and let $\{f_i\}$ and $\{f'_i\}$ be
+  Let $\cstr{A}$, $\cstr{B}$ be change actions, with $\cstr{B}$ continuous and let $\{f_i\}$ and $\{f'_i\}$ be
   $I$-indexed directed families of functions in $A \rightarrow B$ and $A \times \changes{A} \rightarrow \changes{B}$.
 
   Then, if for every $i \in I$ is the case that $f''_i$ is a derivative of $f_i$, then $\sqcup_{i \in I} \{ f'_i \}$ is
@@ -873,7 +865,8 @@ operators.
   define minimal and maximal minus operators.
 \end{prop}
 
-In particular, \cref{thm:derivativeCharacterization} gives us bounds for
+In particular, \cref{thm:derivativeCharacterization} along with
+\cref{prop:maximalMinusDerivatives} give us bounds for
 all the derivatives on Boolean algebras:
 
 \begin{corollary}
@@ -992,7 +985,8 @@ This gives us a way to compute our fixpoint incrementally, by adding successive
 changes to our accumulator until we reach fixpoint.
 
 Note that we have \emph{not} taken the fixpoint of $\nextiter_f$, since it is
-not continuous. 
+not continuous. So while this allows us to compute fixpoints that converge in
+finitely many steps, it does not let us handle the infinite case.
 
 \subsection{Derivatives of fixpoints}
 \label{sec:fixpointDerivatives}
