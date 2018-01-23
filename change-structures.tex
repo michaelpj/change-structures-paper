@@ -431,6 +431,13 @@ practical computation.
   We will denote the set of pointwise $\reachOrder$-increasing functions by $\rightarrow_{\reachOrder}$.
   \todompj{Why can't we just say ``monotone with respect to the reachability
     order lifted to functions''?}
+  \todomario{We can, but I thought it might be more clear to write it explicitly - feel free
+    to change it}
+  \todomario{Also, I was a bit wrong with this, they aren't monotone functions, they are
+    increasing}
+  \todomario{Interestingly, the function $\cplus \change{a} : A \rightarrow A$ is
+    always increasing, but only monotone if the change structure has a commutator, and this
+    is why the previous proof failed.}
 
   Then $\cstruct{\cstr{A} \difffunc \cstr{B}}
     {(\cstr{A} \difffunc \cstr{B}) \rightarrow {\reachOrder} (\cstr{A} \difffunc \cstr{B})}
@@ -493,9 +500,9 @@ practical computation.
   \item[ ]$\curry{f}(a \cplus \change{a})$
   \item[=]$\lambda b . f(a \cplus \change{a}, b)$
   \item[=]$\lambda b . f(a, b) \cplus \derive{f}((a, b), (\change{a}, \mzero))$
-  \item[=]$(\cplus \change{a}) \circ \lambda b . f(a)$
   \end{itemize}
   \todompj{I don't follow the last step here}
+  \todomario{My bad, it was there from a previous version of the proof}
 
   We note that $\curry{f}(a \cplus \change{a})$ is differentiable, and $\curry{f}(a)(b) \reachOrder \curry{f}(a \cplus \change{a})(b)$,
   hence there is some function change $\change{f}_{a, \change{a}}$ mapping $\curry{f}(a)$ to $\curry{f}(a \cplus \change{a})$. The map
@@ -580,36 +587,8 @@ Thus, the category of thin change actions is Cartesian closed as well.
 \subsection{Ordering change actions}
 
 \todompj{Cut?}
-
-We can put an order on the change actions for a given base set as follows:
-
-\begin{defn}[Change action ordering]
-  $\cstr{A}_\cplus \fineOrder \cstr{A}_\cpluss$ iff $\textrm{id}: \cstr{A}_\cplus \rightarrow \cstr{A}_\cpluss$ is differentiable.
-\end{defn}
-
-Transitivity of the order follows from the chain rule, and reflexivity is trivial.
-
-This ordering is useful because it gives us a natural sense of the ``fineness''
-of a change action, much like the corresponding version in topology.
-
-\begin{prop}
-  If $f: \cstr{A}_\cplus \rightarrow \cstr{B}_\cpluss$ is differentiable, then
-  \begin{itemize}
-    \item if $\cstr{A}_\cplusss \fineOrder \cstr{A}_\cplus$ then $f: \cstr{A}_\cplusss \rightarrow
-      \cstr{B}_\cpluss$ is differentiable.
-    \item if $\cstr{B}_\cplus \fineOrder \cstr{B}_\cplusss$ then $f: \cstr{A}_\cplus \rightarrow
-      \cstr{B}_\cplusss$ is differentiable.
-  \end{itemize}
-\end{prop}
-
-That is, functions remain differentiable if the source change action becomes
-coarser, or the target change action becomes finer (again, mirroring topology).
-
-Furthermore, $\fineOrder$ also gives a fineness ordering on the reachability orders.
-
-\begin{prop}
-  If $a \reachOrder b$ in $\cstr{A}_\cplus$ and $\cstr{A}_\cplus \fineOrder \cstr{A}_\cpluss$, then $a \reachOrder b$ in $\cstr{A}_\cpluss$.
-\end{prop}
+\todomario{Actually follows from the equivalence to $\cat{PreOrd}$ and the
+  fact that preorders are equivalent to Alexandroff topologies}
 
 \section{Change actions over other structures}
 \label{sec:moreStructures}
@@ -1015,6 +994,7 @@ changes to our accumulator until we reach fixpoint.
 
 OLD VERSION
 \todompj{Decide whether to use this or the new version}
+\todomario{I like the new one better, but up to you.}
 
 \begin{thm}[Incremental computation of iterated function applications]
 \label{thm:diffIter}
@@ -1411,6 +1391,7 @@ specifics of the evaluation engine. Here is one possibility.\footnote{These are
 \ifproofs
 \begin{proof}
   Long, tedious structural induction. Maybe in an appendix?
+  \todomario{``Left as an exercise for the reader''}
 \end{proof}
 \fi
 
