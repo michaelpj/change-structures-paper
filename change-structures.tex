@@ -993,7 +993,8 @@ relation:
   &\nextiter_f^n (\bot, \bot) = (\iter_f(n), \derive{\iter_f}(n, 1))
 \end{align*}
 
-\begin{thm}[Incremental computation of fixpoints]
+\begin{thm}[Incremental computation of least fixpoints]
+\label{thm:diffFP}
   Let $\cstr{A}$ be a continuous change action, $f: \cstr{A} \rightarrow
   \cstr{A}$ be continuous and differentiable.
 
@@ -1007,19 +1008,13 @@ relation:
     &=\sqcup_{n \in \NN} \iter_f(n)\\
     &=\sqcup_{n \in \NN} \pi_1 (\nextiter_f^n(\bot))\\
     &=\pi_1 (\sqcup_{n \in \NN} \nextiter_f^n(\bot)) \tag{$\pi_1$ is continuous}\\
-    &=\pi_1 (\lfp(\nextiter_f)) \tag{$\nextiter$ is continuous}
+    &=\pi_1 (\lfp(\nextiter_f)) \tag{$\nextiter$ is continuous, Kleene's Theorem}
   \end{align*}
 \end{proof}
 \fi
 
 This gives us a way to compute our fixpoint incrementally, by adding successive
 changes to our accumulator until we reach fixpoint.
-
-\begin{corollary}[Differential computation of fixpoints]
-\label{corollary:diffFP}
-  Fixpoints of differentiable functions which can be calculated by repeated
-  function application can also be calculated incrementally.
-\end{corollary}
 
 \subsection{Derivatives of fixpoints}
 \label{sec:fixpointDerivatives}
@@ -1054,11 +1049,15 @@ $\fixpoint$. We can get quite close in the general case, but to get a precise
 derivative we'll need to do a bit more work.
 
 \begin{defn}
-  Let $\derive{\ev}$ be a derivative of the evaluation map. Then we define
+  Let $\cstr{A}$ be a change structure, $\fixpoint_A$ a fixpoint operator, and
+  $\derive{\ev}$ be a derivative of the evaluation map.
+
+  Then we define
   \begin{align*}
     &\adjust : (A \rightarrow A) \times \changes{(A \rightarrow A)} \rightarrow (\changes{A} \rightarrow \changes{A})\\
     &\adjust(f, \change{f}) \defeq \lambda\ \change{a} . \derive{\ev}((f,
-    \fixpoint_A(f), (\change{f}, \change{a})))
+    \fixpoint_A(f), (\change{f}, \change{a})))\\
+    &\derive{\fixpoint_A}(f, \change{f}) \defeq \fixpoint_{\changes{A}}(\adjust(f, \change{f}))
   \end{align*}
 \end{defn}
 
@@ -1067,7 +1066,7 @@ derivative we'll need to do a bit more work.
   Let
   \begin{itemize}
     \item $\cstr{A}$ be a change action
-    \item $\fixpoint_A : (\cstr{A} \rightarrow \cstr{A}) \rightarrow \cstr{A}$ be a fixpoint operator
+    \item $\fixpoint : (\cstr{A} \rightarrow \cstr{A}) \rightarrow \cstr{A}$ be a fixpoint operator
     \item $f: \cstr{A} \rightarrow \cstr{A}$ be a differentiable function
     \item $\change{f} \in \changes{(A \rightarrow A)}$ be a change to $f$
     \item $\derive{\ev}$ be a derivative of the evaluation map
@@ -1078,13 +1077,9 @@ derivative we'll need to do a bit more work.
   \begin{equation}\label{eqn:fixcondition}
     \change{w} = \adjust(f, \change{f})(\change{w})
   \end{equation}
-  if and only if $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$.
+  if and only if $\fixpoint(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$.
 
-  In particular, if the operator $\fixpoint$ is defined over $\Delta A$, we can define:
-  \begin{displaymath}
-    \derive{\fixpoint_A}(f, \change{f}) \defeq \fixpoint_{\changes{A}}(\adjust(f, \change{f}))
-  \end{displaymath}
-  thus $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ is a fixpoint
+  In particular, $\fixpoint(f) \cplus \derive{\fixpoint}(f, \change{f})$ is a fixpoint
   of $f \cplus \change{f}$.
 \end{thm}
 \ifproofs
@@ -1092,31 +1087,32 @@ derivative we'll need to do a bit more work.
   Let $\change{w} \in \Delta A$ satisfy \cref{eqn:fixcondition}. Then
   \begin{align*}
     &(f \cplus \change{f})(\fixpoint_A(f) \cplus \change{w})\\
-    &= f(\fixpoint_A(f))
+    &= f(\fixpoint(f))
     \cplus
     \adjust(f, \change{f})(\change{w})
     \tag{by \cref{prop:incrementalization}}\\
-    &= \fixpoint_A(f)
+    &= \fixpoint(f)
     \cplus
     \change{w}
     \tag{rolling the fixpoint and \cref{eqn:fixcondition}}
   \end{align*}
 
-  Hence $\fixpoint_A(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$. The converse
+  Hence $\fixpoint(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$. The converse
   follows from reversing the direction of the proof.
 \end{proof}
 \fi
 
 This is not enough to give us a true derivative, because we have only shown
-that $\fixpoint_A(f) \cplus \derive{\fixpoint_A}(f, \change{f})$ computes \emph{a} fixpoint, not necessarily
-the same one computed by $\fixpoint_A{(f \cplus \change{f})}$.
+that $\fixpoint(f) \cplus \derive{\fixpoint}(f, \change{f})$ computes \emph{a} fixpoint, not necessarily
+the same one computed by $\fixpoint{(f \cplus \change{f})}$.
 
-However, if we restrict ourselves to directed-complete partial orders and
-continuous change actions, then it becomes a true derivative. This is not too
+However, if we restrict ourselves to directed-complete partial orders, least
+fixpoints, and continuous change actions, then $\derive{\lfp}$ becomes a true derivative. This is not too
 onerous a restriction, since this is the setting in which we normally compute
 least fixpoints anyway.
 
-Applying \cref{cor:diffContinuous}, it follows that if we can find a derivative
+Since $\lfp$ is characterized as the limit of a chain of functions,
+\cref{cor:diffContinuous} suggests a way to compute its derivative. If we can find a derivative
 of each iteration map $\derive{\iter_n}$
 such that the resulting set $\{ \derive{\iter_n} \}$ is directed, then $\sqcup_{n \in \NN}
 \{\derive{\iter_n} \}$ is a derivative of $\lfp$.
@@ -1181,14 +1177,17 @@ recomputation of $\iter_n$ later.
   $\derive{\ev}$ and $f$ are.
 
   Hence the set $\{ \derive{\iter}_n \}$ is directed, and so $\sqcup_{i \in \NN}
-  \{ \derive{\iter_i} \}$ is indeed a derivative for $\lfp$.
+  \derive{\iter_i}$ is indeed a derivative for $\lfp$.
 
   We now show that it is equivalent to $\derive{\lfp}$:
   \begin{align*}
-    &\sqcup_{i \in \NN} \{ \derive{\iter_i} \}(f, \change{f})\\
-    &= \pi_2 (\lfp(\nextiter_{f, \change{f}}))\\
-    &= \pi_2 (\lfp(f), \lfp (\lambda\ \change{a}. \derive{\ev}((f, \lfp f), (\change{f}, \change{a}))))
+    &\sqcup_{n \in \NN} \derive{\iter_n}(f, \change{f})\\
+    &=\sqcup_{n \in \NN} \pi_2(\nextiter_{f, \change{f}}^n(\bot))\\
+    &=\pi_2(\sqcup_{n \in \NN} \nextiter_{f, \change{f}}^n(\bot))) \tag{$\pi_2$ is continuous}\\
+    &= \pi_2 (\lfp(\nextiter_{f, \change{f}})) \tag{$\nextiter_{f, \change{f}}$ is continuous, Kleene's Theorem}\\
+    &= \pi_2 ((\lfp(f), \lfp (\lambda\ \change{a}. \derive{\ev}((f, \lfp f), (\change{f}, \change{a})))))
     \tag{by \cref{prop:factoringFixpoints}, and the definition of $\nextiter$}\\
+    &= \pi_2 ((\lfp(f), \lfp(\adjust(f, \change{f})))\\
     &= \lfp(\adjust(f, \change{f}))\\
     &= \derive{\lfp}(f, \change{f})
   \end{align*}
@@ -1393,7 +1392,7 @@ Putting this together, we get two results.
 \end{thm}
 \ifproofs
 \begin{proof}
-  Corollary of \cref{corollary:diffFP} and \cref{corollary:consqDiff}.
+  Corollary of \cref{thm:diffFP} and \cref{corollary:consqDiff}.
 \end{proof}
 \fi
 
