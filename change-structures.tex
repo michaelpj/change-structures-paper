@@ -195,10 +195,6 @@ Here are some recurring examples of changes actions:
   \item $\cstr{A}_\discrete \defeq \cstruct{A}{\emptyset}{\emptyset}$, the discrete change action on any base set.
   \item $\cstr{A}_\Rightarrow \defeq \cstruct{A}{A\Rightarrow A}{\ev}$, where $A
     \Rightarrow A$ denotes the exponential object and $\ev$ is the evaluation map.
-  \item $\cstr{A}_\leq \defeq \cstruct{A}{\leq}{ev_\leq}$, where $\leq$ is some
-    transitive relation on $A$ and $ev_\leq$ denotes
-    conditional application, i.e. $ev_\leq(a, (b, c))$ is equal to $c$ if $a = b$, and $a$ otherwise. Composition of changes is obtained
-    by transitivity of $\leq$.
   \item $\cstr{\mathbb{Z}}_1 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{+}$
   \item $\cstr{\mathbb{Z}}_2 \defeq \cstruct{\mathbb{Z}}{\mathbb{N}}{-}$
   \item $\cstr{\mathbb{Z}}_3 \defeq \cstruct{\mathbb{Z}}{\mathbb{Z}}{+}$
@@ -296,6 +292,8 @@ Thinness gives us uniqueness of derivatives:
 \section{The category of change actions}
 \label{sec:category}
 
+Change actions form a category, with differentiable functions as the morphisms.
+
 \begin{defn}[Category of change actions]
   We define the category $\cat{CAct}$ of change actions. The objects are
   change actions and the morphisms are differentiable functions. 
@@ -303,22 +301,20 @@ Thinness gives us uniqueness of derivatives:
 
 \subsection{Equivalence with PreOrd}
 
-There is a natural preorder on the base set of a change actions, given by reachability
- under the action:
+There is a natural preorder on the base set of a change action, given by reachability
+under the action:
+
 \begin{defn}[Reachability order]
   $a \reachOrder b$ iff there is a $\change{a} \in \changes{A}$ such that $a \cplus
   \change{a} = b$.
 \end{defn}
 
-The reachability order of a complete change action on $\cstr{A}$ is precisely the trivial relation
-$A \times A$. Conversely, any such change action is necessarily complete. The correspondence
-between a change action and its corresponding reachability preorder gives rise to
-a faithful functor $Reach : \cat{CAct} \rightarrow \cat{PreOrd}$ that acts as the identity
-on morphisms.
+We can characterize many of the properties of change actions in terms of the reachability order, which
+suggests a connection between $\cat{CAct}$ and the category or preorders, $\cat{PreOrd}$.
 
 \begin{prop}
   A function is differentiable iff it is monotone with respect to the
-  reachability order. Equivalently, the functor $Reach$ is full.
+  reachability order. 
 \end{prop}
 
 \begin{corollary}
@@ -331,25 +327,38 @@ on morphisms.
   action is differentiable.
 \end{corollary}
 
-Conversely, any preorder $\leq$ on some set $A$ induces the corresponding change action
-$\cstr{A}_\leq$. This gives rise to a (full and faithful) functor $\{\_\}_\leq : \cat{PreOrd} \rightarrow \cat{CAct}$
+Indeed, the correspondence between a change action and its reachability preorder gives rise to
+a (full and faithful) functor $\reach : \cat{CAct} \rightarrow \cat{PreOrd}$ that acts as the identity
+on morphisms.
 
-\begin{thm}[Equivalence to $\cat{PreOrd}$]
-  The functor $Reach$ from $\cat{CAct}$ to $\cat{PreOrd}$ together with the
-  functor $\{\_\}_\leq$ in the opposite direction form an equivalence of categories.
+Conversely, any preorder $\leq$ on some set $A$ induces a change action
+$\cstr{A}_\leq \defeq \cstruct{A}{\leq}{\ev_\leq}$,
+where $\ev_\leq(a, (b, c))$ is equal to $c$ if $a = b$, and $a$ otherwise. 
+
+The mapping to $\cstr{A}_\leq$ gives rise to a (full and faithful) functor
+$\direct : \cat{PreOrd} \rightarrow \cat{CAct}$, again acting as the identity on morphisms.
+
+These two functors are in fact enough to give us an equivalence between
+$\cat{CAct}$ and $\cat{PreOrd}$.
+
+\begin{thm}[Equivalence of $\cat{CAct}$ $\cat{PreOrd}$]
+  The functor $\reach$ from $\cat{CAct}$ to $\cat{PreOrd}$ together with the
+  functor $\direct$ in the opposite direction form an equivalence of categories.
 \end{thm}
 \ifproofs
 \begin{proof}
-  On one hand, if $U$ is a preorder, it's trivial to check that $Reach (\{U\}_\leq) = U$.
+  On one hand, if $U$ is a preorder, it's trivial to check that $\reach (\direct (U)) = U$.
 
-  On the other hand, we need to find a natural isomorphism between $\{\_\}_\leq \circ Reach$
-  and the identity functor. First, we note that the base set for the change action $\{Reach(A)\}$ is
-  the same as the base set for $\cstr{A}$. We claim that the desired natural isomorphism is given by the
+  On the other hand, we need to find a natural isomorphism between $\direct \circ \reach$
+  and the identity functor. First, we note that the base set for the change action $\direct(\reach(A))$ is
+  the same as the base set for $\cstr{A}$.
+
+  We claim that the desired natural isomorphism is given by the
   the identity on the base sets. It remains to prove that the identities
-  $id_A : \cstr{A} \rightarrow \{Reach(A)\}$ and $id_{\reachOrder} : \{Reach(A)\} \rightarrow \cstr{A}$
-  is indeed differentiable in both directions.
+  $id_A : \cstr{A} \rightarrow \direct(\reach(A))$ and $id_{A_{\reachOrder}} : \direct(\reach(A)) \rightarrow \cstr{A}$
+  are indeed differentiable in both directions.
 
-  On one direction, a derivative is given by
+  In one direction, a derivative is given by
   \begin{displaymath}
     \derive{id}_A(a, \change{a}) \defeq (a, a \cplus \change{a})
   \end{displaymath}
@@ -357,15 +366,14 @@ $\cstr{A}_\leq$. This gives rise to a (full and faithful) functor $\{\_\}_\leq :
   $\change{}_{(a, b)} \in \changes{A}$ satisfying $a \cplus \change{}_{(a,b)} = b$. Hence we set the
   derivative to be
   \begin{displaymath}
-    \derive{id}_{\reachOrder}(a, (a, b)) \defeq \change{}_{(a, b)}
+    \derive{id}_{A_{\reachOrder}}(a, (a, b)) \defeq \change{}_{(a, b)}
   \end{displaymath}
 \end{proof}
 \fi
 
-Since $\cat{PreOrd}$ is topological over $\cat{Set}$\cite[Chapter~V]{adamek2004abstract}, 
+Since $\cat{PreOrd}$ is topological over $\cat{Set}$\autocite[][Chapter V]{adamek2004abstract}, 
 (and hence complete and co-complete) and also an exponential ideal of $\cat{Cat}$
-(and hence Cartesian closed),
-this gives us a proof of the existence of limits, colimits, and exponentials in $\cat{CAct}$.
+(and hence Cartesian closed), this gives us a proof of the existence of limits, colimits, and exponentials in $\cat{CAct}$.
 
 \begin{corollary}
   The category $\cat{CAct}$ has all limits, colimits and exponential objects.
