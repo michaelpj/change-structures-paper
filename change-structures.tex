@@ -736,13 +736,13 @@ Becik's Theorem\autocite[][section 10.1]{winskel1993formal}, but it has a straig
 
 \begin{prop}[Factoring of fixpoints]
   \label{prop:factoringFixpoints}
-  Let $f : A \rightarrow A$ and $g: A \times B \rightarrow B$ be continuous, and let
+  Let $A$ and $B$ be dcpos, $f : A \rightarrow A$ and $g: A \times B \rightarrow B$ be continuous, and let
   \begin{displaymath}
     h(a, b) \defeq (f(a), g(a, b))
   \end{displaymath}
   Then
   \begin{displaymath}
-    \lfp(h) = (\lfp f, \lfp(g(\lfp(f))))
+    \lfp(h) = (\lfp(f), \lfp(g(\lfp(f))))
   \end{displaymath}
 \end{prop}
 \ifproofs
@@ -758,13 +758,13 @@ Becik's Theorem\autocite[][section 10.1]{winskel1993formal}, but it has a straig
 
   But $h(\lfp(p)) = \lfp(p)$, so $\lfp(h) \leq \lfp(p)$, since $\lfp(h)$ is least.
 
-  Hence $\lfp(h) = \lfp(p) = (\lfp f, \lfp(g(\lfp(f))))$.
+  Hence $\lfp(h) = \lfp(p) = (\lfp(f), \lfp(g(\lfp(f))))$.
 \end{proof}
 \fi
 
 \subsection{Boolean algebras}
 
-Boolean algebras have a nice complete change structure.
+Boolean algebras have a simple, complete change structure.
 
 \begin{prop}
   Let $L$ be a Boolean algebra. Define
@@ -919,7 +919,7 @@ $f$, and this will give us a way to get from iterating $f$ to iterating $f
   given as just $\bot$).}
 
 To avoid confusion, we shall write $\iter_f$ when we are holding $f$ constant,
-and $iter_n$ when we are holding $n$ constant.
+and $\iter_n$ when we are holding $n$ constant.
 
 \subsection{Incremental computation of fixpoints}
 
