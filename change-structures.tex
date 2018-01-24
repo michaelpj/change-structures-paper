@@ -436,15 +436,10 @@ practical computation.
   is \emph{pointwise $\reachOrder$-increasing} iff, for every $f : \cstr{A} \rightarrow \cstr{B}$
   and $a \in \cstr{A}$, it is the case that $f(a) \reachOrder \change{f}(f)(a)$.
   We will denote the set of pointwise $\reachOrder$-increasing functions by $\rightarrow_{\reachOrder}$.
-  \todompj{Why can't we just say ``monotone with respect to the reachability
+  \todompj{Why can't we just say ``increasing with respect to the reachability
     order lifted to functions''?}
   \todomario{We can, but I thought it might be more clear to write it explicitly - feel free
     to change it}
-  \todomario{Also, I was a bit wrong with this, they aren't monotone functions, they are
-    increasing}
-  \todomario{Interestingly, the function $\cplus \change{a} : A \rightarrow A$ is
-    always increasing, but only monotone if the change structure has a commutator, and this
-    is why the previous proof failed.}
 
   Then $\cstruct{\cstr{A} \rightarrow \cstr{B}}
     {(\cstr{A} \rightarrow \cstr{B}) \rightarrow_{\reachOrder} (\cstr{A} \rightarrow \cstr{B})}
@@ -502,12 +497,11 @@ practical computation.
   First, suppose $f$ is differentiable, and let $\change{a} \in \changes{A}$. Then 
   \begin{itemize}
   \item[ ]$\curry{f}(a \cplus \change{a})$
-  \item[=]$\lambda b . f(a \cplus \change{a}, b)$
-  \item[=]$\lambda b . f(a, b) \cplus \derive{f}((a, b), (\change{a}, \mzero))$
+  \item[=]\{ definition of $\curry{f}$\}\\
+  $\lambda b . f(a \cplus \change{a}, b)$
+  \item[=]\{ differentiability of $f$\}\\
+  $\lambda b . f(a, b) \cplus \derive{f}((a, b), (\change{a}, \mzero))$
   \end{itemize}
-  \todompj{I don't follow the last step here}
-  \todomario{My bad, it was there from a previous version of the proof}
-
   We note that $\curry{f}(a \cplus \change{a})$ is differentiable, and $\curry{f}(a)(b) \reachOrder \curry{f}(a \cplus \change{a})(b)$,
   hence there is some function change $\change{f}_{a, \change{a}}$ mapping $\curry{f}(a)$ to $\curry{f}(a \cplus \change{a})$. The map
   $\lambda a . \lambda \change{a} . \change{f}_{a, \change{a}}$ is, then, a derivative of $\curry{f}$.
@@ -529,7 +523,37 @@ practical computation.
     \item[=]\{ definition of $\curry{f}$\}\\
     $f(a, b) \cplus [ \derive{\curry{f}(a)}(b, \change{b}) \cdot \derive{(\curry{f})}(a, \change{a})_\Delta(\curry{f}(a), b \cplus \change{b}) ]$
   \end{itemize}
-  \todomario{Add comments on commutators, completeness}
+\end{proof}
+\fi
+
+The resulting change action is rather unwieldy and it's hard to perform actual computation on it. Fortunately, in many
+cases, it is equivalent to a much simpler one.
+\begin{lemma}[Pointwise function changes]
+  Let $\cstr{B}$ be a change action. If $\cplus : B \times \changes{B} \rightarrow B$ is differentiable
+  with respect to its first argument, then the change action
+  $\cstruct{\cstr{A} \rightarrow \cstr{B}}{\cstr{A} \rightarrow \cstr{\changes{B}}}{\cplus_\rightarrow}$, with the action
+  $\cplus_\rightarrow$ and the monoidal structure defined pointwise, is the exponential
+  object $\cstr{B}^{\cstr{A}}$.
+\end{lemma}
+\ifproofs
+\begin{proof}
+  We prove first that $\cplus_\rightarrow$ is indeed a valid action, i.e. given functions $f : \cstr{A} \rightarrow \cstr{B}$
+  and $\change{f} : A \rightarrow \changes{B}$, $f \cplus_\rightarrow \change{f}$ is differentiable.
+  Letting $a \in A, \change{a} \in \changes{A}$, we have:
+  \begin{itemize}
+    \item[ ]$(f \cplus_\rightarrow \change{f})(a \cplus \change{a})$
+    \item[=]$f (a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})$
+    \item[=]$(f (a) \cplus \derive{f}(a, \change{a})) \cplus \change{f}(a \cplus \change{a})$
+    \item[=]$(f (a) \cplus \change{f}(a \cplus \change{a})) \cplus \partial_1\cplus(f(a), \change{f}(a \cplus \change{a}))(\derive{f}(a, \change{a}))$
+    \item[=]$(f (a) \cplus \change{f}(a)) \cplus (\derive{\change{f}}(a, \change{a}) \cdot \partial_1\cplus(f(a), \change{f}(a \cplus \change{a}))(\derive{f}(a, \change{a})))$
+  \end{itemize}
+  Thus $\lambda a . \lambda \change{a} .\derive{\change{f}}(a, \change{a}) \cdot \partial_1\cplus(f(a), \change{f}(a \cplus \change{a}))(\derive{f}(a, \change{a}))$
+  is a derivative for $f \cplus \change{f}$.
+
+  In order to show that it is isomorphic to the previous exponential structure, we prove that the induced
+  reachability order is the same.
+  /todomario{Nevermind, this is in fact false because the changes need to be differentiable but they may not! Quite a problem.}
+  /todomario{The question boils down to whether there is always a differentiable derivative, which is tricky.}
 \end{proof}
 \fi
 
