@@ -303,8 +303,8 @@ under the action:
   \change{a} = b$.
 \end{defn}
 
-We can characterize many of the properties of change actions in terms of the reachability order, which
-suggests a connection between $\cat{CAct}$ and the category or preorders, $\cat{PreOrd}$.
+We can characterize many of the properties of change actions in terms of the reachability order,
+which suggests a connection between $\cat{CAct}$ and the category or preorders, $\cat{PreOrd}$.
 
 \begin{prop}
   A function is differentiable iff it is monotone with respect to the
@@ -322,34 +322,46 @@ suggests a connection between $\cat{CAct}$ and the category or preorders, $\cat{
 \end{corollary}
 
 Indeed, the correspondence between a change action and its reachability preorder gives rise to
-a (full and faithful) functor $\reach : \cat{CAct} \rightarrow \cat{PreOrd}$ that acts as the identity
-on morphisms.
+a (full and faithful) functor $\reach : \cat{CAct} \rightarrow \cat{PreOrd}$ that acts as the
+identity on morphisms.
 
 Conversely, any preorder $\leq$ on some set $A$ induces a change action
-$\cstr{A}_\leq \defeq \cstruct{A}{\leq}{\ev_\leq}$,
-where $\ev_\leq(a, (b, c))$ is equal to $c$ if $a = b$, and $a$ otherwise. 
+$\cstr{A}_\leq \defeq \cstruct{A}{\leq^\star}{\cplus_\star}$.
+The action $\cplus_\star$ is defined as the extension of $\cplus_\leq$ to the free
+monoid $\leq^\star$, where $\cplus_\leq$ is defined as:
+\[
+\begin{aligned}
+   \cplus_\leq &: A \times \leq \rightarrow A&\\
+   a \cplus_\leq (b, c) &\defeq
+     \begin{cases}
+     c&\text{ if $a = b$}\\
+     b&\text{ otherwise}
+     \end{cases}
+\end{aligned}
+\]
 
 The mapping to $\cstr{A}_\leq$ gives rise to a (full and faithful) functor
 $\direct : \cat{PreOrd} \rightarrow \cat{CAct}$, again acting as the identity on morphisms.
 
-These two functors are in fact enough to give us an equivalence between
+These two functors are in fact enough to give us an equivalence between the categories
 $\cat{CAct}$ and $\cat{PreOrd}$.
 
-\begin{thm}[Equivalence of $\cat{CAct}$ $\cat{PreOrd}$]
+\begin{thm}[Equivalence of $\cat{CAct}$, $\cat{PreOrd}$]
   The functor $\reach$ from $\cat{CAct}$ to $\cat{PreOrd}$ together with the
   functor $\direct$ in the opposite direction form an equivalence of categories.
 \end{thm}
 \ifproofs
 \begin{proof}
-  On one hand, if $U$ is a preorder, it's trivial to check that $\reach (\direct (U)) = U$.
+  On one direction, if $U$ is a preorder, it's trivial to check that $\reach (\direct (U)) = U$.
 
-  On the other hand, we need to find a natural isomorphism between $\direct \circ \reach$
-  and the identity functor. First, we note that the base set for the change action $\direct(\reach(A))$ is
-  the same as the base set for $\cstr{A}$.
+  On the other direction, we need to find a natural isomorphism between $\direct \circ \reach$
+  and the identity functor. First, we note that the base set for the change action
+  $\direct(\reach(A))$ is the same as the base set for $\cstr{A}$.
 
   We claim that the desired natural isomorphism is given by the
   the identity on the base sets. It remains to prove that the identities
-  $id_A : \cstr{A} \rightarrow \direct(\reach(A))$ and $id_{A_{\reachOrder}} : \direct(\reach(A)) \rightarrow \cstr{A}$
+  $id_A : \cstr{A} \rightarrow \direct(\reach(A))$ and
+  $id_{A_{\reachOrder}} : \direct(\reach(A)) \rightarrow \cstr{A}$
   are indeed differentiable in both directions.
 
   In one direction, a derivative is given by
@@ -357,11 +369,13 @@ $\cat{CAct}$ and $\cat{PreOrd}$.
     \derive{id}_A(a, \change{a}) \defeq (a, a \cplus \change{a})
   \end{displaymath}
   Conversely, let $(a, b) \in \reachOrder$. By definition of $\reachOrder$, there is some
-  $\change{}_{(a, b)} \in \changes{A}$ satisfying $a \cplus \change{}_{(a,b)} = b$. Hence we set the
-  derivative to be
+  $\change{}_{(a, b)} \in \changes{A}$ satisfying $a \cplus \change{}_{(a,b)} = b$.
+  This gives a definition for the derivative of the identity on pairs:
   \begin{displaymath}
     \derive{id}_{A_{\reachOrder}}(a, (a, b)) \defeq \change{}_{(a, b)}
   \end{displaymath}
+  which can be extended freely to the whole change set $\reachOrder^\star$. 
+
 \end{proof}
 \fi
 
