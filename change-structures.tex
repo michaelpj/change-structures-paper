@@ -54,56 +54,114 @@
 
 \section{Introduction}
 
-Often when we compute the value of a function, we are not only interested in the
-result we get, but also in being able to (efficiently) update the result when
-the input changes.
+Consider the following archetypal Datalog program, which computes the transitive
+closure of an edge relation $e$:
+\begin{align*}
+  tc(x, y) &\leftarrow e(x, y)\\
+  tc(x, y) &\leftarrow e(x, z) \wedge tc(z, y)
+\end{align*}
 
-This is the setting in which incremental computation is studied. Recently,
-\textcite{cai2014changes} have given an account of incremental computation using
-of \emph{change structures} and \emph{derivatives}, and used them to provide
-a composable framework for incrementally evaluating lambda calculus programs.
+The semantics of Datalog tell us that the denotation of this program is the
+least fixpoint of the rule $tc$. Kleene's Theorem tells us that we can reach
+this by repeating applying the rule, starting from empty. For example, supposing
+that $e = \{ (1, 2), (3, 4), (5, 6) \}$:
 
-This provides an excellent foundation for \emph{using} change structures, but there are
-some questions about the approach itself:
-\begin{itemize}
-  \item Can we extend the concepts to cover a broader range of structures?
-    The requirements for being a change structure are stringent enough that they
-    prevent many useful structures in computer science (such as streams) from
-    having nice change structures.
-  \item Can we say anything about the class of change structures in its own right?  
-    If we can easily compose new change structures using standard
-    constructions like sums and products then it is much easier to apply the
-    techniques to new types of data.
-  \item Can we perform incremental computation on fixpoints? Fixpoints are
-    commonly used in the semantics of programming languages to implement recursion,
-    and so we would like to be able to compute and update them incrementally.
-\end{itemize}
+\begin{center}
+  \begin{tabular} {|c|c|c|}
+    \hline
+    Iteration & Deduced facts & Accumulated contents of $tc$ \\
+    \hline
+    1 & $\{ (1, 2)\}$ & $\{ (1, 2) \}$\\
+    2 & $\{ (1,2), (3,4) \}$ & $\{ (1, 2), (3,4) \}$\\
+    3 & $\{ (1,2), (3,4), (5,6) \}$ & $\{ (1, 2), (3,4), (5,6) \}$\\
+    \hline 
+  \end{tabular}
+\end{center}
 
-These are mostly theoretical questions, but we also have a very practical
-application in mind: the computation of the semantics of Datalog (with
-extensions). The research in this paper was carried out at Semmle, which
+And then we have reached fixpoint, so we are done.
+
+However, this process is quite wasteful. We deduced $(1,2)$ at every iteration,
+even though we had already deduced it in the first iteration. In fact, for a
+chain of $n$ such edges we will deduce $O(n^2)$ facts along the way.
+
+The standard improvement to this is ``semi-naive'' evaluation, where we transform
+the program into a \emph{delta} program that only deduces the new facts at each
+iteration, which we gradually accumulate \autocite[See][section
+13.1]{abiteboul1995foundations}.
+\begin{align*}
+  \Delta tc_{0}(x, y) &\leftarrow e(x, z)\\
+  \Delta tc_{i+1}(x, y) &\leftarrow e(x, z) \wedge \Delta_i tc(z, y)\\
+  tc_{0}(x, y) &\leftarrow e(x, z)\\
+  tc_{i+1}(x, y) &\leftarrow tc_{i}(x,y) \vee \Delta_{i+1} tc(x,y)
+\end{align*}
+
+\begin{center}
+  \begin{tabular} {|c|c|c|}
+    \hline
+    Iteration & $\Delta_i tc$ & $tc_i$ \\
+    \hline
+    1 & $\{ (1, 2)\}$ & $\{ (1, 2) \}$\\
+    2 & $\{ (3,4) \}$ & $\{ (1, 2), (3,4) \}$\\
+    2 & $\{ (5,6) \}$ & $\{ (1, 2), (3,4), (5,6) \}$\\
+    3 & $\{ \}$ & $\{ (1, 2), (3,4), (5,6) \}$\\
+    \hline
+  \end{tabular}
+\end{center}
+
+This is much better - we have turned a quadratic computation into a linear one.
+
+But the delta rule translation works only for traditional Datalog. It is easy to
+liberalise our syntax to support, say, disjunction, existential quantification, and parity-stratified
+negation.\footnote{Parity-stratified negation means that recursive calls must
+  appear under an even number of negations. This ensures that the rule remains
+  monotone, so the least fixpoint semantics still exists.}
+
+Then we can write programs like the following:
+\begin{align*}
+  treeProperty(x) &\leftarrow p(x) \wedge \neg \exists y . (child(x,y) \wedge \neg treeProperty(y))
+\end{align*}
+
+This is essentially a recursion through a \emph{universal} quantifier. We would
+like to be able to use semi-naive evaluation for this rule too, but the delta
+transformation does not work, and it is unclear how to extend it (and the
+correctness proof) to handle such cases.
+
+This is of more than theoretical interest - the research
+in this paper was carried out at Semmle, which
 makes heavy use of a commercial Datalog implementation
 \autocites{semmleWebsite}{avgustinov2016ql}{sereni2008adding}{schafer2010type}.
-Semmle's implementation includes some non-standard features, such as
-parity-stratified negation and recursive aggregates, and so traditional
-approaches to incremental computation of Datalog are not applicable.
+Semmle's implementation includes parity-stratified negation other non-standard
+features, so a more generic approach to incremental evaluation is vitally necessary.
 
-Moreover, an account of incremental computation
-for languages like Datalog which is compatible with the approach of
-\textcite{cai2014changes} opens exciting prospects for embedding
-such languages seamlessly into larger incremental computations
-\autocite[See][]{arntz2016datafun}.
+There is a piece of folkloric knowledge in the Datalog community that hints at a
+solution: the semi-naive translation of a rule corresponds to the
+\emph{derivative} of that rule \autocites{bancilhon1986naive}[section
+3.2.2]{bancilhon1986amateur}. If we can make this precise, then perhaps we can
+work out how to take derivatives of more complex rules.
 
-The major contributions of this paper are:
-\begin{itemize}
-  \item We generalize change structures to \emph{change actions} 
-    (\cref{sec:changeActions}), and explore their categorical properties (\cref{sec:category}).
-  \item We derive theorems showing both how to incrementally compute fixpoints,
-    and how to update already evaluated fixpoint expressions (\cref{sec:fixpoints}). 
-  \item We generalize the incremental computation and
-    update of Datalog semantics, showing how to gracefully handle additional
-    language constructs, including negation and aggregation (\cref{sec:datalog}).
-\end{itemize}
+The idea of performing incremental computation using derivatives has been
+studied recently by \textcite{cai2014changes}, who given an account using
+\emph{change structures}. They use this to provide a framework for incrementally evaluating lambda calculus programs.
+
+However, their work isn't directly applicable to Datalog: the tricky part
+of Datalog's semantics is the \emph{fixpoint}, and we need some theory to tell us how to
+handle incremental evaluation of fixpoint computations.\footnote{In fact, we can prove these
+results for fixpoint computations over dcpos in general, which opens up the
+possibility of using these result in domain theory, which uses fixpoints to
+represent recursion in programming language semantics.}
+
+This paper bridges that gap. We start by generalizing change structures to
+\emph{change actions} (\cref{sec:changeActions}). Change actions are weaker than change structures, but
+have nice categorical properties (\cref{sec:category}), and exist for more structures.
+
+We then show how to compute fixpoints incrementally, and also how to perform
+incremental updates of already computed fixpoint expressions, given a change to
+the function of which the fixpoint is taken (\cref{sec:fixpoints}).
+
+Finally, we put all this together into a generic account of incremental
+computation and update of Datalog programs, showing how to handle 
+language constructs such as negation, disjunction, and additional well-behaved
+extensions (\cref{sec:datalog}).
 
 \section{Change actions}
 \label{sec:changeActions}
@@ -230,7 +288,7 @@ compute the difference between two values.
   Let $\cstr{A}$ be a change action. Then the following are equivalent:
   \begin{itemize}
     \item $\cstr{A}$ is complete.
-    \item The monoid action is transitive.
+    \item The monoid action of $\cplus$ on $A$ is transitive.
     \item There is a minus operator on $\cstr{A}$.
     \item Any function from any change action into $\cstr{A}$ is differentiable.
   \end{itemize}
@@ -267,7 +325,7 @@ Many change actions are not thin, for example $\cstruct{\NN}{\ZZ}{+}$ (as $0 + (
   Let $\cstr{A}$ be a change action. Then the following are equivalent.
   \begin{itemize}
     \item $\cstr{A}$ is thin.
-    \item The monoid action is free.
+    \item The monoid action of $\cplus$ on $A$ is free.
     \item If $\cstr{A}$ has a minus operator $\cminus$, then $(a \cplus \change{a})
       \cminus a = \change{a}$.
   \end{itemize}
@@ -748,7 +806,7 @@ A direct corollary of this property is the following result, reminiscent of a we
   Let $\cstr{A}$, $\cstr{B}$ be change actions, with $\cstr{B}$ continuous and let $\{f_i\}$ and $\{f'_i\}$ be
   $I$-indexed directed families of functions in $A \rightarrow B$ and $A \times \changes{A} \rightarrow \changes{B}$.
 
-  Then, if for every $i \in I$ is the case that $f''_i$ is a derivative of $f_i$, then $\sqcup_{i \in I} \{ f'_i \}$ is
+  Then, if for every $i \in I$ is the case that $f''_i$ is a derivative of $f_i$, then $\sqcup_{i \in I} \{ f''''_i \}$ is
   a derivative of $\sqcup_{i \in I} \{ f_i \}$.
 \end{corollary}
 \ifproofs
@@ -969,20 +1027,11 @@ and $\iter_n$ when we are holding $n$ constant.
 
 \subsection{Incremental computation of fixpoints}
 
-In the Datalog literature, the approach of computing the fixpoint by bottom-up
-iteration is called ``naive evaluation''. Naive evaluation has the property that
-if it derives a fact at some iteration, it will derive that fact at each
-subsequent iteration as well. This is obviously wasteful, and can turn what
-should be a linear computation into a quadratic one.
-
-The traditional solution to this problem is ``semi-naive evaluation'', which
-attempts to derive only the new facts at each iteration \autocite[][section
-13.1]{abiteboul1995foundations}.
-However, semi-naive as traditionally presented requires a Datalog-specific proof, and is hard to
-extend to handle new language constructs. The following theorems provide a
+The following theorems provide a
 generalization of semi-naive evaluation to any differentiable function over a
-continuous change action. To apply this to the semantics of Datalog we will need
-to differentiate its semantics, and we will see the details of this in \cref{sec:datalogDifferentiability}.
+continuous change action. We will want to apply this to the semantics of
+Datalog, for which we will need to differentiate its semantics. We will see the
+details of ho to do this in \cref{sec:datalogDifferentiability}.
 
 Since we are trying to incrementalize the iterative step, we start by taking the
 derivative of $\iter$ with respect to $n$.
