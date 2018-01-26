@@ -344,7 +344,16 @@ Thinness gives us uniqueness of derivatives:
 \section{The category of change actions}
 \label{sec:category}
 
-Change actions form a category, with differentiable functions as the morphisms.
+We are arguing that change actions provide a good model for incremental
+computation in general. That means we want to be able to easily construct change
+actions over the wide variety of datatypes that we actually use in programming.
+
+We can do this by showing that the category of change actions has the usual
+useful constructions: products, coproducts, and exponentials. These are the
+building blocks from which we create our datatypes, and they will also be useful
+for our proofs in \cref{sec:fixpoints}: in particular, the \emph{evaluation map}
+$\ev$ that we get from exponentials will turn out to be differentiable, and its
+derivative has a deep connection to the incremental evaluation of functions.
 
 \begin{defn}[Category of change actions]
   We define the category $\cat{CAct}$ of change actions. The objects are
@@ -362,7 +371,7 @@ under the action:
 \end{defn}
 
 We can characterize many of the properties of change actions in terms of the reachability order,
-which suggests a connection between $\cat{CAct}$ and the category or preorders, $\cat{PreOrd}$.
+which suggests a connection between $\cat{CAct}$ and the category of preorders, $\cat{PreOrd}$.
 
 \begin{prop}
   A function is differentiable iff it is monotone with respect to the
@@ -389,7 +398,7 @@ The action $\cplus_\star$ is defined as the extension of $\cplus_\leq$ to the fr
 monoid $\leq^\star$, where $\cplus_\leq$ is defined as:
 \[
 \begin{aligned}
-   \cplus_\leq &: A \times \leq \rightarrow A&\\
+   \cplus_\leq &: (A \times \leq) \rightarrow A&\\
    a \cplus_\leq (b, c) &\defeq
      \begin{cases}
      c&\text{ if $a = b$}\\
@@ -448,9 +457,9 @@ Since $\cat{PreOrd}$ is topological over $\cat{Set}$ \autocite[][Chapter V]{adam
 \subsection{Explicit constructions}
 
 Having shown that $\cat{CAct}$ is equivalent to $\cat{PreOrd}$ it may seem
-redundant to give explicit constructions of some of the useful categorical
-notions. However, we can give constructions that are much nicer than the ones
-gained by going via $\cat{PreOrd}$, which is important for using them in
+redundant to give explicit recipes for constructing products, coproducts, and exponentials.
+However, we can give constructions that are much nicer than the ones
+which we get via $\cat{PreOrd}$, which is important for using them in
 practical computation.
 
 \begin{prop}[Products]
@@ -624,8 +633,8 @@ cases, it is equivalent to a much simpler one.
 
   In order to show that it is isomorphic to the previous exponential structure, we prove that the induced
   reachability order is the same.
-  /todomario{Nevermind, this is in fact false because the changes need to be differentiable but they may not! Quite a problem.}
-  /todomario{The question boils down to whether there is always a differentiable derivative, which is tricky.}
+  \todomario{Nevermind, this is in fact false because the changes need to be differentiable but they may not! Quite a problem.}
+  \todomario{The question boils down to whether there is always a differentiable derivative, which is tricky.}
 \end{proof}
 \fi
 
@@ -803,10 +812,10 @@ A direct corollary of this property is the following result, reminiscent of a we
 
 \begin{corollary}[Continuity of differentiation]
   \label{cor:diffContinuous}
-  Let $\cstr{A}$, $\cstr{B}$ be change actions, with $\cstr{B}$ continuous and let $\{f_i\}$ and $\{f'_i\}$ be
+  Let $\cstr{A}$, $\cstr{B}$ be change actions, with $\cstr{B}$ continuous and let $\{f_i\}$ and $\{\derive{f_i}\}$ be
   $I$-indexed directed families of functions in $A \rightarrow B$ and $A \times \changes{A} \rightarrow \changes{B}$.
 
-  Then, if for every $i \in I$ is the case that $f''_i$ is a derivative of $f_i$, then $\sqcup_{i \in I} \{ f''''_i \}$ is
+  Then, if for every $i \in I$ is the case that $\derive{f_i}$ is a derivative of $f_i$, then $\sqcup_{i \in I} \{ \derive{f_i} \}$ is
   a derivative of $\sqcup_{i \in I} \{ f_i \}$.
 \end{corollary}
 \ifproofs
@@ -849,7 +858,7 @@ Becik's Theorem \autocite[][section 10.1]{winskel1993formal}, but it has a strai
 
 \subsection{Boolean algebras}
 
-Boolean algebras have a simple, complete change structure.
+Boolean algebras have a complete, continuous change structure.
 
 \begin{prop}
   Let $L$ be a Boolean algebra. Define
@@ -1031,7 +1040,7 @@ The following theorems provide a
 generalization of semi-naive evaluation to any differentiable function over a
 continuous change action. We will want to apply this to the semantics of
 Datalog, for which we will need to differentiate its semantics. We will see the
-details of ho to do this in \cref{sec:datalogDifferentiability}.
+details of how to do this in \cref{sec:datalogDifferentiability}.
 
 Since we are trying to incrementalize the iterative step, we start by taking the
 derivative of $\iter$ with respect to $n$.
@@ -1292,11 +1301,10 @@ Datalog is a well-known, simple, logic programming language. It is also a textbo
 example of the need for incremental computation, as its semantics rely on
 bottom-up computation of a least fixpoint \autocite[See][part D]{abiteboul1995foundations}.
 
-There is an extensive existing literature on incremental computation of Datalog,
-but the aim of this section is to argue that by viewing the computation
-of Datalog semantics as composed of differentiable functions we can give a
-bring the machinery that we've developed so far to bear, and give an elegant,
-flexible account of incremental evaluation. 
+The aim of this section is to argue that by viewing the computation
+of Datalog semantics as composed of differentiable functions we can
+bring the machinery that we've developed so far to bear, and give a flexible
+account of incremental evaluation. 
 
 Firstly, however, we must show that we can see the semantics of Datalog in terms
 of elements that we know how to handle: Boolean algebras and fixpoints.
@@ -1307,7 +1315,7 @@ Datalog is usually given a logical semantics wherein we look for models that
 satisfy the program. We will instead give a simple denotational semantics that treats a Datalog
 program as denoting a family of relations.
 
-One obstacle to this approach is giving a denotation to negations. We adopt the
+One obstacle to this approach is giving a denotation to negations. We adopt the usual
 closed-world assumption to solve this.
 
 \begin{defn}[Closed-world assumption and negation]
@@ -1739,7 +1747,7 @@ dependently-typed version as gestured towards in
 the technical difficulties, and also provide a structure that is compatible with
 synthetic differential geometry.
 
-MPJ: mention the integration/integral curves stuff?
+\todompj{mention the integration/integral curves stuff?}
 
 Secondly, the theory of change actions on domains could be developed. Since
 domains are commonly used to define programming language semantics, this could
