@@ -38,7 +38,7 @@
   structures} and \emph{derivatives} of programs. The derivative of a program allows updating the output
   of a program based on a change to its input.
 
-  We generalise change structures to a Cartesian closed category \emph{change actions},
+  We generalise change structures to a Cartesian closed category of \emph{change actions},
   and study their algebraic properties. We develop change actions for several common structures
   in computer science, including directed-complete partial orders and Boolean algebras.
 
@@ -69,11 +69,12 @@ that $e = \{ (1, 2), (3, 4), (5, 6) \}$:
 \begin{center}
   \begin{tabular} {|c|c|c|}
     \hline
-    Iteration & Deduced facts & Accumulated contents of $tc$ \\
+    Iteration & Newly deduced facts & Accumulated contents of $tc$ \\
     \hline
     1 & $\{ (1, 2)\}$ & $\{ (1, 2) \}$\\
     2 & $\{ (1,2), (3,4) \}$ & $\{ (1, 2), (3,4) \}$\\
     3 & $\{ (1,2), (3,4), (5,6) \}$ & $\{ (1, 2), (3,4), (5,6) \}$\\
+    4 & $\{ (1,2), (3,4), (5,6) \}$ & $\{ (1, 2), (3,4), (5,6) \}$\\
     \hline 
   \end{tabular}
 \end{center}
@@ -98,20 +99,20 @@ iteration, which we gradually accumulate \autocite[See][section
 \begin{center}
   \begin{tabular} {|c|c|c|}
     \hline
-    Iteration & $\Delta_i tc$ & $tc_i$ \\
+    Iteration & Newly deduced facts & Accumulated contents of $tc$ \\
     \hline
     1 & $\{ (1, 2)\}$ & $\{ (1, 2) \}$\\
     2 & $\{ (3,4) \}$ & $\{ (1, 2), (3,4) \}$\\
-    2 & $\{ (5,6) \}$ & $\{ (1, 2), (3,4), (5,6) \}$\\
-    3 & $\{ \}$ & $\{ (1, 2), (3,4), (5,6) \}$\\
+    3 & $\{ (5,6) \}$ & $\{ (1, 2), (3,4), (5,6) \}$\\
+    4 & $\{ \}$ & $\{ (1, 2), (3,4), (5,6) \}$\\
     \hline
   \end{tabular}
 \end{center}
 
 This is much better - we have turned a quadratic computation into a linear one.
 
-But the delta rule translation works only for traditional Datalog. It is easy to
-liberalise our syntax to support, say, disjunction, existential quantification, and parity-stratified
+But the delta rule translation works only for traditional Datalog. It is common to
+liberalise the term syntax to support, say, disjunction, existential quantification, and parity-stratified
 negation.\footnote{Parity-stratified negation means that recursive calls must
   appear under an even number of negations. This ensures that the rule remains
   monotone, so the least fixpoint semantics still exists.}
@@ -122,7 +123,7 @@ Then we can write programs like the following:
 \end{align*}
 
 This is essentially a recursion through a \emph{universal} quantifier. We would
-like to be able to use semi-naive evaluation for this rule too, but the delta
+like to be able to use semi-naive evaluation for this rule too, but the simple delta
 transformation does not work, and it is unclear how to extend it (and the
 correctness proof) to handle such cases.
 
@@ -130,7 +131,7 @@ This is of more than theoretical interest - the research
 in this paper was carried out at Semmle, which
 makes heavy use of a commercial Datalog implementation
 \autocites{semmleWebsite}{avgustinov2016ql}{sereni2008adding}{schafer2010type}.
-Semmle's implementation includes parity-stratified negation other non-standard
+Semmle's implementation includes parity-stratified negation, and other non-standard
 features, so a more generic approach to incremental evaluation is vitally necessary.
 
 There is a piece of folkloric knowledge in the Datalog community that hints at a
@@ -1332,13 +1333,18 @@ This makes $\Rel$ into a Boolean algebra.
 \begin{defn}[Term semantics]
   A Datalog term $T$ denotes a function from its free relation variables to
   $\Rel$, $\denote{\_} : \Term \rightarrow \Rel^n \rightarrow \Rel$
+
+  $\denote{t}$ takes an argument $\overline{X} : \Rel^n$. However, this is
+  passed down unchanged through all recursive calls, so we will leave it
+  implicit except where it is used.
+
   \begin{align*}
-    \denote{R_i}(\overline{X}) &\defeq \overline{X}[i] \\
-    \denote{T \wedge U}(\overline{X}) &\defeq \denote{T}(\overline{X}) \cap  \denote{U}(\overline{X})\\
-    \denote{T \vee U}(\overline{X}) &\defeq \denote{T}(\overline{X}) \cup  \denote{U}(\overline{X})\\
-    \denote{\exists x. T}(\overline{X}) &\defeq \pi_x(\denote{T}(\overline{X}))\\
-    \denote{\neg T}(\overline{X}) &\defeq \neg \denote{T}(\overline{X})\\
-    \denote{x=y}(\overline{X}) &\defeq \Delta(x, y) \text{ where } \Delta \text{ is the diagonal relation }
+    \denote{R_j} &\defeq X_j \tag{where $X_i$ is the $i$th element of $\overline{X}$}\\
+    \denote{T \wedge U} &\defeq \denote{T} \cap \denote{U}\\
+    \denote{T \vee U} &\defeq \denote{T} \cup \denote{U}\\
+    \denote{\exists x. T} &\defeq \pi_x(\denote{T})\\
+    \denote{\neg T} &\defeq \neg \denote{T}\\
+    \denote{x=y} &\defeq \Delta(x, y) \tag{ where $\Delta$ is the diagonal relation}
   \end{align*}
 \end{defn}
 
@@ -1348,7 +1354,7 @@ functions of terms are functions between Boolean algebras.
 \begin{defn}[Immediate consequence operator]
   Given a program $\mathcal{P} = \overline{P}$, the immediate consequence operator $\consq: \Rel^n \rightarrow \Rel^n$ is defined as follows:
   \begin{displaymath}
-    \consq(\overline{R}) = \overline{\denote{P_i}(\overline{R})}
+    \consq(\overline{R}) = \overline{\denote{P_j}(\overline{R})} \tag{where $P_j$ is the $j$th component of $\overline{P}$}
   \end{displaymath}
 \end{defn}
 
@@ -1360,13 +1366,15 @@ to the denotation of each predicate, to get a new product of relations.
   \begin{displaymath}
     \denote{\mathcal{P}} \defeq \lfp_{\Rel^n}(\consq)
   \end{displaymath}
-  and may be calculated by repeated application of $\consq$ to $\bot$.
+  and may be calculated by iterative application of $\consq$ to $\bot$ until
+  fixpoint is reached.
 \end{defn}
 
 Whether or not this program semantics exists will depend on whether the fixpoint
 exists. Typically this is ensured by constraining the program such that $\consq$
-is monotone. However, we will remain agnostic on this front - we are merely
-interested in calculating the semantics faster if it exists.
+is monotone (or, in the context of a dcpo, continuous). We can be agnostic
+about this when applying \cref{thm:diffFP}, but we it will be a requirement to
+apply \cref{thm:leastFixpointDiff}.
 
 \subsection{Differentiability of Datalog semantics}
 \label{sec:datalogDifferentiability}
@@ -1417,25 +1425,29 @@ specifics of the evaluation engine. Here is one possibility.\footnote{These are
   bound given by the maximal derivative.}
 
 \newcommand{\bothdiff}{\diamond}
+\newcommand{\bothchanges}{\rho}
 \begin{thm}[Concrete Datalog term derivatives]
 \label{thm:concreteDatalog}
   We give two mutually recursive definitions,
-  $\updiff: \Term \rightarrow \changes{\Rel^n} \rightarrow \changes{Rel}$ and
-  $\downdiff: \Term \rightarrow \changes{\Rel^n} \rightarrow \changes{Rel}$, such
-  that $\updiff \times \downdiff$ is a derivative for Datalog term semantics.
+  $\updiff: \Term \rightarrow \changes{\Rel^n} \rightarrow \changes{\Rel}$ and
+  $\downdiff: \Term \rightarrow \changes{\Rel^n} \rightarrow \changes{\Rel}$, such
+  that $\updiff(t) \times \downdiff(t)$ is a derivative for the semantics of a Datalog term $t$.
 
-  Let
+  $\updiff$ and $\downdiff$ define functions which take an argument
+  $\bothchanges: \changes{\Rel^n}$ . However, this argument is passed down
+  unchanged through all recursive calls until it is used, so we shall leave it
+  implicit until it is used.
+
+  Additionally, let
   \begin{displaymath}
     \diamond X \defeq X \twist (\updiff X, \downdiff X)
   \end{displaymath}
   in the following.
 
-  \todompj{Make the references to the argument changes more obvious}
-
   \begin{align*}
-  \updiff\bot &\defeq \bot\\
-  \updiff\top &\defeq \bot\\
-  \updiff R &\defeq \updiff R\\
+  \updiff(\bot) &\defeq \bot\\
+  \updiff(\top) &\defeq \bot\\
+  \updiff(R_j) &\defeq \updiff R_j \tag{where $\updiff R_j$ is the first component of the $j$th element of $\bothchanges$}\\
   \updiff(T\vee U) &\defeq \updiff T \vee \updiff U\\
   \updiff(T\wedge U) &\defeq (\updiff T\wedge \bothdiff U)
                            \vee
@@ -1445,7 +1457,7 @@ specifics of the evaluation engine. Here is one possibility.\footnote{These are
     \\
   \downdiff\bot &\defeq \bot\\
   \downdiff\top &\defeq \bot\\
-  \downdiff R &\defeq \downdiff R\\
+  \downdiff R &\defeq \downdiff R_j \tag{where $\downdiff R_j$ is the second component of the $j$the element of $\bothchanges$}\\
   \downdiff(T\vee U) &\defeq (\downdiff T \wedge \neg \bothdiff U)
                            \vee
                            (\downdiff U \wedge \neg \bothdiff T)\\
@@ -1655,9 +1667,9 @@ whose derivative is $\lambda a. \lambda d. d$.
 
 \textcite{arntz2017fixpoints} gives a derivative operator for fixpoints. However,
 it uses the definition of function changes from Cai et al., whereas
-we have a different notion of function changes, so the result is unfortunately
-inapplicable. In addition, we prove our result for all functions, not just
-monotone functions.
+we have a different notion of function changes, so the result is inapplicable as
+stated. In addition, we have a somewhat different set of conditions, in particular we
+don't require our changes to always be increasing.
 
 \subsection{Datalog}
 
