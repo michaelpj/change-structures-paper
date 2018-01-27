@@ -124,7 +124,7 @@ Then we can write programs like the following:
 
 This is essentially a recursion through a \emph{universal} quantifier. We would
 like to be able to use semi-naive evaluation for this rule too, but the simple delta
-transformation does not work, and it is unclear how to extend it (and the
+transformation does not produce a correct incremental program, and it is unclear how to extend it (and the
 correctness proof) to handle such cases.
 
 This is of more than theoretical interest - the research
@@ -137,10 +137,7 @@ features, so a more generic approach to incremental evaluation is vitally necess
 There is a piece of folkloric knowledge in the Datalog community that hints at a
 solution: the semi-naive translation of a rule corresponds to the
 \emph{derivative} of that rule \autocites{bancilhon1986naive}[section
-3.2.2]{bancilhon1986amateur}. If we can make this precise, then perhaps we can
-work out how to take derivatives of more complex rules.
-
-The idea of performing incremental computation using derivatives has been
+3.2.2]{bancilhon1986amateur}. The idea of performing incremental computation using derivatives has been
 studied recently by \textcite{cai2014changes}, who given an account using
 \emph{change structures}. They use this to provide a framework for incrementally evaluating lambda calculus programs.
 
@@ -354,7 +351,7 @@ useful constructions: products, coproducts, and exponentials. These are the
 building blocks from which we create our datatypes, and they will also be useful
 for our proofs in \cref{sec:fixpoints}: in particular, the \emph{evaluation map}
 $\ev$ that we get from exponentials will turn out to be differentiable, and its
-derivative has a deep connection to the incremental evaluation of functions.
+derivative has a deep connection to the incremental evaluation of functions (\cref{prop:incrementalization}).
 
 \begin{defn}[Category of change actions]
   We define the category $\cat{CAct}$ of change actions. The objects are
@@ -1481,6 +1478,35 @@ If we did have one, its cases would be dual to those for $\exists$, namely:
 \downdiff(\forall x.T) &= \forall x. \downdiff T
 \end{align*}
 
+We can now give a derivative for our $treeProperty$ program!
+
+Here is the upwards difference:
+\begin{align*}
+  \updiff treeProperty(x) \leftarrow & p(x)\\
+    &\wedge
+    \exists y. (
+      child(x, y)
+      \wedge
+      \updiff treeProperty(y)
+    )\\
+    &\wedge 
+    \neg \exists y. (
+      child(x, y)
+      \wedge
+      \neg \bothdiff treeProperty(y)
+    )
+\end{align*}
+
+This is not especially easy to compute. The third conjunct amounts to
+recomputing the whole of the recursive part. The second conjunct gives us a
+guard: we only need to do the work if there is \emph{some} change in the body of
+our existential. This shows that our derivatives aren't a panacea: it is simply \emph{hard} to compute
+downwards differences for $\exists$ (and, equivalently, upwards differences for
+$\forall$). However, we can do significantly better than nothing, and the
+difficulty is largely isolated to difficult subterms.
+
+\subsection{Differential evaluation of Datalog}
+
 We can easily extend a derivative for the term semantics to a derivative for $\consq$.
 
 \begin{corollary}
@@ -1488,9 +1514,7 @@ We can easily extend a derivative for the term semantics to a derivative for $\c
   $\consq$ is differentiable.
 \end{corollary}
 
-\subsection{Differential evaluation of Datalog}
-
-Putting this together, we get two results.
+Putting this together with the results from \cref{sec:fixpoints}, we get two results.
 
 \begin{thm}[Differential evaluation of Datalog semantics]
 \label{thm:diffEval}
