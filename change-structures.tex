@@ -185,11 +185,10 @@ on the base set.\footnote{The requirement that the change set be a monoid is con
   action. We may abbreviate $\cstruct{A}{\changes{A}}{\cplus}$ to $\cstr{A}_\cplus$.
 \end{defn}
 
-The fact that the change set is a monoid action reveals the heart of the
-change action definition: the change set represents a subset of the
-endofunctions on the base set which is closed under composition (a
-\emph{transformation monoid}). This shows that we can represent any closed structure of
-changes with a change action.
+The fact that the change set is a monoid action gives us a reason to think that
+change actions are an adequate representation of changes: any set of
+transformations on the base set which is closed under composition can be
+represented as a monoid action, so we are able to capture all of these as change actions.
 
 The primary motivation for change actions is that they let us define
 \emph{derivatives} for functions.
@@ -256,13 +255,14 @@ Here are some recurring examples of changes actions:
 \end{itemize}
 
 Indeed, any monoid $(A, \splus)$ can be seen as a change action
-$\cstruct{A}{A}{\splus}$, and the final two examples are instances of this. In particular,
-for any change action $\cstruct{A}{\changes{A}}{\cplus}$,
-$\cstruct{\changes{A}}{\changes{A}}{\splus}$ is also a change action. Many practical change actions
-can be constructed in this way.
+$\cstruct{A}{A}{\splus}$, and the final two examples are instances of this. Many practical change actions
+can be constructed in this way. In particular, for any change action $\cstruct{A}{\changes{A}}{\cplus}$,
+$\cstruct{\changes{A}}{\changes{A}}{\splus}$ is also a change action. This means
+that we don't have to do any extra work to talk about higher derivatives of
+functions - we can always take $\changes{\changes{A}} = \changes{A}$.
 
 Many other notions in computer science can be naturally understood in terms of change actions, e.g. databases
-and database updates, files and \emph{diff}s, Git repositories and commits, even video compression
+and database updates, files and diffs, Git repositories and commits, even video compression
 algorithms that encode a frame as a series of changes to the previous frame.
 
 \subsection{Complete change actions and minus operators}
