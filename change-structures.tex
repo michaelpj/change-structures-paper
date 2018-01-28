@@ -1631,19 +1631,33 @@ dependently typed changes, since the type of the tangent space at a point is
 dependent on the point.
 
 In fact, a slightly different dependently-typed formulation arises if we consider changes
-to be indexed \emph{both} by the source and the target. This corresponds to
+to be indexed \emph{both} by the source and the target. This means
 thinking of our base set as a category, with changes $\Delta_a^b$ between $a$
 and $b$ as morphisms between $a$ and $b$. In this interpretation, a function is
-differentiable iff it is a functor (i.e. takes a change in $\Delta_a^b$ to one in
-$\Delta_{f(a)}^{f(b)}$). Function changes also have an interpretation as natural
-transformation.
+differentiable iff it is a functor (i.e. has an action (its derivative) taking a
+change in $\Delta_a^b$ to one in $\Delta_{f(a)}^{f(b)}$). The correspondence
+with $\cat{PreOrd}$ still holds, but it is with the 2-categorical version of
+$\cat{PreOrd}$ where each poset is viewed as a category.
 
 This approach seems promising, although it introduces some
 interesting additional restrictions (functoriality implies $\derive{f}(\change{a} \splus \change{b}) =
 \derive{f}(\change{a}) \splus \derive{f}(\change{b})$; naturality of function
-changes implies that
-the two derivatives from \cref{prop:evDerivatives} are equal). These seem
+changes implies that the two derivatives from \cref{prop:evDerivatives} are equal). These seem
 reasonable, but we don't know exactly what the consequences would be.
+
+\citeauthor{cai2014changes} also discuss \emph{self-maintainable} derivatives,
+which are derivatives that do not use their first argument, and hence can be
+evaluated using only the change argument. These appear in traditional semi-naive
+evaluation of Datalog too: \emph{linear} Datalog rules which have only a single
+recursive reference can be converted into delta rules which only mention the
+delta of the recursive predicate \autocite[See][section
+13.1]{abiteboul1995foundations}. For our more complex derivatives it is less
+easy to tell whether a term will have a self-maintainable derivative or not, but
+the consequences of non-linearity remain very noticeable in practice.
+Self-maintainable derivatives are also interesting because they produce 
+\emph{commutative} changes (since they do not depend on the base point), and so can be
+evaluated in parallel for multiple incoming changes. This seems worthy of
+further study, and could provide a model for CRDTs.
 
 \subsubsection{S-acts}
 
@@ -1656,17 +1670,13 @@ structure, whereas we are interested in changing both the base set \emph{and} th
 There are similarities: if we compare the definition of an ``act-preserving''
 homeomorphism in $\cat{SAct} $\autocite[See][]{kilp2000monoids} we can see that the structure is
 quite similar to the definition of differentiability:
-
 \begin{displaymath}
   f(a \splus s) = f(a) \splus s
 \end{displaymath}
-
 as opposed to
-
 \begin{displaymath}
   f(a \cplus s) = f(a) \cplus \derive{f}(a, s)
 \end{displaymath}
-
 That is, we use $\derive{f}$ to transform the action element into the new
 monoid, whereas in $\cat{SAct}$ it simply remains the same.
 
