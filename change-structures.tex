@@ -53,6 +53,7 @@
 \maketitle
 
 \section{Introduction}
+\label{sec:intro}
 
 Consider the following archetypal Datalog program, which computes the transitive
 closure of an edge relation $e$:
@@ -1119,10 +1120,9 @@ and we now wish to apply a change to $E$ and compute
 This amounts to applying a change to the \emph{function} whose fixpoint we are taking.
 
 In Datalog this would allow us to update a recursively defined relation given an
-update to a non-recursive dependency of it, such as the base database.
-
+update one of its non-recursive dependencies, or the base extensional database.
 For example, we might want to take the transitive closure relation
-and update it by changing the base relation $e$.
+and update it by changing the edge relation $e$.
 
 However, this requires us to have a derivative for the fixpoint operator
 $\fixpoint$ with respect to the function which it takes the fixpoint of.
@@ -1290,9 +1290,9 @@ again (which will itself require a fixpoint computation).
 \section{Datalog}
 \label{sec:datalog}
 
-Datalog is a well-known, simple, logic programming language. It is also a textbook
-example of the need for incremental computation, as its semantics rely on
-bottom-up computation of a least fixpoint \autocite[See][part D]{abiteboul1995foundations}.
+Datalog is a well-known simple logic programming language \autocite[See][part D]{abiteboul1995foundations}.
+It is also a textbook example of the need for incremental computation, since as we have seen
+(\cref{sec:intro}) the naive computation of its semantics can be very expensive.
 
 The aim of this section is to argue that by viewing the computation
 of Datalog semantics as composed of differentiable functions we can
@@ -1308,8 +1308,8 @@ Datalog is usually given a logical semantics wherein we look for models that
 satisfy the program. We will instead give a simple denotational semantics that treats a Datalog
 program as denoting a family of relations.
 
-One obstacle to this approach is giving a denotation to negations. We adopt the usual
-closed-world assumption to solve this.
+One obstacle to this approach is giving a denotation to negations. We adopt an
+equivalent of the usual closed-world assumption to solve this.
 
 \begin{defn}[Closed-world assumption and negation]
   There exists a universal relation $\universalRel$.
@@ -1449,7 +1449,7 @@ specifics of the evaluation engine. Here is one possibility.\footnote{These are
     \\
   \downdiff\bot &\defeq \bot\\
   \downdiff\top &\defeq \bot\\
-  \downdiff R &\defeq \downdiff R_j \tag{where $\downdiff R_j$ is the second component of the $j$the element of $\bothchanges$}\\
+  \downdiff R &\defeq \downdiff R_j \tag{where $\downdiff R_j$ is the second component of the $j$th element of $\bothchanges$}\\
   \downdiff(T\vee U) &\defeq (\downdiff T \wedge \neg \bothdiff U)
                            \vee
                            (\downdiff U \wedge \neg \bothdiff T)\\
@@ -1500,7 +1500,7 @@ downwards differences for $\exists$ (and, equivalently, upwards differences for
 $\forall$). However, we can do significantly better than nothing, and the
 difficulty is largely isolated to difficult subterms.
 
-\subsection{Differential evaluation of Datalog}
+\subsection{Incremental evaluation of Datalog}
 
 We can easily extend a derivative for the term semantics to a derivative for $\consq$.
 
@@ -1585,16 +1585,15 @@ typed type of changes. For example, the change actions described before on sets 
 useful for incremental computation on streams, yet they do not admit minus operators - instead, one would
 be forced to work with e.g. multisets admitting negative arities, as \citeauthor{cai2014changes} do.
 
-Our notion of function changes is different to \citeauthor{cai2014changes}'s,
-because we consider changes of functions to be what \citeauthor{cai2014changes} describe as
+Our notion of function changes is different to \citeauthor{cai2014changes}'s.
+Our function changes (when well behaved) correspond to what \citeauthor{cai2014changes} call as
 \emph{pointwise differences} (for the subsequent paragraphs we shall adopt
 their terminology) \autocite[See][section 2.2]{cai2014changes}. As they point out, you can reconstruct their
 function changes from pointwise changes and derivatives, so the two formulations
 are equivalent. This gives us the following correspondences:
 \begin{itemize}
-  \item Our \emph{derivatives of the
-      evaluation map} are \citeauthor{cai2014changes}'s \emph{function changes}
-  \item Our \emph{function changes} are \citeauthor{cai2014changes}'s \emph{pointwise differences}
+  \item Our \emph{derivatives of the evaluation map} are \citeauthor{cai2014changes}'s \emph{function changes}
+  \item Our \emph{function changes} are (usually) \citeauthor{cai2014changes}'s \emph{pointwise differences}
 \end{itemize}
 
 Our equivalent to \citeauthor{cai2014changes}'s ``Incrementalization'' lemma
@@ -1604,23 +1603,14 @@ the lemma simply follows from the fact that we are using the derivative of the
 evaluation map - any derivative will do. It is then a further fact that we can
 find actual definitions for this derivative (\cref{prop:evDerivatives}).
 
-\citeauthor{cai2014changes} assert that the reason they use their function changes instead of pointwise
+\citeauthor{cai2014changes} say that the reason they use their function changes instead of pointwise
 differences as the primitive notion is that a function change has access to more
-information, and so is easier to optimize. In contrast, we have not found pointwise differences to be
+information, and so is easier to optimize \autocite[][section
+2.2]{cai2014changes}. In contrast, we have not found pointwise differences to be
 significantly harder to work with in practice, or more difficult to compute (at least in our implementations
-in Datalog).
-
-We have two reasons to prefer using pointwise differences to function changes:
-\begin{itemize}
-  \item Pointwise differences are simpler from a theoretical point of view, and
-    correspond to the exponentials that we get from the categorical equivalence with $\cat{PreOrd}$.
-  \item We can take pointwise differences of non-differentiable
-    functions.\footnote{The fact that function changes imply differentiability
-      of a function follows from \textcite[][Theorem 2.10]{cai2014changes}, and
-      the fact that all change actions have a zero change.} This
-    is of somewhat limited usefulness in the material we have presented, but for
-    example allows us to apply \cref{thm:fixpointDiff} to non-differentiable functions.
-\end{itemize}
+for Datalog). On the other hand, from a theoretical point of view our function changes correspond to the
+exponentials that we get from the categorical equivalence with $\cat{PreOrd}$,
+and (when we can use them) pointwise differences are easier to work with.
 
 However, this is largely an issue of presentation: if it turned out that it was
 significantly easier to work with function changes rather than pointwise
@@ -1628,7 +1618,9 @@ changes, then there is nothing preventing a ``plugin'' for \citeauthor{cai2014ch
 ability to create either or both.
 
 The equivalence of our presentations means that our work should be compatible
-with ILC. In particular, this is likely to be of interest for languages like
+with ILC. The rules we give in \cref{sec:datalogDifferentiability} are more or
+less a ``change semantics'' for Datalog \autocite[See][section
+3.5]{cai2014changes}. In particular, this is likely to be of interest for languages like
 Datafun (see \cref{sec:embeddingDatalog} below) which embed Datlog or logic programming behaviour within a broader
 programming context.
 
@@ -1773,21 +1765,20 @@ strategies for incrementally evaluating fixpoints and the semantics of Datalog.
 
 Our work opens several avenues for future investigation.
 
-Firstly, the abstract definition of change actions could be extended to the
+Firstly, the abstract definition of change actions could be extended to a
 dependently-typed version as gestured towards in
 \cref{sec:relatedChangeStructures}. We believe this might smooth over many of
 the technical difficulties, and also provide a structure that is compatible with
-synthetic differential geometry.
-
-\todompj{mention the integration/integral curves stuff?}
+synthetic differential geometry, where the type of the tangent bundle at a point
+depends on the point.
 
 Secondly, the theory of change actions on domains could be developed. Since
 domains are commonly used to define programming language semantics, this could
 open up opportunities for incremental evaluation of many programming languages,
-even those that not fit into the model of \citeauthor{cai2014changes}'s ILC.
+even those that do not fit into the model of \citeauthor{cai2014changes}'s ILC.
 
 Finally, combining our concrete Datalog derivatives with a system similar to ILC
-in a language such as Datafun would be an exciting proof of the compositional
+in a language such as Datafun would be an exciting demonstration of the compositional
 power of this approach.
 
 \printbibliography
