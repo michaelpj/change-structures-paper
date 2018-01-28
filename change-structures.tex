@@ -57,6 +57,7 @@
 Consider the following archetypal Datalog program, which computes the transitive
 closure of an edge relation $e$:
 \begin{align*}
+  \label{eqn:tc}
   tc(x, y) &\leftarrow e(x, y)\\
   tc(x, y) &\leftarrow e(x, z) \wedge tc(z, y)
 \end{align*}
@@ -1120,13 +1121,7 @@ This amounts to applying a change to the \emph{function} whose fixpoint we are t
 In Datalog this would allow us to update a recursively defined relation given an
 update to a non-recursive dependency of it, such as the base database.
 
-For example, we might want to take the archetypal transitive closure relation
-
-\begin{align*}
-  tc(x, y) &\leftarrow e(x, y)\\
-  tc(x, y) &\leftarrow e(x, z), tc(z, y)
-\end{align*}
-
+For example, we might want to take the transitive closure relation
 and update it by changing the base relation $e$.
 
 However, this requires us to have a derivative for the fixpoint operator
@@ -1155,7 +1150,7 @@ derivative we'll need to do a bit more work.
     \item $\cstr{A}$ be a change action
     \item $\fixpoint : (\cstr{A} \rightarrow \cstr{A}) \rightarrow \cstr{A}$ be a fixpoint operator
     \item $f: \cstr{A} \rightarrow \cstr{A}$ be a differentiable function
-    \item $\change{f} \in \changes{(A \rightarrow A)}$ be a change to $f$
+    \item $\change{f} \in \changes{(A \rightarrow A)}$ be a function change 
     \item $\derive{\ev}$ be a derivative of the evaluation map
   \end{itemize}
 
@@ -1201,10 +1196,11 @@ the setting in which we normally compute fixpoints anyway.
 Since $\lfp$ is characterized as the limit of a chain of functions,
 \cref{cor:diffContinuous} suggests a way to compute its derivative. If we can find a derivative
 $\derive{\iter_n}$ of each iteration map 
-such that the resulting set $\{ \derive{\iter_n} \}$ is directed, then $\sqcup_{n \in \NN}
-\{\derive{\iter_n} \}$ will be a derivative of $\lfp$.
+such that the resulting set $\{ \derive{\iter_n} \}$ is directed, then $\sqcup_{n \in \NN}\derive{\iter_n}$ will be a derivative of $\lfp$.
 
-These correspond to the other derivative of $\iter$ - this time with respect to $f$.
+These correspond to the other derivative of $\iter$ - this time with respect to
+$f$. While we are differentiating with respect to $f$, we are still going to
+need to define our derivatives inductively in terms of $n$.
 
 \begin{prop}[Derivative of the iteration map with respect to $f$]
   $\iter_n$ is differentiable and a derivative is given by:
@@ -1248,8 +1244,8 @@ Which has the property that
 
 In fact, the recursion here is not \emph{mutual}: $\iter_n$ does
 not depend on $\derive{\iter_n}$. However, writing it in this way makes it
-amenable to computation by fixpoint, and we shall see how to eliminate the
-recomputation of $\iter_n$ later.
+amenable to computation by fixpoint, and we are about to see that we can avoid
+the recomputation of $\iter_n$ by using \cref{prop:factoringFixpoints}.
 
 \begin{thm}[Derivatives of least fixpoint operators]
   \label{thm:leastFixpointDiff}
@@ -1257,8 +1253,7 @@ recomputation of $\iter_n$ later.
   \begin{itemize}
     \item $\cstr{A}$ be a continuous change action
     \item $f : \cstr{A} \rightarrow \cstr{A}$ be a continuous, differentiable function
-    \item $f' : A \times \changes{A} \rightarrow \changes{A}$ be a continuous derivative of $f$
-    \item $\change{f} : A \rightarrow \changes{A}$ be a function change
+    \item $\change{f} \in A \rightarrow \changes{A}$ be a function change
     \item $\derive{\ev}$ be a derivative of the evaluation map, continuous with
       respect to $a$ and $\change{a}$.
   \end{itemize}
@@ -1666,8 +1661,8 @@ overview). However, there is a key difference between our $\cat{CAct}$ and the c
 S-acts $\cat{SAct}$: the objects of $\cat{SAct}$ all maintain the same monoid
 structure, whereas we are interested in changing both the base set \emph{and} the structure of the act.
 
-There are similarities: if we compare the definition of a $\cat{SAct}$ ``act-preserving''
-homeomorphism \autocite[See][]{kilp2000monoids} we can see that the structure is
+There are similarities: if we compare the definition of an ``act-preserving''
+homeomorphism in $\cat{SAct} $\autocite[See][]{kilp2000monoids} we can see that the structure is
 quite similar to the definition of differentiability:
 
 \begin{displaymath}
@@ -1707,7 +1702,8 @@ developed that approach.
 
 As far as we know, traditional semi-naive is generally considered the state of
 the art in incremental, bottom-up, Datalog evaluation, and there are no strategies that
-accommodate additional (recursive) language features such as aggregates.
+accommodate additional (recursive) language features such as parity-stratified
+negation and aggregates.
 
 \subsubsection{Incremental updates}
 
