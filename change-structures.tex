@@ -55,17 +55,16 @@
 \section{Introduction}
 \label{sec:intro}
 
-Consider the following archetypal Datalog program, which computes the transitive
+Consider the following classic Datalog program, which computes the transitive
 closure of an edge relation $e$:
 \begin{align*}
-  \label{eqn:tc}
   tc(x, y) &\leftarrow e(x, y)\\
   tc(x, y) &\leftarrow e(x, z) \wedge tc(z, y)
 \end{align*}
 
 The semantics of Datalog tell us that the denotation of this program is the
 least fixpoint of the rule $tc$. Kleene's Theorem tells us that we can reach
-this by repeating applying the rule, starting from empty. For example, supposing
+this by repeating applying the rule, starting from the empty relation. For example, supposing
 that $e = \{ (1, 2), (3, 4), (5, 6) \}$:
 
 \begin{center}
@@ -119,7 +118,8 @@ negation.\footnote{Parity-stratified negation means that recursive calls must
   appear under an even number of negations. This ensures that the rule remains
   monotone, so the least fixpoint semantics still exists.}
 
-Then we can write programs like the following:
+Then we can write programs like the following, where we compute whether all the
+nodes in a subtree given by $child$ have some property $p$:
 \begin{align*}
   treeProperty(x) &\leftarrow p(x) \wedge \neg \exists y . (child(x,y) \wedge \neg treeProperty(y))
 \end{align*}
@@ -134,17 +134,18 @@ in this paper was carried out at Semmle, which
 makes heavy use of a commercial Datalog implementation
 \autocites{semmleWebsite}{avgustinov2016ql}{sereni2008adding}{schafer2010type}.
 Semmle's implementation includes parity-stratified negation, and other non-standard
-features, so a more generic approach to incremental evaluation is vitally necessary.
+features, so we are faced with a dilemma: either abandon the new language
+features, or abandon incremental computation.
 
 There is a piece of folkloric knowledge in the Datalog community that hints at a
 solution: the semi-naive translation of a rule corresponds to the
 \emph{derivative} of that rule \autocites{bancilhon1986naive}[section
 3.2.2]{bancilhon1986amateur}. The idea of performing incremental computation using derivatives has been
-studied recently by \textcite{cai2014changes}, who given an account using
+studied recently by \textcite{cai2014changes}, who give an account using
 \emph{change structures}. They use this to provide a framework for incrementally evaluating lambda calculus programs.
 
-However, their work isn't directly applicable to Datalog: the tricky part
-of Datalog's semantics is the \emph{fixpoint}, and we need some theory to tell us how to
+However, \citeauthor{cai2014changes}'s work isn't directly applicable to Datalog: the tricky part
+of Datalog's semantics is the \emph{fixpoint}, and we need some addtional theory to tell us how to
 handle incremental evaluation of fixpoint computations.\footnote{In fact, we can prove these
 results for fixpoint computations over dcpos in general, which opens up the
 possibility of using these result in domain theory, which uses fixpoints to
@@ -161,7 +162,9 @@ the function of which the fixpoint is taken (\cref{sec:fixpoints}).
 Finally, we put all this together into a generic account of incremental
 computation and update of Datalog programs, showing how to handle 
 language constructs such as negation, disjunction, and additional well-behaved
-extensions (\cref{sec:datalog}).
+extensions (\cref{sec:datalog}). This provides the world's first incremental
+evaluation and update mechanism for Datalog that can handle arbitrary additional
+term constructs (\cref{sec:extensions}).
 
 \section{Change actions}
 \label{sec:changeActions}
@@ -1537,6 +1540,7 @@ term semantics.
 This is a generalization of the view-update problem for Datalog, including recursive views.
 
 \subsection{Extensions to Datalog}
+\label{sec:extensions}
 
 Our formulation of Datalog term semantics and differential evaluation is quite
 generic and composable, so it is relatively easy to extend the language with new
@@ -1548,24 +1552,27 @@ A new term construct must have:
   \item An implementation of $\updiff$ and $\downdiff$.
 \end{itemize}
 
-These are very easy conditions - the former is needed for the construct to even
-make sense, and the latter can always be satisfied by using the maximal or
-minimal derivative. Although they are very bad derivatives, having them
-available as options is very helpful. It means that even if we have a term
-construct which we cannot find a good derivative for, we only lose incremental
+These are very easy conditions to satisfy. The former is needed for the construct to even
+make sense, and because we are using the complete change structure
+$\cstr{L}_\superpose$, the latter can \emph{always} be satisfied by using the maximal or
+minimal derivative. This justifies our claim that we can support
+\emph{arbitrary} additional term constructs: although the maximal and minimal
+derivatives are likely to be very bad derivatives, having them
+available as options means that we can still work them into the overall process.
+Even if we have a term construct which we cannot find a good derivative for, we only lose incremental
 evaluation for those subterms, and not for anything else.
 
-Note that this does not say anything about monotonicity. New term constructs may
+This does not say anything about monotonicity. New term constructs may
 be required to be monotone if they are to participate in recursion, but we are
 interested in derivatives even for non-monotone terms because they allow us to
 use \cref{thm:diffUpdate}.
 
 This is important in practice for Semmle's variant of Datalog, which includes
-aggregation and other primitives with interesting derivatives.
+aggregation and other primitives with interesting derivatives. 
 
 \section{Related work}
 
-\subsection{Change actions}
+\subsection{Change actions and incremental computation}
 
 \subsubsection{Change structures}
 \label{sec:relatedChangeStructures}
@@ -1686,10 +1693,10 @@ whose derivative is $\lambda a. \lambda d. d$.
 
 \subsubsection{Derivatives of fixpoints}
 
-\textcite{arntz2017fixpoints} gives a derivative operator for fixpoints. However,
-it uses the definition of function changes from Cai et al., whereas
-we have a different notion of function changes, so the result is inapplicable as
-stated. In addition, we have a somewhat different set of conditions, in particular we
+\textcite{arntz2017fixpoints} gives a derivative operator for fixpoints based on
+the framework in \textcite{cai2014changes}. However, since we have different
+notions of function changes, the result is inapplicable as
+stated. In addition, we require a somewhat different set of conditions, in particular we
 don't require our changes to always be increasing.
 
 \subsection{Datalog}
@@ -1702,10 +1709,9 @@ and the requisite soundness condition appears as a throwaway comment in
 \textcite[][section 3.2.2]{bancilhon1986amateur}, and as far as we know nobody has since
 developed that approach.
 
-As far as we know, traditional semi-naive is generally considered the state of
+As far as we know, traditional semi-naive is the state of
 the art in incremental, bottom-up, Datalog evaluation, and there are no strategies that
-accommodate additional (recursive) language features such as parity-stratified
-negation and aggregates.
+accommodate additional language features such as parity-stratified negation and aggregates.
 
 \subsubsection{Incremental updates}
 
