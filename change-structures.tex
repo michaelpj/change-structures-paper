@@ -9,6 +9,7 @@
 \usepackage{amsthm}
 \usepackage{mathtools}
 \usepackage{stmaryrd}
+\usepackage{thmtools}
 \usepackage{todonotes}
 \usepackage{etoolbox}
 \usepackage{appendix}
@@ -405,7 +406,8 @@ $\direct : \cat{PreOrd} \rightarrow \cat{CAct}$, again acting as the identity on
 These two functors are in fact enough to give us an equivalence between the categories
 $\cat{CAct}$ and $\cat{PreOrd}$.
 
-\begin{thm}[Equivalence of $\cat{CAct}$, $\cat{PreOrd}$]
+\begin{thm}[name=Equivalence of $\cat{CAct}$ and $\cat{PreOrd}$, restate=preordEquivalence]
+  \label{thm:preordEquivalence}
   The functor $\reach$ from $\cat{CAct}$ to $\cat{PreOrd}$ together with the
   functor $\direct$ in the opposite direction form an equivalence of categories.
 \end{thm}
@@ -431,7 +433,8 @@ However, we can give constructions that are much nicer than the ones
 which we get via $\cat{PreOrd}$, which is important for using them in
 practical computation.
 
-\begin{prop}[Products]
+\begin{prop}[name=Products, restate=products]
+  \label{prop:products}
   Let $\cstr{A} = \cstruct{A}{\changes{A}}{\cplus}$ and $\cstr{B} =
   \cstruct{B}{\changes{B}}{\cpluss}$ be change actions.
 
@@ -444,7 +447,8 @@ practical computation.
 \end{proof}
 \fi
 
-\begin{prop}[Coproducts]
+\begin{prop}[name=Coproducts, restate=coproducts]
+  \label{prop:coproducts}
   Let $\cstr{A} = \cstruct{A}{\changes{A}}{\cplus}$ and $\cstr{B} =
   \cstruct{B}{\changes{B}}{\cpluss}$ be change actions.
 
@@ -461,7 +465,7 @@ practical computation.
 \end{proof}
 \fi
 
-\begin{prop}[Exponentials]
+\begin{prop}[name=Exponentials, restate=exponentials]
 \label{prop:exponentials}
   Let $\cstr{A}_\cplus$ and $\cstr{B}_\cpluss$ be change actions. We will say a map 
   $\change{f} : (\cstr{A} \rightarrow \cstr{B}) \rightarrow (\cstr{A} \rightarrow \cstr{B})$ 
@@ -779,7 +783,7 @@ A direct corollary of this property is the following result, reminiscent of a we
 We also state the following additional fixpoint lemma. This is a specialization of
 Becik's Theorem \autocite[][section 10.1]{winskel1993formal}, but it has a straightforward direct proof.
 
-\begin{prop}[Factoring of fixpoints]
+\begin{prop}[name=Factoring of fixpoints, restate=factoringFixpoints]
   \label{prop:factoringFixpoints}
   Let $A$ and $B$ be dcpos, $f : A \rightarrow A$ and $g: A \times B \rightarrow B$ be continuous, and let
   \begin{displaymath}
@@ -800,7 +804,7 @@ Becik's Theorem \autocite[][section 10.1]{winskel1993formal}, but it has a strai
 
 Boolean algebras have a complete, continuous change structure.
 
-\begin{prop}
+\begin{prop}[restate=lsuperpose]
   Let $L$ be a Boolean algebra. Define
   \begin{displaymath}
     \cstr{L}_\superpose \defeq \cstruct{L}{L \times L}{\twist}
@@ -897,7 +901,8 @@ details of how to do this in \cref{sec:datalogDifferentiability}.
 Since we are trying to incrementalize the iterative step, we start by taking the
 derivative of $\iter$ with respect to $n$.
 
-\begin{prop}[Derivative of the iteration map with respect to $n$]
+\begin{prop}[name=Derivative of the iteration map with respect to $n$, restate=iterDerivativesN]
+  \label{prop:iterDerivativesN}
   Let $\cstr{A}$ be a complete change structure. Then $\iter_f$ is differentiable, and a derivative is given by:
   \begin{align*}
     &\derive{\iter_f}: \NN \times \changes{\NN} \rightarrow \changes{A}\\
@@ -924,8 +929,8 @@ Which has the property that
   &\nextiter_f^n (\bot, \bot) = (\iter_f(n), \derive{\iter_f}(n, 1))
 \end{align*}
 
-\begin{thm}[Incremental computation of least fixpoints]
-\label{thm:diffFP}
+\begin{thm}[name=Incremental computation of least fixpoints, restate=fixpointIter]
+\label{thm:fixpointIter}
   Let $\cstr{A}$ be a continuous change action, $f: \cstr{A} \rightarrow
   \cstr{A}$ be continuous and differentiable.
 
@@ -984,8 +989,8 @@ derivative we'll need to do a bit more work.
   \end{align*}
 \end{defn}
 
-\begin{thm}[Pseudo-derivatives of fixpoints]
-\label{thm:fixpointDiff}
+\begin{thm}[name=Pseudo-derivatives of fixpoints, restate=fixpointPseudoDerivatives]
+\label{thm:fixpointPseudoDerivatives}
   Let
   \begin{itemize}
     \item $\cstr{A}$ be a change action
@@ -1029,7 +1034,8 @@ These correspond to the other derivative of $\iter$ - this time with respect to
 $f$. While we are differentiating with respect to $f$, we are still going to
 need to define our derivatives inductively in terms of $n$.
 
-\begin{prop}[Derivative of the iteration map with respect to $f$]
+\begin{prop}[name=Derivative of the iteration map with respect to $f$, restate=iterDerivativesF]
+  \label{prop:iterDerivativesF}
   $\iter_n$ is differentiable and a derivative is given by:
   \begin{align*}
     &\derive{\iter_n} : (A \rightarrow A) \times \changes{(A \rightarrow A)} \rightarrow \changes{A}\\
@@ -1059,8 +1065,8 @@ not depend on $\derive{\iter_n}$. However, writing it in this way makes it
 amenable to computation by fixpoint, and we are about to see that we can avoid
 the recomputation of $\iter_n$ by using \cref{prop:factoringFixpoints}.
 
-\begin{thm}[Derivatives of least fixpoint operators]
-  \label{thm:leastFixpointDiff}
+\begin{thm}[name=Derivatives of least fixpoint operators, restate=leastFixpointDerivatives]
+  \label{thm:leastFixpointDerivatives}
   Let
   \begin{itemize}
     \item $\cstr{A}$ be a continuous change action
@@ -1073,7 +1079,7 @@ the recomputation of $\iter_n$ by using \cref{prop:factoringFixpoints}.
 \end{thm}
 \ifproofs
 \begin{proof}
-  See \cref{prf:fixpointDerivatives}.
+  See \cref{prf:leastFixpointDerivatives}.
 \end{proof}
 \fi
 
@@ -1160,8 +1166,8 @@ to the denotation of each predicate, to get a new product of relations.
 Whether or not this program semantics exists will depend on whether the fixpoint
 exists. Typically this is ensured by constraining the program such that $\consq$
 is monotone (or, in the context of a dcpo, continuous). We can be agnostic
-about this when applying \cref{thm:diffFP}, but we it will be a requirement to
-apply \cref{thm:leastFixpointDiff}.
+about this when applying \cref{thm:fixpointIter}, but we it will be a requirement to
+apply \cref{thm:leastFixpointDerivatives}.
 
 \subsection{Differentiability of Datalog semantics}
 \label{sec:datalogDifferentiability}
@@ -1312,7 +1318,7 @@ Putting this together with the results from \cref{sec:fixpoints}, we get two res
 \end{thm}
 \ifproofs
 \begin{proof}
-  Corollary of \cref{thm:diffFP} and \cref{corollary:consqDiff}.
+  Corollary of \cref{thm:fixpointIter} and \cref{corollary:consqDiff}.
 \end{proof}
 \fi
 
@@ -1325,7 +1331,7 @@ term semantics.
 \end{thm}
 \ifproofs
 \begin{proof}
-  Corollary of \cref{thm:leastFixpointDiff} and \cref{corollary:consqDiff}.
+  Corollary of \cref{thm:leastFixpointDerivatives} and \cref{corollary:consqDiff}.
 \end{proof}
 \fi
 
@@ -1598,6 +1604,7 @@ power of this approach.
 
 \subsection{The category of change actions}
 
+\preordEquivalence*
 \begin{proof}
   \label{prf:preordEquivalence}
   On one direction, if $U$ is a preorder, it's trivial to check that $\reach (\direct (U)) = U$.
@@ -1625,6 +1632,7 @@ power of this approach.
   which can be extended freely to the whole change set $\reachOrder^\star$. 
 \end{proof}
 
+\products*
 \begin{proof}
   \label{prf:products}
   Let $\cstr{Y}$ be a change action, and $f_1: \cstr{Y} \rightarrow \cstr{A}$, $f_2: \cstr{Y}
@@ -1639,6 +1647,7 @@ power of this approach.
   product in the $\cat{Set}$.
 \end{proof}
 
+\coproducts*
 \begin{proof}
   \label{prf:coproducts}
   Let $\cstr{Y}$ be a change action, and $f_1 : \cstr{A} \rightarrow \cstr{Y}$, $f_2 : \cstr{B}
@@ -1655,6 +1664,7 @@ power of this approach.
 
 \subsection{Change actions over other structures}
 
+\factoringFixpoints*
 \begin{proof}
   \label{prf:factoringFixpoints}
   Let
@@ -1671,6 +1681,7 @@ power of this approach.
   Hence $\lfp(h) = \lfp(p) = (\lfp(f), \lfp(g(\lfp(f))))$.
 \end{proof}
 
+\lsuperpose*
 \begin{proof}
   \label{prf:lsuperpose}
   We show that the monoid action property holds:
@@ -1766,6 +1777,7 @@ power of this approach.
 
 \subsection{Fixpoints}
 
+\iterDerivativesN*
 \begin{proof}
   \label{prf:iterDerivativesN}
   By induction on $n$. We show the inductive step.
@@ -1777,6 +1789,7 @@ power of this approach.
   \end{align*}
 \end{proof}
 
+\fixpointIter*
 \begin{proof}
   \label{prf:fixpointIter}
   \begin{align*}
@@ -1787,6 +1800,7 @@ power of this approach.
   \end{align*}
 \end{proof}
 
+\fixpointPseudoDerivatives*
 \begin{proof}
   \label{prf:fixpointPseudoDerivatives}
   Let $\change{w} \in \Delta A$ satisfy \cref{eqn:fixcondition}. Then
@@ -1806,6 +1820,7 @@ power of this approach.
   follows from reversing the direction of the proof.
 \end{proof}
 
+\iterDerivativesF*
 \begin{proof}
   \label{prf:iterDerivativesF}
   The base case follows from \cref{cor:bottomPlusBottom}.
@@ -1826,8 +1841,9 @@ power of this approach.
   \end{align*}
 \end{proof}
 
+\leastFixpointDerivatives*
 \begin{proof}
-  \label{prf:fixpointDerivatives}
+  \label{prf:leastFixpointDerivatives}
   $\derive{\iter_n}$ and $\nextiter_{f, \change{f}}$ are continuous since
   $\derive{\ev}$ and $f$ are.
 
