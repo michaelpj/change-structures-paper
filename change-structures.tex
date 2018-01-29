@@ -7,13 +7,16 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
-\usepackage[safeinputenc,natbib=true]{biblatex}
-\usepackage{cleveref}
-\usepackage{etoolbox}
-\usepackage{hyperref}
 \usepackage{mathtools}
 \usepackage{stmaryrd}
 \usepackage{todonotes}
+\usepackage{etoolbox}
+\usepackage{appendix}
+
+% Packages where the order matters
+\usepackage[safeinputenc,natbib=true]{biblatex}
+\usepackage{cleveref}
+\usepackage{hyperref}
 
 \newcommand{\todoall}[1]{\todo[inline,color=black!30,author=All]{#1}}
 \newcommand{\todokcg}[1]{\todo[inline,color=pink!60,author=Katriel]{#1}}
@@ -422,30 +425,7 @@ $\cat{CAct}$ and $\cat{PreOrd}$.
 \end{thm}
 \ifproofs
 \begin{proof}
-  On one direction, if $U$ is a preorder, it's trivial to check that $\reach (\direct (U)) = U$.
-
-  On the other direction, we need to find a natural isomorphism between $\direct \circ \reach$
-  and the identity functor. First, we note that the base set for the change action
-  $\direct(\reach(A))$ is the same as the base set for $\cstr{A}$.
-
-  We claim that the desired natural isomorphism is given by the
-  the identity on the base sets. It remains to prove that the identities
-  $id_A : \cstr{A} \rightarrow \direct(\reach(A))$ and
-  $id_{A_{\reachOrder}} : \direct(\reach(A)) \rightarrow \cstr{A}$
-  are indeed differentiable in both directions.
-
-  In one direction, a derivative is given by
-  \begin{displaymath}
-    \derive{id}_A(a, \change{a}) \defeq (a, a \cplus \change{a})
-  \end{displaymath}
-  Conversely, let $(a, b) \in \reachOrder$. By definition of $\reachOrder$, there is some
-  $\change{}_{(a, b)} \in \changes{A}$ satisfying $a \cplus \change{}_{(a,b)} = b$.
-  This gives a definition for the derivative of the identity on pairs:
-  \begin{displaymath}
-    \derive{id}_{A_{\reachOrder}}(a, (a, b)) \defeq \change{}_{(a, b)}
-  \end{displaymath}
-  which can be extended freely to the whole change set $\reachOrder^\star$. 
-
+  See \cref{prf:preordEquivalence}.
 \end{proof}
 \fi
 
@@ -474,16 +454,7 @@ practical computation.
 \end{prop}
 \ifproofs
 \begin{proof}
-  Let $\cstr{Y}$ be a change action, and $f_1: \cstr{Y} \rightarrow \cstr{A}$, $f_2: \cstr{Y}
-  \rightarrow \cstr{B}$ be morphisms.
-
-  Then the product morphism in $\cat{Set}$, $\pair{f_1}{f_2}$ is the product
-  morphism in $\cat{CAct}$. It can easily be
-  shown that $\pair{\derive{f_1}}{\derive{f_2}}$ is a derivative of $\pair{f_1}{f_2}$,
-  hence $\pair{f_1}{f_2}$ is a morphism in $\cat{SAct}$.
-
-  Commutativity and uniqueness follow from the corresponding properties of the
-  product in the $\cat{Set}$.
+  See \cref{prf:products}.
 \end{proof}
 \fi
 
@@ -500,16 +471,7 @@ practical computation.
 \end{prop}
 \ifproofs
 \begin{proof}
-  Let $\cstr{Y}$ be a change action, and $f_1 : \cstr{A} \rightarrow \cstr{Y}$, $f_2 : \cstr{B}
-  \rightarrow \cstr{Y}$ be differentiable functions.
-
-  As before, it suffices to prove that the universal function $[f_1, f_2]$ in $\cat{Set}$ is a differentiable
-  function from $\cstruct{A + B}{\changes{A} \times \changes{B}}{\cplusvee}$ into $Y$. It's easy to see
-  that the following morphism is a derivative:
-  \begin{align*}
-    \derive{[f_1, f_2]} (i_1 a, (\change{a}, \change{b})) &\defeq f_1'(a, \change{a})\\
-    \derive{[f_1, f_2]} (i_2 b, (\change{a}, \change{b})) &\defeq f_2'(b, \change{b})
-  \end{align*}
+  See \cref{prf:coproducts}.
 \end{proof}
 \fi
 
@@ -844,18 +806,7 @@ Becik's Theorem \autocite[][section 10.1]{winskel1993formal}, but it has a strai
 \end{prop}
 \ifproofs
 \begin{proof}
-  Let
-  \begin{displaymath}
-    p(b) = (\lfp f, g(\lfp(f), b))
-  \end{displaymath}
-  Then $h(h^i(\bot)) \leq p(p^i(\bot)))$ (by simple induction), and so by continuity
-  \begin{displaymath}
-    \lfp(h) = \sqcup_{i \in \NN} h^i(\bot) \leq \sqcup_{i \in \NN} p^i(\bot) = \lfp(p)
-  \end{displaymath}
-
-  But $h(\lfp(p)) = \lfp(p)$, so $\lfp(h) \leq \lfp(p)$, since $\lfp(h)$ is least.
-
-  Hence $\lfp(h) = \lfp(p) = (\lfp(f), \lfp(g(\lfp(f))))$.
+  See \cref{prf:factoringFixpoints}.
 \end{proof}
 \fi
 
@@ -881,95 +832,7 @@ Boolean algebras have a complete, continuous change structure.
 \end{prop}
 \ifproofs
 \begin{proof}
-  We show that the monoid action property holds:
-  \begin{align*}
-    &a \twist \left[(p, q) \splus (r, s)\right]\\
-    &= a \twist ((p \wedge \neg q) \vee r, (q \wedge \neg r) \vee s)\\
-    &= \left(
-      a \vee
-      \left(
-        \left(
-          p \wedge \neg q
-        \right)
-        \vee r
-      \right)
-    \right)
-    \wedge \neg
-    \left(
-      \left(
-        q \wedge \neg r
-      \right)
-      \vee s
-    \right)\\
-    &= \left(
-      \left(
-        \left(
-          a \vee p
-        \right)
-        \wedge
-        \left(
-          a \vee \neg q
-        \right)
-      \right)
-      \vee r
-    \right)
-    \wedge
-    \left(
-      \neg q \vee r
-    \right)
-    \wedge
-    \neg s
-    \tag{distributing $\vee$ over $\wedge$, applying de Morgan rules}\\
-    &= \left(
-      \left(
-        \left(
-          a \vee p
-        \right)
-        \wedge
-        \left(
-          a \vee \neg q
-        \right)
-        \wedge
-        \neg q
-      \right)
-      \vee r
-    \right)
-    \wedge
-    \neg s
-    \tag{un-distributing $\vee$ over $\wedge$ }\\
-    &= \left(
-      \left(
-        \left(
-          a \vee p
-        \right)
-        \wedge
-        \neg q
-      \right)
-      \vee r
-    \right)
-    \wedge
-    \neg s
-    \tag{$(A \vee B) \wedge B = B$}\\
-    &= a \twist (p, q) \twist (r, s)
-  \end{align*}
-
-  Completeness is easy to show.
-
-  $L$ is a complete lattice, so certainly a dcpo. $\cstr{L}_\superpose$ is a
-  dcpo with $\bigvee (p_i, q_i) \defeq (\bigvee p_i, \bigwedge q_i)$.
-
-  Continuity of $\twist$ in its second argument:
-  \begin{align*}
-    &a \twist \bigvee (p_i, q_i)\\
-    &= a \twist (\bigvee p_i, \bigwedge q_i)\\
-    &= (a \vee \bigvee p_i) \wedge (\neg \bigwedge q_i)\\
-    &= (a \vee \bigvee p_i) \wedge (\bigvee \neg q_i) \tag{applying de Morgan}\\
-    &= \bigvee (a \vee p_i) \wedge \neg q_i \tag{$\vee$ and $\wedge$ are continuous}\\
-    &= \bigvee a \twist (p_i, q_i)
-  \end{align*}
-
-  Continuity $\twist$ in its first argument and continuity of $\splus$ follow easily from their definitions and the continuity
-  of $\vee$ and $\wedge$.
+  See \cref{prf:lsuperpose}.
 \end{proof}
 \fi
 
@@ -1058,13 +921,7 @@ derivative of $\iter$ with respect to $n$.
 \end{prop}
 \ifproofs
 \begin{proof}
-  By induction on $n$. We show the inductive step.
-  \begin{align*}
-    &\iter_f((n+1) + m)\\
-    &=f(\iter_f(n + m)) \tag{definition of $\iter_f$}\\
-    &=f(\iter_f(n) \cplus \derive{\iter_f}(n, m)) \tag{by induction}\\
-    &=\iter_f(n+1) \cplus \derive{f}(\iter_f(n), \derive{\iter_f}(n, m)) \tag{$f$ is differentiable, definition of $\iter_f$}
-  \end{align*}
+  See \cref{prf:iterDerivativesN}.
 \end{proof}
 \fi
 
@@ -1090,12 +947,7 @@ Which has the property that
 \end{thm}
 \ifproofs
 \begin{proof}
-  \begin{align*}
-    &\lfp(\iter_f)\\
-    &=\sqcup_{n \in \NN} \iter_f(n)\\
-    &=\sqcup_{n \in \NN} \pi_1 (\nextiter_f^n(\bot))\\
-    &=\pi_1 (\sqcup_{n \in \NN} \nextiter_f^n(\bot)) \tag{$\pi_1$ is continuous}
-  \end{align*}
+  See \cref{prf:fixpointIter}.
 \end{proof}
 \fi
 
@@ -1169,21 +1021,7 @@ derivative we'll need to do a bit more work.
 \end{thm}
 \ifproofs
 \begin{proof}
-  Let $\change{w} \in \Delta A$ satisfy \cref{eqn:fixcondition}. Then
-  \begin{align*}
-    &(f \cplus \change{f})(\fixpoint_A(f) \cplus \change{w})\\
-    &= f(\fixpoint(f))
-    \cplus
-    \adjust(f, \change{f})(\change{w})
-    \tag{by \cref{prop:incrementalization}}\\
-    &= \fixpoint(f)
-    \cplus
-    \change{w}
-    \tag{rolling the fixpoint and \cref{eqn:fixcondition}}
-  \end{align*}
-
-  Hence $\fixpoint(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$. The converse
-  follows from reversing the direction of the proof.
+  See \cref{prf:fixpointPseudoDerivatives}.
 \end{proof}
 \fi
 
@@ -1215,22 +1053,7 @@ need to define our derivatives inductively in terms of $n$.
 \end{prop}
 \ifproofs
 \begin{proof}
-  The base case follows from \cref{cor:bottomPlusBottom}.
-
-  For the inductive step:
-  \begin{align*}
-    &\iter_{n+1}(f \cplus \change{f})\\
-    &=(f \cplus \change{f})(\iter_{n}(f \cplus \change{f}))\\
-    &= (f \cplus \change{f})(
-        \iter_{n}(f)
-        \cplus \derive{\iter_{n}}(f, \change{f})
-      )
-    \tag{ by induction}\\
-    &= f(\iter_n(f)) \cplus \derive{\ev}((f, \iter_{n}(f)), (\change{f},
-      \derive{\iter_{n}}(f, \change{f})))
-    \tag{by \cref{prop:incrementalization}}\\
-    & =\iter_{n+1}(f) \cplus \derive{\iter_{n+1}}(f, \change{f})))
-  \end{align*}
+  See \cref{prf:iterDerivativesF}.
 \end{proof}
 \fi
 
@@ -1264,24 +1087,7 @@ the recomputation of $\iter_n$ by using \cref{prop:factoringFixpoints}.
 \end{thm}
 \ifproofs
 \begin{proof}
-  $\derive{\iter_n}$ and $\nextiter_{f, \change{f}}$ are continuous since
-  $\derive{\ev}$ and $f$ are.
-
-  Hence the set $\{ \derive{\iter}_n \}$ is directed, and so $\sqcup_{i \in \NN}
-  \derive{\iter_i}$ is indeed a derivative for $\lfp$.
-
-  We now show that it is equivalent to $\derive{\lfp}$:
-  \begin{align*}
-    &\sqcup_{n \in \NN} \derive{\iter_n}(f, \change{f})\\
-    &=\sqcup_{n \in \NN} \pi_2(\nextiter_{f, \change{f}}^n(\bot))\\
-    &=\pi_2(\sqcup_{n \in \NN} \nextiter_{f, \change{f}}^n(\bot))) \tag{$\pi_2$ is continuous}\\
-    &= \pi_2 (\lfp(\nextiter_{f, \change{f}})) \tag{$\nextiter_{f, \change{f}}$ is continuous, Kleene's Theorem}\\
-    &= \pi_2 ((\lfp(f), \lfp (\lambda\ \change{a}. \derive{\ev}((f, \lfp f), (\change{f}, \change{a})))))
-    \tag{by \cref{prop:factoringFixpoints}, and the definition of $\nextiter$}\\
-    &= \pi_2 ((\lfp(f), \lfp(\adjust(f, \change{f})))\\
-    &= \lfp(\adjust(f, \change{f}))\\
-    &= \derive{\lfp}(f, \change{f})
-  \end{align*}
+  See \cref{prf:fixpointDerivatives}.
 \end{proof}
 \fi
 
@@ -1798,5 +1604,262 @@ in a language such as Datafun would be an exciting demonstration of the composit
 power of this approach.
 
 \printbibliography
+
+
+\appendix
+\appendixpage
+\section{Proofs}
+
+\subsection{The category of change actions}
+
+\begin{proof}
+  \label{prf:preordEquivalence}
+  On one direction, if $U$ is a preorder, it's trivial to check that $\reach (\direct (U)) = U$.
+
+  On the other direction, we need to find a natural isomorphism between $\direct \circ \reach$
+  and the identity functor. First, we note that the base set for the change action
+  $\direct(\reach(A))$ is the same as the base set for $\cstr{A}$.
+
+  We claim that the desired natural isomorphism is given by the
+  the identity on the base sets. It remains to prove that the identities
+  $id_A : \cstr{A} \rightarrow \direct(\reach(A))$ and
+  $id_{A_{\reachOrder}} : \direct(\reach(A)) \rightarrow \cstr{A}$
+  are indeed differentiable in both directions.
+
+  In one direction, a derivative is given by
+  \begin{displaymath}
+    \derive{id}_A(a, \change{a}) \defeq (a, a \cplus \change{a})
+  \end{displaymath}
+  Conversely, let $(a, b) \in \reachOrder$. By definition of $\reachOrder$, there is some
+  $\change{}_{(a, b)} \in \changes{A}$ satisfying $a \cplus \change{}_{(a,b)} = b$.
+  This gives a definition for the derivative of the identity on pairs:
+  \begin{displaymath}
+    \derive{id}_{A_{\reachOrder}}(a, (a, b)) \defeq \change{}_{(a, b)}
+  \end{displaymath}
+  which can be extended freely to the whole change set $\reachOrder^\star$. 
+\end{proof}
+
+\begin{proof}
+  \label{prf:products}
+  Let $\cstr{Y}$ be a change action, and $f_1: \cstr{Y} \rightarrow \cstr{A}$, $f_2: \cstr{Y}
+  \rightarrow \cstr{B}$ be morphisms.
+
+  Then the product morphism in $\cat{Set}$, $\pair{f_1}{f_2}$ is the product
+  morphism in $\cat{CAct}$. It can easily be
+  shown that $\pair{\derive{f_1}}{\derive{f_2}}$ is a derivative of $\pair{f_1}{f_2}$,
+  hence $\pair{f_1}{f_2}$ is a morphism in $\cat{SAct}$.
+
+  Commutativity and uniqueness follow from the corresponding properties of the
+  product in the $\cat{Set}$.
+\end{proof}
+
+\begin{proof}
+  \label{prf:coproducts}
+  Let $\cstr{Y}$ be a change action, and $f_1 : \cstr{A} \rightarrow \cstr{Y}$, $f_2 : \cstr{B}
+  \rightarrow \cstr{Y}$ be differentiable functions.
+
+  As before, it suffices to prove that the universal function $[f_1, f_2]$ in $\cat{Set}$ is a differentiable
+  function from $\cstruct{A + B}{\changes{A} \times \changes{B}}{\cplusvee}$ into $Y$. It's easy to see
+  that the following morphism is a derivative:
+  \begin{align*}
+    \derive{[f_1, f_2]} (i_1 a, (\change{a}, \change{b})) &\defeq f_1'(a, \change{a})\\
+    \derive{[f_1, f_2]} (i_2 b, (\change{a}, \change{b})) &\defeq f_2'(b, \change{b})
+  \end{align*}
+\end{proof}
+
+\subsection{Change actions over other structures}
+
+\begin{proof}
+  \label{prf:factoringFixpoints}
+  Let
+  \begin{displaymath}
+    p(b) = (\lfp f, g(\lfp(f), b))
+  \end{displaymath}
+  Then $h(h^i(\bot)) \leq p(p^i(\bot)))$ (by simple induction), and so by continuity
+  \begin{displaymath}
+    \lfp(h) = \sqcup_{i \in \NN} h^i(\bot) \leq \sqcup_{i \in \NN} p^i(\bot) = \lfp(p)
+  \end{displaymath}
+
+  But $h(\lfp(p)) = \lfp(p)$, so $\lfp(h) \leq \lfp(p)$, since $\lfp(h)$ is least.
+
+  Hence $\lfp(h) = \lfp(p) = (\lfp(f), \lfp(g(\lfp(f))))$.
+\end{proof}
+
+\begin{proof}
+  \label{prf:lsuperpose}
+  We show that the monoid action property holds:
+  \begin{align*}
+    &a \twist \left[(p, q) \splus (r, s)\right]\\
+    &= a \twist ((p \wedge \neg q) \vee r, (q \wedge \neg r) \vee s)\\
+    &= \left(
+      a \vee
+      \left(
+        \left(
+          p \wedge \neg q
+        \right)
+        \vee r
+      \right)
+    \right)
+    \wedge \neg
+    \left(
+      \left(
+        q \wedge \neg r
+      \right)
+      \vee s
+    \right)\\
+    &= \left(
+      \left(
+        \left(
+          a \vee p
+        \right)
+        \wedge
+        \left(
+          a \vee \neg q
+        \right)
+      \right)
+      \vee r
+    \right)
+    \wedge
+    \left(
+      \neg q \vee r
+    \right)
+    \wedge
+    \neg s
+    \tag{distributing $\vee$ over $\wedge$, applying de Morgan rules}\\
+    &= \left(
+      \left(
+        \left(
+          a \vee p
+        \right)
+        \wedge
+        \left(
+          a \vee \neg q
+        \right)
+        \wedge
+        \neg q
+      \right)
+      \vee r
+    \right)
+    \wedge
+    \neg s
+    \tag{un-distributing $\vee$ over $\wedge$ }\\
+    &= \left(
+      \left(
+        \left(
+          a \vee p
+        \right)
+        \wedge
+        \neg q
+      \right)
+      \vee r
+    \right)
+    \wedge
+    \neg s
+    \tag{$(A \vee B) \wedge B = B$}\\
+    &= a \twist (p, q) \twist (r, s)
+  \end{align*}
+
+  Completeness is easy to show.
+
+  $L$ is a complete lattice, so certainly a dcpo. $\cstr{L}_\superpose$ is a
+  dcpo with $\bigvee (p_i, q_i) \defeq (\bigvee p_i, \bigwedge q_i)$.
+
+  Continuity of $\twist$ in its second argument:
+  \begin{align*}
+    &a \twist \bigvee (p_i, q_i)\\
+    &= a \twist (\bigvee p_i, \bigwedge q_i)\\
+    &= (a \vee \bigvee p_i) \wedge (\neg \bigwedge q_i)\\
+    &= (a \vee \bigvee p_i) \wedge (\bigvee \neg q_i) \tag{applying de Morgan}\\
+    &= \bigvee (a \vee p_i) \wedge \neg q_i \tag{$\vee$ and $\wedge$ are continuous}\\
+    &= \bigvee a \twist (p_i, q_i)
+  \end{align*}
+
+  Continuity $\twist$ in its first argument and continuity of $\splus$ follow easily from their definitions and the continuity
+  of $\vee$ and $\wedge$.
+\end{proof}
+
+\subsection{Fixpoints}
+
+\begin{proof}
+  \label{prf:iterDerivativesN}
+  By induction on $n$. We show the inductive step.
+  \begin{align*}
+    &\iter_f((n+1) + m)\\
+    &=f(\iter_f(n + m)) \tag{definition of $\iter_f$}\\
+    &=f(\iter_f(n) \cplus \derive{\iter_f}(n, m)) \tag{by induction}\\
+    &=\iter_f(n+1) \cplus \derive{f}(\iter_f(n), \derive{\iter_f}(n, m)) \tag{$f$ is differentiable, definition of $\iter_f$}
+  \end{align*}
+\end{proof}
+
+\begin{proof}
+  \label{prf:fixpointIter}
+  \begin{align*}
+    &\lfp(\iter_f)\\
+    &=\sqcup_{n \in \NN} \iter_f(n)\\
+    &=\sqcup_{n \in \NN} \pi_1 (\nextiter_f^n(\bot))\\
+    &=\pi_1 (\sqcup_{n \in \NN} \nextiter_f^n(\bot)) \tag{$\pi_1$ is continuous}
+  \end{align*}
+\end{proof}
+
+\begin{proof}
+  \label{prf:fixpointPseudoDerivatives}
+  Let $\change{w} \in \Delta A$ satisfy \cref{eqn:fixcondition}. Then
+  \begin{align*}
+    &(f \cplus \change{f})(\fixpoint_A(f) \cplus \change{w})\\
+    &= f(\fixpoint(f))
+    \cplus
+    \adjust(f, \change{f})(\change{w})
+    \tag{by \cref{prop:incrementalization}}\\
+    &= \fixpoint(f)
+    \cplus
+    \change{w}
+    \tag{rolling the fixpoint and \cref{eqn:fixcondition}}
+  \end{align*}
+
+  Hence $\fixpoint(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$. The converse
+  follows from reversing the direction of the proof.
+\end{proof}
+
+\begin{proof}
+  \label{prf:iterDerivativesF}
+  The base case follows from \cref{cor:bottomPlusBottom}.
+
+  For the inductive step:
+  \begin{align*}
+    &\iter_{n+1}(f \cplus \change{f})\\
+    &=(f \cplus \change{f})(\iter_{n}(f \cplus \change{f}))\\
+    &= (f \cplus \change{f})(
+        \iter_{n}(f)
+        \cplus \derive{\iter_{n}}(f, \change{f})
+      )
+    \tag{ by induction}\\
+    &= f(\iter_n(f)) \cplus \derive{\ev}((f, \iter_{n}(f)), (\change{f},
+      \derive{\iter_{n}}(f, \change{f})))
+    \tag{by \cref{prop:incrementalization}}\\
+    & =\iter_{n+1}(f) \cplus \derive{\iter_{n+1}}(f, \change{f})))
+  \end{align*}
+\end{proof}
+
+\begin{proof}
+  \label{prf:fixpointDerivatives}
+  $\derive{\iter_n}$ and $\nextiter_{f, \change{f}}$ are continuous since
+  $\derive{\ev}$ and $f$ are.
+
+  Hence the set $\{ \derive{\iter}_n \}$ is directed, and so $\sqcup_{i \in \NN}
+  \derive{\iter_i}$ is indeed a derivative for $\lfp$.
+
+  We now show that it is equivalent to $\derive{\lfp}$:
+  \begin{align*}
+    &\sqcup_{n \in \NN} \derive{\iter_n}(f, \change{f})\\
+    &=\sqcup_{n \in \NN} \pi_2(\nextiter_{f, \change{f}}^n(\bot))\\
+    &=\pi_2(\sqcup_{n \in \NN} \nextiter_{f, \change{f}}^n(\bot))) \tag{$\pi_2$ is continuous}\\
+    &= \pi_2 (\lfp(\nextiter_{f, \change{f}})) \tag{$\nextiter_{f, \change{f}}$ is continuous, Kleene's Theorem}\\
+    &= \pi_2 ((\lfp(f), \lfp (\lambda\ \change{a}. \derive{\ev}((f, \lfp f), (\change{f}, \change{a})))))
+    \tag{by \cref{prop:factoringFixpoints}, and the definition of $\nextiter$}\\
+    &= \pi_2 ((\lfp(f), \lfp(\adjust(f, \change{f})))\\
+    &= \lfp(\adjust(f, \change{f}))\\
+    &= \derive{\lfp}(f, \change{f})
+  \end{align*}
+\end{proof}
 
 \end{document}
