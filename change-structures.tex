@@ -125,7 +125,7 @@ negation.\footnote{Parity-stratified negation means that recursive calls must
 Then we can write programs like the following, where we compute whether all the
 nodes in a subtree given by $child$ have some property $p$:
 \begin{align*}
-  \mathrm{treeP}(x) &\leftarrow p(x) \wedge \neg \exists y . (child(x,y) \wedge \neg \mathrm{treeP}(y))
+  treeP(x) &\leftarrow p(x) \wedge \neg \exists y . (child(x,y) \wedge \neg treeP(y))
 \end{align*}
 
 This is essentially a recursion through a \emph{universal} quantifier. We would
@@ -1274,7 +1274,7 @@ If we did have one, its cases would be dual to those for $\exists$, namely:
 \downdiff(\forall x.T) &= \forall x. \downdiff T
 \end{align*}
 
-We can now give a derivative for our $treeProperty$ program!
+We can now give a derivative for our $treeP$ program!
 
 Here is the upwards difference:
 \begin{align*}
