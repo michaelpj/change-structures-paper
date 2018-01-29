@@ -62,20 +62,20 @@ closure of an edge relation $e$:
   tc(x, y) &\leftarrow e(x, z) \wedge tc(z, y)
 \end{align*}
 
-The semantics of Datalog tell us that the denotation of this program is the
+The semantics of Datalog tells us that the denotation of this program is the
 least fixpoint of the rule $tc$. Kleene's Theorem tells us that we can reach
-this by repeating applying the rule, starting from the empty relation. For example, supposing
-that $e = \{ (1, 2), (3, 4), (5, 6) \}$:
+this by repeatedly applying the rule, starting from the empty relation. For example, supposing
+that $e = \{ (1, 2), (2, 3), (3, 4) \}$:
 
 \begin{center}
-  \begin{tabular} {|c|c|c|}
+  \begin{tabular} {|p{3.5em}|p{10em}|p{10em}|}
     \hline
-    Iteration & Newly deduced facts & Accumulated contents of $tc$ \\
+    Iteration & Newly deduced facts & Accumulated data in $tc$ \\
     \hline
-    1 & $\{ (1, 2)\}$ & $\{ (1, 2) \}$\\
-    2 & $\{ (1,2), (3,4) \}$ & $\{ (1, 2), (3,4) \}$\\
-    3 & $\{ (1,2), (3,4), (5,6) \}$ & $\{ (1, 2), (3,4), (5,6) \}$\\
-    4 & $\{ (1,2), (3,4), (5,6) \}$ & $\{ (1, 2), (3,4), (5,6) \}$\\
+    1 & $\{ (1, 2), (2, 3), (3, 4) \}$ & $\{ (1, 2), (2, 3), (3, 4) \}$\\
+    2 & $\{ (1, 2), (2, 3), (3, 4),$ $(1, 3), (2, 4) \}$ & $\{ (1, 2), (2, 3), (3, 4),$ $(1, 3), (2, 4) \}$\\
+    3 & $\{ (1, 2), (2, 3), (3, 4),$ $(1, 3), (2, 4), (1, 4),(1, 4) \}$ & $\{ (1, 2), (2, 3), (3, 4),$ $(1, 3), (2, 4), (1, 4) \}$\\
+    4 & (as above) & (as above) \\
     \hline 
   \end{tabular}
 \end{center}
@@ -98,14 +98,14 @@ iteration, which we gradually accumulate \autocite[See][section
 \end{align*}
 
 \begin{center}
-  \begin{tabular} {|c|c|c|}
+  \begin{tabular} {|p{3.5em}|p{10em}|p{10em}|}
     \hline
-    Iteration & Newly deduced facts & Accumulated contents of $tc$ \\
+    Iteration & Newly deduced facts & Data in $tc_n$ \\
     \hline
-    1 & $\{ (1, 2)\}$ & $\{ (1, 2) \}$\\
-    2 & $\{ (3,4) \}$ & $\{ (1, 2), (3,4) \}$\\
-    3 & $\{ (5,6) \}$ & $\{ (1, 2), (3,4), (5,6) \}$\\
-    4 & $\{ \}$ & $\{ (1, 2), (3,4), (5,6) \}$\\
+    1 & $\{ (1, 2), (2, 3), (3, 4) \}$ & $\{ (1, 2), (2, 3), (3, 4) \}$\\
+    2 & $\{ (1, 3), (2, 4) \}$ & $\{ (1, 2), (2, 3), (3, 4),$ $(1, 3), (2, 4) \}$\\
+    3 & $\{ (1, 4) \}$ & $\{ (1, 2), (2, 3), (3, 4),$ $(1, 3), (2, 4), (1, 4) \}$\\
+    4 & $\{ \}$ & (as above) \\
     \hline
   \end{tabular}
 \end{center}
@@ -116,12 +116,12 @@ But the delta rule translation works only for traditional Datalog. It is common 
 liberalise the term syntax to support, say, disjunction, existential quantification, and parity-stratified
 negation.\footnote{Parity-stratified negation means that recursive calls must
   appear under an even number of negations. This ensures that the rule remains
-  monotone, so the least fixpoint semantics still exists.}
+  monotone, so the least fixpoint still exists and can be found via Kleene's theorem.}
 
 Then we can write programs like the following, where we compute whether all the
 nodes in a subtree given by $child$ have some property $p$:
 \begin{align*}
-  treeProperty(x) &\leftarrow p(x) \wedge \neg \exists y . (child(x,y) \wedge \neg treeProperty(y))
+  \mathrm{treeP}(x) &\leftarrow p(x) \wedge \neg \exists y . (child(x,y) \wedge \neg \mathrm{treeP}(y))
 \end{align*}
 
 This is essentially a recursion through a \emph{universal} quantifier. We would
@@ -145,15 +145,15 @@ studied recently by \textcite{cai2014changes}, who give an account using
 \emph{change structures}. They use this to provide a framework for incrementally evaluating lambda calculus programs.
 
 However, \citeauthor{cai2014changes}'s work isn't directly applicable to Datalog: the tricky part
-of Datalog's semantics is the \emph{fixpoint}, and we need some addtional theory to tell us how to
+of Datalog's semantics are recursive definitions and the need for the \emph{fixpoints}, and we need some additional theory to tell us how to
 handle incremental evaluation of fixpoint computations.\footnote{In fact, we can prove these
 results for fixpoint computations over dcpos in general, which opens up the
-possibility of using these result in domain theory, which uses fixpoints to
+possibility of using them in domain theory, which uses fixpoints to
 represent recursion in programming language semantics.}
 
 This paper bridges that gap. We start by generalizing change structures to
 \emph{change actions} (\cref{sec:changeActions}). Change actions are weaker than change structures, but
-have nice categorical properties (\cref{sec:category}), and exist for more structures.
+have nice categorical properties (\cref{sec:category}), and exist for more structures (\cref{sec:moreStructures}).
 
 We then show how to compute fixpoints incrementally, and also how to perform
 incremental updates of already computed fixpoint expressions, given a change to
