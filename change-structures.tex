@@ -458,6 +458,7 @@ practical computation.
 \end{proof}
 \fi
 
+\iffalse
 \begin{prop}[name=Exponentials, restate=exponentials]
 \label{prop:exponentials}
   Let $\cstr{A}_\cplus$ and $\cstr{B}_\cpluss$ be change actions. We will say a map 
@@ -554,40 +555,42 @@ practical computation.
   \end{itemize}
 \end{proof}
 \fi
-
-The resulting change action is rather unwieldy and it's hard to perform actual computation on it. Fortunately, in many
-cases, it is equivalent to a much simpler one.
-\begin{lemma}[Pointwise function changes]
-  Let $\cstr{B}$ be a change action. If $\cplus : B \times \changes{B} \rightarrow B$ is differentiable
-  with respect to its first argument, then the change action
-  $\cstruct{\cstr{A} \rightarrow \cstr{B}}{\cstr{A} \rightarrow \cstr{\changes{B}}}{\cplus_\rightarrow}$, with the action
-  $\cplus_\rightarrow$ and the monoidal structure defined pointwise, is the exponential
-  object $\cstr{B}^{\cstr{A}}$.
-\end{lemma}
-\ifproofs
-\begin{proof}
-  We prove first that $\cplus_\rightarrow$ is indeed a valid action, i.e. given functions $f : \cstr{A} \rightarrow \cstr{B}$
-  and $\change{f} : A \rightarrow \changes{B}$, $f \cplus_\rightarrow \change{f}$ is differentiable.
-  Letting $a \in A, \change{a} \in \changes{A}$, we have:
-  \begin{itemize}
-    \item[ ]$(f \cplus_\rightarrow \change{f})(a \cplus \change{a})$
-    \item[=]$f (a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})$
-    \item[=]$(f (a) \cplus \derive{f}(a, \change{a})) \cplus \change{f}(a \cplus \change{a})$
-    \item[=]$(f (a) \cplus \change{f}(a \cplus \change{a})) \cplus \partial_1\cplus(f(a), \change{f}(a \cplus \change{a}))(\derive{f}(a, \change{a}))$
-    \item[=]$(f (a) \cplus \change{f}(a)) \cplus (\derive{\change{f}}(a, \change{a}) \cdot \partial_1\cplus(f(a), \change{f}(a \cplus \change{a}))(\derive{f}(a, \change{a})))$
-  \end{itemize}
-  Thus $\lambda a . \lambda \change{a} .\derive{\change{f}}(a, \change{a}) \cdot \partial_1\cplus(f(a), \change{f}(a \cplus \change{a}))(\derive{f}(a, \change{a}))$
-  is a derivative for $f \cplus \change{f}$.
-
-  In order to show that it is isomorphic to the previous exponential structure, we prove that the induced
-  reachability order is the same.
-  \todomario{Nevermind, this is in fact false because the changes need to be differentiable but they may not! Quite a problem.}
-  \todomario{The question boils down to whether there is always a differentiable derivative, which is tricky.}
-\end{proof}
 \fi
 
-Derivatives of the evaluation map correspond to incremental evaluation of functions:
+The exponential objects in the category $\cat{CAct}$ are, in general, intractable. Under some
+conditions, however, we can give a much simpler presentation, which aligns with the intuitive
+idea that the reachability order on function spaces should be obtained pointwise.
+\begin{defn}[Pointwise change actions]
+  A change action $\cstr{B}$ is pointwise whenever every exponential object
+  $\cstr{B}^{\cstr{A}}$ is isomorphic to the pointwise change action
+  $\cstruct{\cstr{A} \rightarrow \cstr{B}}{A \rightarrow \changes{B}}{\cplus_\rightarrow}$,
+  where $(f \cplus_\rightarrow \change{f})(x) \defeq f(x) \cplus \change{f}(x)$ and the
+  monoidal structure on $A \rightarrow \changes{B}$ is given by pointwise lifting
+  of the one on $\changes{B}$.
+\end{defn}
+This pointwise change action is, in general, not well defined, as applying a change $\change{f}$ to
+a differentiable function $f$ results in a function $f \cplus_\rightarrow \change{f}$ which
+may not be differentiable.
+Fortunately, there are large subcategories of $\cat{CAct}$ formed of pointwise change actions.
 
+\begin{prop}
+  \ref{prop:pointwiseComplete}
+  Every change action $\cstr{A}$ such that the monoidal change action
+  on $\changes{A}$ is complete and the action $\cplus$ is differentiable with
+  respect to its first argument is pointwise.
+
+  In particular, every change action which is a group action is pointwise.
+\end{prop}
+
+\begin{prop}
+   Every complete change action $\cstr{A}$ is pointwise.
+\end{prop}
+Furthermore, since the product and exponential of complete change actions is complete,
+the full subcategory of $\cat{CAct}$ formed by complete change actions is a Cartesian
+closed category of pointwise change actions.
+
+Derivatives of the evaluation map, irrespective of a particular choice of change action on the
+exponential objects, correspond to incremental evaluation of functions:
 \begin{prop}[Incrementalization]
 \label{prop:incrementalization}
   Let $f: \cstr{A} \rightarrow \cstr{B}$, $a \in A$, $\change{a} \in
@@ -598,30 +601,27 @@ Derivatives of the evaluation map correspond to incremental evaluation of functi
   \begin{displaymath}
     (f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus \derive{\ev}((f, a), (\change{f}, \change{a}))
   \end{displaymath}
-
 \end{prop}
 
-Conveniently, our proof of \cref{prop:exponentials} gives us actual derivatives for the evaluation map:
-
-\todomario{Redo this!}
+Conveniently, \cref{prop:pointwiseComplete} gives us a way to compute explicit derivatives for
+the evaluation map on pointwise change structures:
 \begin{prop}[Derivatives of the evaluation map]
 \label{prop:evDerivatives}
-  Let $f: \cstr{A} \rightarrow \cstr{B}$, $a \in A$, $\change{a} \in
-  \changes{A}$, $\change{f} \in \changes{(A \rightarrow B)}$.
+  Suppose $\cstr{B}$ is a pointwise change structure. Let
+  $f: \cstr{A} \rightarrow \cstr{B}$,
+  $a \in A$, $\change{a} \in \changes{A}$,
+  $\change{f} \in \changes{(A \rightarrow B)}$.
 
-  Then if $f$ is differentiable
+  Then, differentiating $f$ we obtain the following derivative for the evaluation map:
   \begin{displaymath}
     \derive{\ev}_1 \defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})
   \end{displaymath}
-  
-  is a derivative for the evaluation map.
 
-  Or, if $f \cplus \change{f}$ is differentiable
+  Alternatively, differentiating $f \cplus \change{f}$ we can obtain another derivative
+  for the evaluation map:
   \begin{displaymath}
     \derive{\ev}_2 \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})
   \end{displaymath}
-
-  is a derivative for the evaluation map.
 \end{prop}
 \ifproofs
 \begin{proof}
@@ -631,16 +631,17 @@ Conveniently, our proof of \cref{prop:exponentials} gives us actual derivatives 
 \fi
 
 \subsection{The category of thin change actions}
+\todomario{This subsection feels really out of place.}
 
 \begin{prop}
   The product $\cstr{A} \times \cstr{B}$ of change actions $\cstr{A}$ and $\cstr{B}$ is thin if and only if both $\cstr{A}$ and $\cstr{B}$ are.
   Furthermore, whenever $\cstr{A}$ and $\cstr{B}$ are complete, then so is $\cstr{A} \times \cstr{B}$.
 
-  The exponential object $\cstr{A} \Rightarrow \cstr{B}$ of change actions $\cstr{A}$ and $\cstr{B}$ is thin if $\cstr{B}$ is.
-  Furthermore, whenever $\cstr{B}$ is complete, then so is $\cstr{A} \Rightarrow \cstr{B}$.
+  The pointwise exponential object $\cstr{A} \Rightarrow \cstr{B}$ of change actions $\cstr{A}$ and $\cstr{B}$ is
+  thin if $\cstr{B}$ is. Furthermore, whenever $\cstr{B}$ is complete, then so is $\cstr{A} \Rightarrow \cstr{B}$.
 \end{prop}
 
-Thus, the category of thin change actions is Cartesian closed as well.
+Thus, the category of thin, complete change actions is Cartesian closed as well.
 
 \section{Change actions over other structures}
 \label{sec:moreStructures}
