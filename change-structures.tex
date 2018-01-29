@@ -212,7 +212,7 @@ The primary motivation for change actions is that they let us define
   A function which has a derivative is called \emph{differentiable}.
 \end{defn}
 
-Derivatives need not be unique, in general, so we will speak of ``a''
+Derivatives need not be unique in general, so we will speak of ``a''
 derivative.\footnote{In several places we will need to pick an arbitrary
   derivative for some construction. In general this needs the Axiom of Choice,
   but in most practical cases we will want to have a computable derivative
@@ -236,7 +236,7 @@ they satisfy the standard chain rule.
   \end{displaymath}
   or, in curried form
   \begin{displaymath}
-    \derive{(g \circ f)}(x)(\change{x}) = \derive{g}(f(x)) \circ \derive{f}(x)
+    \derive{(g \circ f)}(x) = \derive{g}(f(x)) \circ \derive{f}(x)
   \end{displaymath}
 \end{thm}
 
@@ -256,7 +256,7 @@ $\cstruct{\changes{A}}{\changes{A}}{\splus}$ is also a change action. This means
 that we don't have to do any extra work to talk about higher derivatives of
 functions - we can always take $\changes{\changes{A}} = \changes{A}$.
 
-Many other notions in computer science can be naturally understood in terms of change actions, e.g. databases
+Many other notions in computer science can be naturally understood in terms of change actions, \emph{e.g.} databases
 and database updates, files and diffs, Git repositories and commits, even video compression
 algorithms that encode a frame as a series of changes to the previous frame.
 
@@ -311,17 +311,10 @@ well-behaved, so it's worth naming them.
   = a \cplus \change{b}$ for some $a \in A$, it is the case that $\change{a} = \change{b}$.
 \end{defn}
 
-Many change actions are not thin, for example $\cstruct{\NN}{\ZZ}{+}$ (as $0 + (-1)
-= 0 + (-2)$ in $\NN$).
+Many change actions are not thin; for example, because $\{0\} \cap \{1\} = \{0\} \cap \{2\}$, $\cstruct{\mathcal{P}(\NN)}{\mathcal{P}(\NN)}{\cap}$ is not thin.
 
-\begin{prop}[Thin equivalences]
-  Let $\cstr{A}$ be a change action. Then the following are equivalent.
-  \begin{itemize}
-    \item $\cstr{A}$ is thin.
-    \item The monoid action of $\cplus$ on $A$ is free.
-    \item If $\cstr{A}$ has a minus operator $\cminus$, then $(a \cplus \change{a})
-      \cminus a = \change{a}$.
-  \end{itemize}
+\begin{prop}
+  Let $\cstr{A}$ be a change action. Then $\cstr{A}$ is thin if and only if the monoid action of $\cplus$ on $A$ is free.
 \end{prop}
 
 Thinness gives us uniqueness of derivatives:
