@@ -238,20 +238,6 @@ they satisfy the standard chain rule.
     \derive{(g \circ f)}(x)(\change{x}) = \derive{g}(f(x)) \circ \derive{f}(x)
   \end{displaymath}
 \end{thm}
-\ifproofs
-\begin{proof}
-  By equivalence:
-  \begin{align*}
-    &(g \circ f)(x) \cplusss \derive{g}\left(f(x), \derive{f}(x,\change{x})\right)\\
-    &= (g(f(x)) \cplusss \derive{g}\left(f(x), \derive{f}(x,\change{x})\right)\\
-    &= g\left(f(x) \cpluss \derive{f}(x, \change{x}) \right)\\
-    &= g\left(f(x \cplus \change{x})\right)\\
-    &= (g \circ f)(x \cplus \change{x})
-  \end{align*}
-  Therefore $\derive{g}\left(f(x), \derive{f}(x, \change{x})\right)$ is a
-  derivative for $(g \circ f)$.
-\end{proof}
-\fi
 
 Here are some recurring examples of changes actions:
 \begin{itemize}
