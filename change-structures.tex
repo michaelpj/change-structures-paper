@@ -313,14 +313,8 @@ well-behaved, so it's worth naming them.
 
 Many change actions are not thin; for example, because $\{0\} \cap \{1\} = \{0\} \cap \{2\}$, $\cstruct{\mathcal{P}(\NN)}{\mathcal{P}(\NN)}{\cap}$ is not thin.
 
-\begin{prop}[Thin equivalences]
-  Let $\cstr{A}$ be a change action. Then the following are equivalent.
-  \begin{itemize}
-    \item $\cstr{A}$ is thin.
-    \item The monoid action of $\cplus$ on $A$ is free.
-    \item If $\cstr{A}$ has a minus operator $\cminus$, then $(a \cplus \change{a})
-      \cminus a = \change{a}$.
-  \end{itemize}
+\begin{prop}
+  Let $\cstr{A}$ be a change action. Then $\cstr{A}$ is thin if and only if the monoid action of $\cplus$ on $A$ is free.
 \end{prop}
 
 Thinness gives us uniqueness of derivatives:
