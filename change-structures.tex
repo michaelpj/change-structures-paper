@@ -310,7 +310,7 @@ This last property is of the utmost importance, since we are often concerned wit
 of functions.
 
 \begin{prop}[Minus derivative]
-  Given a minus operator $\cminus$, and a function $f$, define
+  Given a minus operator $\cminus$, and a function $f$, let
   \begin{displaymath}
     \derive{f}_\cminus(a, \change{a}) \defeq f(a \cplus \change{a}) \cminus f(a)
   \end{displaymath}
@@ -491,8 +491,7 @@ conditions, however, we can find a simpler representation.
 
 This corresponds to the intuition about how the correspondence with
 $\cat{PreOrd}$ should work: the order on monotone functions in $\cat{PreOrd}$ is
-pointwise, and so that should correspond to how changes between functions work
-in $\cat{CAct}$.
+pointwise.
 
 This pointwise change action is not well defined for all change actions, since
 we require $f \cplus_\rightarrow \change{f}$ to be \emph{differentiable}, which
@@ -552,6 +551,11 @@ the evaluation map on pointwise change structures:
     \derive{\ev}_2 \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})
   \end{displaymath}
 \end{prop}
+
+This is important for \cref{sec:fixpoints}, where we will need derivatives of
+the evaluation map. In practice, this means that we will only be able to compute
+these results when we have pointwise change actions, since we know how to
+compute derivatives of the evaluation map for them.
 
 \subsection{The category of thin change actions}
 \todomario{This subsection feels really out of place.}
@@ -724,7 +728,7 @@ Becik's Theorem \autocite[][section 10.1]{winskel1993formal}, but it has a strai
 
 Boolean algebras have a complete, continuous change action.
 
-\begin{prop}[restate=lsuperpose]
+\begin{prop}[name=Boolean algebra change actions, restate=lsuperpose]
   Let $L$ be a Boolean algebra. Define
   \begin{displaymath}
     \cstr{L}_\superpose \defeq \cstruct{L}{L \times L}{\twist}
@@ -738,7 +742,7 @@ Boolean algebras have a complete, continuous change action.
     (p, q) \splus (r, s) \defeq ((p \wedge \neg q) \vee r, (q \wedge \neg r) \vee s)
   \end{displaymath}
 
-  Then $\cstr{L}_\superpose$ is a complete, continuous change action on $L$.
+  Then $\cstr{L}_\superpose$ is a complete (and hence pointwise), continuous change action on $L$.
 \end{prop}
 \ifproofs
 \begin{proof}
