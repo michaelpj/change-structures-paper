@@ -310,7 +310,7 @@ This last property is of the utmost importance, since we are often concerned wit
 of functions.
 
 \begin{prop}[Minus derivative]
-  Given a minus operator $\cminus$, and a function $f$, define
+  Given a minus operator $\cminus$, and a function $f$, let
   \begin{displaymath}
     \derive{f}_\cminus(a, \change{a}) \defeq f(a \cplus \change{a}) \cminus f(a)
   \end{displaymath}
@@ -491,8 +491,7 @@ conditions, however, we can find a simpler representation.
 
 This corresponds to the intuition about how the correspondence with
 $\cat{PreOrd}$ should work: the order on monotone functions in $\cat{PreOrd}$ is
-pointwise, and so that should correspond to how changes between functions work
-in $\cat{CAct}$.
+pointwise.
 
 This pointwise change action is not well defined for all change actions, since
 we require $f \cplus_\rightarrow \change{f}$ to be \emph{differentiable}, which
@@ -570,20 +569,10 @@ the evaluation map on pointwise change structures:
   \end{displaymath}
 \end{prop}
 
-\subsection{The category of thin change actions}
-\todomario{This subsection feels really out of place.}
-\todompj{I'm inclined to cut it, unless we come up with more to say about thin
-  change actions.}
-
-\begin{prop}
-  The product $\cstr{A} \times \cstr{B}$ of change actions $\cstr{A}$ and $\cstr{B}$ is thin if and only if both $\cstr{A}$ and $\cstr{B}$ are.
-  Furthermore, whenever $\cstr{A}$ and $\cstr{B}$ are complete, then so is $\cstr{A} \times \cstr{B}$.
-
-  The pointwise exponential object $\exponential{\cstr{A}}{\cstr{B}}$ of change actions $\cstr{A}$ and $\cstr{B}$ is
-  thin if $\cstr{B}$ is. Furthermore, whenever $\cstr{B}$ is complete, then so is $\exponential{\cstr{A}}{\cstr{B}}$.
-\end{prop}
-
-Thus, the category of thin, complete change actions is Cartesian closed as well.
+This is important for \cref{sec:fixpoints}, where we will need derivatives of
+the evaluation map. In practice, this means that we will only be able to compute
+these results when we have pointwise change actions, since we know how to
+compute derivatives of the evaluation map for them.
 
 \section{Change actions over other structures}
 \label{sec:moreStructures}
@@ -741,7 +730,7 @@ Becik's Theorem \autocite[][section 10.1]{winskel1993formal}, but it has a strai
 
 Boolean algebras have a complete, continuous change action.
 
-\begin{prop}[restate=lsuperpose]
+\begin{prop}[name=Boolean algebra change actions, restate=lsuperpose]
   Let $L$ be a Boolean algebra. Define
   \begin{displaymath}
     \cstr{L}_\superpose \defeq \cstruct{L}{L \times L}{\twist}
@@ -755,7 +744,7 @@ Boolean algebras have a complete, continuous change action.
     (p, q) \splus (r, s) \defeq ((p \wedge \neg q) \vee r, (q \wedge \neg r) \vee s)
   \end{displaymath}
 
-  Then $\cstr{L}_\superpose$ is a complete, continuous change action on $L$.
+  Then $\cstr{L}_\superpose$ is a complete (and hence pointwise), continuous change action on $L$.
 \end{prop}
 \ifproofs
 \begin{proof}
