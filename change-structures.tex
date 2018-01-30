@@ -499,16 +499,62 @@ may not be true for all pointwise changes $\change{f}$.
 Fortunately, there are useful subcategories of $\cat{CAct}$ formed of pointwise change actions.
 
 \begin{prop}
-  \label{prop:pointwiseComplete}
-  Every change action $\cstruct{A}{\changes{A}}{\cplus}$ such that the change action
-  $\cstruct{\changes{A}}{\changes{A}}{\splus}$ is complete and $\cplus$ is differentiable with
+  Every change action $\cstruct{B}{\changes{B}}{\cplus}$ such that the change action
+  $\cstruct{\changes{B}}{\changes{B}}{\splus}$ is complete and $\cplus$ is differentiable with
   respect to its first argument is pointwise.
 
   In particular, every change action where $\cplus$ is a group action is pointwise.
 \end{prop}
+\ifproofs
+  Let $\cstr{B}$ be a change action, with $\cplus$ differentiable with respect
+  to its first argument, and suppose the change action on $\changes{B}$
+  is complete.
+
+  First, we prove that the pointwise change action is well defined: let
+  $f : \cstr{A} \rightarrow \cstr{B}$ be some differentiable function, and
+  $\change{f} : A \rightarrow \changes{B}$ a pointwise change. Then:
+  \begin{align*}
+    (f \cplus_\rightarrow \change{f})(a \cplus \change{a}) &= f(a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})\\
+    &= (f(a) \cplus \derive{f}(a, \change{a})) \cplus (\change{f}(a) \splus \derive{\change{f}}(a, \change{a}) )\\
+    &= f(a) \cplus (\change{f}(a) \splus \derive{\change{f}}(a, \change{a}))
+       \cplus \derive{\cplus}((f(a), \derive{f}(a, \change{a})), \change{f}(a \cplus \change{a}))\\
+    &= (f \cplus_\rightarrow \change{f})(a) \cplus (\derive{\change{f}}(a, \change{a})
+       \splus \derive{\cplus}((f(a), \derive{f}(a, \change{a}), \change{f}(a, \cplus \change{a}))))
+  \end{align*}
+  Hence (f \cplus_\rightarrow \change{f}) is differentiable.
+  
+  The evaluation map, defined as $\ev(f, a) \defeq f(a)$ is differentiable as well:
+  \begin{align*}
+    \ev((f, \change{f}), (a, \change{a})) &= (f \cplus_\rightarrow \change{f})(a \cplus \change{a}) \\
+    &= f(a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})\\
+    &= f(a) \cplus (f'(a, \change{a}) \splus \change{f}(a \cplus \change{a}))\\
+    &= \ev(f, a) \cplus (f'(a, \change{a}) \splus \change{f}(a \cplus \change{a}))
+  \end{align*}
+
+  Now, on one hand, suppose that $f : C \times A \rightarrow B$ is a differentiable function,
+  and $\Lambda(f) : C \rightarrow \cstr{B}^{\cstr{A}}$ its corresponding curried version:
+  \begin{align*}
+    \Lambda(f)(c \cplus \change{c}) &= \lambda a . f(c \cplus \change{c}, a)\\
+    &= \lambda a . f(c, a) \cplus f'((c, \change{c}), (a, 0))\\
+    &= (\lambda a . f(c, a)) \cplus_\rightarrow (\lambda a . f'((c, \change{c}), (a, 0)))
+  \end{align*}
+  Then the funciton $\lambda a . f'((c, \change{c}), (a, 0))$ is a derivative for $\Lambda(f)$,
+  thus $\Lambda(f)$ is differentiable. Conversely, suppose that $\Lambda(f)$ is differentiable.
+  Then we note that, by hypothesis, $\Lambda(f)(a)$ is differentiable for all $f$, with derivative
+  $f'_a$, and hence:
+  \begin{align*}
+    f(a \cplus \change{a}, c \cplus \change{c}) &= \Lambda(f)(a \cplus \change{a})(c \cplus \change{c})\\
+    &= (\Lambda(f)(a) \cplus_\rightarrow \derive{\Lambda(f)}(a, \change{a}))(c \cplus \change{c})\\
+    &= \Lambda(f)(a)(c \cplus \change{c}) \cplus \derive{\Lambda(f)}(a, \change{a})(c\cplus\change{c})\\
+    &= \Lambda(f)(a)(c) \cplus (f'_a(c, \change{c}) \splus \derive{\Lambda(f)}(a, \change{a})(c\cplus\change{c}))\\
+    &= f(a, c) \cplus (f'_a(c, \change{c}) \splus \derive{\Lambda(f)}(a, \change{a})(c\cplus\change{c}))
+  \end{align*}
+  Thus $f$ is differentiable as a function from $\cstr{C} \times \cstr{A}$ into $\cstr{B}$.
+\fi
 
 \begin{prop}
-   Every complete change action $\cstr{A}$ is pointwise.
+  \label{prop:pointwiseComplete}
+   Every complete change action $\cstr{B}$ is pointwise.
 \end{prop}
 \ifproofs
   Let $\cstr{B}$ be a complete change action.
@@ -525,8 +571,8 @@ Fortunately, there are useful subcategories of $\cat{CAct}$ formed of pointwise 
   (g \cminus_\rightarrow f)(a) &\defeq g(a) \cminus f(a)
   \]
   It's easy to check that this is indeed a minus operator and, therefore, $\cstr{B}^{\cstr{A}}$
-  is complete. Thus, trivially, any function $f : A \times C \rightarrow B$ is differentiable
-  if and only if its curried version $\Lambda(f) : A \rightarrow B^C$ is.
+  is complete. Thus, trivially, any function $f : C \times A \rightarrow B$ is differentiable
+  if and only if its curried version $\Lambda(f) : C \rightarrow B^A$ is.
 \fi
 
 Furthermore, since the products and exponentials of complete change actions are complete,
