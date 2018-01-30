@@ -117,10 +117,13 @@ iteration, which we gradually accumulate \autocite[See][section
 This is much better - we have turned a quadratic computation into a linear one.
 
 But the delta rule translation works only for traditional Datalog. It is common to
-liberalise the term syntax to support, say, disjunction, existential quantification, and parity-stratified
-negation.\footnote{Parity-stratified negation means that recursive calls must
-  appear under an even number of negations. This ensures that the rule remains
-  monotone, so the least fixpoint still exists and can be found via Kleene's theorem.} 
+liberalise the term syntax with additional features, such as disjunction,
+existential quantification, negation, and aggregates.\footnote{ See, for
+  example, \autocites(LogiQL)(){logicbloxWebsite}{halpin2014logiql},
+  \autocites(Datomic)(){datomicWebsite},
+  \autocites(Souffle)(){souffleWebsite}{scholz2016fast}, and
+  \autocites(DES)(){saenz2011deductive}, which between them have all of these
+  features and more. } 
 Then we can write programs like the following, where we compute whether all the
 nodes in a subtree given by $child$ have some property $p$:
 \begin{align*}
@@ -137,7 +140,9 @@ This is of more than theoretical interest - the research
 in this paper was carried out at Semmle, which
 makes heavy use of a commercial Datalog implementation
 \autocites{semmleWebsite}{avgustinov2016ql}{sereni2008adding}{schafer2010type}.
-Semmle's implementation includes parity-stratified negation, and other non-standard
+Semmle's implementation includes parity-stratified negation\footnote{Parity-stratified negation means that recursive calls must
+  appear under an even number of negations. This ensures that the rule remains
+  monotone, so the least fixpoint still exists and can be found via Kleene's theorem.}, and other non-standard
 features, so we are faced with a dilemma: either abandon the new language
 features, or abandon incremental computation.
 
