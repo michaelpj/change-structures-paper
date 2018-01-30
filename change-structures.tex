@@ -1140,16 +1140,14 @@ This makes $\Rel$, the set of all relations over $\universalRel$, into a Boolean
   implicit except where it is used.
 
   \begin{align*}
-    \denote{R_i} &\defeq X_i \tag{where $X_i$ is the $i$th element of $\overline{X}$}\\
+    \denote{R_j} &\defeq X_j \tag{where $X_j$ is the $j$th element of $\overline{X}$}\\
     \denote{T \wedge U} &\defeq \denote{T} \cap \denote{U}\\
     \denote{T \vee U} &\defeq \denote{T} \cup \denote{U}\\
-    \denote{\exists x. T} &\defeq \pi_x(\denote{T})\\
+    \denote{\exists x. T} &\defeq \pi_x(\denote{T}) \tag{where $\pi_x(R)$ is the projection onto all columns except $x$}\\
     \denote{\neg T} &\defeq \neg \denote{T}\\
     \denote{x=y} &\defeq \Delta(x, y) \tag{where $\Delta$ is the diagonal relation}
   \end{align*}
 \end{defn}
-
-In the above, $\pi_x(R)$ denotes the projection of $R$ onto all columns except for the column corresponding to $x$.
 
 Since $\Rel$ is a Boolean algebra, and so is $\Rel^n$, the denotation
 functions of terms are functions between Boolean algebras.
@@ -1284,22 +1282,22 @@ If we did have one, its cases would be dual to those for $\exists$, namely:
 \downdiff(\forall x.T) &= \forall x. \downdiff T
 \end{align*}
 
-We can now give a derivative for our $\mathrm{treeP}$ program!
+We can now give a derivative for our $treeP$ program!
 
 Here is the upwards difference:
 \begin{align*}
-  \updiff \mathrm{treeP}(x) \leftarrow & p(x)\\
+  \updiff treeP(x) \leftarrow & p(x)\\
     &\wedge
     \exists y. (
       child(x, y)
       \wedge
-      \updiff \mathrm{treeP}(y)
+      \updiff treeP(y)
     )\\
     &\wedge 
     \neg \exists y. (
       child(x, y)
       \wedge
-      \neg \bothdiff \mathrm{treeP}(y)
+      \neg \bothdiff treeP(y)
     )
 \end{align*}
 
@@ -1356,7 +1354,7 @@ term constructs.
 
 A new term construct must have:
 \begin{itemize}
-  \item An interpretation as a (differentiable) function on its free relation variables.
+  \item An interpretation as a function on its free relation variables.
   \item An implementation of $\updiff$ and $\downdiff$.
 \end{itemize}
 
