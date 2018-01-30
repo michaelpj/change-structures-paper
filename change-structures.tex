@@ -261,8 +261,8 @@ Here are some other recurring examples of changes actions:
 \begin{itemize}
   \item $\cstr{A}_\discrete \defeq \cstruct{A}{\emptyset}{\lambda(a, da). a}$,
     which we call the \emph{discrete} change action on any base set.
-  \item $\cstr{A}_\Rightarrow \defeq \cstruct{A}{A^A}{\ev}$, where $A$ is some
-    category, $A^A$ is the exponential object, and $\ev$ is the evaluation map
+  \item $\cstr{A}_\Rightarrow \defeq \cstruct{A}{\exponential{A}{A}}{\ev}$, where $A$ is some
+    category, $\exponential{A}{A}$ is the exponential object, and $\ev$ is the evaluation map
     (for example, functions and function application).
   \item $[A]$, the type of lists (or streams) of elements of type $A$, has a
     change action over concatenation ($\doubleplus$): $\cstruct{[A]}{[A]}{\doubleplus}$.
@@ -476,112 +476,13 @@ practical computation.
 \end{proof}
 \fi
 
-\iffalse
-\begin{prop}[name=Exponentials, restate=exponentials]
-\label{prop:exponentials}
-  Let $\cstr{A}_\cplus$ and $\cstr{B}_\cpluss$ be change actions. We will say a map 
-  $\change{f} : (\cstr{A} \rightarrow \cstr{B}) \rightarrow (\cstr{A} \rightarrow \cstr{B})$ 
-  is \emph{pointwise $\reachOrder$-increasing} iff, for every $f : \cstr{A} \rightarrow \cstr{B}$
-  and $a \in \cstr{A}$, it is the case that $f(a) \reachOrder \change{f}(f)(a)$.
-  We will denote the set of pointwise $\reachOrder$-increasing functions by $\rightarrow_{\reachOrder}$.
-  \todompj{Why can't we just say ``increasing with respect to the reachability
-    order lifted to functions''?}
-  \todomario{We can, but I thought it might be more clear to write it explicitly - feel free
-    to change it}
-
-  Then $\cstruct{\cstr{A} \rightarrow \cstr{B}}
-    {(\cstr{A} \rightarrow \cstr{B}) \rightarrow_{\reachOrder} (\cstr{A} \rightarrow \cstr{B})}
-    {\lambda f . \lambda \change{f} . \change{f}(f)}$
-  is a change action with base
-  set $\cstr{A} \rightarrow \cstr{B}$, with monoidal structure given by function composition.
-  Furthermore, it is the exponential object $\cstr{B}^{\cstr{A}}$ in $\cat{CAct}$.
-\end{prop}
-\ifproofs
-\begin{proof}
-  First, we note that, if $f : \cstr{A} \rightarrow \cstr{B}$, $\change{f} \in \changes{(\cstr{A} \rightarrow \cstr{B})}$
-  and $a \in \cstr{A}$, since $\change{f}$ is pointwise $\reachOrder$-increasing, $\change{f}(f)(a)$ is reachable
-  from $f(a)$, and thus there is some $\change{b} \in \changes{B}$ satisfying $f(a) \cplus \change{b} = \change{f}(f)(a)$.
-  We will often abuse the notation and use $\change{f}_\Delta(f)(a)$ to refer such a change (although, in general, the Axiom
-  of Choice is necessary to find such a $\change{b}$).
-
-  \todomario{this is terrible and I hate it}
-  \todompj{Agreed}
-
-  Furthermore, if $f, g : \cstr{A} \rightarrow \cstr{B}$ and for all $a$ we have $f(a) \reachOrder g(a)$, then there exists
-  some function change $\change{gf}$ sending $f$ to $g$ (it suffices to pick the change that maps $f$ to $g$ and every other
-  differentiable map to itself).
-
-  We are now ready to proceed with the proof. The evaluation map is, as expected, identical to its definition in $\cat{Set}$:
-  \begin{align*}
-    &\ev : (\cstr{A} \rightarrow \cstr{B}) \times \cstr{A} \rightarrow \cstr{B}\\
-    &\ev((f, a)) \defeq f(a)
-  \end{align*}
-
-  We need first to show that it is differentiable: this is straightforward to check. Indeed, suppose 
-  $a \in A, f : \cstr{A} \rightarrow \cstr{B}, \change{a} \in \changes{A}, \change{f} \in \changes{(\cstr{A} \rightarrow \cstr{B})}$.
-  Then, for $f'$ an arbitrary derivative of $f$, let:
-  \begin{align*}
-    &\derive{\ev} : (((\cstr{A} \rightarrow \cstr{B}) \times \cstr{A}) \times (\changes{(\cstr{A} \rightarrow \cstr{B})} \times \changes{A})) \rightarrow \changes{B}\\
-    &\derive{\ev}((f, a), (\change{f}, \change{a})) \defeq \derive{f}(a, \change{a}) \cdot \change{f}_\Delta(f)(a \cplus \change{a})
-  \end{align*}
-
-  Then $\derive{\ev}$ is a derivative of the evaluation map $\ev$:
-  \begin{itemize}
-    \item[ ]$\ev((f, a) \cplus (\change{f}, \change{a}))$
-    \item[=]\{ definition of $\ev$\}\\
-    $\ev(\change{f}(f), a \cplus \change{a})$
-    \item[=]\{ definition of $\changes{\cstr{A} \rightarrow \cstr{B}}$\}\\
-    $\change{f}(f)(a \cplus \change{a})$
-    \item[=]\{ $\change{f}$ is pointwise $\reachOrder$-increasing\}\\
-    $f(a \cplus \change{a}) \cplus \change{f}_\Delta(f)(a \cplus \change{a})$
-    \item[=]\{ differentiability of $f$\}\\
-    $f(a) \cplus [ f'(a, \change{a})\cdot \change{f}_\Delta(f)(a \cplus \change{a}) ]$
-    \item[=]\{ definition of $\ev$\}\\
-    $\ev(f, a) \cplus \ev'((f, a), (\change{f}, \change{a}))$
-  \end{itemize}
-
-  It remains to prove that a function $f : \cstr{A} \times \cstr{B} \rightarrow \cstr{C}$ is differentiable iff its curried
-  version $\curry{f} : \cstr{A} \rightarrow \cstr{C}^{\cstr{B}}$ is.
-  First, suppose $f$ is differentiable, and let $\change{a} \in \changes{A}$. Then 
-  \begin{itemize}
-  \item[ ]$\curry{f}(a \cplus \change{a})$
-  \item[=]\{ definition of $\curry{f}$\}\\
-  $\lambda b . f(a \cplus \change{a}, b)$
-  \item[=]\{ differentiability of $f$\}\\
-  $\lambda b . f(a, b) \cplus \derive{f}((a, b), (\change{a}, \mzero))$
-  \end{itemize}
-  We note that $\curry{f}(a \cplus \change{a})$ is differentiable, and $\curry{f}(a)(b) \reachOrder \curry{f}(a \cplus \change{a})(b)$,
-  hence there is some function change $\change{f}_{a, \change{a}}$ mapping $\curry{f}(a)$ to $\curry{f}(a \cplus \change{a})$. The map
-  $\lambda a . \lambda \change{a} . \change{f}_{a, \change{a}}$ is, then, a derivative of $\curry{f}$.
-
-  Conversely, suppose $\curry{f} : \cstr{A} \rightarrow \cstr{C}^{\cstr{B}}$ is differentiable, let $(a, b) \in \cstr{A} \times \cstr{B}$
-  and let $(\change{a}, \change{b}) \in \changes{A} \times \changes{B}$. Then:
-  \begin{itemize}
-    \item[ ]$f((a, b) \cplus (\change{a}, \change{b}))$
-    \item[=]\{ definition of $\cplus$ on products\}\\
-    $f((a \cplus \change{a}, b \cplus \change{b}))$
-    \item[=]\{ definition of $\curry{f}$\}\\
-    $\curry{f}(a \cplus \change{a})(b \cplus \change{b})$
-    \item[=]\{ differentiability of $\curry{f}$\}\\
-    $(\curry{f}(a) \cplus \derive{(\curry{f})}(a, \change{a}))(b \cplus \change{b})$
-    \item[=]\{ $\derive{(\curry{f})}(a, \change{a})$ is pointwise $\reachOrder$-increasing \}\\
-    $\curry{f}(a)(b \cplus \change{b}) \cplus \derive{(\curry{f})}(a, \change{a})_\Delta(\curry{f}(a), b \cplus \change{b})$
-    \item[=]\{ differentiability of $\curry{f}(a)$\}\\
-    $\curry{f}(a)(b) \cplus [ \derive{\curry{f}(a)}(b, \change{b}) \cdot \derive{(\curry{f})}(a, \change{a})_\Delta(\curry{f}(a), b \cplus \change{b}) ]$
-    \item[=]\{ definition of $\curry{f}$\}\\
-    $f(a, b) \cplus [ \derive{\curry{f}(a)}(b, \change{b}) \cdot \derive{(\curry{f})}(a, \change{a})_\Delta(\curry{f}(a), b \cplus \change{b}) ]$
-  \end{itemize}
-\end{proof}
-\fi
-\fi
-
 The exponential objects in the category $\cat{CAct}$ are difficult to work with. Under some
 conditions, however, we can find a simpler representation.
 
 \begin{defn}[Pointwise change actions]
   \label{def:pointwiseChanges}
   A change action $\cstr{B}$ is pointwise if every exponential object
-  $\cstr{B}^{\cstr{A}}$ is isomorphic to the pointwise change action
+  $\exponential{\cstr{A}}{\cstr{B}}$ is isomorphic to the pointwise change action
   $\cstruct{\cstr{A} \rightarrow \cstr{B}}{A \rightarrow \changes{B}}{\cplus_\rightarrow}$,
   where $(f \cplus_\rightarrow \change{f})(x) \defeq f(x) \cplus \change{f}(x)$ and the
   monoidal structure on $A \rightarrow \changes{B}$ is given by lifting
@@ -600,11 +501,11 @@ Fortunately, there are useful subcategories of $\cat{CAct}$ formed of pointwise 
 
 \begin{prop}
   \label{prop:pointwiseComplete}
-  Every change action $\cstr{A}$ such that the change action
-  $\cstr{\changes{A}}{\changes{A}}{\splus}$ is complete and the action $\cplus$ is differentiable with
+  Every change action $\cstruct{A}{\changes{A}}{\cplus}$ such that the change action
+  $\cstruct{\changes{A}}{\changes{A}}{\splus}$ is complete and $\cplus$ is differentiable with
   respect to its first argument is pointwise.
 
-  In particular, every change action which is a group action is pointwise.
+  In particular, every change action where $\cplus$ is a group action is pointwise.
 \end{prop}
 
 \begin{prop}
@@ -661,8 +562,8 @@ the evaluation map on pointwise change structures:
   The product $\cstr{A} \times \cstr{B}$ of change actions $\cstr{A}$ and $\cstr{B}$ is thin if and only if both $\cstr{A}$ and $\cstr{B}$ are.
   Furthermore, whenever $\cstr{A}$ and $\cstr{B}$ are complete, then so is $\cstr{A} \times \cstr{B}$.
 
-  The pointwise exponential object $\cstr{A} \Rightarrow \cstr{B}$ of change actions $\cstr{A}$ and $\cstr{B}$ is
-  thin if $\cstr{B}$ is. Furthermore, whenever $\cstr{B}$ is complete, then so is $\cstr{A} \Rightarrow \cstr{B}$.
+  The pointwise exponential object $\exponential{\cstr{A}}{\cstr{B}}$ of change actions $\cstr{A}$ and $\cstr{B}$ is
+  thin if $\cstr{B}$ is. Furthermore, whenever $\cstr{B}$ is complete, then so is $\exponential{\cstr{A}}{\cstr{B}}$.
 \end{prop}
 
 Thus, the category of thin, complete change actions is Cartesian closed as well.
