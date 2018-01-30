@@ -1485,39 +1485,37 @@ incrementally, but also allowing Datafun expressions to be fully incrementally u
 \subsection{Differential $\lambda$-calculus}
 
 Another setting where derivatives of arbitrary higher-order programs have been studied
-is the \emph{differential $\lambda$-calculus}\citeauthor{ehrhard2003differential}\citeauthor{ehrhard2017introduction}.
+is the \emph{differential $\lambda$-calculus} \autocites{ehrhard2003differential}{ehrhard2017introduction}.
 This is a higher-order, simply-typed
 calculus which allows for computing the derivative of a function, in a similar
 way to the notion of derivative in Cai's work and the present paper.
 
-While both systems have clear similarities, there are big differences between
-them, the most important one being the properties of the derivatives themselves:
+While there are clear similarities between the two systems, 
+the most important difference is the properties of the derivatives themselves:
 in the differential $\lambda$-calculus, derivatives are guaranteed to be linear
-in their second argument, whereas in our approach, derivatives are unrestricted
-in this sense
+in their second argument, whereas in our approach derivatives do not have this restriction 
 but are instead required to satisfy a strong relation to the function
 that is being differentiated (see \cref{def:derivative}).
 
 Families of denotational models for the differential $\lambda$-calculus have been
-studied in depth\citeauthor{bucciarelli2010categorical}\citeauthor{blute2010convenient}\citeauthor{cockett2016categorical}
-\citeauthor{kerjean2016mackey}, and the relationship between these and change actions
-is the subject of ongoing work.
+studied in depth
+\autocites{bucciarelli2010categorical}{blute2010convenient}{cockett2016categorical}{kerjean2016mackey},
+and the relationship between these and change actions is the subject of ongoing work.
 
 \subsection{Higher-order automatic differentiation}
 
-Automatic differentiation\citeauthor{griewank2008evaluating} is a technique that allows
-for efficiently computing
-the derivative of arbitrary programs, with applications in probabilistic modeling\citeauthor{kucukelbir2017automatic}
-and machine learning\citeauthor{baydin2014automatic} among other areas. In recent times, this technique has been successfully
-applied to higher-order languages\citeauthor{siskind2008nesting}\citeauthor{baydin2016diffsharp}.
-While some approaches have been suggested\citeauthor{manzyuk2012simply}\citeauthor{kelly2016evolving}, a general
-theoretical framework for this technique is still
-a matter of open research. 
+Automatic differentiation \autocite{griewank2008evaluating} is a technique that allows
+for efficiently computing the derivative of arbitrary programs, with
+applications in probabilistic modeling \autocite{kucukelbir2017automatic}
+and machine learning \autocite{baydin2014automatic} among other areas. In recent times, this technique has been successfully
+applied to higher-order languages \autocites{siskind2008nesting}{baydin2016diffsharp}.
+While some approaches have been suggested \autocites{manzyuk2012simply}{kelly2016evolving}, a general
+theoretical framework for this technique is still a matter of open research. 
 
 To this purpose, some authors have proposed the incremental $\lambda$-calculus
 as a foundational framework on which models of automatic differentiation can
-be based\cite{kelly2016evolving}. We believe our notion of change actions is intrinsically better suited
-to this purpose than change structures, since one can easily give them a
+be based \autocite{kelly2016evolving}. We believe our change actions are better suited
+to this purpose than the incremental $\lambda$-calculus, since one can easily give them a
 synthetic differential geometric reading (by interpreting $\cstr{A}$ as an Euclidean module and $\changes{A}$
 as its corresponding spectrum, for example).
 
@@ -1535,8 +1533,8 @@ the technical difficulties. A generic categorical description of change actions
 would also be easy to provide, which may lead to models of
 the incremental $\lambda$-calculus on different base categories. 
 
-Of those, the theory of change actions on the category domains is of particular interest. Since
-domains are commonly used to model recursion in programming language semantics, this could
+Of those, the theory of change actions on the category of domains is of particular interest. Since
+domains are used to model programming language semantics, this could
 open up opportunities for incremental evaluation of many programming languages,
 even those that do not fit into the model of \citeauthor{cai2014changes}'s ILC. 
 
