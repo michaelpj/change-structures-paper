@@ -499,7 +499,7 @@ we require $f \cplus_\rightarrow \change{f}$ to be \emph{differentiable}, which
 may not be true for all pointwise changes $\change{f}$.
 Fortunately, there are useful subcategories of $\cat{CAct}$ formed of pointwise change actions.
 
-\begin{prop}[restate=pointwiseChangeActions]
+\begin{prop}[name=Pointwise change actions, restate=pointwiseChangeActions]
   \label{prop:pointwiseChangeActions}
   Every change action $\cstruct{B}{\changes{B}}{\cplus}$ such that the change action
   $\cstruct{\changes{B}}{\changes{B}}{\splus}$ is complete and $\cplus$ is differentiable with
@@ -508,15 +508,15 @@ Fortunately, there are useful subcategories of $\cat{CAct}$ formed of pointwise 
   In particular, every change action where $\cplus$ is a group action is pointwise.
 \end{prop}
 \ifproofs
-  See \cref{prf:pointwiseChangeActions}
+  See \cref{prf:pointwiseChangeActions}.
 \fi
 
-\begin{prop}[restate=pointwiseComplete]
+\begin{prop}[name=Complete implies pointwise, restate=pointwiseComplete]
   \label{prop:pointwiseComplete}
    Every complete change action $\cstr{B}$ is pointwise.
 \end{prop}
 \ifproofs
-  See \cref{prf:pointwiseComplete}
+  See \cref{prf:pointwiseComplete}.
 \fi
 
 Furthermore, since the products and exponentials of complete change actions are complete,
@@ -1627,9 +1627,11 @@ power of this approach.
 
   First, we prove that the pointwise change action is well defined: let
   $f : \cstr{A} \rightarrow \cstr{B}$ be some differentiable function, and
-  $\change{f} : A \rightarrow \changes{B}$ a pointwise change. Then:
+  $\change{f} : A \rightarrow \changes{B}$ a pointwise change (which is
+  differentiable, since $\cstr{\changes{B}}$ is complete). Then:
   \begin{align*}
-    (f \cplus_\rightarrow \change{f})(a \cplus \change{a}) &= f(a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})\\
+    &(f \cplus_\rightarrow \change{f})(a \cplus \change{a})\\
+    &= f(a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})\\
     &= (f(a) \cplus \derive{f}(a, \change{a})) \cplus (\change{f}(a) \splus \derive{\change{f}}(a, \change{a}) )\\
     &= f(a) \cplus (\change{f}(a) \splus \derive{\change{f}}(a, \change{a}))
        \cplus \derive{\cplus}((f(a), \derive{f}(a, \change{a})), \change{f}(a \cplus \change{a}))\\
@@ -1640,29 +1642,32 @@ power of this approach.
   
   The evaluation map, defined as $\ev(f, a) \defeq f(a)$ is differentiable as well:
   \begin{align*}
-    \ev((f, \change{f}), (a, \change{a})) &= (f \cplus_\rightarrow \change{f})(a \cplus \change{a}) \\
+    &\ev((f, \change{f}), (a, \change{a}))\\
+    &= (f \cplus_\rightarrow \change{f})(a \cplus \change{a}) \\
     &= f(a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})\\
     &= f(a) \cplus (f'(a, \change{a}) \splus \change{f}(a \cplus \change{a}))\\
     &= \ev(f, a) \cplus (f'(a, \change{a}) \splus \change{f}(a \cplus \change{a}))
   \end{align*}
 
-  Now, on one hand, suppose that $f : C \times A \rightarrow B$ is a differentiable function,
-  and $\Lambda(f) : C \rightarrow \cstr{B}^{\cstr{A}}$ its corresponding curried version:
+  Now, on the one hand, suppose that $f : C \times A \rightarrow B$ is a differentiable function,
+  and $\curry{f} : C \rightarrow \exponential{\cstr{A}}{\cstr{A}}$ its corresponding curried version:
   \begin{align*}
-    \Lambda(f)(c \cplus \change{c}) &= \lambda a . f(c \cplus \change{c}, a)\\
-    &= \lambda a . f(c, a) \cplus f'((c, \change{c}), (a, 0))\\
-    &= (\lambda a . f(c, a)) \cplus_\rightarrow (\lambda a . f'((c, \change{c}), (a, 0)))
+    &\curry{f}(c \cplus \change{c})\\
+    &= \lambda a . f(c \cplus \change{c}, a)\\
+    &= \lambda a . f(c, a) \cplus \derive{f}((c, \change{c}), (a, 0))\\
+    &= (\lambda a . f(c, a)) \cplus_\rightarrow (\lambda a . \derive{f}((c, \change{c}), (a, 0)))
   \end{align*}
-  Then the funciton $\lambda a . f'((c, \change{c}), (a, 0))$ is a derivative for $\Lambda(f)$,
-  thus $\Lambda(f)$ is differentiable. Conversely, suppose that $\Lambda(f)$ is differentiable.
-  Then we note that, by hypothesis, $\Lambda(f)(a)$ is differentiable for all $f$, with derivative
-  $f'_a$, and hence:
+  Then the funciton $\lambda a . \derive{f}((c, \change{c}), (a, 0))$ is a derivative for $\curry{f}$,
+  thus $\curry{f}$ is differentiable. Conversely, suppose that $\curry{f}$ is differentiable.
+  Then we note that, by hypothesis, $\curry{f}(a)$ is differentiable for all $f$, with derivative
+  $\derive{f_a}$, and hence:
   \begin{align*}
-    f(a \cplus \change{a}, c \cplus \change{c}) &= \Lambda(f)(a \cplus \change{a})(c \cplus \change{c})\\
-    &= (\Lambda(f)(a) \cplus_\rightarrow \derive{\Lambda(f)}(a, \change{a}))(c \cplus \change{c})\\
-    &= \Lambda(f)(a)(c \cplus \change{c}) \cplus \derive{\Lambda(f)}(a, \change{a})(c\cplus\change{c})\\
-    &= \Lambda(f)(a)(c) \cplus (f'_a(c, \change{c}) \splus \derive{\Lambda(f)}(a, \change{a})(c\cplus\change{c}))\\
-    &= f(a, c) \cplus (f'_a(c, \change{c}) \splus \derive{\Lambda(f)}(a, \change{a})(c\cplus\change{c}))
+    &f(a \cplus \change{a}, c \cplus \change{c})\\
+    &= \curry{f}(a \cplus \change{a})(c \cplus \change{c})\\
+    &= (\curry{f}(a) \cplus_\rightarrow \derive{\curry{f}}(a, \change{a}))(c \cplus \change{c})\\
+    &= \curry{f}(a)(c \cplus \change{c}) \cplus \derive{\curry{f}}(a, \change{a})(c\cplus\change{c})\\
+    &= \curry{f}(a)(c) \cplus (\derive{f_a}(c, \change{c}) \splus \derive{\curry{f}}(a, \change{a})(c\cplus\change{c}))\\
+    &= f(a, c) \cplus (\derive{f_a}(c, \change{c}) \splus \derive{\curry{f}}(a, \change{a})(c\cplus\change{c}))
   \end{align*}
   Thus $f$ is differentiable as a function from $\cstr{C} \times \cstr{A}$ into $\cstr{B}$.
 \end{proof}
@@ -1671,19 +1676,19 @@ power of this approach.
 \begin{proof}
 \label{prf:pointwiseComplete}
   Let $\cstr{B}$ be a complete change action.
-  We prove that the pointwise change action is the exponential object $\cstr{B}^{\cstr{A}}$.
+  We prove that the pointwise change action is the exponential object $\exponential{\cstr{A}}{\cstr{B}}$.
 
   First, we note that the pointwise change action is trivially well defined, since
   every function into $\cstr{B}$ is differentiable. Similarly, the evaluation map
   is differentiable.
 
-  Now consider two elements $\Lambda(f), \Lambda(g)$ of $\cstr{B}^{\cstr{A}}$. Since
+  Now consider two elements $\curry{f}$, $\curry{g}$ of $\exponential{\cstr{A}}{\cstr{b}}$. Since
   $\cstr{B}$ is complete, it is endowed with a minus operator $\cminus$, so we define
-  $\cminus_\rightarrow : \cstr{B}^{\cstr{A}} \times \cstr{B}^{\cstr{A}} \rightarrow A \rightarrow \changes{B}$ by:
+  $\cminus_\rightarrow : \exponential{\cstr{A}}{\cstr{B}} \times \exponential{\cstr{A}}{\cstr{B}} \rightarrow A \rightarrow \changes{B}$ by:
   $$ (g \cminus_\rightarrow f)(a) \defeq g(a) \cminus f(a) $$
-  It's easy to check that this is indeed a minus operator and, therefore, $\cstr{B}^{\cstr{A}}$
+  It's easy to check that this is indeed a minus operator and, therefore, $\exponential{\cstr{A}}{\cstr{B}}$
   is complete. Thus, trivially, any function $f : C \times A \rightarrow B$ is differentiable
-  if and only if its curried version $\Lambda(f) : C \rightarrow B^A$ is.
+  if and only if its curried version $\curry{f} : C \rightarrow \exponential{A}{B}$ is.
 \end{proof}
 
 \subsection{Change actions over other structures}
