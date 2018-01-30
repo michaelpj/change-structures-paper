@@ -575,26 +575,33 @@ practical computation.
 \fi
 \fi
 
-The exponential objects in the category $\cat{CAct}$ are, in general, intractable. Under some
-conditions, however, we can give a much simpler presentation, which aligns with the intuitive
-idea that the reachability order on function spaces should be obtained pointwise.
+The exponential objects in the category $\cat{CAct}$ are difficult to work with. Under some
+conditions, however, we can find a simpler representation.
+
 \begin{defn}[Pointwise change actions]
-  A change action $\cstr{B}$ is pointwise whenever every exponential object
+  \label{def:pointwiseChanges}
+  A change action $\cstr{B}$ is pointwise if every exponential object
   $\cstr{B}^{\cstr{A}}$ is isomorphic to the pointwise change action
   $\cstruct{\cstr{A} \rightarrow \cstr{B}}{A \rightarrow \changes{B}}{\cplus_\rightarrow}$,
   where $(f \cplus_\rightarrow \change{f})(x) \defeq f(x) \cplus \change{f}(x)$ and the
-  monoidal structure on $A \rightarrow \changes{B}$ is given by pointwise lifting
-  of the one on $\changes{B}$.
+  monoidal structure on $A \rightarrow \changes{B}$ is given by lifting
+  the monoidal structure on $\changes{B}$ pointwise.
 \end{defn}
-This pointwise change action is, in general, not well defined, as applying a change $\change{f}$ to
-a differentiable function $f$ results in a function $f \cplus_\rightarrow \change{f}$ which
-may not be differentiable.
-Fortunately, there are large subcategories of $\cat{CAct}$ formed of pointwise change actions.
+
+This corresponds to the intuition about how the correspondence with
+$\cat{PreOrd}$ should work: the order on monotone functions in $\cat{PreOrd}$ is
+pointwise, and so that should correspond to how changes between functions work
+in $\cat{CAct}$.
+
+This pointwise change action is not well defined for all change actions, since
+we require $f \cplus_\rightarrow \change{f}$ to be \emph{differentiable}, which
+may not be true for all pointwise changes $\change{f}$.
+Fortunately, there are useful subcategories of $\cat{CAct}$ formed of pointwise change actions.
 
 \begin{prop}
-  \ref{prop:pointwiseComplete}
-  Every change action $\cstr{A}$ such that the monoidal change action
-  on $\changes{A}$ is complete and the action $\cplus$ is differentiable with
+  \label{prop:pointwiseComplete}
+  Every change action $\cstr{A}$ such that the change action
+  $\cstr{\changes{A}}{\changes{A}}{\splus}$ is complete and the action $\cplus$ is differentiable with
   respect to its first argument is pointwise.
 
   In particular, every change action which is a group action is pointwise.
@@ -603,12 +610,14 @@ Fortunately, there are large subcategories of $\cat{CAct}$ formed of pointwise c
 \begin{prop}
    Every complete change action $\cstr{A}$ is pointwise.
 \end{prop}
-Furthermore, since the product and exponential of complete change actions is complete,
+
+Furthermore, since the products and exponentials of complete change actions are complete,
 the full subcategory of $\cat{CAct}$ formed by complete change actions is a Cartesian
 closed category of pointwise change actions.
 
 Derivatives of the evaluation map, irrespective of a particular choice of change action on the
 exponential objects, correspond to incremental evaluation of functions:
+
 \begin{prop}[Incrementalization]
 \label{prop:incrementalization}
   Let $f: \cstr{A} \rightarrow \cstr{B}$, $a \in A$, $\change{a} \in
@@ -621,8 +630,9 @@ exponential objects, correspond to incremental evaluation of functions:
   \end{displaymath}
 \end{prop}
 
-Conveniently, \cref{prop:pointwiseComplete} gives us a way to compute explicit derivatives for
+Conveniently, \cref{def:pointwiseChanges} gives us a way to compute explicit derivatives for
 the evaluation map on pointwise change structures:
+
 \begin{prop}[Derivatives of the evaluation map]
 \label{prop:evDerivatives}
   Suppose $\cstr{B}$ is a pointwise change structure. Let
@@ -641,15 +651,11 @@ the evaluation map on pointwise change structures:
     \derive{\ev}_2 \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})
   \end{displaymath}
 \end{prop}
-\ifproofs
-\begin{proof}
-  The first is shown in the proof of \cref{prop:exponentials}, the second is
-  similar but begins by taking the derivative of $f \cplus \change{f}$.
-\end{proof}
-\fi
 
 \subsection{The category of thin change actions}
 \todomario{This subsection feels really out of place.}
+\todompj{I'm inclined to cut it, unless we come up with more to say about thin
+  change actions.}
 
 \begin{prop}
   The product $\cstr{A} \times \cstr{B}$ of change actions $\cstr{A}$ and $\cstr{B}$ is thin if and only if both $\cstr{A}$ and $\cstr{B}$ are.
