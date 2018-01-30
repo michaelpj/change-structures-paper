@@ -214,6 +214,7 @@ The primary motivation for change actions is that they let us define
 \emph{derivatives} for functions.
 
 \begin{defn}[Derivatives]
+  \label{def:derivative}
   A \emph{derivative} of a function $f: \cstr{A}_\cplus \rightarrow \cstr{B}_\cpluss$ is a function $\derive{f}: A \times \changes{A} \rightarrow
   \changes{B}$ such that
   \begin{displaymath}
@@ -499,6 +500,7 @@ may not be true for all pointwise changes $\change{f}$.
 Fortunately, there are useful subcategories of $\cat{CAct}$ formed of pointwise change actions.
 
 \begin{prop}
+  \label{prop:pointwiseChangeActions}
   Every change action $\cstruct{B}{\changes{B}}{\cplus}$ such that the change action
   $\cstruct{\changes{B}}{\changes{B}}{\splus}$ is complete and $\cplus$ is differentiable with
   respect to its first argument is pointwise.
@@ -506,50 +508,7 @@ Fortunately, there are useful subcategories of $\cat{CAct}$ formed of pointwise 
   In particular, every change action where $\cplus$ is a group action is pointwise.
 \end{prop}
 \ifproofs
-  Let $\cstr{B}$ be a change action, with $\cplus$ differentiable with respect
-  to its first argument, and suppose the change action on $\changes{B}$
-  is complete.
-
-  First, we prove that the pointwise change action is well defined: let
-  $f : \cstr{A} \rightarrow \cstr{B}$ be some differentiable function, and
-  $\change{f} : A \rightarrow \changes{B}$ a pointwise change. Then:
-  \begin{align*}
-    (f \cplus_\rightarrow \change{f})(a \cplus \change{a}) &= f(a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})\\
-    &= (f(a) \cplus \derive{f}(a, \change{a})) \cplus (\change{f}(a) \splus \derive{\change{f}}(a, \change{a}) )\\
-    &= f(a) \cplus (\change{f}(a) \splus \derive{\change{f}}(a, \change{a}))
-       \cplus \derive{\cplus}((f(a), \derive{f}(a, \change{a})), \change{f}(a \cplus \change{a}))\\
-    &= (f \cplus_\rightarrow \change{f})(a) \cplus (\derive{\change{f}}(a, \change{a})
-       \splus \derive{\cplus}((f(a), \derive{f}(a, \change{a}), \change{f}(a, \cplus \change{a}))))
-  \end{align*}
-  Hence (f \cplus_\rightarrow \change{f}) is differentiable.
-  
-  The evaluation map, defined as $\ev(f, a) \defeq f(a)$ is differentiable as well:
-  \begin{align*}
-    \ev((f, \change{f}), (a, \change{a})) &= (f \cplus_\rightarrow \change{f})(a \cplus \change{a}) \\
-    &= f(a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})\\
-    &= f(a) \cplus (f'(a, \change{a}) \splus \change{f}(a \cplus \change{a}))\\
-    &= \ev(f, a) \cplus (f'(a, \change{a}) \splus \change{f}(a \cplus \change{a}))
-  \end{align*}
-
-  Now, on one hand, suppose that $f : C \times A \rightarrow B$ is a differentiable function,
-  and $\Lambda(f) : C \rightarrow \cstr{B}^{\cstr{A}}$ its corresponding curried version:
-  \begin{align*}
-    \Lambda(f)(c \cplus \change{c}) &= \lambda a . f(c \cplus \change{c}, a)\\
-    &= \lambda a . f(c, a) \cplus f'((c, \change{c}), (a, 0))\\
-    &= (\lambda a . f(c, a)) \cplus_\rightarrow (\lambda a . f'((c, \change{c}), (a, 0)))
-  \end{align*}
-  Then the funciton $\lambda a . f'((c, \change{c}), (a, 0))$ is a derivative for $\Lambda(f)$,
-  thus $\Lambda(f)$ is differentiable. Conversely, suppose that $\Lambda(f)$ is differentiable.
-  Then we note that, by hypothesis, $\Lambda(f)(a)$ is differentiable for all $f$, with derivative
-  $f'_a$, and hence:
-  \begin{align*}
-    f(a \cplus \change{a}, c \cplus \change{c}) &= \Lambda(f)(a \cplus \change{a})(c \cplus \change{c})\\
-    &= (\Lambda(f)(a) \cplus_\rightarrow \derive{\Lambda(f)}(a, \change{a}))(c \cplus \change{c})\\
-    &= \Lambda(f)(a)(c \cplus \change{c}) \cplus \derive{\Lambda(f)}(a, \change{a})(c\cplus\change{c})\\
-    &= \Lambda(f)(a)(c) \cplus (f'_a(c, \change{c}) \splus \derive{\Lambda(f)}(a, \change{a})(c\cplus\change{c}))\\
-    &= f(a, c) \cplus (f'_a(c, \change{c}) \splus \derive{\Lambda(f)}(a, \change{a})(c\cplus\change{c}))
-  \end{align*}
-  Thus $f$ is differentiable as a function from $\cstr{C} \times \cstr{A}$ into $\cstr{B}$.
+  See \cref{prf:pointwiseChangeActions}
 \fi
 
 \begin{prop}
@@ -557,22 +516,7 @@ Fortunately, there are useful subcategories of $\cat{CAct}$ formed of pointwise 
    Every complete change action $\cstr{B}$ is pointwise.
 \end{prop}
 \ifproofs
-  Let $\cstr{B}$ be a complete change action.
-  We prove that the pointwise change action is the exponential object $\cstr{B}^{\cstr{A}}$.
-
-  First, we note that the pointwise change action is trivially well defined, since
-  every function into $\cstr{B}$ is differentiable. Similarly, the evaluation map
-  is differentiable.
-
-  Now consider two elements $\Lambda(f), \Lambda(g)$ of $\cstr{B}^{\cstr{A}}$. Since
-  $\cstr{B}$ is complete, it is endowed with a minus operator $\cminus$, so we define
-  $\cminus_\rightarrow : \cstr{B}^{\cstr{A}} \times \cstr{B}^{\cstr{A}} \rightarrow A \rightarrow \changes{B}$ by:
-  \[
-  (g \cminus_\rightarrow f)(a) &\defeq g(a) \cminus f(a)
-  \]
-  It's easy to check that this is indeed a minus operator and, therefore, $\cstr{B}^{\cstr{A}}$
-  is complete. Thus, trivially, any function $f : C \times A \rightarrow B$ is differentiable
-  if and only if its curried version $\Lambda(f) : C \rightarrow B^A$ is.
+  See \cref{prf:pointwiseComplete}
 \fi
 
 Furthermore, since the products and exponentials of complete change actions are complete,
@@ -1401,12 +1345,6 @@ less a ``change semantics'' for Datalog \autocite[See][section
 Datafun (see \cref{sec:embeddingDatalog} below) which embed Datlog or logic programming behaviour within a broader
 programming context.
 
-Since we do not require a minus operator to always be defined, we do not need
-our changes to depend on the value being changed. However,
-if we want to extend our formalism to synthetic differential geometry we \emph{will} need
-dependently typed changes, since the type of the tangent space at a point is
-dependent on the point.
-
 In fact, a slightly different dependently-typed formulation arises if we consider changes
 to be indexed \emph{both} by the source and the target. This means
 thinking of our base set as a category, with changes $\Delta_a^b$ between $a$
@@ -1544,24 +1482,65 @@ derivative operator for Datalog, our work could be used as a ``plugin'' in the s
 of \citeauthor{cai2014changes}, allowing Datafun to compute its internal fixpoints
 incrementally, but also allowing Datafun expressions to be fully incrementally updated.
 
+\subsection{Differential $\lambda$-calculus}
+
+Another setting where derivatives of arbitrary higher-order programs have been studied
+is the \emph{differential $\lambda$-calculus}. This is a higher-order, simply-typed
+calculus which allows for computing the derivative of a function, in a similar
+way to the notion of derivative in Cai's work and the present paper.
+
+While both systems have clear similarities, there are big differences between
+them, the most important one being the properties of the derivatives themselves:
+in the differential $\lambda$-calculus, derivatives are guaranteed to be linear
+in their second argument, whereas in our approach, derivatives are unrestricted
+in this sense
+but are instead required to satisfy a strong relation to the function
+that is being differentiated (see \cref{def:derivative}).
+
+Families of denotational models for the differential $\lambda$-calculus have been
+studied in depth, and the relationship between these and change actions
+is the subject of ongoing work.
+
+\subsection{Higher-order automatic differentiation}
+
+Automatic differentiation is a technique that allows for efficiently computing
+the derivative of arbitrary programs, with many applications in scientific computing
+and machine learning. In recent times, this technique has been successfully
+applied to higher-order languages, but a general theoretical framework for it is still
+a matter of open research. 
+
+To this purpose, some authors have proposed the incremental $\lambda$-calculus
+as a foundational framework on which models of automatic differentiation can
+be based. We believe our notion of change actions is intrinsically better suited
+to this purpose than change structures, since one can easily give them a
+geometric reading (by interpreting $\cstr{A}$ as an Euclidean module and $\changeS{A}$
+as its corresponding spectrum, for example).
+
 \section{Conclusions and future work}
 
-We have presented change actions and their properties, and provided novel
+We have presented change actions and their properties, and used them to provide novel
 strategies for incrementally evaluating fixpoints and the semantics of Datalog.
 
 Our work opens several avenues for future investigation.
 
-Firstly, the abstract definition of change actions could be extended to a
-dependently-typed version as gestured towards in
-\cref{sec:relatedChangeStructures}. We believe this might smooth over many of
-the technical difficulties, and also provide a structure that is compatible with
-synthetic differential geometry, where the type of the tangent bundle at a point
-depends on the point.
+Firstly, the concrete definition of change actions can be generalized in a number of
+ways. A dependently-typed version, as gestured towards in
+\cref{sec:relatedChangeStructures}, might smooth over many of
+the technical difficulties. A generic categorical description of change actions
+would also be easy to provide, which may lead to models of
+the incremental $\lambda$-calculus on different base categories. 
 
-Secondly, the theory of change actions on domains could be developed. Since
-domains are commonly used to define programming language semantics, this could
+Of those, the theory of change actions on the category domains is of particular interest. Since
+domains are commonly used to model recursion in programming language semantics, this could
 open up opportunities for incremental evaluation of many programming languages,
-even those that do not fit into the model of \citeauthor{cai2014changes}'s ILC.
+even those that do not fit into the model of \citeauthor{cai2014changes}'s ILC. 
+
+Additionally, the tantalizing connection between change actions, the ILC and synthetic
+differential geometry has only begun to be explored and a denotational semantics for the
+ILC based on smooth spaces is the subject of ongoing research. We believe many concepts
+from standard differential geometry, like gradients, vector fields, curves and flows can
+be defined for general change actions, which could then have implications for higher-order
+computation.
 
 Finally, combining our concrete Datalog derivatives with a system similar to ILC
 in a language such as Datafun would be an exciting demonstration of the compositional
@@ -1634,6 +1613,76 @@ power of this approach.
   \end{align*}
 \end{proof}
 
+\pointwiseChangeActions*
+\begin{proof}
+\label{prf:pointwiseChangeAction}
+  Let $\cstr{B}$ be a change action, with $\cplus$ differentiable with respect
+  to its first argument, and suppose the change action on $\changes{B}$
+  is complete.
+
+  First, we prove that the pointwise change action is well defined: let
+  $f : \cstr{A} \rightarrow \cstr{B}$ be some differentiable function, and
+  $\change{f} : A \rightarrow \changes{B}$ a pointwise change. Then:
+  \begin{align*}
+    (f \cplus_\rightarrow \change{f})(a \cplus \change{a}) &= f(a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})\\
+    &= (f(a) \cplus \derive{f}(a, \change{a})) \cplus (\change{f}(a) \splus \derive{\change{f}}(a, \change{a}) )\\
+    &= f(a) \cplus (\change{f}(a) \splus \derive{\change{f}}(a, \change{a}))
+       \cplus \derive{\cplus}((f(a), \derive{f}(a, \change{a})), \change{f}(a \cplus \change{a}))\\
+    &= (f \cplus_\rightarrow \change{f})(a) \cplus (\derive{\change{f}}(a, \change{a})
+       \splus \derive{\cplus}((f(a), \derive{f}(a, \change{a}), \change{f}(a, \cplus \change{a}))))
+  \end{align*}
+  Hence (f \cplus_\rightarrow \change{f}) is differentiable.
+  
+  The evaluation map, defined as $\ev(f, a) \defeq f(a)$ is differentiable as well:
+  \begin{align*}
+    \ev((f, \change{f}), (a, \change{a})) &= (f \cplus_\rightarrow \change{f})(a \cplus \change{a}) \\
+    &= f(a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})\\
+    &= f(a) \cplus (f'(a, \change{a}) \splus \change{f}(a \cplus \change{a}))\\
+    &= \ev(f, a) \cplus (f'(a, \change{a}) \splus \change{f}(a \cplus \change{a}))
+  \end{align*}
+
+  Now, on one hand, suppose that $f : C \times A \rightarrow B$ is a differentiable function,
+  and $\Lambda(f) : C \rightarrow \cstr{B}^{\cstr{A}}$ its corresponding curried version:
+  \begin{align*}
+    \Lambda(f)(c \cplus \change{c}) &= \lambda a . f(c \cplus \change{c}, a)\\
+    &= \lambda a . f(c, a) \cplus f'((c, \change{c}), (a, 0))\\
+    &= (\lambda a . f(c, a)) \cplus_\rightarrow (\lambda a . f'((c, \change{c}), (a, 0)))
+  \end{align*}
+  Then the funciton $\lambda a . f'((c, \change{c}), (a, 0))$ is a derivative for $\Lambda(f)$,
+  thus $\Lambda(f)$ is differentiable. Conversely, suppose that $\Lambda(f)$ is differentiable.
+  Then we note that, by hypothesis, $\Lambda(f)(a)$ is differentiable for all $f$, with derivative
+  $f'_a$, and hence:
+  \begin{align*}
+    f(a \cplus \change{a}, c \cplus \change{c}) &= \Lambda(f)(a \cplus \change{a})(c \cplus \change{c})\\
+    &= (\Lambda(f)(a) \cplus_\rightarrow \derive{\Lambda(f)}(a, \change{a}))(c \cplus \change{c})\\
+    &= \Lambda(f)(a)(c \cplus \change{c}) \cplus \derive{\Lambda(f)}(a, \change{a})(c\cplus\change{c})\\
+    &= \Lambda(f)(a)(c) \cplus (f'_a(c, \change{c}) \splus \derive{\Lambda(f)}(a, \change{a})(c\cplus\change{c}))\\
+    &= f(a, c) \cplus (f'_a(c, \change{c}) \splus \derive{\Lambda(f)}(a, \change{a})(c\cplus\change{c}))
+  \end{align*}
+  Thus $f$ is differentiable as a function from $\cstr{C} \times \cstr{A}$ into $\cstr{B}$.
+\end{proof}
+
+\pointwiseComplete*
+\begin{proof}
+\label{prf:pointwiseComplete}
+  Let $\cstr{B}$ be a complete change action.
+  We prove that the pointwise change action is the exponential object $\cstr{B}^{\cstr{A}}$.
+
+  First, we note that the pointwise change action is trivially well defined, since
+  every function into $\cstr{B}$ is differentiable. Similarly, the evaluation map
+  is differentiable.
+
+  Now consider two elements $\Lambda(f), \Lambda(g)$ of $\cstr{B}^{\cstr{A}}$. Since
+  $\cstr{B}$ is complete, it is endowed with a minus operator $\cminus$, so we define
+  $\cminus_\rightarrow : \cstr{B}^{\cstr{A}} \times \cstr{B}^{\cstr{A}} \rightarrow A \rightarrow \changes{B}$ by:
+  \[
+  (g \cminus_\rightarrow f)(a) &\defeq g(a) \cminus f(a)
+  \]
+  It's easy to check that this is indeed a minus operator and, therefore, $\cstr{B}^{\cstr{A}}$
+  is complete. Thus, trivially, any function $f : C \times A \rightarrow B$ is differentiable
+  if and only if its curried version $\Lambda(f) : C \rightarrow B^A$ is.
+\end{proof}
+
 \subsection{Change actions over other structures}
 
 \factoringFixpoints*
@@ -1643,7 +1692,7 @@ power of this approach.
   \begin{displaymath}
     p(b) = (\lfp f, g(\lfp(f), b))
   \end{displaymath}
-  Then $h(h^i(\bot)) \leq p(p^i(\bot)))$ (by simple induction), and so by continuity
+  Then $h(h^i(\bot)) \leq p(p^i(\bot))$ (by simple induction), and so by continuity
   \begin{displaymath}
     \lfp(h) = \sqcup_{i \in \NN} h^i(\bot) \leq \sqcup_{i \in \NN} p^i(\bot) = \lfp(p)
   \end{displaymath}
@@ -1809,7 +1858,7 @@ power of this approach.
     &= f(\iter_n(f)) \cplus \derive{\ev}((f, \iter_{n}(f)), (\change{f},
       \derive{\iter_{n}}(f, \change{f})))
     \tag{by \cref{prop:incrementalization}}\\
-    & =\iter_{n+1}(f) \cplus \derive{\iter_{n+1}}(f, \change{f})))
+    & =\iter_{n+1}(f) \cplus \derive{\iter_{n+1}}(f, \change{f})
   \end{align*}
 \end{proof}
 
@@ -1826,11 +1875,11 @@ power of this approach.
   \begin{align*}
     &\sqcup_{n \in \NN} \derive{\iter_n}(f, \change{f})\\
     &=\sqcup_{n \in \NN} \pi_2(\nextiter_{f, \change{f}}^n(\bot))\\
-    &=\pi_2(\sqcup_{n \in \NN} \nextiter_{f, \change{f}}^n(\bot))) \tag{$\pi_2$ is continuous}\\
+    &=\pi_2(\sqcup_{n \in \NN} \nextiter_{f, \change{f}}^n(\bot)) \tag{$\pi_2$ is continuous}\\
     &= \pi_2 (\lfp(\nextiter_{f, \change{f}})) \tag{$\nextiter_{f, \change{f}}$ is continuous, Kleene's Theorem}\\
     &= \pi_2 ((\lfp(f), \lfp (\lambda\ \change{a}. \derive{\ev}((f, \lfp f), (\change{f}, \change{a})))))
     \tag{by \cref{prop:factoringFixpoints}, and the definition of $\nextiter$}\\
-    &= \pi_2 ((\lfp(f), \lfp(\adjust(f, \change{f})))\\
+    &= \pi_2 (\lfp(f), \lfp(\adjust(f, \change{f})))\\
     &= \lfp(\adjust(f, \change{f}))\\
     &= \derive{\lfp}(f, \change{f})
   \end{align*}
