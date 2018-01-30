@@ -513,7 +513,7 @@ practical computation.
   \end{align*}
 
   We need first to show that it is differentiable: this is straightforward to check. Indeed, suppose 
-  $a \in \changes{A}, f : \cstr{A} \rightarrow \cstr{B}, \change{a} \in \changes{A}, \change{f} \in \changes{(\cstr{A} \rightarrow \cstr{B})}$.
+  $a \in A, f : \cstr{A} \rightarrow \cstr{B}, \change{a} \in \changes{A}, \change{f} \in \changes{(\cstr{A} \rightarrow \cstr{B})}$.
   Then, for $f'$ an arbitrary derivative of $f$, let:
   \begin{align*}
     &\derive{\ev} : (((\cstr{A} \rightarrow \cstr{B}) \times \cstr{A}) \times (\changes{(\cstr{A} \rightarrow \cstr{B})} \times \changes{A})) \rightarrow \changes{B}\\
@@ -680,7 +680,7 @@ Having a monotone order on the changes is very useful.
 
 \begin{thm}[Sandwich lemma]
   \label{thm:sandwich}
-  Let $\supderive{f}$ and $\subderive{f}$ be a derivatives for $f$, $\changeOrder$ be a preorder on $\changes{B}$ such that $\cplus$ is monotone with
+  Let $\supderive{f}$ and $\subderive{f}$ be derivatives for $f$, $\changeOrder$ be a preorder on $\changes{B}$ such that $\cplus$ is monotone with
   respect to it, and $g$ be such that
 
   \begin{displaymath}
@@ -695,7 +695,7 @@ characterisation of all the derivatives for a function.
 
 \begin{thm}[Characterization of derivatives]
 \label{thm:derivativeCharacterization}
-  Let $\cstr{A}$ and $\cstr{B}$ be a change actions, let
+  Let $\cstr{A}$ and $\cstr{B}$ be change actions, let
   $f: \cstr{A} \rightarrow \cstr{B}$ be a function, and let $\subderiveM{f}$ and
   $\supderiveM{f}$ be minimal and maximal derivatives of $f$, respectively.
   Then the derivatives of $f$ are precisely
@@ -777,7 +777,7 @@ A direct corollary of this property is the following result, reminiscent of a we
   Let $\cstr{A}$, $\cstr{B}$ be change actions, with $\cstr{B}$ continuous and let $\{f_i\}$ and $\{\derive{f_i}\}$ be
   $I$-indexed directed families of functions in $A \rightarrow B$ and $A \times \changes{A} \rightarrow \changes{B}$.
 
-  Then, if for every $i \in I$ is the case that $\derive{f_i}$ is a derivative of $f_i$, then $\sqcup_{i \in I} \{ \derive{f_i} \}$ is
+  Then, if for every $i \in I$ it is the case that $\derive{f_i}$ is a derivative of $f_i$, then $\sqcup_{i \in I} \{ \derive{f_i} \}$ is
   a derivative of $\sqcup_{i \in I} \{ f_i \}$.
 \end{corollary}
 \ifproofs
@@ -810,7 +810,7 @@ Becik's Theorem \autocite[][section 10.1]{winskel1993formal}, but it has a strai
 \subsection{Boolean algebras}
 \label{sec:booleanAlgebras}
 
-Boolean algebras have a complete, continuous change structure.
+Boolean algebras have a complete, continuous change action.
 
 \begin{prop}[restate=lsuperpose]
   Let $L$ be a Boolean algebra. Define
@@ -911,7 +911,7 @@ derivative of $\iter$ with respect to $n$.
 
 \begin{prop}[name=Derivative of the iteration map with respect to $n$, restate=iterDerivativesN]
   \label{prop:iterDerivativesN}
-  Let $\cstr{A}$ be a complete change structure. Then $\iter_f$ is differentiable, and a derivative is given by:
+  Let $\cstr{A}$ be a complete change action. Then $\iter_f$ is differentiable, and a derivative is given by:
   \begin{align*}
     &\derive{\iter_f}: \NN \times \changes{\NN} \rightarrow \changes{A}\\
     &\derive{\iter_f}(0, m) \defeq \iter_f(m) \cminus \bot\\
@@ -984,7 +984,7 @@ We can get quite close in the general case, but to get a precise
 derivative we'll need to do a bit more work.
 
 \begin{defn}
-  Let $\cstr{A}$ be a change structure, $\fixpoint_A$ a fixpoint operator, and
+  Let $\cstr{A}$ be a change action, $\fixpoint_A$ a fixpoint operator, and
   $\derive{\ev}$ be a derivative of the evaluation map.
 
   Then we define
@@ -1129,7 +1129,7 @@ equivalent of the usual closed-world assumption to solve this.
   \end{displaymath}
 \end{defn}
 
-This makes $\Rel$ into a Boolean algebra.
+This makes $\Rel$, the set of all relations over $\universalRel$, into a Boolean algebra.
 
 \begin{defn}[Term semantics]
   A Datalog term $T$ denotes a function from its free relation variables to
@@ -1140,14 +1140,16 @@ This makes $\Rel$ into a Boolean algebra.
   implicit except where it is used.
 
   \begin{align*}
-    \denote{R_j} &\defeq X_j \tag{where $X_i$ is the $i$th element of $\overline{X}$}\\
+    \denote{R_i} &\defeq X_i \tag{where $X_i$ is the $i$th element of $\overline{X}$}\\
     \denote{T \wedge U} &\defeq \denote{T} \cap \denote{U}\\
     \denote{T \vee U} &\defeq \denote{T} \cup \denote{U}\\
     \denote{\exists x. T} &\defeq \pi_x(\denote{T})\\
     \denote{\neg T} &\defeq \neg \denote{T}\\
-    \denote{x=y} &\defeq \Delta(x, y) \tag{ where $\Delta$ is the diagonal relation}
+    \denote{x=y} &\defeq \Delta(x, y) \tag{where $\Delta$ is the diagonal relation}
   \end{align*}
 \end{defn}
+
+In the above, $\pi_x(R)$ denotes the projection of $R$ onto all columns except for the column corresponding to $x$.
 
 Since $\Rel$ is a Boolean algebra, and so is $\Rel^n$, the denotation
 functions of terms are functions between Boolean algebras.
@@ -1174,7 +1176,7 @@ to the denotation of each predicate, to get a new product of relations.
 Whether or not this program semantics exists will depend on whether the fixpoint
 exists. Typically this is ensured by constraining the program such that $\consq$
 is monotone (or, in the context of a dcpo, continuous). We can be agnostic
-about this when applying \cref{thm:fixpointIter}, but we it will be a requirement to
+about this when applying \cref{thm:fixpointIter}, but it will be a requirement to
 apply \cref{thm:leastFixpointDerivatives}.
 
 \subsection{Differentiability of Datalog semantics}
@@ -1201,7 +1203,7 @@ In the case of Datalog, the change ordering on the change action also
 corresponds to the size of the derivative as a pair of relations. The minimal
 derivative contains precisely the elements that are newly added or removed,
 whereas the maximal derivative contains all the elements that have \emph{ever}
-been added or removed. This means that \cref{cor:booleanCharacterization} allows
+been added or removed but not re-added. This means that \cref{cor:booleanCharacterization} allows
 us to \emph{approximate} the most precise derivative while still being
 guaranteed that the result is sound.\footnote{The idea of using an approximation
 to the precise derivative, and a soundness condition, appears in \textcite{bancilhon1986amateur}.}
@@ -1216,7 +1218,7 @@ terms.\footnote{Indeed, if this process is occurring in an optimizing compiler,
 
 This does give us additional constraints that the derivative terms must satisfy:
 for example, we need to be able to evaluate them; and we may wish to pick terms that will be easy or cheap
-for our evaluation engine to evaluate, even if the results are larger.
+for our evaluation engine to compute, even if the results are larger.
 
 The upshot of these considerations is that the optimal choice of derivatives is likely
 to be quite dependent on the precise variant of Datalog being evaluated, and the
@@ -1282,22 +1284,22 @@ If we did have one, its cases would be dual to those for $\exists$, namely:
 \downdiff(\forall x.T) &= \forall x. \downdiff T
 \end{align*}
 
-We can now give a derivative for our $treeP$ program!
+We can now give a derivative for our $\mathrm{treeP}$ program!
 
 Here is the upwards difference:
 \begin{align*}
-  \updiff treeProperty(x) \leftarrow & p(x)\\
+  \updiff \mathrm{treeP}(x) \leftarrow & p(x)\\
     &\wedge
     \exists y. (
       child(x, y)
       \wedge
-      \updiff treeProperty(y)
+      \updiff \mathrm{treeP}(y)
     )\\
     &\wedge 
     \neg \exists y. (
       child(x, y)
       \wedge
-      \neg \bothdiff treeProperty(y)
+      \neg \bothdiff \mathrm{treeP}(y)
     )
 \end{align*}
 
@@ -1354,16 +1356,16 @@ term constructs.
 
 A new term construct must have:
 \begin{itemize}
-  \item An interpretation as a function on its free relation variables.
+  \item An interpretation as a (differentiable) function on its free relation variables.
   \item An implementation of $\updiff$ and $\downdiff$.
 \end{itemize}
 
 These are very easy conditions to satisfy. The former is needed for the construct to even
-make sense, and because we are using the complete change structure
+make sense, and because we are using the complete change action
 $\cstr{L}_\superpose$, the latter can \emph{always} be satisfied by using the maximal or
 minimal derivative. This justifies our claim that we can support
 \emph{arbitrary} additional term constructs: although the maximal and minimal
-derivatives are likely to be very bad derivatives, having them
+derivatives are likely to be impractical derivatives, having them
 available as options means that we can still work them into the overall process.
 Even if we have a term construct which we cannot find a good derivative for, we only lose incremental
 evaluation for those subterms, and not for anything else.
@@ -1399,7 +1401,7 @@ useful for incremental computation on streams, yet they do not admit minus opera
 be forced to work with e.g. multisets admitting negative arities, as \citeauthor{cai2014changes} do.
 
 Our notion of function changes is different to \citeauthor{cai2014changes}'s.
-Our function changes (when well behaved) correspond to what \citeauthor{cai2014changes} call as
+Our function changes (when well behaved) correspond to what \citeauthor{cai2014changes} call
 \emph{pointwise differences} (for the subsequent paragraphs we shall adopt
 their terminology) \autocite[See][section 2.2]{cai2014changes}. As they point out, you can reconstruct their
 function changes from pointwise changes and derivatives, so the two formulations
