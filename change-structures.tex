@@ -1650,7 +1650,7 @@ power of this approach.
   \end{align*}
 
   Now, on the one hand, suppose that $f : C \times A \rightarrow B$ is a differentiable function,
-  and $\curry{f} : C \rightarrow \exponential{\cstr{A}}{\cstr{A}}$ its corresponding curried version:
+  and $\curry{f} : C \rightarrow \exponential{\cstr{A}}{\cstr{B}}$ its corresponding curried version:
   \begin{align*}
     &\curry{f}(c \cplus \change{c})\\
     &= \lambda a . f(c \cplus \change{c}, a)\\
@@ -1682,7 +1682,7 @@ power of this approach.
   every function into $\cstr{B}$ is differentiable. Similarly, the evaluation map
   is differentiable.
 
-  Now consider two elements $\curry{f}$, $\curry{g}$ of $\exponential{\cstr{A}}{\cstr{b}}$. Since
+  Now consider two elements $\curry{f}$, $\curry{g}$ of $\exponential{\cstr{A}}{\cstr{B}}$. Since
   $\cstr{B}$ is complete, it is endowed with a minus operator $\cminus$, so we define
   $\cminus_\rightarrow : \exponential{\cstr{A}}{\cstr{B}} \times \exponential{\cstr{A}}{\cstr{B}} \rightarrow A \rightarrow \changes{B}$ by:
   $$ (g \cminus_\rightarrow f)(a) \defeq g(a) \cminus f(a) $$
