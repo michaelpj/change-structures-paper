@@ -499,7 +499,7 @@ we require $f \cplus_\rightarrow \change{f}$ to be \emph{differentiable}, which
 may not be true for all pointwise changes $\change{f}$.
 Fortunately, there are useful subcategories of $\cat{CAct}$ formed of pointwise change actions.
 
-\begin{prop}
+\begin{prop}[restate=pointwiseChangeActions]
   \label{prop:pointwiseChangeActions}
   Every change action $\cstruct{B}{\changes{B}}{\cplus}$ such that the change action
   $\cstruct{\changes{B}}{\changes{B}}{\splus}$ is complete and $\cplus$ is differentiable with
@@ -511,7 +511,7 @@ Fortunately, there are useful subcategories of $\cat{CAct}$ formed of pointwise 
   See \cref{prf:pointwiseChangeActions}
 \fi
 
-\begin{prop}
+\begin{prop}[restate=pointwiseComplete]
   \label{prop:pointwiseComplete}
    Every complete change action $\cstr{B}$ is pointwise.
 \end{prop}
@@ -1485,7 +1485,8 @@ incrementally, but also allowing Datafun expressions to be fully incrementally u
 \subsection{Differential $\lambda$-calculus}
 
 Another setting where derivatives of arbitrary higher-order programs have been studied
-is the \emph{differential $\lambda$-calculus}. This is a higher-order, simply-typed
+is the \emph{differential $\lambda$-calculus}\citeauthor{ehrhard2003differential}\citeauthor{ehrhard2017introduction}.
+This is a higher-order, simply-typed
 calculus which allows for computing the derivative of a function, in a similar
 way to the notion of derivative in Cai's work and the present paper.
 
@@ -1498,22 +1499,26 @@ but are instead required to satisfy a strong relation to the function
 that is being differentiated (see \cref{def:derivative}).
 
 Families of denotational models for the differential $\lambda$-calculus have been
-studied in depth, and the relationship between these and change actions
+studied in depth\citeauthor{bucciarelli2010categorical}\citeauthor{blute2010convenient}\citeauthor{cockett2016categorical}
+\citeauthor{kerjean2016mackey}, and the relationship between these and change actions
 is the subject of ongoing work.
 
 \subsection{Higher-order automatic differentiation}
 
-Automatic differentiation is a technique that allows for efficiently computing
-the derivative of arbitrary programs, with many applications in scientific computing
-and machine learning. In recent times, this technique has been successfully
-applied to higher-order languages, but a general theoretical framework for it is still
+Automatic differentiation\citeauthor{griewank2008evaluating} is a technique that allows
+for efficiently computing
+the derivative of arbitrary programs, with applications in probabilistic modeling\citeauthor{kucukelbir2017automatic}
+and machine learning\citeauthor{baydin2014automatic} among other areas. In recent times, this technique has been successfully
+applied to higher-order languages\citeauthor{siskind2008nesting}\citeauthor{baydin2016diffsharp}.
+While some approaches have been suggested\citeauthor{manzyuk2012simply}\citeauthor{kelly2016evolving}, a general
+theoretical framework for this technique is still
 a matter of open research. 
 
 To this purpose, some authors have proposed the incremental $\lambda$-calculus
 as a foundational framework on which models of automatic differentiation can
-be based. We believe our notion of change actions is intrinsically better suited
+be based\cite{kelly2016evolving}. We believe our notion of change actions is intrinsically better suited
 to this purpose than change structures, since one can easily give them a
-geometric reading (by interpreting $\cstr{A}$ as an Euclidean module and $\changes{A}$
+synthetic differential geometric reading (by interpreting $\cstr{A}$ as an Euclidean module and $\changes{A}$
 as its corresponding spectrum, for example).
 
 \section{Conclusions and future work}
@@ -1615,7 +1620,7 @@ power of this approach.
 
 \pointwiseChangeActions*
 \begin{proof}
-\label{prf:pointwiseChangeAction}
+\label{prf:pointwiseChangeActions}
   Let $\cstr{B}$ be a change action, with $\cplus$ differentiable with respect
   to its first argument, and suppose the change action on $\changes{B}$
   is complete.
@@ -1631,7 +1636,7 @@ power of this approach.
     &= (f \cplus_\rightarrow \change{f})(a) \cplus (\derive{\change{f}}(a, \change{a})
        \splus \derive{\cplus}((f(a), \derive{f}(a, \change{a}), \change{f}(a, \cplus \change{a}))))
   \end{align*}
-  Hence (f \cplus_\rightarrow \change{f}) is differentiable.
+  Hence $(f \cplus_\rightarrow \change{f})$ is differentiable.
   
   The evaluation map, defined as $\ev(f, a) \defeq f(a)$ is differentiable as well:
   \begin{align*}
@@ -1675,9 +1680,7 @@ power of this approach.
   Now consider two elements $\Lambda(f), \Lambda(g)$ of $\cstr{B}^{\cstr{A}}$. Since
   $\cstr{B}$ is complete, it is endowed with a minus operator $\cminus$, so we define
   $\cminus_\rightarrow : \cstr{B}^{\cstr{A}} \times \cstr{B}^{\cstr{A}} \rightarrow A \rightarrow \changes{B}$ by:
-  \[
-  (g \cminus_\rightarrow f)(a) &\defeq g(a) \cminus f(a)
-  \]
+  $$ (g \cminus_\rightarrow f)(a) \defeq g(a) \cminus f(a) $$
   It's easy to check that this is indeed a minus operator and, therefore, $\cstr{B}^{\cstr{A}}$
   is complete. Thus, trivially, any function $f : C \times A \rightarrow B$ is differentiable
   if and only if its curried version $\Lambda(f) : C \rightarrow B^A$ is.
