@@ -511,6 +511,24 @@ Fortunately, there are useful subcategories of $\cat{CAct}$ formed of pointwise 
 \begin{prop}
    Every complete change action $\cstr{A}$ is pointwise.
 \end{prop}
+\ifproofs
+  Let $\cstr{B}$ be a complete change action.
+  We prove that the pointwise change action is the exponential object $\cstr{B}^{\cstr{A}}$.
+
+  First, we note that the pointwise change action is trivially well defined, since
+  every function into $\cstr{B}$ is differentiable. Similarly, the evaluation map
+  is differentiable.
+
+  Now consider two elements $\Lambda(f), \Lambda(g)$ of $\cstr{B}^{\cstr{A}}$. Since
+  $\cstr{B}$ is complete, it is endowed with a minus operator $\cminus$, so we define
+  $\cminus_\rightarrow : \cstr{B}^{\cstr{A}} \times \cstr{B}^{\cstr{A}} \rightarrow A \rightarrow \changes{B}$ by:
+  \[
+  (g \cminus_\rightarrow f)(a) &\defeq g(a) \cminus f(a)
+  \]
+  It's easy to check that this is indeed a minus operator and, therefore, $\cstr{B}^{\cstr{A}}$
+  is complete. Thus, trivially, any function $f : A \times C \rightarrow B$ is differentiable
+  if and only if its curried version $\Lambda(f) : A \rightarrow B^C$ is.
+\fi
 
 Furthermore, since the products and exponentials of complete change actions are complete,
 the full subcategory of $\cat{CAct}$ formed by complete change actions is a Cartesian
@@ -518,7 +536,6 @@ closed category of pointwise change actions.
 
 Derivatives of the evaluation map, irrespective of a particular choice of change action on the
 exponential objects, correspond to incremental evaluation of functions:
-
 \begin{prop}[Incrementalization]
 \label{prop:incrementalization}
   Let $f: \cstr{A} \rightarrow \cstr{B}$, $a \in A$, $\change{a} \in
@@ -543,13 +560,13 @@ the evaluation map on pointwise change structures:
 
   Then, differentiating $f$ we obtain the following derivative for the evaluation map:
   \begin{displaymath}
-    \derive{\ev}_1 \defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})
+    \derive{\ev}_1((f, a), (\change{f}, \change{a})) \defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})
   \end{displaymath}
 
   Alternatively, differentiating $f \cplus \change{f}$ we can obtain another derivative
   for the evaluation map:
   \begin{displaymath}
-    \derive{\ev}_2 \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})
+    \derive{\ev}_2((f, a), (\change{f}, \change{a})) \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})
   \end{displaymath}
 \end{prop}
 
