@@ -95,7 +95,7 @@ the program into a \emph{delta} program that only deduces the new facts at each
 iteration, which we gradually accumulate \autocite[See][section
 13.1]{abiteboul1995foundations}.
 \begin{align*}
-  \Delta tc_{0}(x, y) &\leftarrow e(x, z)\\
+  \Delta tc_{0}(x, y) &\leftarrow e(x, y)\\
   \Delta tc_{i+1}(x, y) &\leftarrow e(x, z) \wedge \Delta_i tc(z, y)\\
   tc_{0}(x, y) &\leftarrow e(x, z)\\
   tc_{i+1}(x, y) &\leftarrow tc_{i}(x,y) \vee \Delta_{i+1} tc(x,y)
@@ -104,7 +104,7 @@ iteration, which we gradually accumulate \autocite[See][section
 \begin{center}
   \begin{tabular} {|p{3.5em}|p{10em}|p{10em}|}
     \hline
-    Iteration & Newly deduced facts & Data in $tc_n$ \\
+    Iteration & $\Delta tc_i$ & $tc_i$ \\
     \hline
     1 & $\{ (1, 2), (2, 3), (3, 4) \}$ & $\{ (1, 2), (2, 3), (3, 4) \}$\\
     2 & $\{ (1, 3), (2, 4) \}$ & $\{ (1, 2), (2, 3), (3, 4),$ $(1, 3), (2, 4) \}$\\
@@ -120,15 +120,15 @@ But the delta rule translation works only for traditional Datalog. It is common 
 liberalise the term syntax to support, say, disjunction, existential quantification, and parity-stratified
 negation.\footnote{Parity-stratified negation means that recursive calls must
   appear under an even number of negations. This ensures that the rule remains
-  monotone, so the least fixpoint still exists and can be found via Kleene's theorem.}
-
+  monotone, so the least fixpoint still exists and can be found via Kleene's theorem.} 
 Then we can write programs like the following, where we compute whether all the
 nodes in a subtree given by $child$ have some property $p$:
 \begin{align*}
   treeP(x) &\leftarrow p(x) \wedge \neg \exists y . (child(x,y) \wedge \neg treeP(y))
 \end{align*}
 
-This is essentially a recursion through a \emph{universal} quantifier. We would
+Here the combination of negation and explicit existential quantification amounts
+to recursion through a \emph{universal} quantifier. We would
 like to be able to use semi-naive evaluation for this rule too, but the simple delta
 transformation does not produce a correct incremental program, and it is unclear how to extend it (and the
 correctness proof) to handle such cases.
@@ -167,8 +167,13 @@ Finally, we put all this together into a generic account of incremental
 computation and update of Datalog programs, showing how to handle 
 language constructs such as negation, disjunction, and additional well-behaved
 extensions (\cref{sec:datalog}). This provides the world's first incremental
-evaluation and update mechanism for Datalog that can handle arbitrary additional
+evaluation and update mechanism for Datalog. Moreover, the structure of the
+proof is modular, and can accommodate arbitrary additional
 term constructs (\cref{sec:extensions}).
+
+We have omitted the proofs from this paper. Most of the results have routine
+proofs, but the proofs of the more substantial results
+(especially those in \cref{sec:fixpoints}) are included in an appendix.
 
 \section{Change actions}
 \label{sec:changeActions}
@@ -188,7 +193,8 @@ on the base set.\footnote{The requirement that the change set be a monoid is con
     \cstr{A} \defeq \cstruct{A}{\changes{A}}{\cplus}
   \end{displaymath}
 
-  where $A$ is a set, $(\changes{A}, \splus, \mzero)$ is a monoid, and $\cplus$ gives a monoid action on $A$.
+  where $A$ is a set, $(\changes{A}, \splus, \mzero)$ is a monoid on $\changes{A}$, and $\cplus : A \rightarrow
+  \changes{A} \rightarrow A$ is a monoid action on $A$.
 
   We will call $A$ the base set, and $\changes{A}$ the change set of the change
   action. We may abbreviate $\cstruct{A}{\changes{A}}{\cplus}$ to $\cstr{A}_\cplus$.
@@ -240,12 +246,21 @@ they satisfy the standard chain rule.
   \end{displaymath}
 \end{thm}
 
-Here are some recurring examples of changes actions:
+For our Datalog example, we are going to want a derivative of the semantics of
+Datalog. As we will discuss later (\cref{sec:datalog}), we can see Datalog's
+semantics as computing an n-tuple of relations. So we need a change action on
+$\Rel^n$, and fortunately we can construct good change actions for Boolean
+algebras in general (\cref{sec:booleanAlgebras}).
+
+Here are some other recurring examples of changes actions:
 \begin{itemize}
-  \item $\cstr{A}_\discrete \defeq \cstruct{A}{\emptyset}{\emptyset}$ is the discrete change action on any base set.
-  \item $\cstr{A}_\Rightarrow \defeq \cstruct{A}{A^A}{\ev}$, where $A^A$ denotes the exponential object and $\ev$ is the evaluation map.
+  \item $\cstr{A}_\discrete \defeq \cstruct{A}{\emptyset}{\lambda(a, da). a}$,
+    which we call the \emph{discrete} change action on any base set.
+  \item $\cstr{A}_\Rightarrow \defeq \cstruct{A}{A^A}{\ev}$, where $A$ is some
+    category, $A^A$ is the exponential object, and $\ev$ is the evaluation map
+    (for example, functions and function application).
   \item $[A]$, the type of lists (or streams) of elements of type $A$, has a
-    change structure over concatenation ($\doubleplus$): $\cstruct{[A]}{[A]}{\doubleplus}$.
+    change action over concatenation ($\doubleplus$): $\cstruct{[A]}{[A]}{\doubleplus}$.
   \item $\{A\}$, the type of sets, has change actions $\cstruct{\{A\}}{\{A\}}{\cup}$, $\cstruct{\{A\}}{\{A\}}{\cap}$.
 \end{itemize}
 
@@ -281,22 +296,22 @@ compute the difference between two values.
   Let $\cstr{A}$ be a change action. Then the following are equivalent:
   \begin{itemize}
     \item $\cstr{A}$ is complete.
-    \item The monoid action of $\cplus$ on $A$ is transitive.
     \item There is a minus operator on $\cstr{A}$.
-    \item Any function from any change action into $\cstr{A}$ is differentiable.
+    \item Any function $f: \cstr{B} \rightarrow \cstr{A}$ is differentiable.
   \end{itemize}
 \end{prop}
 
 This last property is of the utmost importance, since we are often concerned with the differentiability
 of functions.
 
-\begin{defn}[Minus derivative]
-  Given a minus operator $\cminus$, we have a derivative for any function $f$,
-  defined as
+\begin{prop}[Minus derivative]
+  Given a minus operator $\cminus$, and a function $f$, define
   \begin{displaymath}
     \derive{f}_\cminus(a, \change{a}) \defeq f(a \cplus \change{a}) \cminus f(a)
   \end{displaymath}
-\end{defn}
+
+  Then $\derive{f}_\cminus$ is a derivative for $f$.
+\end{prop}
 
 \subsection{Thin change actions}
 \label{sec:thin}
@@ -311,13 +326,10 @@ well-behaved, so it's worth naming them.
   = a \cplus \change{b}$ for some $a \in A$, it is the case that $\change{a} = \change{b}$.
 \end{defn}
 
-Many change actions are not thin; for example, because $\{0\} \cap \{1\} = \{0\} \cap \{2\}$, $\cstruct{\mathcal{P}(\NN)}{\mathcal{P}(\NN)}{\cap}$ is not thin.
+Many change actions are not thin; for example, because $\{0\} \cap \{1\} = \{0\}
+\cap \{2\}$, $\cstruct{\mathcal{P}(\NN)}{\mathcal{P}(\NN)}{\cap}$ is not thin.
 
-\begin{prop}
-  Let $\cstr{A}$ be a change action. Then $\cstr{A}$ is thin if and only if the monoid action of $\cplus$ on $A$ is free.
-\end{prop}
-
-Thinness gives us uniqueness of derivatives:
+Thin change actions have unique derivatives:
 
 \begin{prop}
   Let $\cstr{B}$ be a thin change action, and $f: \cstr{A} \rightarrow \cstr{B}$. Then $f$ has at
@@ -335,7 +347,8 @@ computation in general. That means we want to be able to easily construct change
 actions over the wide variety of datatypes that we actually use in programming.
 
 We can do this by showing that the category of change actions has the usual
-useful constructions: products, coproducts, and exponentials. These are the
+useful constructions: products ($A \times B$), coproducts ($A + B$), and
+exponentials ($A \rightarrow B$). These are the
 building blocks from which we create our datatypes, and they will also be useful
 for our proofs in \cref{sec:fixpoints}: in particular, the \emph{evaluation map}
 $\ev$ that we get from exponentials will turn out to be differentiable, and its
@@ -795,6 +808,7 @@ Becik's Theorem \autocite[][section 10.1]{winskel1993formal}, but it has a strai
 \fi
 
 \subsection{Boolean algebras}
+\label{sec:booleanAlgebras}
 
 Boolean algebras have a complete, continuous change structure.
 
