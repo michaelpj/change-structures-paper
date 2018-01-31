@@ -28,7 +28,7 @@
 
 \newif\ifproofs
 % Comment out to disable proofs
-\proofstrue
+%\proofstrue
 
 \addbibresource{paper.bib}
 
@@ -155,10 +155,7 @@ studied recently by \textcite{cai2014changes}, who give an account using
 
 However, \citeauthor{cai2014changes}'s work isn't directly applicable to Datalog: the tricky part
 of Datalog's semantics are recursive definitions and the need for the \emph{fixpoints}, and we need some additional theory to tell us how to
-handle incremental evaluation of fixpoint computations.\footnote{In fact, we can prove these
-results for fixpoint computations over dcpos in general, which opens up the
-possibility of using them in domain theory, which uses fixpoints to
-represent recursion in programming language semantics.}
+handle incremental evaluation of fixpoint computations.
 
 This paper bridges that gap. We start by generalizing change structures to
 \emph{change actions} (\cref{sec:changeActions}). Change actions are weaker than change structures, but
@@ -198,16 +195,17 @@ on the base set.\footnote{The requirement that the change set be a monoid is con
     \cstr{A} \defeq \cstruct{A}{\changes{A}}{\cplus}
   \end{displaymath}
 
-  where $A$ is a set, $(\changes{A}, \splus, \mzero)$ is a monoid on $\changes{A}$, and $\cplus : A \rightarrow
+  where $A$ is a set, $\changes{A}$ is a monoid, and $\cplus : A \rightarrow
   \changes{A} \rightarrow A$ is a monoid action on $A$.
 
   We will call $A$ the base set, and $\changes{A}$ the change set of the change
-  action. We may abbreviate $\cstruct{A}{\changes{A}}{\cplus}$ to $\cstr{A}_\cplus$.
+  action. We will use $\splus$ for the monoid action of $\changes{A}$, and
+  $\mzero$ for its identity element. We may abbreviate $\cstruct{A}{\changes{A}}{\cplus}$ to $\cstr{A}_\cplus$.
 \end{defn}
 
 The fact that the change set is a monoid action gives us a reason to think that
-change actions are an adequate representation of changes: any set of
-transformations on the base set which is closed under composition can be
+change actions are an adequate representation of changes: any subset of $A
+\rightarrow A$ which is closed under composition can be
 represented as a monoid action, so we are able to capture all of these as change actions.
 
 The primary motivation for change actions is that they let us define
@@ -228,17 +226,17 @@ Derivatives need not be unique in general, so we will speak of ``a''
 derivative.\footnote{In several places we will need to pick an arbitrary
   derivative for some construction. In general this needs the Axiom of Choice,
   but in most practical cases we will want to have a computable derivative
-  operator for our domain, which alleviates the problem. In addition, thin
-  change actions (\cref{sec:thin}) have unique derivatives.}
+  operator for our domain, which alleviates the problem.} A ``thin'' change
+action - where $a \cplus \change{a} = a \cplus \change{b}$ implies $\change{a} =
+\change{b}$ - has unique derivatives, but many change actions are not thin.
+For example, because $\{0\} \cap \{1\} = \{0\}
+\cap \{2\}$, $\cstruct{\mathcal{P}(\NN)}{\mathcal{P}(\NN)}{\cap}$ is not thin.
 
 Derivatives capture the essence of incremental computation: given the value of a
 function at a point, and a change to that point, they tell you how to compute
 the new value of the function.
 
-The choice of the name ``derivative'' is also not a coincidence. While these
-derivatives do not look quite like derivatives in real analysis, they \emph{do}
-bear a strong resemblance other derivatives (such as in synthetic differential geometry), and
-they satisfy the standard chain rule.
+The derivative of a function can be computed compositionally, because derivatives satisfy the standard chain rule.
 
 \begin{thm}[The Chain Rule]
   Let $f: \cstr{A}_\cplus \rightarrow \cstr{B}_\cpluss$, $g: \cstr{B}_\cpluss \rightarrow \cstr{C}_\cplusss$ be differentiable functions. Then $g \circ f$ is also
@@ -317,32 +315,6 @@ of functions.
   \end{displaymath}
 
   Then $\derive{f}_\cminus$ is a derivative for $f$.
-\end{prop}
-
-\subsection{Thin change actions}
-\label{sec:thin}
-
-There can be multiple changes representing the difference
-between two elements. This is true for many change actions, but the change
-actions for which there \emph{is} only one such change are particularly
-well-behaved, so it's worth naming them.
-
-\begin{defn}[Thin change actions]
-  A change action is \emph{thin} if whenever $a \cplus \change{a}
-  = a \cplus \change{b}$ for some $a \in A$, it is the case that $\change{a} = \change{b}$.
-\end{defn}
-
-Many change actions are not thin; for example, because $\{0\} \cap \{1\} = \{0\}
-\cap \{2\}$, $\cstruct{\mathcal{P}(\NN)}{\mathcal{P}(\NN)}{\cap}$ is not thin.
-
-Thin change actions have unique derivatives:
-
-\begin{prop}
-  Let $\cstr{B}$ be a thin change action, and $f: \cstr{A} \rightarrow \cstr{B}$. Then $f$ has at
-  most one derivative.
-
-  Conversely, if $\textrm{id}: \cstr{B} \rightarrow \cstr{B}$ has exactly one derivative, then
-  $B$ is thin.
 \end{prop}
 
 \section{The category of change actions}
@@ -429,9 +401,8 @@ $\cat{CAct}$ and $\cat{PreOrd}$.
 \end{proof}
 \fi
 
-Since $\cat{PreOrd}$ is topological over $\cat{Set}$ \autocite[][Chapter V]{adamek2004abstract}, 
-(and hence complete and co-complete) and also an exponential ideal of $\cat{Cat}$
-(and hence Cartesian closed), this gives us a proof of the existence of limits, colimits, and exponentials in $\cat{CAct}$.
+Since $\cat{PreOrd}$ is a Cartesian closed category and has all limits and
+colimits, this gives us a proof of the existence of limits, colimits, and exponentials in $\cat{CAct}$.
 
 \begin{corollary}
   The category $\cat{CAct}$ has all limits, colimits and exponential objects.
@@ -525,7 +496,7 @@ closed category of pointwise change actions.
 
 Derivatives of the evaluation map, irrespective of a particular choice of change action on the
 exponential objects, correspond to incremental evaluation of functions:
-\begin{prop}[Incrementalization]
+\begin{prop}[Incremental application]
 \label{prop:incrementalization}
   Let $f: \cstr{A} \rightarrow \cstr{B}$, $a \in A$, $\change{a} \in
   \changes{A}$, $\change{f} \in \changes{(A \rightarrow B)}$, and let
@@ -564,7 +535,7 @@ the evaluation map. In practice, this means that we will only be able to compute
 these results when we have pointwise change actions, since we know how to
 compute derivatives of the evaluation map for them.
 
-\section{Change actions over other structures}
+\section{Change actions over ordered structures}
 \label{sec:moreStructures}
 
 We are aiming to work over Boolean algebras with fixpoints, which is where we
@@ -574,22 +545,35 @@ finally to Boolean algebras.
 
 \subsection{Posets}
 
-If the base set of a change action is a poset, then this gives us a natural
-order on the change set.
+Ordered sets give us an interestingly constrained class of functions: monotone
+functions. We can define \emph{ordered} change actions, which are well-behaved
+with respect to monotonicity.\footnote{If we were giving a presentation that was
+generic in the base category, then this would simply be the definition of being
+a change action over posets.}
+
+\begin{defn}[Ordered change actions]
+  A change action $\cstr{A}$ is \emph{ordered} if
+  \begin{itemize}
+    \item $A$ and $\changes{A}$ are posets.
+    \item $\cplus$ and $\splus$ are monotone in both arguments.
+  \end{itemize}
+\end{defn}
+
+In fact, in all cases where the base set is a poset, we can always pick an order on the change
+set which makes $\cplus$ monotone in its second argument.
 
 \begin{defn}[Change order]
   $\change{a} \changeOrder \change{b}$ iff for all $a \in A$ it is the case that $a \cplus \change{a} \leq a \cplus \change{b}$.
 \end{defn}
 
-If the change action is thin, then the order is antisymmetric, and a
-full partial order.
-
-Having a monotone order on the changes is very useful.
+Ordered change structures are useful because they let us give a sensible order
+to our derivatives.
 
 \begin{thm}[Sandwich lemma]
   \label{thm:sandwich}
-  Let $\supderive{f}$ and $\subderive{f}$ be derivatives for $f$, $\changeOrder$ be a preorder on $\changes{B}$ such that $\cplus$ is monotone with
-  respect to it, and $g$ be such that
+  Let $\cstr{A}$ be an change action, $\cstr{B}$ be an ordered change action,
+  $f: \cstr{A} \rightarrow \cstr{B}$, and $\supderive{f}$ and $\subderive{f}$ be
+  derivatives for $f$ such that
 
   \begin{displaymath}
     \supderive{f} \changeOrder g \changeOrder \subderive{f}
@@ -645,7 +629,7 @@ Which gives us a correspondence between maximal minus operators and maximal deri
 \subsection{Directed-complete partial orders}
 
 Directed-complete partial orders give us the well known notion of
-\emph{Scott-continuity}. We define \emph{continuous} change actions,
+\emph{Scott-continuity}. We can define \emph{continuous} change actions,
 which are well-behaved with respect to continuity.
 
 \begin{defn}[Continuous change actions]
@@ -655,20 +639,6 @@ which are well-behaved with respect to continuity.
     \item $\cplus$ and $\splus$ are Scott-continuous in both arguments.
   \end{itemize}
 \end{defn}
-
-\begin{corollary}
-  \label{cor:bottomPlusBottom}
-  Let $\cstr{A}$ be a continuous change structure. Then $\bot_A \cplus
-  \bot_{\changes{A}} = \bot_A$.
-\end{corollary}
-\ifproofs
-\begin{proof}
-  $\bot_{\changes{A}} \leq \mzero$, therefore
-  \begin{displaymath}
-    \bot_A \leq \bot_A \cplus \bot_{\changes{A}} \leq \bot_A \cplus \mzero = \bot_A
-  \end{displaymath}
-\end{proof}
-\fi
 
 We also have the following lemma (which is just a re-statement of a well-known
 property of Scott-continuous functions, see e.g. \cite[Lemma~3.2.6]{abramsky1994domain}):
@@ -850,7 +820,7 @@ Which has the property that
   Let $\cstr{A}$ be a continuous change action, $f: \cstr{A} \rightarrow
   \cstr{A}$ be continuous and differentiable.
 
-  Then $\lfp(f) = \pi_1(\sqcup_{n \in \NN}(\nextiter_f^n(\bot)))$.
+  Then $\lfp(f) = \sqcup_{n \in \NN}(\pi_1(\nextiter_f^n(\bot)))$.
 \end{thm}
 \ifproofs
 \begin{proof}
@@ -862,8 +832,7 @@ This gives us a way to compute our fixpoint incrementally, by adding successive
 changes to our accumulator until we reach fixpoint.
 
 Note that we have \emph{not} taken the fixpoint of $\nextiter_f$, since it is
-not continuous. So while this allows us to compute fixpoints that converge in
-finitely many steps, it does not let us handle the infinite case.
+not continuous. 
 
 \subsection{Derivatives of fixpoints}
 \label{sec:fixpointDerivatives}
@@ -978,8 +947,7 @@ Which has the property that
 
 In fact, the recursion here is not \emph{mutual}: $\iter_n$ does
 not depend on $\derive{\iter_n}$. However, writing it in this way makes it
-amenable to computation by fixpoint, and we are about to see that we can avoid
-the recomputation of $\iter_n$ by using \cref{prop:factoringFixpoints}.
+amenable to computation by fixpoint, and we will in fact be able to avoid the recomputation of $\iter_n$.
 
 \begin{thm}[name=Derivatives of least fixpoint operators, restate=leastFixpointDerivatives]
   \label{thm:leastFixpointDerivatives}
@@ -1037,7 +1005,10 @@ equivalent of the usual closed-world assumption to solve this.
   \end{displaymath}
 \end{defn}
 
-This makes $\Rel$, the set of all relations over $\universalRel$, into a Boolean algebra.
+This makes $\Rel$, the set of all relations over $\universalRel$, into a Boolean
+algebra.\footnote{Technically we need to use the set of relations of a given
+  arity. In practice it is easy to make the arities match up, and we will gloss
+  over them for clarity.}
 
 \begin{defn}[Term semantics]
   A Datalog term $T$ denotes a function from its free relation variables to
@@ -1057,8 +1028,7 @@ This makes $\Rel$, the set of all relations over $\universalRel$, into a Boolean
   \end{align*}
 \end{defn}
 
-Since $\Rel$ is a Boolean algebra, and so is $\Rel^n$, the denotation
-functions of terms are functions between Boolean algebras.
+Since $\Rel$ is a Boolean algebra, and so is $\Rel^n$, $\denote{t}$ is a functions between Boolean algebras.
 
 \begin{defn}[Immediate consequence operator]
   Given a program $\mathcal{P} = \overline{P}$, the immediate consequence operator $\consq: \Rel^n \rightarrow \Rel^n$ is defined as follows:
@@ -1307,32 +1277,7 @@ and (when we can use them) pointwise differences are easier to work with.
 The equivalence of our presentations means that our work should be compatible
 with ILC. The rules we give in \cref{sec:datalogDifferentiability} are more or
 less a ``change semantics'' for Datalog \autocite[See][section
-3.5]{cai2014changes}. In particular, this is likely to be of interest for languages like
-Datafun (see \cref{sec:embeddingDatalog} below) which embed Datlog or logic programming behaviour within a broader
-programming context.
-
-In fact, a slightly different dependently-typed formulation arises if we consider changes
-to be indexed \emph{both} by the source and the target. This means
-thinking of our base set as a category, with changes $\Delta_a^b$ between $a$
-and $b$ as morphisms between $a$ and $b$. In this interpretation, a function is
-differentiable iff it is a functor (i.e. has an action (its derivative) taking a
-change in $\Delta_a^b$ to one in $\Delta_{f(a)}^{f(b)}$). The correspondence
-with $\cat{PreOrd}$ still holds, but it is with the 2-categorical version of
-$\cat{PreOrd}$ where each poset is viewed as a category.
-
-\citeauthor{cai2014changes} also discuss \emph{self-maintainable} derivatives,
-which are derivatives that do not use their first argument, and hence can be
-evaluated using only the change argument. These appear in traditional semi-naive
-evaluation of Datalog too: \emph{linear} Datalog rules which have only a single
-recursive reference can be converted into delta rules which only mention the
-delta of the recursive predicate \autocite[See][section
-13.1]{abiteboul1995foundations}. For our more complex derivatives it is less
-easy to tell whether a term will have a self-maintainable derivative or not, but
-the consequences of non-linearity remain very noticeable in practice.
-Self-maintainable derivatives are also interesting because they produce 
-\emph{commutative} changes (since they do not depend on the base point), and so can be
-evaluated in parallel for multiple incoming changes. This seems worthy of
-further study, and could provide a model for CRDTs.
+3.5]{cai2014changes}. 
 
 \subsubsection{S-acts}
 
@@ -1394,13 +1339,6 @@ the genericity of the presentation. Our machinery works for a wider variety of
 algebraic structures, and it is clear how the parts of the proof work together
 to produce the result. In addition, it is easy to see how to extend the proofs
 to cover additional language constructs.
-
-\citeauthor{griffin1997improved} are interested in \emph{minimal} changes. These correspond to
-minimal derivatives in the sense of \cref{cor:booleanCharacterization}. However,
-while minimality (or proximity to minimality) is desirable (since it decreases
-the size of the derivatives as relations), it is important to be able to trade
-it off against other considerations. For example, at
-Semmle we use the derivatives given in \cref{thm:concreteDatalog}, which are not minimal.
 
 There are some inessential points of difference as well: we work on Datalog,
 rather than relational algebra; and we use set semantics rather than bag
@@ -1487,16 +1425,20 @@ strategies for incrementally evaluating fixpoints and the semantics of Datalog.
 Our work opens several avenues for future investigation.
 
 Firstly, the concrete definition of change actions can be generalized in a number of
-ways. A dependently-typed version, as gestured towards in
-\cref{sec:relatedChangeStructures}, might smooth over many of
-the technical difficulties. A generic categorical description of change actions
-would also be easy to provide, which may lead to models of
+ways. A 2-categorical version (by analogy with the 2-categorical interpretation
+of $\cat{PreOrd}$) would smooth over many of the technical difficulties which
+the current presentation faces due to the fact that the changes produced
+$\derive{f}(a, \change{a})$ can be applied at points other than $f(a)$.
+A description of change actions which is generic in
+the base category would also be easy to provide, which may lead to models of
 the incremental $\lambda$-calculus on different base categories. 
 
 Of those, the theory of change actions on the category of domains is of particular interest. Since
 domains are used to model programming language semantics, this could
 open up opportunities for incremental evaluation of many programming languages,
-even those that do not fit into the model of \citeauthor{cai2014changes}'s ILC. 
+even those that do not fit into the model of \citeauthor{cai2014changes}'s ILC.
+Our fixpoint theorems are proven over dcpos in general, which is crucial since
+fixpoints are often used in domain theory to give a semantics to recursion.
 
 Additionally, the tantalizing connection between change actions, the ILC and synthetic
 differential geometry has only begun to be explored and a denotational semantics for the
@@ -1504,9 +1446,6 @@ ILC based on smooth spaces is the subject of ongoing research. We believe many c
 from standard differential geometry, like gradients, vector fields, curves and flows can
 be defined for general change actions, which could then have implications for higher-order
 computation.
-
-Practical applications of self-maintainable derivatives to the semantics CRDTs as described in
-\cref{sec:relatedChangeStructures} would be a useful advance in their theory.
 
 Finally, combining our concrete Datalog derivatives with a system similar to ILC
 in a language such as Datafun would be an exciting demonstration of the compositional
@@ -1785,8 +1724,7 @@ power of this approach.
   \begin{align*}
     &\lfp(\iter_f)\\
     &=\sqcup_{n \in \NN} \iter_f(n)\\
-    &=\sqcup_{n \in \NN} \pi_1 (\nextiter_f^n(\bot))\\
-    &=\pi_1 (\sqcup_{n \in \NN} \nextiter_f^n(\bot)) \tag{$\pi_1$ is continuous}
+    &=\sqcup_{n \in \NN} \pi_1 (\nextiter_f^n(\bot))
   \end{align*}
 \end{proof}
 
@@ -1813,7 +1751,7 @@ power of this approach.
 \iterDerivativesF*
 \begin{proof}
   \label{prf:iterDerivativesF}
-  The base case follows from \cref{cor:bottomPlusBottom}.
+  The base case is easy to prove.
 
   For the inductive step:
   \begin{align*}
