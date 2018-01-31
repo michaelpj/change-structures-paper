@@ -102,7 +102,7 @@ iteration, which we gradually accumulate \autocite[See][section
 \end{align*}
 
 \begin{center}
-  \begin{tabular} {|p{3.5em}|p{10em}|p{10em}|}
+  \begin{tabular} {|p{3.5em}|p{8em}|p{10em}|}
     \hline
     Iteration & $\Delta tc_i$ & $tc_i$ \\
     \hline
@@ -237,7 +237,7 @@ the new value of the function.
 
 The choice of the name ``derivative'' is also not a coincidence. While these
 derivatives do not look quite like derivatives in real analysis, they \emph{do}
-bear a strong resemblance to derivatives in other areas (such as synthetic differential geometry), and
+bear a strong resemblance other derivatives (such as in synthetic differential geometry), and
 they satisfy the standard chain rule.
 
 \begin{thm}[The Chain Rule]
@@ -1119,8 +1119,8 @@ maximal and minimal minus operators are actually representable as pairs of terms
 in our Datalog, and so we can compute the derivative via a pair of terms that
 satisfy those bounds, allowing us to reuse our machinery for evaluating Datalog
 terms.\footnote{Indeed, if this process is occurring in an optimizing compiler,
-  the derivative terms can themselves be optimized. This is likely to be
-  beneficial, since the initial terms may be quite complex.}
+  the derivative terms can themselves be optimized. This is very 
+  beneficial in practice, since the initial terms may be quite complex.}
 
 This does give us additional constraints that the derivative terms must satisfy:
 for example, we need to be able to evaluate them; and we may wish to pick terms that will be easy or cheap
@@ -1226,9 +1226,10 @@ We can easily extend a derivative for the term semantics to a derivative for $\c
   $\consq$ is differentiable.
 \end{corollary}
 
-Putting this together with the results from \cref{sec:fixpoints}, we get two results.
+Putting this together with the results from \cref{sec:fixpoints}, we get our two
+big results.
 
-\begin{thm}[Differential evaluation of Datalog semantics]
+\begin{thm}[Incremental evaluation of Datalog semantics]
 \label{thm:diffEval}
   Datalog program semantics can be evaluated incrementally.
 \end{thm}
@@ -1238,12 +1239,10 @@ Putting this together with the results from \cref{sec:fixpoints}, we get two res
 \end{proof}
 \fi
 
-This is a generalization of semi-naive evaluation to use any derivative for the
-term semantics.
-
-\begin{thm}[Differential update of Datalog semantics]
+\begin{thm}[Incremental update of Datalog semantics]
 \label{thm:diffUpdate}
-  Datalog program semantics can be incrementally updated with changes to non-recursive relations.
+  Datalog program semantics can be incrementally updated with changes to
+  extensional relations.
 \end{thm}
 \ifproofs
 \begin{proof}
@@ -1251,13 +1250,11 @@ term semantics.
 \end{proof}
 \fi
 
-This is a generalization of the view-update problem for Datalog, including recursive views.
-
 \subsection{Extensions to Datalog}
 \label{sec:extensions}
 
-Our formulation of Datalog term semantics and differential evaluation is quite
-generic and composable, so it is relatively easy to extend the language with new
+Our formulation of Datalog term semantics and incremental evaluation is 
+generic and modular, so it is easy to extend the language with new
 term constructs.
 
 A new term construct must have:
@@ -1266,20 +1263,15 @@ A new term construct must have:
   \item An implementation of $\updiff$ and $\downdiff$.
 \end{itemize}
 
-These are very easy conditions to satisfy. The former is needed for the construct to even
+These are easy conditions to satisfy. The former is needed for the construct to even
 make sense, and because we are using the complete change action
 $\cstr{L}_\superpose$, the latter can \emph{always} be satisfied by using the maximal or
 minimal derivative. This justifies our claim that we can support
 \emph{arbitrary} additional term constructs: although the maximal and minimal
-derivatives are likely to be impractical derivatives, having them
-available as options means that we can still work them into the overall process.
+derivatives are likely to be impractical, having them
+available as options means that we can still use the overall process.
 Even if we have a term construct which we cannot find a good derivative for, we only lose incremental
 evaluation for those subterms, and not for anything else.
-
-This does not say anything about monotonicity. New term constructs may
-be required to be monotone if they are to participate in recursion, but we are
-interested in derivatives even for non-monotone terms because they allow us to
-use \cref{thm:diffUpdate}.
 
 This is important in practice for Semmle's variant of Datalog, which includes
 aggregation and other primitives with interesting derivatives. 
@@ -1291,8 +1283,8 @@ aggregation and other primitives with interesting derivatives.
 \subsubsection{Change structures}
 \label{sec:relatedChangeStructures}
 
-The seminal paper in this area is \textcite{cai2014changes}. We use the notions
-defined in that excellent paper heavily, but we deviate in three regards: the
+The seminal paper in this area is \textcite{cai2014changes}. We deviate from
+that excellent paper in three regards: the
 inclusion of minus operators, the nature of function changes, and the use of
 dependent types.
 
@@ -1301,11 +1293,10 @@ there are many interesting change actions that are not complete and so cannot
 have a minus operator. Where we can find a change structure with a minus operator, often we are
 forced to use unwieldy representations for change sets, and
 \citeauthor{cai2014changes} cite this as their reason for using a dependently
-typed type of changes. For example, the change actions described before on sets and lists are clearly
+typed type of changes. For example, the monoidal change actions on sets and lists are clearly
 useful for incremental computation on streams, yet they do not admit minus operators - instead, one would
 be forced to work with e.g. multisets admitting negative arities, as \citeauthor{cai2014changes} do.
 
-Our notion of function changes is also different to \citeauthor{cai2014changes}'s.
 Our function changes (when well behaved) correspond to what \citeauthor{cai2014changes} call
 \emph{pointwise differences} \autocite[See][section 2.2]{cai2014changes}. As they point out, you can reconstruct their
 function changes from pointwise changes and derivatives, so the two formulations
@@ -1620,7 +1611,7 @@ power of this approach.
   \end{align*}
 
   Now, on the one hand, suppose that $f : C \times A \rightarrow B$ is a differentiable function,
-  and $\curry{f} : C \rightarrow \exponential{\cstr{A}}{\cstr{B}}$ its corresponding curried version:
+  and $\curry{f} : C \rightarrow (\exponential{\cstr{A}}{\cstr{B}})$ its corresponding curried version:
   \begin{align*}
     &\curry{f}(c \cplus \change{c})\\
     &= \lambda a . f(c \cplus \change{c}, a)\\
@@ -1654,11 +1645,11 @@ power of this approach.
 
   Now consider two elements $\curry{f}$, $\curry{g}$ of $\exponential{\cstr{A}}{\cstr{B}}$. Since
   $\cstr{B}$ is complete, it is endowed with a minus operator $\cminus$, so we define
-  $\cminus_\rightarrow : \exponential{\cstr{A}}{\cstr{B}} \times \exponential{\cstr{A}}{\cstr{B}} \rightarrow A \rightarrow \changes{B}$ by:
+  $\cminus_\rightarrow : (\exponential{\cstr{A}}{\cstr{B}}) \times (\exponential{\cstr{A}}{\cstr{B}}) \rightarrow A \rightarrow \changes{B}$ by:
   $$ (g \cminus_\rightarrow f)(a) \defeq g(a) \cminus f(a) $$
   It's easy to check that this is indeed a minus operator and, therefore, $\exponential{\cstr{A}}{\cstr{B}}$
   is complete. Thus, trivially, any function $f : C \times A \rightarrow B$ is differentiable
-  if and only if its curried version $\curry{f} : C \rightarrow \exponential{A}{B}$ is.
+  if and only if its curried version $\curry{f} : C \rightarrow (\exponential{A}{B})$ is.
 \end{proof}
 
 \subsection{Change actions over other structures}
