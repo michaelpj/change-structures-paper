@@ -509,11 +509,11 @@ exponential objects, correspond to incremental evaluation of functions:
 \end{prop}
 
 Conveniently, \cref{def:pointwiseChanges} gives us a way to compute explicit derivatives for
-the evaluation map on pointwise change structures:
+the evaluation map on pointwise change actions:
 
 \begin{prop}[Derivatives of the evaluation map]
 \label{prop:evDerivatives}
-  Suppose $\cstr{B}$ is a pointwise change structure. Let
+  Suppose $\cstr{B}$ is a pointwise change action. Let
   $f: \cstr{A} \rightarrow \cstr{B}$,
   $a \in A$, $\change{a} \in \changes{A}$,
   $\change{f} \in \changes{(A \rightarrow B)}$.
@@ -566,7 +566,7 @@ set which makes $\cplus$ monotone in its second argument.
   $\change{a} \changeOrder \change{b}$ iff for all $a \in A$ it is the case that $a \cplus \change{a} \leq a \cplus \change{b}$.
 \end{defn}
 
-Ordered change structures are useful because they let us give a sensible order
+Ordered change actions are useful because they let us give a sensible order
 to our derivatives.
 
 \begin{thm}[Sandwich lemma]
