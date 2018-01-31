@@ -70,19 +70,18 @@ The semantics of Datalog tells us that the denotation of this program is the
 least fixpoint of the rule $tc$. Kleene's Theorem tells us that we can reach
 this by repeatedly applying the rule, starting from the empty relation. For example, supposing
 that $e = \{ (1, 2), (2, 3), (3, 4) \}$:
-
 \begin{center}
-  \begin{tabular} {|p{3.5em}|p{10em}|p{10em}|}
-    \hline
+  \begin{tabular} {p{3.5em} p{10em} p{10em}}
     Iteration & Newly deduced facts & Accumulated data in $tc$ \\
-    \hline
+    \toprule
     1 & $\{ (1, 2), (2, 3), (3, 4) \}$ & $\{ (1, 2), (2, 3), (3, 4) \}$\\
     2 & $\{ (1, 2), (2, 3), (3, 4),$ $(1, 3), (2, 4) \}$ & $\{ (1, 2), (2, 3), (3, 4),$ $(1, 3), (2, 4) \}$\\
     3 & $\{ (1, 2), (2, 3), (3, 4),$ $(1, 3), (2, 4), (1, 4),(1, 4) \}$ & $\{ (1, 2), (2, 3), (3, 4),$ $(1, 3), (2, 4), (1, 4) \}$\\
     4 & (as above) & (as above) \\
-    \hline 
+    \bottomrule
   \end{tabular}
 \end{center}
+\medskip
 
 And then we have reached fixpoint, so we are done.
 
@@ -102,19 +101,19 @@ iteration, which we gradually accumulate \autocite[See][section
 \end{align*}
 
 \begin{center}
-  \begin{tabular} {|p{3.5em}|p{8em}|p{10em}|}
-    \hline
+  \begin{tabular} {p{3.5em} p{8em} p{10em}}
     Iteration & $\Delta tc_i$ & $tc_i$ \\
-    \hline
+    \toprule
     1 & $\{ (1, 2), (2, 3), (3, 4) \}$ & $\{ (1, 2), (2, 3), (3, 4) \}$\\
     2 & $\{ (1, 3), (2, 4) \}$ & $\{ (1, 2), (2, 3), (3, 4),$ $(1, 3), (2, 4) \}$\\
     3 & $\{ (1, 4) \}$ & $\{ (1, 2), (2, 3), (3, 4),$ $(1, 3), (2, 4), (1, 4) \}$\\
     4 & $\{ \}$ & (as above) \\
-    \hline
+    \bottomrule
   \end{tabular}
 \end{center}
+\medskip
 
-This is much better - we have turned a quadratic computation into a linear one.
+This is much better \textemdash we have turned a quadratic computation into a linear one.
 
 But the delta rule translation works only for traditional Datalog. It is common to
 liberalise the term syntax with additional features, such as disjunction,
@@ -136,7 +135,7 @@ like to be able to use semi-naive evaluation for this rule too, but the simple d
 transformation does not produce a correct incremental program, and it is unclear how to extend it (and the
 correctness proof) to handle such cases.
 
-This is of more than theoretical interest - the research
+This is of more than theoretical interest \textemdash the research
 in this paper was carried out at Semmle, which
 makes heavy use of a commercial Datalog implementation
 \autocites{semmleWebsite}{avgustinov2016ql}{sereni2008adding}{schafer2010type}.
@@ -157,7 +156,11 @@ However, \citeauthor{cai2014changes}'s work isn't directly applicable to Datalog
 of Datalog's semantics are recursive definitions and the need for the \emph{fixpoints}, and we need some additional theory to tell us how to
 handle incremental evaluation of fixpoint computations.
 
-This paper bridges that gap. We start by generalizing change structures to
+This paper bridges that gap.
+
+\subsection{Contributions}
+
+We start by generalizing change structures to
 \emph{change actions} (\cref{sec:changeActions}). Change actions are weaker than change structures, but
 have nice categorical properties (\cref{sec:category}), and exist for more structures (\cref{sec:moreStructures}).
 
@@ -227,8 +230,8 @@ derivative.\footnote{In several places we will need to pick an arbitrary
   derivative for some construction. In general this needs the Axiom of Choice,
   but in most practical cases we will want to have a computable derivative
   operator for our domain, which alleviates the problem.} A ``thin'' change
-action - where $a \cplus \change{a} = a \cplus \change{b}$ implies $\change{a} =
-\change{b}$ - has unique derivatives, but many change actions are not thin.
+action \textemdash where $a \cplus \change{a} = a \cplus \change{b}$ implies $\change{a} =
+\change{b}$ \textemdash has unique derivatives, but many change actions are not thin.
 For example, because $\{0\} \cap \{1\} = \{0\}
 \cap \{2\}$, $\cstruct{\mathcal{P}(\NN)}{\mathcal{P}(\NN)}{\cap}$ is not thin.
 
@@ -256,7 +259,7 @@ semantics as computing an n-tuple of relations. So we need a change action on
 $\Rel^n$, and fortunately we can construct good change actions for Boolean
 algebras in general (\cref{sec:booleanAlgebras}).
 
-Here are some other recurring examples of changes actions:
+Here are some other recurring examples of change actions:
 \begin{itemize}
   \item $\cstr{A}_\discrete \defeq \cstruct{A}{\emptyset}{\lambda(a, da). a}$,
     which we call the \emph{discrete} change action on any base set.
@@ -273,7 +276,7 @@ $\cstruct{A}{A}{\splus}$, and the final two examples are instances of this. Many
 can be constructed in this way. In particular, for any change action $\cstruct{A}{\changes{A}}{\cplus}$,
 $\cstruct{\changes{A}}{\changes{A}}{\splus}$ is also a change action. This means
 that we don't have to do any extra work to talk about higher derivatives of
-functions - we can always take $\changes{\changes{A}} = \changes{A}$.
+functions \textemdash we can always take $\changes{\changes{A}} = \changes{A}$.
 
 Many other notions in computer science can be naturally understood in terms of change actions, \emph{e.g.} databases
 and database updates, files and diffs, Git repositories and commits, even video compression
@@ -1028,7 +1031,7 @@ algebra.\footnote{Technically we need to use the set of relations of a given
   \end{align*}
 \end{defn}
 
-Since $\Rel$ is a Boolean algebra, and so is $\Rel^n$, $\denote{t}$ is a functions between Boolean algebras.
+Since $\Rel$ is a Boolean algebra, and so is $\Rel^n$, $\denote{t}$ is a function between Boolean algebras.
 
 \begin{defn}[Immediate consequence operator]
   Given a program $\mathcal{P} = \overline{P}$, the immediate consequence operator $\consq: \Rel^n \rightarrow \Rel^n$ is defined as follows:
@@ -1179,7 +1182,7 @@ Here is the upwards difference:
     )
 \end{align*}
 
-This is not especially easy to compute. The third conjunct amounts to
+While better than nothing, this is not especially easy to compute. The third conjunct amounts to
 recomputing the whole of the recursive part. The second conjunct gives us a
 guard: we only need to do the work if there is \emph{some} change in the body of
 our existential. This shows that our derivatives aren't a panacea: it is simply \emph{hard} to compute
@@ -1264,7 +1267,7 @@ have a minus operator. Where we can find a change structure with a minus operato
 forced to use unwieldy representations for change sets, and
 \citeauthor{cai2014changes} cite this as their reason for using a dependently
 typed type of changes. For example, the monoidal change actions on sets and lists are clearly
-useful for incremental computation on streams, yet they do not admit minus operators - instead, one would
+useful for incremental computation on streams, yet they do not admit minus operators \textemdash instead, one would
 be forced to work with e.g. multisets admitting negative arities, as \citeauthor{cai2014changes} do.
 
 Our function changes (when well behaved) correspond to what \citeauthor{cai2014changes} call
@@ -1557,7 +1560,7 @@ power of this approach.
     &= \lambda a . f(c, a) \cplus \derive{f}((c, \change{c}), (a, 0))\\
     &= (\lambda a . f(c, a)) \cplus_\rightarrow (\lambda a . \derive{f}((c, \change{c}), (a, 0)))
   \end{align*}
-  Then the funciton $\lambda a . \derive{f}((c, \change{c}), (a, 0))$ is a derivative for $\curry{f}$,
+  Then the function $\lambda a . \derive{f}((c, \change{c}), (a, 0))$ is a derivative for $\curry{f}$,
   thus $\curry{f}$ is differentiable. Conversely, suppose that $\curry{f}$ is differentiable.
   Then we note that, by hypothesis, $\curry{f}(a)$ is differentiable for all $f$, with derivative
   $\derive{f_a}$, and hence:
