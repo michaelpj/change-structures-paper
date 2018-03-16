@@ -116,7 +116,7 @@ iteration, which we gradually accumulate \autocite[See][section
 This is much better \textemdash we have turned a quadratic computation into a linear one.
 
 But the delta rule translation works only for traditional Datalog. It is common to
-liberalise the term syntax with additional features, such as disjunction,
+liberalise the formula syntax with additional features, such as disjunction,
 existential quantification, negation, and aggregates.\footnote{ See, for
   example, \autocites(LogiQL)(){logicbloxWebsite}{halpin2014logiql},
   \autocites(Datomic)(){datomicWebsite},
@@ -141,7 +141,8 @@ makes heavy use of a commercial Datalog implementation
 \autocites{semmleWebsite}{avgustinov2016ql}{sereni2008adding}{schafer2010type}.
 Semmle's implementation includes parity-stratified negation\footnote{Parity-stratified negation means that recursive calls must
   appear under an even number of negations. This ensures that the rule remains
-  monotone, so the least fixpoint still exists and can be found via Kleene's theorem.}, and other non-standard
+  monotone, so the least fixpoint still exists and can be found via Kleene's
+  theorem.}, recursive aggregates \autocite{demoor2013aggregates}, and other non-standard
 features, so we are faced with a dilemma: either abandon the new language
 features, or abandon incremental computation.
 
@@ -174,7 +175,7 @@ language constructs such as negation, disjunction, and additional well-behaved
 extensions (\cref{sec:datalog}). This provides the world's first incremental
 evaluation and update mechanism for Datalog that can handle these features. Moreover, the structure of the
 proof is modular, and can accommodate arbitrary additional
-term constructs (\cref{sec:extensions}).
+formula constructs (\cref{sec:extensions}).
 
 We have omitted the proofs from this paper. Most of the results have routine
 proofs, but the proofs of the more substantial results
@@ -222,7 +223,11 @@ The primary motivation for change actions is that they let us define
     f(a \cplus \change{a}) = f(a) \cpluss \derive{f}(a, \change{a})
   \end{displaymath}
 
-  A function which has a derivative is called \emph{differentiable}.
+  A function which has a derivative is called
+  \emph{differentiable}.\footnote{Note that we do not require that $\derive{f}(a,
+    \change{a} \splus \change{b}) = \derive{f}(a, \change{a}) \splus \derive{f}(a
+    \cplus \change{a}, \change{b})$. This is a natural condition, and almost all
+    derivatives satisfy it, but we have not found it to be necessary so far.}
 \end{defn}
 
 Derivatives need not be unique in general, so we will speak of ``a''
@@ -264,15 +269,18 @@ Here are some other recurring examples of change actions:
   \item $\cstr{A}_\discrete \defeq \cstruct{A}{\emptyset}{\lambda(a, da). a}$,
     which we call the \emph{discrete} change action on any base set.
   \item $\cstr{A}_\Rightarrow \defeq \cstruct{A}{\exponential{A}{A}}{\ev}$, where $A$ is some
-    category, $\exponential{A}{A}$ is the exponential object, and $\ev$ is the evaluation map
+    category, $\exponential{A}{A}$ is the exponential object (which is a monoid
+    under composition), and $\ev$ is the evaluation map
     (for example, functions and function application).
   \item $[A]$, the type of lists (or streams) of elements of type $A$, has a
     change action over concatenation ($\doubleplus$): $\cstruct{[A]}{[A]}{\doubleplus}$.
   \item $\{A\}$, the type of sets, has change actions $\cstruct{\{A\}}{\{A\}}{\cup}$,\\ $\cstruct{\{A\}}{\{A\}}{\cap}$.
+  \item $\cstr{\NN} \defeq \cstruct{\NN}{\NN}{+}$, the natural numbers with itself as change
+    set under the additive monoid.
 \end{itemize}
 
 Indeed, any monoid $(A, \splus)$ can be seen as a change action
-$\cstruct{A}{A}{\splus}$, and the final two examples are instances of this. Many practical change actions
+$\cstruct{A}{A}{\splus}$, and the final three examples are instances of this. Many practical change actions
 can be constructed in this way. In particular, for any change action $\cstruct{A}{\changes{A}}{\cplus}$,
 $\cstruct{\changes{A}}{\changes{A}}{\splus}$ is also a change action. This means
 that we don't have to do any extra work to talk about higher derivatives of
@@ -340,27 +348,31 @@ derivative has a deep connection to the incremental evaluation of functions (\cr
   change actions and the morphisms are differentiable functions. 
 \end{defn}
 
+In \cref{sec:moreStructures} we will look at subsets of $\cat{CAct}$ with
+interesting properties. However, for simplicity we will keep working in $\cat{CAct}$
+throughout, rather than defining subcategories.
+
 \subsection{Equivalence with PreOrd}
 
 There is a natural preorder on the base set of a change action, given by reachability
 under the action:
 
-\begin{defn}[Reachability order]
+\begin{defn}[Reachability preorder]
   $a \reachOrder b$ iff there is a $\change{a} \in \changes{A}$ such that $a \cplus
   \change{a} = b$.
 \end{defn}
 
-We can characterize many of the properties of change actions in terms of the reachability order,
+We can characterize many of the properties of change actions in terms of the reachability preorder,
 which suggests a connection between $\cat{CAct}$ and the category of preorders, $\cat{PreOrd}$.
 
 \begin{prop}
   A function is differentiable iff it is monotone with respect to the
-  reachability order. 
+  reachability preorder. 
 \end{prop}
 
 \begin{corollary}
   Two change actions are isomorphic iff their posets under the reachability
-  order are isomorphic.
+  preorder are isomorphic.
 \end{corollary}
 
 \begin{corollary}
@@ -382,7 +394,7 @@ monoid $\leq^\star$, where $\cplus_\leq$ is defined as:
    a \cplus_\leq (b, c) &\defeq
      \begin{cases}
      c&\text{ if $a = b$}\\
-     b&\text{ otherwise}
+     a&\text{ otherwise}
      \end{cases}
 \end{aligned}
 \]
@@ -411,6 +423,9 @@ colimits, this gives us a proof of the existence of limits, colimits, and expone
   The category $\cat{CAct}$ has all limits, colimits and exponential objects.
 \end{corollary}
 
+In the case of complete change actions, this equivalence degenerates into an
+equivalence with $\cat{Set}$, since all functions are differentiable.
+
 \subsection{Explicit constructions}
 
 Having shown that $\cat{CAct}$ is equivalent to $\cat{PreOrd}$ it may seem
@@ -418,6 +433,8 @@ redundant to give explicit recipes for constructing products, coproducts, and ex
 However, we can give constructions that are much nicer than the ones
 which we get via $\cat{PreOrd}$, which is important for using them in
 practical computation.
+
+The products and coproducts are fairly straightforward.
 
 \begin{prop}[name=Products, restate=products]
   \label{prop:products}
@@ -451,7 +468,9 @@ practical computation.
 \end{proof}
 \fi
 
-The exponential objects in the category $\cat{CAct}$ are difficult to work with. Under some
+The exponential objects in the category $\cat{CAct}$ are difficult to work with,
+because we need to ensure that $f \cplus \change{f}$ continues to be a
+differentiable function. Under some
 conditions, however, we can find a simpler representation.
 
 \begin{defn}[Pointwise change actions]
@@ -465,7 +484,7 @@ conditions, however, we can find a simpler representation.
 \end{defn}
 
 This corresponds to the intuition about how the correspondence with
-$\cat{PreOrd}$ should work: the order on monotone functions in $\cat{PreOrd}$ is
+$\cat{PreOrd}$ should work: the preorder on monotone functions in $\cat{PreOrd}$ is
 pointwise.
 
 This pointwise change action is not well defined for all change actions, since
@@ -498,7 +517,7 @@ the full subcategory of $\cat{CAct}$ formed by complete change actions is a Cart
 closed category of pointwise change actions.
 
 Derivatives of the evaluation map, irrespective of a particular choice of change action on the
-exponential objects, correspond to incremental evaluation of functions:
+exponential objects, give us a way to do incremental evaluation of function application:
 \begin{prop}[Incremental application]
 \label{prop:incrementalization}
   Let $f: \cstr{A} \rightarrow \cstr{B}$, $a \in A$, $\change{a} \in
@@ -521,12 +540,12 @@ the evaluation map on pointwise change actions:
   $a \in A$, $\change{a} \in \changes{A}$,
   $\change{f} \in \changes{(A \rightarrow B)}$.
 
-  Then, differentiating $f$ we obtain the following derivative for the evaluation map:
+  Then, by taking a derivative of $f$ we obtain the following derivative for the evaluation map:
   \begin{displaymath}
     \derive{\ev}_1((f, a), (\change{f}, \change{a})) \defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})
   \end{displaymath}
 
-  Alternatively, differentiating $f \cplus \change{f}$ we can obtain another derivative
+  Alternatively, by taking a derivative of $f \cplus \change{f}$ we can obtain another derivative
   for the evaluation map:
   \begin{displaymath}
     \derive{\ev}_2((f, a), (\change{f}, \change{a})) \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})
@@ -565,11 +584,11 @@ a change action over posets.}
 In fact, in all cases where the base set is a poset, we can always pick an order on the change
 set which makes $\cplus$ monotone in its second argument.
 
-\begin{defn}[Change order]
+\begin{defn}[Change preorder]
   $\change{a} \changeOrder \change{b}$ iff for all $a \in A$ it is the case that $a \cplus \change{a} \leq a \cplus \change{b}$.
 \end{defn}
 
-Ordered change actions are useful because they let us give a sensible order
+Ordered change actions are useful because they let us give a sensible pointwise preorder
 to our derivatives.
 
 \begin{thm}[Sandwich lemma]
@@ -585,14 +604,14 @@ to our derivatives.
   Then $g$ is a derivative for $f$.
 \end{thm}
 
-If we have minimal and maximal derivatives then this gives us a full
+If we have unique minimal and maximal derivatives then this gives us a full
 characterisation of all the derivatives for a function.
 
 \begin{thm}[Characterization of derivatives]
 \label{thm:derivativeCharacterization}
   Let $\cstr{A}$ and $\cstr{B}$ be change actions, let
   $f: \cstr{A} \rightarrow \cstr{B}$ be a function, and let $\subderiveM{f}$ and
-  $\supderiveM{f}$ be minimal and maximal derivatives of $f$, respectively.
+  $\supderiveM{f}$ be unique minimal and maximal derivatives of $f$, respectively.
   Then the derivatives of $f$ are precisely
   the functions $\derive{f}$ such that
   \begin{displaymath}
@@ -631,7 +650,7 @@ Which gives us a correspondence between maximal minus operators and maximal deri
 
 \subsection{Directed-complete partial orders}
 
-Directed-complete partial orders give us the well known notion of
+Directed-complete partial orders with least elements (dcpos) give us the well known notion of
 \emph{Scott-continuity}. We can define \emph{continuous} change actions,
 which are well-behaved with respect to continuity.
 
@@ -691,10 +710,10 @@ Becik's Theorem \autocite[][section 10.1]{winskel1993formal}, but it has a strai
 \subsection{Boolean algebras}
 \label{sec:booleanAlgebras}
 
-Boolean algebras have a complete, continuous change action.
+Complete Boolean algebras have a complete, continuous change action.
 
 \begin{prop}[name=Boolean algebra change actions, restate=lsuperpose]
-  Let $L$ be a Boolean algebra. Define
+ Let $L$ be a complete Boolean algebra. Define
   \begin{displaymath}
     \cstr{L}_\superpose \defeq \cstruct{L}{L \times L}{\twist}
   \end{displaymath}
@@ -721,8 +740,10 @@ We can think of $\cstr{L}_\superpose$ as tracking changes as pairs of ``upwards'
   and ``downwards'' change action glued together, but here it is simpler to
   just go directly to the useful change action.}  
 
-Boolean algebras also have concrete definitions for maximal and minimal minus
-operators.
+Boolean algebras also have concrete definitions for unique maximal and minimal minus
+operators, giving them the usual preorder based on implication.\footnote{The change
+set is, as usual, given the change preorder, which in this case corresponds to
+the natural order on $L \times L^{\textrm{op}}$.}
 
 \begin{prop}
   Let $L$ be a Boolean algebra. Then
@@ -731,7 +752,7 @@ operators.
     a \cminus_\top b &= (a, b \wedge \neg a)
   \end{align*}
 
-  define minimal and maximal minus operators.
+  define unique minimal and maximal minus operators.
 \end{prop}
 
 In particular, \cref{thm:derivativeCharacterization} along with
@@ -759,7 +780,15 @@ we have concrete definitions for our bounds (which, again, we will make use of i
 \section{Fixpoints}
 \label{sec:fixpoints}
 
-In directed-complete partial orders we can define a least fixpoint operator $\lfp$ in terms of the
+Fixpoints appear frequently in the semantics of languages with recursion. If we
+can give a generic account of how to compute fixpoints using change actions,
+then this gives us a compositional way of extending a change semantics for a
+language to handle the addition of recursion. We will later do this to handle
+recursion in Datalog (\cref{sec:datalogIncr}).
+
+\subsection{Iteration functions}
+
+Over directed-complete partial orders we can define a least fixpoint operator $\lfp$ in terms of the
 iteration function $\iter$:
 \begin{align*}
   &\lfp : (A \rightarrow A) \rightarrow A\\
@@ -769,12 +798,12 @@ iteration function $\iter$:
 \end{align*}
 
 The iteration function is going to be the basis for everything in this section:
-we can differentiate it with respect to $n$, and this will give us a way to get
-to the next iteration incrementally; and we can differentiate it with respect to
-$f$, and this will give us a way to get from iterating $f$ to iterating $f
+we can take the partial derivative with respect to $n$, and this will give us a way to get
+to the next iteration incrementally; and we can compute the partial derivative
+with respect to $f$, and this will give us a way to get from iterating $f$ to iterating $f
 \cplus \change{f}$.\footnote{The sharp-eyed reader may have noticed that we
-  could also differentiate $\iter$ with respect to the base point (which we have
-  given as just $\bot$).}
+  could also abstract out the base point (which we have just specified as
+  $\bot$) and differentiate with respect to that.}
 
 To avoid confusion, we shall write $\iter_f$ when we are holding $f$ constant,
 and $\iter_n$ when we are holding $n$ constant.
@@ -787,7 +816,7 @@ continuous change action. We will want to apply this to the semantics of
 Datalog, for which we will need to differentiate its semantics. We will see the
 details of how to do this in \cref{sec:datalogDifferentiability}.
 
-Since we are trying to incrementalize the iterative step, we start by taking the
+Since we are trying to incrementalize the iterative step, we start by taking the partial
 derivative of $\iter$ with respect to $n$.
 
 \begin{prop}[name=Derivative of the iteration map with respect to $n$, restate=iterDerivativesN]
@@ -854,19 +883,17 @@ and we now wish to apply a change to $E$ and compute
 This amounts to applying a change to the \emph{function} whose fixpoint we are taking.
 
 In Datalog this would allow us to update a recursively defined relation given an
-update one of its non-recursive dependencies, or the base extensional database.
+update to one of its non-recursive dependencies, or the base extensional database.
 For example, we might want to take the transitive closure relation
 and update it by changing the edge relation $e$.
 
 However, this requires us to have a derivative for the fixpoint operator
 $\fixpoint$ with respect to the function which it takes the fixpoint of.
-We can get quite close in the general case, but to get a precise
-derivative we'll need to do a bit more work.
 
 \begin{defn}
   Let $\cstr{A}$ be a change action, $\fixpoint_A$ a fixpoint operator, and
   $\derive{\ev}$ be a derivative of the evaluation map.
-
+  
   Then we define
   \begin{align*}
     &\adjust : (A \rightarrow A) \times \changes{(A \rightarrow A)} \rightarrow (\changes{A} \rightarrow \changes{A})\\
@@ -996,8 +1023,8 @@ Datalog is usually given a logical semantics wherein we look for models that
 satisfy the program. We will instead give a simple denotational semantics that treats a Datalog
 program as denoting a family of relations.
 
-One obstacle to this approach is giving a denotation to negations. We adopt an
-equivalent of the usual closed-world assumption to solve this.
+We will adopt an equivalent of the usual closed-world assumption to give a
+denotation to give a denotation to negation.
 
 \begin{defn}[Closed-world assumption and negation]
   There exists a universal relation $\universalRel$.
@@ -1008,14 +1035,15 @@ equivalent of the usual closed-world assumption to solve this.
   \end{displaymath}
 \end{defn}
 
-This makes $\Rel$, the set of all relations over $\universalRel$, into a Boolean
+This makes $\Rel$, the set of all relations over $\universalRel$, into a
+complete Boolean
 algebra.\footnote{Technically we need to use the set of relations of a given
   arity. In practice it is easy to make the arities match up, and we will gloss
   over them for clarity.}
 
-\begin{defn}[Term semantics]
-  A Datalog term $T$ denotes a function from its free relation variables to
-  $\Rel$, $\denote{\_} : \Term \rightarrow \Rel^n \rightarrow \Rel$
+\begin{defn}[Formula semantics]
+  A Datalog formula $T$ denotes a function from its free relation variables to
+  $\Rel$, $\denote{\_} : \Formula \rightarrow \Rel^n \rightarrow \Rel$
 
   $\denote{t}$ takes an argument $\overline{X} : \Rel^n$. However, this is
   passed down unchanged through all recursive calls, so we will leave it
@@ -1031,7 +1059,8 @@ algebra.\footnote{Technically we need to use the set of relations of a given
   \end{align*}
 \end{defn}
 
-Since $\Rel$ is a Boolean algebra, and so is $\Rel^n$, $\denote{t}$ is a function between Boolean algebras.
+Since $\Rel$ is a complete Boolean algebra, and so is $\Rel^n$, $\denote{t}$ is
+a function between complete Boolean algebras.
 
 \begin{defn}[Immediate consequence operator]
   Given a program $\mathcal{P} = \overline{P}$, the immediate consequence operator $\consq: \Rel^n \rightarrow \Rel^n$ is defined as follows:
@@ -1061,10 +1090,10 @@ apply \cref{thm:leastFixpointDerivatives}.
 \subsection{Differentiability of Datalog semantics}
 \label{sec:datalogDifferentiability}
 
-In order to apply the machinery we have developed, we need the semantics $\denote{\_}$ to
-be differentiable. However, it is a function on Boolean algebras, and we know
-that the $\cstr{L}_\superpose$ change action is complete, so in fact we know that
-$\denote{\_}$ must be differentiable.
+In order to apply the results in \cref{sec:fixpoints} to Datalog, we need the semantics $\denote{\_}$ to
+be differentiable. Since $\denote{\_}$ is a function on complete Boolean algebras, and we know
+that the $\cstr{L}_\superpose$ change action is complete, in fact we
+\emph{do} know that $\denote{\_}$ must be differentiable.
 
 However, this does not mean that we have a \emph{good} derivative for
 $\denote{\_}$. The derivative that we know we have for complete change actions
@@ -1088,15 +1117,15 @@ guaranteed that the result is sound.\footnote{The idea of using an approximation
 to the precise derivative, and a soundness condition, appears in \textcite{bancilhon1986amateur}.}
 
 There is also the question of how to compute the derivative. Fortunately, the
-maximal and minimal minus operators are actually representable as pairs of terms
-in our Datalog, and so we can compute the derivative via a pair of terms that
+maximal and minimal minus operators are actually representable as pairs of formulae
+in Datalog, and so we can compute the derivative via a pair of formualae that
 satisfy those bounds, allowing us to reuse our machinery for evaluating Datalog
-terms.\footnote{Indeed, if this process is occurring in an optimizing compiler,
-  the derivative terms can themselves be optimized. This is very 
-  beneficial in practice, since the initial terms may be quite complex.}
+formulae.\footnote{Indeed, if this process is occurring in an optimizing compiler,
+  the derivative formulae can themselves be optimized. This is very 
+  beneficial in practice, since the initial formulae may be quite complex.}
 
-This does give us additional constraints that the derivative terms must satisfy:
-for example, we need to be able to evaluate them; and we may wish to pick terms that will be easy or cheap
+This does give us additional constraints that the derivative formulae must satisfy:
+for example, we need to be able to evaluate them; and we may wish to pick formulae that will be easy or cheap
 for our evaluation engine to compute, even if the results are larger.
 
 The upshot of these considerations is that the optimal choice of derivatives is likely
@@ -1108,12 +1137,12 @@ specifics of the evaluation engine. Here is one possibility.\footnote{These are
 
 \newcommand{\bothdiff}{\diamond}
 \newcommand{\bothchanges}{\rho}
-\begin{thm}[Concrete Datalog term derivatives]
+\begin{thm}[Concrete Datalog formula derivatives]
 \label{thm:concreteDatalog}
   We give two mutually recursive definitions,
-  $\updiff: \Term \rightarrow \changes{\Rel^n} \rightarrow \changes{\Rel}$ and
-  $\downdiff: \Term \rightarrow \changes{\Rel^n} \rightarrow \changes{\Rel}$, such
-  that $\updiff(t) \times \downdiff(t)$ is a derivative for the semantics of a Datalog term $t$.
+  $\updiff: \Formula \rightarrow \changes{\Rel^n} \rightarrow \changes{\Rel}$ and
+  $\downdiff: \Formula \rightarrow \changes{\Rel^n} \rightarrow \changes{\Rel}$, such
+  that $\updiff(t) \times \downdiff(t)$ is a derivative for the semantics of a Datalog formula $t$.
 
   $\updiff$ and $\downdiff$ define functions which take an argument
   $\bothchanges: \changes{\Rel^n}$ . However, this argument is passed down
@@ -1182,17 +1211,19 @@ Here is the upwards difference:
     )
 \end{align*}
 
-While better than nothing, this is not especially easy to compute. The third conjunct amounts to
+This is still not especially easy to compute. The third conjunct amounts to
 recomputing the whole of the recursive part. The second conjunct gives us a
 guard: we only need to do the work if there is \emph{some} change in the body of
 our existential. This shows that our derivatives aren't a panacea: it is simply \emph{hard} to compute
 downwards differences for $\exists$ (and, equivalently, upwards differences for
-$\forall$). However, we can do significantly better than nothing, and the
-difficulty is largely isolated to difficult subterms.
+$\forall$). However, this still allows us to avoid re-evaluating the whole
+formula in many cases, and the inefficiency is local to this subformula.
 
 \subsection{Incremental evaluation of Datalog}
+\label{sec:datalogIncr}
 
-We can easily extend a derivative for the term semantics to a derivative for $\consq$.
+We can easily extend a derivative for the formula semantics to a derivative for
+the immediate consequence operator $\consq$.
 
 \begin{corollary}
 \label{corollary:consqDiff}
@@ -1226,11 +1257,11 @@ big results.
 \subsection{Extensions to Datalog}
 \label{sec:extensions}
 
-Our formulation of Datalog term semantics and incremental evaluation is 
+Our formulation of Datalog formula semantics and incremental evaluation is 
 generic and modular, so it is easy to extend the language with new
-term constructs.
+formula constructs.
 
-A new term construct must have:
+A new formula construct must have:
 \begin{itemize}
   \item An interpretation as a function on its free relation variables.
   \item An implementation of $\updiff$ and $\downdiff$.
@@ -1240,14 +1271,22 @@ These are easy conditions to satisfy. The former is needed for the construct to 
 make sense, and because we are using the complete change action
 $\cstr{L}_\superpose$, the latter can \emph{always} be satisfied by using the maximal or
 minimal derivative. This justifies our claim that we can support
-\emph{arbitrary} additional term constructs: although the maximal and minimal
+\emph{arbitrary} additional formula constructs: although the maximal and minimal
 derivatives are likely to be impractical, having them
 available as options means that we can still use the overall process.
-Even if we have a term construct which we cannot find a good derivative for, we only lose incremental
-evaluation for those subterms, and not for anything else.
+Even if we have a formula construct which we cannot find a good derivative for, we only lose incremental
+evaluation for those subformulae, and not for anything else.
 
-This is important in practice for Semmle's variant of Datalog, which includes
-aggregation and other primitives with interesting derivatives. 
+This is important in practice for Semmle's variant of Datalog. For example, the
+upwards derivative for aggregates is:
+
+\begin{align*}
+  \updiff{\textrm{agg}(vs | T | U)} \defeq \exists vs. (T \wedge \updiff{U}) \wedge \textrm{agg}(vs | T | U)
+\end{align*}
+
+While we can't give a precise derivative, similarly to the earlier example of the
+upwards difference of a universal quantifier, we can still provide a guard that
+prevents us from having to re-evaluate in all cases. 
 
 \section{Related work}
 
@@ -1488,7 +1527,9 @@ power of this approach.
   \begin{displaymath}
     \derive{id}_{A_{\reachOrder}}(a, (a, b)) \defeq \change{}_{(a, b)}
   \end{displaymath}
-  which can be extended freely to the whole change set $\reachOrder^\star$. 
+  which can be extended freely to the whole change set
+  $\reachOrder^\star$.\footnote{Note that since we picked arbitrary change
+    representatives, the resulting derivative may not preserve the monoid action.}
 \end{proof}
 
 \products*
