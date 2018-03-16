@@ -721,23 +721,23 @@ We can think of $\cstr{L}_\superpose$ as tracking changes as pairs of ``upwards'
   and ``downwards'' change action glued together, but here it is simpler to
   just go directly to the useful change action.}  
 
-Boolean algebras also have concrete definitions for unique maximal and minimal minus
-operators, giving them the usual preorder based on implication.\footnote{The change
+Boolean algebras also have concrete definitions for unique maximal and minimal
+derivatives, giving them the usual preorder based on implication.\footnote{The change
 set is, as usual, given the change preorder, which in this case corresponds to
 the natural order on $L \times L^{\textrm{op}}$.}
 
 \begin{prop}
-  Let $L$ be a Boolean algebra. Then
+  Let $L$ be a Boolean algebra, and let
   \begin{align*}
     a \cminus_\bot b &= (a \wedge \neg b, b)\\
     a \cminus_\top b &= (a, b \wedge \neg a)
   \end{align*}
 
-  define unique minimal and maximal minus operators.
+  Then $\derive{f}_{\cminus_{\bot}}$ and $\derive{f}_{\cminus_{\top}}$ 
+  define unique minimal and maximal derivatives for $f$.
 \end{prop}
 
-In particular, \cref{thm:derivativeCharacterization} along with
-\cref{prop:maximalMinusDerivatives} give us bounds for
+\Cref{thm:derivativeCharacterization} then gives us bounds for
 all the derivatives on Boolean algebras:
 
 \begin{corollary}
@@ -747,11 +747,11 @@ all the derivatives on Boolean algebras:
   L$ a function. Then the derivatives of $f$ are precisely those functions
   $\derive{f}$ such that
   \begin{displaymath}
-    f(a \cplus \change{a}) \cminus_\bot f(a)
+    \derive{f}_{\cminus_{\bot}}
     \changeOrder
-    \derive{f}(a, \change{a})
+    \derive{f}
     \changeOrder
-    f(a \cplus \change{a}) \cminus_\top f(a)
+    \derive{f}_{\cminus_{\top}}
   \end{displaymath}
 \end{corollary}
 
