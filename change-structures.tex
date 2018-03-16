@@ -471,7 +471,7 @@ The products and coproducts are fairly straightforward.
 The exponential objects in the category $\cat{CAct}$ are difficult to work with,
 because we need to ensure that $f \cplus \change{f}$ continues to be a
 differentiable function. Under some
-conditions, however, we can find a simpler representation.
+conditions, however, we can find a simple representation.
 
 \begin{defn}[Pointwise change actions]
   \label{def:pointwiseChanges}
@@ -1259,10 +1259,9 @@ Even if we have a formula construct which we cannot find a good derivative for, 
 evaluation for those subformulae, and not for anything else.
 
 This is important in practice for Semmle's variant of Datalog. For example, the
-upwards derivative for aggregates is:
-
+upwards derivative for recursive aggregates \autocite{demoor2013aggregates} is:
 \begin{align*}
-  \updiff{\textrm{agg}(vs | T | U)} \defeq \exists vs. (T \wedge \updiff{U}) \wedge \textrm{agg}(vs | T | U)
+  \updiff(\textrm{agg}(vs \mid T \mid U)) \defeq \exists vs. (T \wedge \updiff{U}) \wedge \textrm{agg}(vs \mid T \mid U)
 \end{align*}
 
 While we can't give a precise derivative, similarly to the earlier example of the
