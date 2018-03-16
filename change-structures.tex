@@ -123,7 +123,7 @@ existential quantification, negation, and aggregates.\footnote{ See, for
   \autocites(Souffle)(){souffleWebsite}{scholz2016fast}, and
   \autocites(DES)(){saenz2011deductive}, which between them have all of these
   features and more. } 
-Then we can write programs like the following, where we compute whether all the
+This allows us to write programs like the following, where we compute whether all the
 nodes in a subtree given by $child$ have some property $p$:
 \begin{align*}
   treeP(x) &\leftarrow p(x) \wedge \neg \exists y . (child(x,y) \wedge \neg treeP(y))
@@ -331,7 +331,7 @@ of functions.
 \section{The category of change actions}
 \label{sec:category}
 
-We are arguing that change actions provide a good model for incremental
+Our argument is that change actions provide a good model for incremental
 computation in general. That means we want to be able to easily construct change
 actions over the wide variety of datatypes that we actually use in programming.
 
@@ -628,25 +628,6 @@ This theorem gives us leeway when trying to pick a derivative: we can pick out t
 bounds, and that tells us how much ``wiggle room'' we have. This is helpful
 because some of the intermediary functions may be much easier to compute than
 others, as we will see in \cref{sec:datalogDifferentiability}.
-
-One way to get minimal and maximal derivatives is from minimal and maximal minus
-operators (if we are in a complete change action).
-
-\begin{defn}[Minus ordering]
-  $\cminus_1 \minusOrder \cminus_2$ iff for all $a,b \in A$, $a \cminus_1 b
-  \changeOrder a \cminus_2 b$.
-\end{defn}
-
-This implies an ordering on the corresponding derivatives: if $\cminus_1 \minusOrder \cminus_2$ then
-$\derive{f}_{\cminus_1} \changeOrder \derive{f}_{\cminus_2}$.
-
-Which gives us a correspondence between maximal minus operators and maximal derivatives.
-
-\begin{prop}
-  \label{prop:maximalMinusDerivatives}
-  If $\cminus$ is a minimal (maximal) minus operator with respect to
-  $\minusOrder$, then $\derive{f}_\cminus$ is a minimal (maximal) derivative.
-\end{prop}
 
 \subsection{Directed-complete partial orders}
 
