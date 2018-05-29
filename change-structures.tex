@@ -883,7 +883,8 @@ and update it by changing the edge relation $e$.
 However, this requires us to have a derivative for the fixpoint operator
 $\fixpoint$ with respect to the function which it takes the fixpoint of.
 
-\begin{defn}
+\begin{defn}[Derivatives of fixpoints]
+\label{def:fixpointDerivatives}
   Let $\cstr{A}$ be a change action, $\fixpoint$ a fixpoint operator for
   endofunctions on $A$, and $\derive{\ev}$ be a derivative of the evaluation map.
   
@@ -901,20 +902,12 @@ $\fixpoint$ with respect to the function which it takes the fixpoint of.
   Let
   \begin{itemize}
     \item $\cstr{A}$ be a change action
-    \item $\fixpoint : (A \rightarrow A) \rightarrow A}$ be a fixpoint operator
+    \item $\fixpoint : (A \rightarrow A) \rightarrow A$ be a fixpoint operator
     \item $f: \cstr{A} \rightarrow \cstr{A}$ be a differentiable function
     \item $\change{f} \in \changes{(A \rightarrow A)}$ be a function change 
     \item $\derive{\ev}$ be a derivative of the evaluation map
   \end{itemize}
-
-  Then a change $\change{w} \in \Delta A$ satisfies
-  the equation:
-  \begin{equation}\label{eqn:fixcondition}
-    \change{w} = \adjust(f, \change{f})(\change{w})
-  \end{equation}
-  if and only if $\fixpoint(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$.
-
-  In particular, $\fixpoint(f) \cplus \derive{\fixpoint}(f, \change{f})$ is a fixpoint
+  Then $\fixpoint(f) \cplus \derive{\fixpoint}(f, \change{f})$ is a fixpoint
   of $f \cplus \change{f}$.
 \end{thm}
 \ifproofs
@@ -928,7 +921,8 @@ that $\fixpoint(f) \cplus \derive{\fixpoint}(f, \change{f})$ computes \emph{a} f
 the same one computed by $\fixpoint{(f \cplus \change{f})}$.
 
 However, if we restrict ourselves to directed-complete partial orders, least
-fixpoints, and continuous change actions, then $\derive{\lfp}$ \emph{is} a
+fixpoints, and continuous change actions, then $\derive{\lfp}$ (using the
+derivative definition from \cref{def:fixpointDerivatives}) \emph{is} a
 derivative of $\lfp$. This is not too onerous a restriction, since this is
 the setting in which we normally compute fixpoints anyway.
 
@@ -937,7 +931,7 @@ Since $\lfp$ is characterized as the limit of a chain of functions,
 $\derive{\iter_n}$ of each iteration map 
 such that the resulting set $\{ \derive{\iter_n} \}$ is directed, then $\sqcup_{n \in \NN}\derive{\iter_n}$ will be a derivative of $\lfp$.
 
-These correspond to the other derivative of $\iter$ - this time with respect to
+These correspond to the other derivative of $\iter$ \textemdash this time with respect to
 $f$. While we are differentiating with respect to $f$, we are still going to
 need to define our derivatives inductively in terms of $n$.
 
@@ -969,7 +963,8 @@ Which has the property that
 
 In fact, the recursion here is not \emph{mutual}: $\iter_n$ does
 not depend on $\derive{\iter_n}$. However, writing it in this way makes it
-amenable to computation by fixpoint, and we will in fact be able to avoid the recomputation of $\iter_n$.
+amenable to computation by fixpoint, and we will in fact be able to avoid the
+recomputation of $\iter_n$ when we show that it is equivalent to $\derive{\lfp}$.
 
 \begin{thm}[name=Derivatives of least fixpoint operators, restate=leastFixpointDerivatives]
   \label{thm:leastFixpointDerivatives}
@@ -989,8 +984,8 @@ amenable to computation by fixpoint, and we will in fact be able to avoid the re
 \end{proof}
 \fi
 
-Computing the derivative still requires computing a fixpoint (over the change
-lattice), but this may still be significantly less expensive than the
+Computing this derivative still requires computing a fixpoint \textemdash over the change
+lattice \textemdash but this may still be significantly less expensive than the
 alternative ``update strategy'': throw everything away and start
 again (which will itself require a fixpoint computation).
 
@@ -1015,8 +1010,7 @@ Datalog is usually given a logical semantics wherein we look for models that
 satisfy the program. We will instead give a simple denotational semantics that treats a Datalog
 program as denoting a family of relations.
 
-We will adopt an equivalent of the usual closed-world assumption to give a
-denotation to give a denotation to negation.
+We will adopt the usual closed-world assumption to give a denotation to negation.
 
 \begin{defn}[Closed-world assumption and negation]
   There exists a universal relation $\universalRel$.
@@ -1076,7 +1070,7 @@ to the denotation of each predicate, to get a new product of relations.
 Whether or not this program semantics exists will depend on whether the fixpoint
 exists. Typically this is ensured by constraining the program such that $\consq$
 is monotone (or, in the context of a dcpo, continuous). We can be agnostic
-about this when applying \cref{thm:fixpointIter}, but it will be a requirement to
+about this when applying \cref{thm:fixpointIter}, but it is a requirement to
 apply \cref{thm:leastFixpointDerivatives}.
 
 \subsection{Differentiability of Datalog semantics}
@@ -1109,10 +1103,9 @@ guaranteed that the result is sound.\footnote{The idea of using an approximation
 to the precise derivative, and a soundness condition, appears in \textcite{bancilhon1986amateur}.}
 
 There is also the question of how to compute the derivative. Fortunately, the
-maximal and minimal minus operators are actually representable as pairs of formulae
-in Datalog, and so we can compute the derivative via a pair of formualae that
-satisfy those bounds, allowing us to reuse our machinery for evaluating Datalog
-formulae.\footnote{Indeed, if this process is occurring in an optimizing compiler,
+maximal and minimal minus operators are representable as pairs of Datalog
+formulae, and so we can reuse an existing Datalog formula evaluator.\footnote{
+  Indeed, if this process is occurring in an optimizing compiler,
   the derivative formulae can themselves be optimized. This is very 
   beneficial in practice, since the initial formulae may be quite complex.}
 
@@ -1123,9 +1116,9 @@ for our evaluation engine to compute, even if the results are larger.
 The upshot of these considerations is that the optimal choice of derivatives is likely
 to be quite dependent on the precise variant of Datalog being evaluated, and the
 specifics of the evaluation engine. Here is one possibility.\footnote{These are
-  the rules actually in use at Semmle. We arrived at them by starting with the
+  the derivatives actually in use at Semmle. We arrived at them by starting with the
   minimal derivative and then simplifying and weakening it while preserving the
-  bound given by the maximal derivative.}
+  soundness bound given by the maximal derivative.}
 
 \newcommand{\bothdiff}{\diamond}
 \newcommand{\bothchanges}{\rho}
@@ -1143,7 +1136,7 @@ specifics of the evaluation engine. Here is one possibility.\footnote{These are
 
   Additionally, let
   \begin{displaymath}
-    \diamond X \defeq X \twist (\updiff X, \downdiff X)
+    \diamond X \defeq X \twist (\updiff(X), \downdiff(X))
   \end{displaymath}
   in the following.
 
@@ -1151,22 +1144,22 @@ specifics of the evaluation engine. Here is one possibility.\footnote{These are
   \updiff(\bot) &\defeq \bot\\
   \updiff(\top) &\defeq \bot\\
   \updiff(R_j) &\defeq \updiff R_j \tag{where $\updiff R_j$ is the first component of the $j$th element of $\bothchanges$}\\
-  \updiff(T\vee U) &\defeq \updiff T \vee \updiff U\\
-  \updiff(T\wedge U) &\defeq (\updiff T\wedge \bothdiff U)
+  \updiff(T\vee U) &\defeq \updiff(T) \vee \updiff (U)\\
+  \updiff(T\wedge U) &\defeq (\updiff(T)\wedge \bothdiff(U))
                            \vee
-                           (\updiff U \wedge \bothdiff T)\\
-  \updiff(\neg T) &\defeq \downdiff T\\
-  \updiff(\exists x.T) &\defeq \exists x.\updiff T\\
+                           (\updiff(U) \wedge \bothdiff(T))\\
+  \updiff(\neg T) &\defeq \downdiff(T)\\
+  \updiff(\exists x.T) &\defeq \exists x.\updiff(T)\\
     \\
   \downdiff\bot &\defeq \bot\\
   \downdiff\top &\defeq \bot\\
   \downdiff R &\defeq \downdiff R_j \tag{where $\downdiff R_j$ is the second component of the $j$th element of $\bothchanges$}\\
-  \downdiff(T\vee U) &\defeq (\downdiff T \wedge \neg \bothdiff U)
+  \downdiff(T\vee U) &\defeq (\downdiff(T) \wedge \neg \bothdiff(U))
                            \vee
-                           (\downdiff U \wedge \neg \bothdiff T)\\
-  \downdiff(T\wedge U) &\defeq (\downdiff T\wedge U) \vee (T \wedge \downdiff U)\\
+                           (\downdiff(U) \wedge \neg \bothdiff(T))\\
+  \downdiff(T\wedge U) &\defeq (\downdiff(T)\wedge U) \vee (T \wedge \downdiff(U))\\
   \downdiff(\neg T) &\defeq \updiff T\\
-  \downdiff(\exists x.T) &\defeq \exists x.\downdiff T \wedge \neg \exists x.\bothdiff T
+  \downdiff(\exists x.T) &\defeq \exists x.\downdiff(T) \wedge \neg \exists x.\bothdiff(T)
   \end{align*}
 \end{thm}
 \ifproofs
@@ -1180,26 +1173,26 @@ and $\downdiff$, but the cases for $\exists$ look quite different.
 This is because we have chosen a dialect of Datalog without a primitive universal quantifier.
 If we did have one, its cases would be dual to those for $\exists$, namely:
 \begin{align*}
-\updiff(\forall x.T) &= \exists x. \updiff T \wedge \forall x. \bothdiff T\\
-\downdiff(\forall x.T) &= \forall x. \downdiff T
+\updiff(\forall x.T) &= \exists x. \updiff(T) \wedge \forall x. \bothdiff(T)\\
+\downdiff(\forall x.T) &= \forall x. \downdiff(T)
 \end{align*}
 
 We can now give a derivative for our $treeP$ program!
 
 Here is the upwards difference:
 \begin{align*}
-  \updiff treeP(x) \leftarrow & p(x)\\
+  \updiff(treeP(x)) \leftarrow & p(x)\\
     &\wedge
     \exists y. (
       child(x, y)
       \wedge
-      \updiff treeP(y)
+      \updiff(treeP(y))
     )\\
     &\wedge 
     \neg \exists y. (
       child(x, y)
       \wedge
-      \neg \bothdiff treeP(y)
+      \neg \bothdiff(treeP(y))
     )
 \end{align*}
 
@@ -1308,7 +1301,7 @@ exponentials that we get from the categorical equivalence with $\cat{PreOrd}$,
 and (when we can use them) pointwise differences are easier to work with.
 
 The equivalence of our presentations means that our work should be compatible
-with ILC. The rules we give in \cref{sec:datalogDifferentiability} are more or
+with ILC. The derivatives we give in \cref{sec:datalogDifferentiability} are more or
 less a ``change semantics'' for Datalog \autocite[See][section
 3.5]{cai2014changes}. 
 
@@ -1321,7 +1314,7 @@ S-acts $\cat{SAct}$: the objects of $\cat{SAct}$ all maintain the same monoid
 structure, whereas we are interested in changing both the base set \emph{and} the structure of the act.
 
 There are similarities: if we compare the definition of an ``act-preserving''
-homeomorphism in $\cat{SAct} $\autocite[See][]{kilp2000monoids} we can see that the structure is
+homeomorphism in $\cat{SAct}$ \autocite[See][]{kilp2000monoids} we can see that the structure is
 quite similar to the definition of differentiability:
 \begin{displaymath}
   f(a \splus s) = f(a) \splus s
@@ -1349,7 +1342,7 @@ don't require our changes to always be increasing.
 
 \subsubsection{Incremental evaluation}
 
-The earliest explication of semi-naive evaluation as a derivative process
+The earliest interpretation of semi-naive evaluation as a derivative process
 appears in \textcite{bancilhon1986naive}. The idea of using an approximate derivative
 and the requisite soundness condition appears as a throwaway comment in
 \textcite[][section 3.2.2]{bancilhon1986amateur}, and as far as we know nobody has since
@@ -1772,6 +1765,14 @@ helpful comments on the manuscript.
 \fixpointPseudoDerivatives*
 \begin{proof}
   \label{prf:fixpointPseudoDerivatives}
+  
+  We show that a change $\change{w} \in \Delta A$ satisfies
+  the equation:
+  \begin{equation}\label{eqn:fixcondition}
+    \change{w} = \adjust(f, \change{f})(\change{w})
+  \end{equation}
+  if and only if $\fixpoint(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$.
+
   Let $\change{w} \in \Delta A$ satisfy \cref{eqn:fixcondition}. Then
   \begin{align*}
     &(f \cplus \change{f})(\fixpoint_A(f) \cplus \change{w})\\
