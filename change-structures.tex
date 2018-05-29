@@ -73,8 +73,8 @@ closure of an edge relation $e$:
 \end{align*}
 
 The semantics of Datalog tells us that the denotation of this program is the
-least fixpoint of the rule $tc$. Kleene's Theorem tells us that we can reach
-this by repeatedly applying the rule, starting from the empty relation. For example, supposing
+least fixpoint of the rule $tc$. Kleene's Theorem tells us that we can in fact
+compute this by repeatedly applying the rule to fixpoint, starting from the empty relation. For example, supposing
 that $e = \{ (1, 2), (2, 3), (3, 4) \}$:
 \begin{center}
   \begin{tabular} {p{3.5em} p{10em} p{10em}}
@@ -89,15 +89,15 @@ that $e = \{ (1, 2), (2, 3), (3, 4) \}$:
 \end{center}
 \medskip
 
-And then we have reached fixpoint, so we are done.
+And then we have reached a fixpoint, so we are done.
 
-However, this process is quite wasteful. We deduced $(1,2)$ at every iteration,
-even though we had already deduced it in the first iteration. In fact, for a
+However, this process is quite wasteful. We deduced the fact $(1,2)$ at every iteration,
+even though we had already deduced it in the first iteration. Indeed, for a
 chain of $n$ such edges we will deduce $O(n^2)$ facts along the way.
 
-The standard improvement to this is ``semi-naive'' evaluation, where we transform
-the program into a \emph{delta} program that only deduces the new facts at each
-iteration, which we gradually accumulate \autocite[See][section
+The standard improvement to this evaluation strategy is ``semi-naive'' evaluation, where we transform
+the program into a \emph{delta} program that only deduces the \emph{new} facts at each
+iteration. We can then gradually accumulate these to compute the final relation \autocite[See][section
 13.1]{abiteboul1995foundations}.
 \begin{align*}
   \Delta tc_{0}(x, y) &\leftarrow e(x, y)\\
@@ -123,7 +123,7 @@ This is much better \textemdash we have turned a quadratic computation into a li
 
 But the delta rule translation works only for traditional Datalog. It is common to
 liberalise the formula syntax with additional features, such as disjunction,
-existential quantification, negation, and aggregates.\footnote{ See, for
+existential quantification, negation, and aggregation.\footnote{ See, for
   example, \autocites(LogiQL)(){logicbloxWebsite}{halpin2014logiql},
   \autocites(Datomic)(){datomicWebsite},
   \autocites(Souffle)(){souffleWebsite}{scholz2016fast}, and
@@ -172,16 +172,17 @@ We start by generalizing change structures to
 have nice categorical properties (\cref{sec:category}), and exist for more structures (\cref{sec:moreStructures}).
 
 We then show how to compute fixpoints incrementally, and also how to perform
-incremental updates of already computed fixpoint expressions, given a change to
+incremental maintenance of already computed fixpoint expressions, given a change to
 the function of which the fixpoint is taken (\cref{sec:fixpoints}).
 
 Finally, we put all this together into a generic account of incremental
-computation and update of Datalog programs, showing how to handle 
+computation and maintenance of Datalog programs, showing how to handle 
 language constructs such as negation, disjunction, and additional well-behaved
 extensions (\cref{sec:datalog}). This provides the world's first incremental
-evaluation and update mechanism for Datalog that can handle these features. Moreover, the structure of the
+evaluation and maintenance mechanism for Datalog that can handle these features. Moreover, the structure of the
 proof is modular, and can accommodate arbitrary additional
-formula constructs (\cref{sec:extensions}).
+formula constructs (\cref{sec:extensions}). The technique for handling fixpoints
+is also applicable to other programming languages.
 
 We have omitted the proofs from this paper. Most of the results have routine
 proofs, but the proofs of the more substantial results
@@ -196,7 +197,13 @@ the base set using an operator $\cplus$ (pronounced ``smush''). We also require
 some structure on the changes themselves: they must form a \emph{monoid action}
 on the base set.\footnote{The requirement that the change set be a monoid is convenient but in
   fact inessential: given any set with an action on the base set, we can take the
-  free monoid over the action set to obtain a monoid action.}
+  free monoid over the action set to obtain a monoid action.}\footnote{
+Requiring the change set to be monoid action gives us a reason to think that
+change actions are an adequate representation of changes: any subset of $A
+\rightarrow A$ which is closed under composition can be
+represented as a monoid action, so we are able to capture all of these as change actions.}
+
+\todompj{These footnotes read weirdly together}
 
 \begin{defn}[Change actions]
   A \emph{change action} is defined as:
@@ -209,17 +216,46 @@ on the base set.\footnote{The requirement that the change set be a monoid is con
   \changes{A} \rightarrow A$ is a monoid action on $A$.
 
   We will call $A$ the base set, and $\changes{A}$ the change set of the change
-  action. We will use $\splus$ for the monoid action of $\changes{A}$, and
+  action. We will use $\splus$ for the monoid operation of $\changes{A}$, and
   $\mzero$ for its identity element. We may abbreviate $\cstruct{A}{\changes{A}}{\cplus}$ to $\cstr{A}_\cplus$.
 \end{defn}
 
-The fact that the change set is a monoid action gives us a reason to think that
-change actions are an adequate representation of changes: any subset of $A
-\rightarrow A$ which is closed under composition can be
-represented as a monoid action, so we are able to capture all of these as change actions.
+A typical change action is $\cstruct{[A]}{[A]}{\doubleplus}$. Here we can change
+a list (or stream) by concatenating another stream onto it. The changes
+themselves can be combined using $\doubleplus$ as the monoid operation, and this
+is a monoid action: $(a \doubleplus b) \doubleplus c = a \left( b \doubleplus c \right)$.
+
+This is a very common case: any monoid $(A, \splus)$ can be seen as a change action
+$\cstruct{A}{A}{\splus}$. Many practical change actions
+can be constructed in this way. In particular, for any change action $\cstruct{A}{\changes{A}}{\cplus}$,
+$\cstruct{\changes{A}}{\changes{A}}{\splus}$ is also a change action. This means
+that we don't have to do any extra work to talk about changes to changes \textemdash we can always take $\changes{\changes{A}} = \changes{A}$.
+
+Here are some other recurring examples of change actions:
+\begin{itemize}
+  \item $\cstr{A}_\discrete \defeq \cstruct{A}{\emptyset}{\lambda(a, da). a}$,
+    which we call the \emph{discrete} change action on any base set.
+  \item $\cstr{A}_\Rightarrow \defeq \cstruct{A}{\exponential{A}{A}}{\ev}$, where $A$ is some
+    category, $\exponential{A}{A}$ is the exponential object with the
+    composition monoid, and $\ev$ is the evaluation map
+    (for example, functions and function application).
+  \item $\{A\}$, the type of sets, has change actions $\cstruct{\{A\}}{\{A\}}{\cup}$,\\ $\cstruct{\{A\}}{\{A\}}{\cap}$.
+  \item $\cstr{\NN} \defeq \cstruct{\NN}{\NN}{+}$, the natural numbers with itself as change
+    set under the additive monoid.
+\end{itemize}
+
+Many other notions in computer science can be naturally understood in terms of change actions, \emph{e.g.} databases
+and database updates, files and diffs, Git repositories and commits, even video compression
+algorithms that encode a frame as a series of changes to the previous frame.
+
+\subsection{Derivatives}
 
 The primary motivation for change actions is that they let us define
 \emph{derivatives} for functions.
+
+Derivatives capture the essence of incremental computation: given the value of a
+function at a point, and a change to that point, they tell you how to change the
+the function value to get the new value.
 
 \begin{defn}[Derivatives]
   \label{def:derivative}
@@ -246,10 +282,6 @@ action \textemdash where $a \cplus \change{a} = a \cplus \change{b}$ implies $\c
 For example, because $\{0\} \cap \{1\} = \{0\}
 \cap \{2\}$, $\cstruct{\mathcal{P}(\NN)}{\mathcal{P}(\NN)}{\cap}$ is not thin.
 
-Derivatives capture the essence of incremental computation: given the value of a
-function at a point, and a change to that point, they tell you how to compute
-the new value of the function.
-
 The derivative of a function can be computed compositionally, because derivatives satisfy the standard chain rule.
 
 \begin{thm}[The Chain Rule]
@@ -264,37 +296,12 @@ The derivative of a function can be computed compositionally, because derivative
   \end{displaymath}
 \end{thm}
 
-For our Datalog example, we are going to want a derivative of the semantics of
+For our Datalog case study, we are going to want a derivative of the semantics of
 Datalog. As we will discuss later (\cref{sec:datalog}), we can see Datalog's
 semantics as computing an n-tuple of relations. So we need a change action on
 $\Rel^n$, and fortunately we can construct good change actions for Boolean
 algebras in general (\cref{sec:booleanAlgebras}).
 
-Here are some other recurring examples of change actions:
-\begin{itemize}
-  \item $\cstr{A}_\discrete \defeq \cstruct{A}{\emptyset}{\lambda(a, da). a}$,
-    which we call the \emph{discrete} change action on any base set.
-  \item $\cstr{A}_\Rightarrow \defeq \cstruct{A}{\exponential{A}{A}}{\ev}$, where $A$ is some
-    category, $\exponential{A}{A}$ is the exponential object (which is a monoid
-    under composition), and $\ev$ is the evaluation map
-    (for example, functions and function application).
-  \item $[A]$, the type of lists (or streams) of elements of type $A$, has a
-    change action over concatenation ($\doubleplus$): $\cstruct{[A]}{[A]}{\doubleplus}$.
-  \item $\{A\}$, the type of sets, has change actions $\cstruct{\{A\}}{\{A\}}{\cup}$,\\ $\cstruct{\{A\}}{\{A\}}{\cap}$.
-  \item $\cstr{\NN} \defeq \cstruct{\NN}{\NN}{+}$, the natural numbers with itself as change
-    set under the additive monoid.
-\end{itemize}
-
-Indeed, any monoid $(A, \splus)$ can be seen as a change action
-$\cstruct{A}{A}{\splus}$, and the final three examples are instances of this. Many practical change actions
-can be constructed in this way. In particular, for any change action $\cstruct{A}{\changes{A}}{\cplus}$,
-$\cstruct{\changes{A}}{\changes{A}}{\splus}$ is also a change action. This means
-that we don't have to do any extra work to talk about higher derivatives of
-functions \textemdash we can always take $\changes{\changes{A}} = \changes{A}$.
-
-Many other notions in computer science can be naturally understood in terms of change actions, \emph{e.g.} databases
-and database updates, files and diffs, Git repositories and commits, even video compression
-algorithms that encode a frame as a series of changes to the previous frame.
 
 \subsection{Complete change actions and minus operators}
 
@@ -1230,7 +1237,7 @@ big results.
 \end{proof}
 \fi
 
-\begin{thm}[Incremental update of Datalog semantics]
+\begin{thm}[Incremental maintenance of Datalog semantics]
 \label{thm:diffUpdate}
   Datalog program semantics can be incrementally updated with changes to
   extensional relations.
@@ -1354,9 +1361,9 @@ As far as we know, traditional semi-naive is the state of
 the art in incremental, bottom-up, Datalog evaluation, and there are no strategies that
 accommodate additional language features such as parity-stratified negation and aggregates.
 
-\subsubsection{Incremental updates}
+\subsubsection{Incremental maintenance}
 
-There is existing literature on incremental updates to relational algebra
+There is existing literature on incremental maintenance of relational algebra
 expressions. In particular \textcite{griffin1997improved} following
 \textcite{qian1991incremental} shows the essential insight that it is necessary to
 track both an ``upwards'' and a ``downwards'' difference, and produces a set of
@@ -1406,7 +1413,7 @@ Datalog, allowing significant improvements in genericity, such as the use of
 higher-order functions. Since we have directly defined a change action and
 derivative operator for Datalog, our work could be used as a ``plugin'' in the sense
 of \citeauthor{cai2014changes}, allowing Datafun to compute its internal fixpoints
-incrementally, but also allowing Datafun expressions to be fully incrementally updated.
+incrementally, but also allowing Datafun expressions to be fully incrementally maintained.
 
 \subsection{Differential $\lambda$-calculus}
 
