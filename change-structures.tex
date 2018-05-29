@@ -302,7 +302,6 @@ semantics as computing an n-tuple of relations. So we need a change action on
 $\Rel^n$, and fortunately we can construct good change actions for Boolean
 algebras in general (\cref{sec:booleanAlgebras}).
 
-
 \subsection{Complete change actions and minus operators}
 
 Complete change actions are an important class of change actions, because they
@@ -344,17 +343,16 @@ of functions.
 \section{The category of change actions}
 \label{sec:category}
 
-Our argument is that change actions provide a good model for incremental
+We are arguing that change actions provide a good model for incremental
 computation in general. That means we want to be able to easily construct change
-actions over the wide variety of datatypes that we actually use in programming.
+actions over the wide variety of data types that we actually use in programming.
 
 We can do this by showing that the category of change actions has the usual
 useful constructions: products ($A \times B$), coproducts ($A + B$), and
 exponentials ($A \rightarrow B$). These are the
 building blocks from which we create our datatypes, and they will also be useful
-for our proofs in \cref{sec:fixpoints}: in particular, the \emph{evaluation map}
-$\ev$ that we get from exponentials will turn out to be differentiable, and its
-derivative has a deep connection to the incremental evaluation of functions (\cref{prop:incrementalization}).
+for our proofs in \cref{sec:fixpoints}: in particular, the derivative of the exponential \emph{evaluation map}
+$\ev$ has a deep connection to the incremental evaluation of functions (\cref{prop:incrementalization}).
 
 \begin{defn}[Category of change actions]
   We define the category $\cat{CAct}$ of change actions. The objects are
@@ -734,8 +732,8 @@ We can think of $\cstr{L}_\superpose$ as tracking changes as pairs of ``upwards'
   and ``downwards'' change action glued together, but here it is simpler to
   just go directly to the useful change action.}  
 
-Boolean algebras also have concrete definitions for unique maximal and minimal
-derivatives, giving them the usual preorder based on implication.\footnote{The change
+Boolean algebras also have unique maximal and minimal
+derivatives, under the usual preorder based on implication.\footnote{The change
 set is, as usual, given the change preorder, which in this case corresponds to
 the natural order on $L \times L^{\textrm{op}}$.}
 
@@ -792,15 +790,16 @@ iteration function $\iter$:
 \end{align*}
 
 The iteration function is going to be the basis for everything in this section:
-we can take the partial derivative with respect to $n$, and this will give us a way to get
-to the next iteration incrementally; and we can compute the partial derivative
+we can take the ``partial derivative'' with respect to $n$, and this will give us a way to get
+to the next iteration incrementally; and we can take the partial derivative
 with respect to $f$, and this will give us a way to get from iterating $f$ to iterating $f
 \cplus \change{f}$.\footnote{The sharp-eyed reader may have noticed that we
   could also abstract out the base point (which we have just specified as
   $\bot$) and differentiate with respect to that.}
 
 To avoid confusion, we shall write $\iter_f$ when we are holding $f$ constant,
-and $\iter_n$ when we are holding $n$ constant.
+and $\iter_n$ when we are holding $n$ constant. We will also subscript fixpoint
+operators with the lattice over which they operate when it is not obvious from context.
 
 \subsection{Incremental computation of fixpoints}
 
@@ -863,13 +862,13 @@ not continuous.
 \subsection{Derivatives of fixpoints}
 \label{sec:fixpointDerivatives}
 
-The previous section has shown us how to use derivatives to compute fixpoints
-more efficiently, but we might also want to take the derivative of the fixpoint
-operator itself. The typical case for this will be where we have some fixpoint
+In the previous section we have shown how to use derivatives to compute fixpoints
+more efficiently, but we also want to take the derivative of the fixpoint
+operator itself. The typical use case for this is where we have some fixpoint
 \begin{displaymath}
   \fixpoint (\lambda X . F(E, X))
 \end{displaymath}
-and we now wish to apply a change to $E$ and compute
+and we now wish to apply a change $\change{E}$ to $E$ and compute
 \begin{displaymath}
   \fixpoint (\lambda X . F(E \cplus \change{E}, X))
 \end{displaymath}
@@ -877,7 +876,7 @@ and we now wish to apply a change to $E$ and compute
 This amounts to applying a change to the \emph{function} whose fixpoint we are taking.
 
 In Datalog this would allow us to update a recursively defined relation given an
-update to one of its non-recursive dependencies, or the base extensional database.
+update to one of its non-recursive dependencies, or the extensional database.
 For example, we might want to take the transitive closure relation
 and update it by changing the edge relation $e$.
 
@@ -885,14 +884,13 @@ However, this requires us to have a derivative for the fixpoint operator
 $\fixpoint$ with respect to the function which it takes the fixpoint of.
 
 \begin{defn}
-  Let $\cstr{A}$ be a change action, $\fixpoint_A$ a fixpoint operator, and
-  $\derive{\ev}$ be a derivative of the evaluation map.
+  Let $\cstr{A}$ be a change action, $\fixpoint$ a fixpoint operator for
+  endofunctions on $A$, and $\derive{\ev}$ be a derivative of the evaluation map.
   
   Then we define
   \begin{align*}
     &\adjust : (A \rightarrow A) \times \changes{(A \rightarrow A)} \rightarrow (\changes{A} \rightarrow \changes{A})\\
-    &\adjust(f, \change{f}) \defeq \lambda\ \change{a} . \derive{\ev}((f,
-    \fixpoint_A(f), (\change{f}, \change{a})))\\
+    &\adjust(f, \change{f}) \defeq \lambda\ \change{a} . \derive{\ev}((f, \fixpoint_A(f)), (\change{f}, \change{a}))\\
     &\derive{\fixpoint_A} : (A \rightarrow A) \times \changes{(A \rightarrow A)} \rightarrow \changes{A}\\
     &\derive{\fixpoint_A}(f, \change{f}) \defeq \fixpoint_{\changes{A}}(\adjust(f, \change{f}))
   \end{align*}
@@ -903,7 +901,7 @@ $\fixpoint$ with respect to the function which it takes the fixpoint of.
   Let
   \begin{itemize}
     \item $\cstr{A}$ be a change action
-    \item $\fixpoint : (\cstr{A} \rightarrow \cstr{A}) \rightarrow \cstr{A}$ be a fixpoint operator
+    \item $\fixpoint : (A \rightarrow A) \rightarrow A}$ be a fixpoint operator
     \item $f: \cstr{A} \rightarrow \cstr{A}$ be a differentiable function
     \item $\change{f} \in \changes{(A \rightarrow A)}$ be a function change 
     \item $\derive{\ev}$ be a derivative of the evaluation map
