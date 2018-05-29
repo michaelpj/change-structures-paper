@@ -682,7 +682,7 @@ Becik's Theorem \autocite[][section 10.1]{winskel1993formal}, but it has a strai
   \end{displaymath}
   Then
   \begin{displaymath}
-    \lfp(h) = (\lfp(f), \lfp(g(\lfp(f))))
+    \lfp(h) = (\lfp(f), \lfp(\lambda b . g(\lfp(f), b)))
   \end{displaymath}
 \end{prop}
 \ifproofs
@@ -1631,7 +1631,7 @@ helpful comments on the manuscript.
   \label{prf:factoringFixpoints}
   Let
   \begin{displaymath}
-    p(b) = (\lfp f, g(\lfp(f), b))
+    p(b) = (\lfp(f), g(\lfp(f), b))
   \end{displaymath}
   Then $h(h^i(\bot)) \leq p(p^i(\bot))$ (by simple induction), and so by continuity
   \begin{displaymath}
@@ -1640,7 +1640,7 @@ helpful comments on the manuscript.
 
   But $h(\lfp(p)) = \lfp(p)$, so $\lfp(h) \leq \lfp(p)$, since $\lfp(h)$ is least.
 
-  Hence $\lfp(h) = \lfp(p) = (\lfp(f), \lfp(g(\lfp(f))))$.
+  Hence $\lfp(h) = \lfp(p) = (\lfp(f), \lfp(\lambda b . g(\lfp(f), b)))$.
 \end{proof}
 
 \lsuperpose*
