@@ -23,7 +23,6 @@
 \usepackage{hyperref}
 
 \newcommand{\todoall}[1]{\todo[inline,color=black!30,author=All]{#1}}
-\newcommand{\todokcg}[1]{\todo[inline,color=pink!60,author=Katriel]{#1}}
 \newcommand{\todompj}[1]{\todo[inline,color=yellow!40,author=Michael]{#1}}
 \newcommand{\todomario}[1]{\todo[inline,color=blue!40,author=Mario]{#1}}
 
@@ -343,6 +342,10 @@ of functions.
 \section{The category of change actions}
 \label{sec:category}
 
+\todompj{Move after the more concrete bits? I think the only bit from here we
+  need is the bits about the evaluation map for the fixpoint section, and we
+  implicitly use products in a few cases.}
+
 We are arguing that change actions provide a good model for incremental
 computation in general. That means we want to be able to easily construct change
 actions over the wide variety of data types that we actually use in programming.
@@ -362,6 +365,9 @@ $\ev$ has a deep connection to the incremental evaluation of functions (\cref{pr
 In \cref{sec:moreStructures} we will look at subsets of $\cat{CAct}$ with
 interesting properties. However, for simplicity we will keep working in $\cat{CAct}$
 throughout, rather than defining subcategories.
+
+\todompj{Maybe we should just define the subcategories? I think they are all
+  straightforwardly CCCs if everything is pointwise, not sure in general.}
 
 \subsection{Equivalence with PreOrd}
 
@@ -989,6 +995,11 @@ lattice \textemdash but this may still be significantly less expensive than the
 alternative ``update strategy'': throw everything away and start
 again (which will itself require a fixpoint computation).
 
+\todompj{Worked example of updating a fixpoint? e.g. a TC. Would be painful, but
+  probably helpful. Annoyingly, we haven't given the Datalog semantics yet.
+  Perhaps we should do that after boolean algebras, then this section, then put
+  the pieces together.}
+
 \section{Datalog}
 \label{sec:datalog}
 
@@ -1026,6 +1037,8 @@ complete Boolean
 algebra.\footnote{Technically we need to use the set of relations of a given
   arity. In practice it is easy to make the arities match up, and we will gloss
   over them for clarity.}
+
+\todompj{Consider recasting this in terms of satisfying assignments}
 
 \begin{defn}[Formula semantics]
   A Datalog formula $T$ denotes a function from its free relation variables to
@@ -1180,7 +1193,7 @@ If we did have one, its cases would be dual to those for $\exists$, namely:
 We can now give a derivative for our $treeP$ program!
 
 Here is the upwards difference:
-\begin{align*}
+\begin{align*}\label{eqn:updiffTreeP}
   \updiff(treeP(x)) \leftarrow & p(x)\\
     &\wedge
     \exists y. (
@@ -1196,13 +1209,19 @@ Here is the upwards difference:
     )
 \end{align*}
 
-This is still not especially easy to compute. The third conjunct amounts to
-recomputing the whole of the recursive part. The second conjunct gives us a
-guard: we only need to do the work if there is \emph{some} change in the body of
-our existential. This shows that our derivatives aren't a panacea: it is simply \emph{hard} to compute
+This is still not especially easy to compute. If we naively compute it, the
+third conjunct requires us to recompute the whole of the recursive part. However,
+the second conjunct gives us a
+guard: we only need to evaluate the third conjunct if there is \emph{some} change in the body of
+our existential.
+
+This shows that our derivatives aren't a panacea: it is simply \emph{hard} to compute
 downwards differences for $\exists$ (and, equivalently, upwards differences for
-$\forall$). However, this still allows us to avoid re-evaluating the whole
-formula in many cases, and the inefficiency is local to this subformula.
+$\forall$) because we must check that there is no other way of deriving the same
+facts.\footnote{The ``support'' data structures introduced by
+  \autocite{gupta1993maintaining} are an attempt to avoid this issue by
+  tracking the number of derivations of each tuple.} However, we can still avoid
+the re-evaluation in many cases, and the inefficiency is local to this subformula.
 
 \subsection{Incremental evaluation of Datalog}
 \label{sec:datalogIncr}
@@ -1228,9 +1247,12 @@ big results.
 \end{proof}
 \fi
 
+We knew how to do this already (semi-naive evaluation), but our proof is more
+modular now, so we will be able to extend this result more easily.
+
 \begin{thm}[Incremental maintenance of Datalog semantics]
 \label{thm:diffUpdate}
-  Datalog program semantics can be incrementally updated with changes to
+  Datalog program semantics can be incrementally maintained with changes to
   extensional relations.
 \end{thm}
 \ifproofs
@@ -1238,6 +1260,9 @@ big results.
   Corollary of \cref{thm:leastFixpointDerivatives} and \cref{corollary:consqDiff}.
 \end{proof}
 \fi
+
+Again, we know how to do this (\autocite{gupta1993maintaining} and successors),
+but again, the proof is now modular so we can extend it.
 
 \subsection{Extensions to Datalog}
 \label{sec:extensions}
@@ -1252,9 +1277,9 @@ A new formula construct must have:
   \item An implementation of $\updiff$ and $\downdiff$.
 \end{itemize}
 
-These are easy conditions to satisfy. The former is needed for the construct to even
-make sense, and because we are using the complete change action
-$\cstr{L}_\superpose$, the latter can \emph{always} be satisfied by using the maximal or
+These are easy conditions to satisfy. The former condition is part of the definition of a
+new construct, and because we are using the complete change action
+$\cstr{L}_\superpose$, the latter condition can \emph{always} be satisfied by using the maximal or
 minimal derivative. This justifies our claim that we can support
 \emph{arbitrary} additional formula constructs: although the maximal and minimal
 derivatives are likely to be impractical, having them
@@ -1268,9 +1293,9 @@ upwards derivative for recursive aggregates \autocite{demoor2013aggregates} is:
   \updiff(\textrm{agg}(vs \mid T \mid U)) \defeq \exists vs. (T \wedge \updiff{U}) \wedge \textrm{agg}(vs \mid T \mid U)
 \end{align*}
 
-While we can't give a precise derivative, similarly to the earlier example of the
-upwards difference of a universal quantifier, we can still provide a guard that
-prevents us from having to re-evaluate in all cases. 
+While we can't give a precise derivative, as in the earlier example
+\cref{eqn:updiffTreeP},
+we can still provide a guard that prevents us from having to re-evaluate in all cases. 
 
 \section{Related work}
 
