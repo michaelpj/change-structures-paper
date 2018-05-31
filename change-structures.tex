@@ -74,7 +74,7 @@ closure of an edge relation $e$:
 The semantics of Datalog tells us that the denotation of this program is the
 least fixpoint of the rule $tc$. Kleene's Theorem tells us that we can in fact
 compute this by repeatedly applying the rule to fixpoint, starting from the empty relation. For example, supposing
-that $e = \{ (1, 2), (2, 3), (3, 4) \}$:
+that $e = \{ (1, 2), (2, 3), (3, 4) \}$, we get the following evaluation trace:
 \begin{center}
   \begin{tabular} {p{3.5em} p{10em} p{10em}}
     Iteration & Newly deduced facts & Accumulated data in $tc$ \\
@@ -222,7 +222,7 @@ represented as a monoid action, so we are able to capture all of these as change
 A typical change action is $\cstruct{[A]}{[A]}{\doubleplus}$. Here we can change
 a list (or stream) by concatenating another stream onto it. The changes
 themselves can be combined using $\doubleplus$ as the monoid operation, and this
-is a monoid action: $(a \doubleplus b) \doubleplus c = a \left( b \doubleplus c \right)$.
+is a monoid action: $(a \doubleplus b) \doubleplus c = a \doubleplus \left( b \doubleplus c \right)$.
 
 This is a very common case: any monoid $(A, \splus)$ can be seen as a change action
 $\cstruct{A}{A}{\splus}$. Many practical change actions
@@ -238,12 +238,13 @@ Here are some other recurring examples of change actions:
     category, $\exponential{A}{A}$ is the exponential object with the
     composition monoid, and $\ev$ is the evaluation map
     (for example, functions and function application).
-  \item $\{A\}$, the type of sets, has change actions $\cstruct{\{A\}}{\{A\}}{\cup}$,\\ $\cstruct{\{A\}}{\{A\}}{\cap}$.
-  \item $\cstr{\NN} \defeq \cstruct{\NN}{\NN}{+}$, the natural numbers with itself as change
-    set under the additive monoid.
+  \item $\{A\}$, the type of sets, has change actions
+    $\cstruct{\{A\}}{\{A\}}{\cup}$, $\cstruct{\{A\}}{\{A\}}{\cap}$.
+  \item $\cstr{\NN} \defeq \cstruct{\NN}{\NN}{+}$, the natural numbers with
+    itself as the change set under the additive monoid.
 \end{itemize}
 
-Many other notions in computer science can be naturally understood in terms of change actions, \emph{e.g.} databases
+Many other notions in computer science can be understood in terms of change actions, \emph{e.g.} databases
 and database updates, files and diffs, Git repositories and commits, even video compression
 algorithms that encode a frame as a series of changes to the previous frame.
 
@@ -300,6 +301,9 @@ Datalog. As we will discuss later (\cref{sec:datalog}), we can see Datalog's
 semantics as computing an n-tuple of relations. So we need a change action on
 $\Rel^n$, and fortunately we can construct good change actions for Boolean
 algebras in general (\cref{sec:booleanAlgebras}).
+
+\todompj{I think we need to say something about minimality and why we're not
+  worrying about it. Perhaps here?}
 
 \subsection{Complete change actions and minus operators}
 
@@ -1187,13 +1191,12 @@ This is because we have chosen a dialect of Datalog without a primitive universa
 If we did have one, its cases would be dual to those for $\exists$, namely:
 \begin{align*}
 \updiff(\forall x.T) &= \exists x. \updiff(T) \wedge \forall x. \bothdiff(T)\\
-\downdiff(\forall x.T) &= \forall x. \downdiff(T)
+\downdiff(\forall x.T) &= \exists x. \downdiff(T)
 \end{align*}
 
-We can now give a derivative for our $treeP$ program!
-
-Here is the upwards difference:
-\begin{align*}\label{eqn:updiffTreeP}
+We can now give a derivative for our $treeP$ program (assuming there to be no
+changes to $p$ and $child$):
+\begin{align*}
   \updiff(treeP(x)) \leftarrow & p(x)\\
     &\wedge
     \exists y. (
@@ -1206,10 +1209,12 @@ Here is the upwards difference:
       child(x, y)
       \wedge
       \neg \bothdiff(treeP(y))
-    )
+    )\\
+  \downdiff(treeP(x)) \leftarrow & p(x)\\
+  &\wedge \exists y. \left( child(x, y) \wedge \downdiff(treeP(y)) \right)
 \end{align*}
 
-This is still not especially easy to compute. If we naively compute it, the
+The upwards difference in particular is still not especially easy to compute. If we naively compute it, the
 third conjunct requires us to recompute the whole of the recursive part. However,
 the second conjunct gives us a
 guard: we only need to evaluate the third conjunct if there is \emph{some} change in the body of
@@ -1293,9 +1298,7 @@ upwards derivative for recursive aggregates \autocite{demoor2013aggregates} is:
   \updiff(\textrm{agg}(vs \mid T \mid U)) \defeq \exists vs. (T \wedge \updiff{U}) \wedge \textrm{agg}(vs \mid T \mid U)
 \end{align*}
 
-While we can't give a precise derivative, as in the earlier example
-\cref{eqn:updiffTreeP},
-we can still provide a guard that prevents us from having to re-evaluate in all cases. 
+While we can't give a precise derivative, we can still provide a guard that prevents us from having to re-evaluate in all cases. 
 
 \section{Related work}
 
