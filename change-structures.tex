@@ -1125,9 +1125,11 @@ us to \emph{approximate} the most precise derivative while still being
 guaranteed that the result is sound.\footnote{The idea of using an approximation
 to the precise derivative, and a soundness condition, appears in \textcite{bancilhon1986amateur}.}
 
-There is also the question of how to compute the derivative. Fortunately, the
-maximal and minimal minus operators are representable as pairs of Datalog
-formulae, and so we can reuse an existing Datalog formula evaluator.\footnote{
+There is also the question of how to compute the derivative. Since the change
+action for boolean algebras gives $\changes{\Rel} = \left( \Rel, \Rel \right)$, it
+is possible and indeed very natural to compute the two components via a pair of
+Datalog formulae, which allows us to reuse our existing Datalog formula
+evaluator.\footnote{
   Indeed, if this process is occurring in an optimizing compiler,
   the derivative formulae can themselves be optimized. This is very 
   beneficial in practice, since the initial formulae may be quite complex.}
@@ -1138,8 +1140,8 @@ for our evaluation engine to compute, even if the results are larger.
 
 The upshot of these considerations is that the optimal choice of derivatives is likely
 to be quite dependent on the precise variant of Datalog being evaluated, and the
-specifics of the evaluation engine. Here is one possibility.\footnote{These are
-  the derivatives actually in use at Semmle. We arrived at them by starting with the
+specifics of the evaluation engine. Here is one possibility.\footnote{This is
+  the derivative actually in use at Semmle. We arrived at it by starting with the
   minimal derivative and then simplifying and weakening it while preserving the
   soundness bound given by the maximal derivative.}
 
@@ -1148,14 +1150,11 @@ specifics of the evaluation engine. Here is one possibility.\footnote{These are
 \begin{thm}[Concrete Datalog formula derivatives]
 \label{thm:concreteDatalog}
   We give two mutually recursive definitions,
-  $\updiff: \Formula \rightarrow \changes{\Rel^n} \rightarrow \changes{\Rel}$ and
-  $\downdiff: \Formula \rightarrow \changes{\Rel^n} \rightarrow \changes{\Rel}$, such
-  that $\updiff(t) \times \downdiff(t)$ is a derivative for the semantics of a Datalog formula $t$.
-
-  $\updiff$ and $\downdiff$ define functions which take an argument
-  $\bothchanges: \changes{\Rel^n}$ . However, this argument is passed down
-  unchanged through all recursive calls until it is used, so we shall leave it
-  implicit until it is used.
+  $\updiff: \Formula \rightarrow \Formula$ and
+  $\downdiff: \Formula \rightarrow \Formula$, such
+  that $\denote{\updiff(T)}(\overline{\updiff R}) \times
+  \denote{\downdiff(T)}(\overline{\downdiff R})$ is a derivative for
+  the semantics of a Datalog formula $T$.
 
   Additionally, let
   \begin{displaymath}
@@ -1166,7 +1165,7 @@ specifics of the evaluation engine. Here is one possibility.\footnote{These are
   \begin{align*}
   \updiff(\bot) &\defeq \bot\\
   \updiff(\top) &\defeq \bot\\
-  \updiff(R_j) &\defeq \updiff R_j \tag{where $\updiff R_j$ is the first component of the $j$th element of $\bothchanges$}\\
+  \updiff(R_j) &\defeq \updiff R_j \\
   \updiff(T\vee U) &\defeq \updiff(T) \vee \updiff (U)\\
   \updiff(T\wedge U) &\defeq (\updiff(T)\wedge \bothdiff(U))
                            \vee
@@ -1174,9 +1173,9 @@ specifics of the evaluation engine. Here is one possibility.\footnote{These are
   \updiff(\neg T) &\defeq \downdiff(T)\\
   \updiff(\exists x.T) &\defeq \exists x.\updiff(T)\\
     \\
-  \downdiff\bot &\defeq \bot\\
-  \downdiff\top &\defeq \bot\\
-  \downdiff R &\defeq \downdiff R_j \tag{where $\downdiff R_j$ is the second component of the $j$th element of $\bothchanges$}\\
+  \downdiff(\bot) &\defeq \bot\\
+  \downdiff(\top) &\defeq \bot\\
+  \downdiff(R_j) &\defeq \downdiff R_j \\
   \downdiff(T\vee U) &\defeq (\downdiff(T) \wedge \neg \bothdiff(U))
                            \vee
                            (\downdiff(U) \wedge \neg \bothdiff(T))\\
