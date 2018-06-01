@@ -537,6 +537,12 @@ Furthermore, since the products and exponentials of complete change actions are 
 the full subcategory of $\cat{CAct}$ formed by complete change actions is a Cartesian
 closed category of pointwise change actions.
 
+\todompj{On reflection (hah) I think we can do better: I think complete change
+  actions are a reflective subcategory, where the reflector is the
+  ``completion'' of a change action i.e. pick any complete change action on the
+  set. Or do we? We do if it's set based, since we can use $A \rightarrow A$ but
+  perhaps there are also ``uncompletable'' change actions.}
+
 Derivatives of the evaluation map, irrespective of a particular choice of change action on the
 exponential objects, give us a way to do incremental evaluation of function application:
 \begin{prop}[Incremental application]
@@ -1042,27 +1048,27 @@ algebra.\footnote{Technically we need to use the set of relations of a given
   arity. In practice it is easy to make the arities match up, and we will gloss
   over them for clarity.}
 
-\todompj{Consider recasting this in terms of satisfying assignments}
+The semantics of Datalog formulae are usually given in terms of satisfaction by
+structures. We would like to use a more denotational semantics (as is typical
+when working with fixpoints \autocite[See e.g.]{compton1994stratified}). We are
+going to parameterize by the parts of the structure that are usually variable,
+namely the assignments to variables and relation variables. We will assume we
+are otherwise working in the context of an ambient structure $\Phi$ that
+provides our universe and interpretation of constants.
+
+\todompj{Get rid of the overlines in favour of indices, will be clearer for most people.}
 
 \begin{defn}[Formula semantics]
   A Datalog formula $T$ denotes a function from its free relation variables to
-  $\Rel$, $\denote{\_} : \Formula \rightarrow \Rel^n \rightarrow \Rel$
-
-  $\denote{t}$ takes an argument $\overline{X} : \Rel^n$. However, this is
-  passed down unchanged through all recursive calls, so we will leave it
-  implicit except where it is used.
+  $\Rel$.
 
   \begin{align*}
-    \denote{R_j} &\defeq X_j \tag{where $X_j$ is the $j$th element of $\overline{X}$}\\
-    \denote{T \wedge U} &\defeq \denote{T} \cap \denote{U}\\
-    \denote{T \vee U} &\defeq \denote{T} \cup \denote{U}\\
-    \denote{\exists x. T} &\defeq \pi_x(\denote{T}) \tag{where $\pi_x(R)$ is the projection onto all columns except $x$}\\
-    \denote{\neg T} &\defeq \neg \denote{T}\\
-    \denote{x=y} &\defeq \Delta(x, y) \tag{where $\Delta$ is the diagonal relation}
+    \denote{\_} &: \Formula \rightarrow \Rel^n \rightarrow \Rel\\
+    \denote{T}(\overline{R}) &= \left\{ \left(\overline{a} \right) \mid \Phi \models T\left[ \overline{R}, \overline{a} \right] \right\}
   \end{align*}
 \end{defn}
 
-Since $\Rel$ is a complete Boolean algebra, and so is $\Rel^n$, $\denote{t}$ is
+Since $\Rel$ is a complete Boolean algebra, and so is $\Rel^n$, $\denote{\_}$ is
 a function between complete Boolean algebras.
 
 \begin{defn}[Immediate consequence operator]
