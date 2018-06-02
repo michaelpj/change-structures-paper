@@ -1020,7 +1020,7 @@ It is also a textbook example of the need for incremental computation, since as 
 The aim of this section is to argue that by viewing the computation
 of Datalog semantics as composed of differentiable functions we can
 bring the machinery that we've developed so far to bear, and give a flexible
-account of incremental evaluation. 
+account of incremental evaluation and maintenance. 
 
 Firstly, however, we must show that we can see the semantics of Datalog in terms
 of elements that we know how to handle: Boolean algebras and fixpoints.
@@ -1050,21 +1050,19 @@ algebra.\footnote{Technically we need to use the set of relations of a given
 
 The semantics of Datalog formulae are usually given in terms of satisfaction by
 structures. We would like to use a more denotational semantics (as is typical
-when working with fixpoints \autocite[See e.g.]{compton1994stratified}). We are
+when working with fixpoints \autocite[see e.g.][]{compton1994stratified}). We are
 going to parameterize by the parts of the structure that are usually variable,
 namely the assignments to variables and relation variables. We will assume we
 are otherwise working in the context of an ambient structure $\Phi$ that
 provides our universe and interpretation of constants.
-
-\todompj{Get rid of the overlines in favour of indices, will be clearer for most people.}
 
 \begin{defn}[Formula semantics]
   A Datalog formula $T$ denotes a function from its free relation variables to
   $\Rel$.
 
   \begin{align*}
-    \denote{\_} &: \Formula \rightarrow \Rel^n \rightarrow \Rel\\
-    \denote{T}(\overline{R}) &= \left\{ \left(\overline{a} \right) \mid \Phi \models T\left[ \overline{R}, \overline{a} \right] \right\}
+    &\denote{\_} : \Formula \rightarrow \Rel^n \rightarrow \Rel\\
+    &\denote{T}(R_1, \dots, R_n) = \left\{ \left(a_1, \dots \right) \mid \Phi \models T\left[R_1, \dots R_n, a_1, \dots \right] \right\}
   \end{align*}
 \end{defn}
 
@@ -1072,9 +1070,9 @@ Since $\Rel$ is a complete Boolean algebra, and so is $\Rel^n$, $\denote{\_}$ is
 a function between complete Boolean algebras.
 
 \begin{defn}[Immediate consequence operator]
-  Given a program $\mathcal{P} = \overline{P}$, the immediate consequence operator $\consq: \Rel^n \rightarrow \Rel^n$ is defined as follows:
+  Given a program $\mathcal{P} = (P_1, \dots, P_m)$, the immediate consequence operator $\consq: \Rel^n \rightarrow \Rel^n$ is defined as follows:
   \begin{displaymath}
-    \consq(\overline{R}) = \overline{\denote{P_j}(\overline{R})} \tag{where $P_j$ is the $j$th component of $\overline{P}$}
+    \consq(R_1, \dots, R_n) = (\denote{P_1}(R_1, \dots, R_n), \dots, \denote{P_m}(R_1, \dots, R_n))
   \end{displaymath}
 \end{defn}
 
@@ -1145,20 +1143,38 @@ specifics of the evaluation engine. Here is one possibility.\footnote{This is
   minimal derivative and then simplifying and weakening it while preserving the
   soundness bound given by the maximal derivative.}
 
+We will present the derivative as a pair of mutually recursive functions,
+$\updiff$ and $\downdiff$, which turns a formula $T$ into new formulae that compute
+the upwards and downwards parts of the derivative, respectively. As we expect
+from a derviative, the new formulae will have additional free relation variables
+for the upwards and downwards derivatives of the free relation variables of $T$.
+
 \newcommand{\bothdiff}{\diamond}
+
+We will also use an auxilliary function, $\bothdiff$, which computes the
+``next'' value of a term by applying the upwards and downwards derivatives.
+
+\todompj{We're talking about this as a semantic derivative, but with the way
+  we've defined it it's also a derivative for formulae under
+  denotational equivalence. Worth mentioning, perhaps.}
+
+\todompj{This still isn't quite totally clear.}
+
 \newcommand{\bothchanges}{\rho}
 \begin{thm}[Concrete Datalog formula derivatives]
 \label{thm:concreteDatalog}
   We give two mutually recursive definitions,
   $\updiff: \Formula \rightarrow \Formula$ and
   $\downdiff: \Formula \rightarrow \Formula$, such
-  that $\denote{\updiff(T)}(\overline{\updiff R}) \times
-  \denote{\downdiff(T)}(\overline{\downdiff R})$ is a derivative for
-  the semantics of a Datalog formula $T$.
+  that
+  $\denote{\updiff(T)}(\updiff R_1, \dots, \updiff R_n, \downdiff R_1, \dots, \downdiff R_n)
+  \times
+  \denote{\downdiff(T)}(\updiff R_1, \dots, \updiff R_n, \downdiff R_1, \dots, \downdiff R_n)$
+  is a derivative for $\denote{T}$.
 
   Additionally, let
   \begin{displaymath}
-    \diamond X \defeq X \twist (\updiff(X), \downdiff(X))
+    \bothdiff X \defeq X \twist (\updiff(X), \downdiff(X))
   \end{displaymath}
   in the following.
 
@@ -1180,7 +1196,7 @@ specifics of the evaluation engine. Here is one possibility.\footnote{This is
                            \vee
                            (\downdiff(U) \wedge \neg \bothdiff(T))\\
   \downdiff(T\wedge U) &\defeq (\downdiff(T)\wedge U) \vee (T \wedge \downdiff(U))\\
-  \downdiff(\neg T) &\defeq \updiff T\\
+  \downdiff(\neg T) &\defeq \updiff(T)\\
   \downdiff(\exists x.T) &\defeq \exists x.\downdiff(T) \wedge \neg \exists x.\bothdiff(T)
   \end{align*}
 \end{thm}
@@ -1219,11 +1235,11 @@ changes to $p$ and $child$):
   &\wedge \exists y. \left( child(x, y) \wedge \downdiff(treeP(y)) \right)
 \end{align*}
 
-The upwards difference in particular is still not especially easy to compute. If we naively compute it, the
+The upwards difference in particular is not especially easy to compute. If we naively compute it, the
 third conjunct requires us to recompute the whole of the recursive part. However,
 the second conjunct gives us a
-guard: we only need to evaluate the third conjunct if there is \emph{some} change in the body of
-our existential.
+guard: we only need to evaluate the third conjunct if the second conjunct is
+non-empty, i.e there is \emph{some} change in the body of the existential.
 
 This shows that our derivatives aren't a panacea: it is simply \emph{hard} to compute
 downwards differences for $\exists$ (and, equivalently, upwards differences for
@@ -1327,7 +1343,7 @@ useful for incremental computation on streams, yet they do not admit minus opera
 be forced to work with e.g. multisets admitting negative arities, as \citeauthor{cai2014changes} do.
 
 Our function changes (when well behaved) correspond to what \citeauthor{cai2014changes} call
-\emph{pointwise differences} \autocite[See][section 2.2]{cai2014changes}. As they point out, you can reconstruct their
+\emph{pointwise differences} \autocite[see][section 2.2]{cai2014changes}. As they point out, you can reconstruct their
 function changes from pointwise changes and derivatives, so the two formulations
 are equivalent. However, our function changes correspond to the
 exponentials that we get from the categorical equivalence with $\cat{PreOrd}$,
@@ -1335,7 +1351,7 @@ and (when we can use them) pointwise differences are easier to work with.
 
 The equivalence of our presentations means that our work should be compatible
 with ILC. The derivatives we give in \cref{sec:datalogDifferentiability} are more or
-less a ``change semantics'' for Datalog \autocite[See][section
+less a ``change semantics'' for Datalog \autocite[see][section
 3.5]{cai2014changes}. 
 
 \subsubsection{S-acts}
@@ -1347,7 +1363,7 @@ S-acts $\cat{SAct}$: the objects of $\cat{SAct}$ all maintain the same monoid
 structure, whereas we are interested in changing both the base set \emph{and} the structure of the act.
 
 There are similarities: if we compare the definition of an ``act-preserving''
-homeomorphism in $\cat{SAct}$ \autocite[See][]{kilp2000monoids} we can see that the structure is
+homeomorphism in $\cat{SAct}$ \autocite[see][]{kilp2000monoids} we can see that the structure is
 quite similar to the definition of differentiability:
 \begin{displaymath}
   f(a \splus s) = f(a) \splus s
