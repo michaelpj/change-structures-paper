@@ -175,9 +175,9 @@ incremental maintenance of already computed fixpoint expressions, given a change
 the function of which the fixpoint is taken (\cref{sec:fixpoints}).
 
 Finally, we put all this together into a generic account of incremental
-computation and maintenance of Datalog programs, showing how to handle 
+computation and maintenance of recursive Datalog programs, showing how to handle 
 language constructs such as negation, disjunction, and additional well-behaved
-extensions (\cref{sec:datalog}). This provides the world's first incremental
+extensions (\cref{sec:nonRecursiveDatalog}, \cref{sec:recursiveDatalog}). This provides the world's first incremental
 evaluation and maintenance mechanism for Datalog that can handle these features. Moreover, the structure of the
 proof is modular, and can accommodate arbitrary additional
 formula constructs (\cref{sec:extensions}). The technique for handling fixpoints
@@ -297,7 +297,7 @@ The derivative of a function can be computed compositionally, because derivative
 \end{thm}
 
 For our Datalog case study, we are going to want a derivative of the semantics of
-Datalog. As we will discuss later (\cref{sec:datalog}), we can see Datalog's
+Datalog. As we will discuss later (\cref{sec:nonRecursiveDatalog}, \cref{sec:recursiveDatalog}), we can see Datalog's
 semantics as computing an n-tuple of relations. So we need a change action on
 $\Rel^n$, and fortunately we can construct good change actions for Boolean
 algebras in general (\cref{sec:booleanAlgebras}).
@@ -785,14 +785,232 @@ all the derivatives on Boolean algebras:
 This makes \cref{thm:derivativeCharacterization} actually usable in practice, as
 we have concrete definitions for our bounds (which, again, we will make use of in \cref{sec:datalogDifferentiability}).
 
+\section{Derivatives of non-recursive program semantics}
+\label{sec:nonRecursiveDatalog}
+
+We can now start to give derivatives for interesting functions. One class of
+interesting functions is \emph{programming language semantics}. If we can give
+good derivatives for the semantics of a programming language, then we can
+incrementally update our programs. We don't yet know how to handle recursion
+(which we will tackle in \cref{sec:recursiveDatalog}), but we can start by
+looking at the non-recursive part of the semantics.
+
+We will use Datalog as our example language, but the approach is generic.
+Datalog is a well-known simple logic programming language \autocite[See][part D]{abiteboul1995foundations}.
+It is also a textbook example of the need for incremental computation, since as we have seen
+(\cref{sec:intro}) the naive computation of its semantics can be very expensive.
+While recursion is a major feature of Datalog, the majority of its semantics is
+the non-recursive semantics of Datalog formulae.
+
+\subsection{Semantics of Datalog formulae}
+
+Datalog is usually given a logical semantics wherein we look for models that
+satisfy the program. We will instead give a simple denotational semantics that treats a Datalog
+formula (and later, a Datalog program) as denoting a family of relations.
+
+We will adopt the usual closed-world assumption to give a denotation to negation.
+
+\begin{defn}[Closed-world assumption and negation]
+  There exists a universal relation $\universalRel$.
+
+  Negation on relations is defined as
+  \begin{displaymath}
+    \neg R \defeq \universalRel \setminus R
+  \end{displaymath}
+\end{defn}
+
+This makes $\Rel$, the set of all relations over $\universalRel$, into a
+complete Boolean
+algebra.\footnote{Technically we need to use the set of relations of a given
+  arity. In practice it is easy to make the arities match up, and we will gloss
+  over them for clarity.}
+
+The semantics of Datalog formulae are usually given in terms of satisfaction by
+structures. We would like to use a more denotational semantics (as is typical
+when working with fixpoints \autocite[see e.g.][]{compton1994stratified}). We are
+going to parameterize by the parts of the structure that are usually variable,
+namely the assignments to variables and relation variables. We will assume we
+are otherwise working in the context of an ambient structure $\Phi$ that
+provides our universe and interpretation of constants.
+
+\begin{defn}[Formula semantics]
+  A Datalog formula $T$ denotes a function from its free relation variables to
+  $\Rel$.
+  \begin{align*}
+    &\denote{\_} : \Formula \rightarrow \Rel^n \rightarrow \Rel\\
+    &\denote{T}(R_1, \dots, R_n) = \left\{ \left(a_1, \dots \right) \mid \Phi \models T\left[R_1, \dots R_n, a_1, \dots \right] \right\}
+  \end{align*}
+\end{defn}
+
+Since $\Rel$ is a complete Boolean algebra, and so is $\Rel^n$, $\denote{T}$ is
+a function between complete Boolean algebras.
+
+\subsection{Differentiability of Datalog formula semantics}
+\label{sec:datalogDifferentiability}
+
+In order to apply the results in \cref{sec:fixpoints} to Datalog, we need the
+formula semantics $\denote{T}$ to
+be differentiable. Since $\denote{T}$ is a function on complete Boolean algebras, and we know
+that the $\cstr{L}_\superpose$ change action is complete, in fact we
+\emph{do} know that $\denote{T}$ must be differentiable.
+
+However, this does not mean that we have a \emph{good} derivative for
+$\denote{T}$. The derivative that we know we have for complete change actions
+is quite bad:
+\begin{displaymath}
+  \derive{f}(a, \change{a}) = f(a \cplus \change{a}) \cminus f(a)
+\end{displaymath}
+Naively computed, this requires \emph{more} work than evaluating $f(a \cplus \change{a})$ directly!
+
+However, \cref{cor:booleanCharacterization} gives us a range of derivatives to
+choose from, and we can optimize within that range to find one that satisfies
+our constraints.
+
+In the case of Datalog, the change ordering on the change action also
+corresponds to the size of the derivative as a pair of relations. The minimal
+derivative contains precisely the elements that are newly added or removed,
+whereas the maximal derivative contains all the elements that have \emph{ever}
+been added or removed but not re-added. This means that \cref{cor:booleanCharacterization} allows
+us to \emph{approximate} the most precise derivative while still being
+guaranteed that the result is sound.\footnote{The idea of using an approximation
+to the precise derivative, and a soundness condition, appears in \textcite{bancilhon1986amateur}.}
+
+There is also the question of how to compute the derivative. Since the change
+set for $\cstr{\Rel}_\superpose$ is $\left( \Rel, \Rel \right)$, it
+is possible and indeed very natural to compute the two components via a pair of
+Datalog formulae, which allows us to reuse an existing Datalog formula
+evaluator.\footnote{
+  Indeed, if this process is occurring in an optimizing compiler,
+  the derivative formulae can themselves be optimized. This is very 
+  beneficial in practice, since the initial formulae may be quite complex.}
+
+This does give us additional constraints that the derivative formulae must satisfy:
+for example, we need to be able to evaluate them; and we may wish to pick formulae that will be easy or cheap
+for our evaluation engine to compute, even if they compute a less precise derivative.
+
+The upshot of these considerations is that the optimal choice of derivatives is likely
+to be quite dependent on the precise variant of Datalog being evaluated, and the
+specifics of the evaluation engine. Here is one possibility.\footnote{This is
+  the derivative actually in use at Semmle. We arrived at it by starting with the
+  minimal derivative and then simplifying and weakening it while preserving the
+  soundness bound given by the maximal derivative.}
+
+\subsubsection{A concrete Datalog formula derivative}
+
+We will define the derivative as a pair of mutually recursive functions,
+$\updiff$ and $\downdiff$, which turn a formula $T$ into new formulae that compute
+the upwards and downwards parts of the derivative, respectively. As we expect
+from a derviative, the new formulae will have additional free relation variables
+for the upwards and downwards derivatives of the free relation variables of $T$.
+
+\newcommand{\bothdiff}{\diamond}
+
+We will also use an auxilliary function, $\bothdiff$, which computes the
+``next'' value of a term by applying the upwards and downwards derivatives.
+
+\todompj{We're talking about this as a semantic derivative, but with the way
+  we've defined it it's also a derivative for formulae under
+  denotational equivalence. Worth mentioning, perhaps.}
+
+\todompj{This still isn't quite totally clear.}
+
+\newcommand{\bothchanges}{\rho}
+\begin{thm}[Concrete Datalog formula derivatives]
+\label{thm:concreteDatalog}
+  We give two mutually recursive definitions,
+  $\updiff: \Formula \rightarrow \Formula$ and
+  $\downdiff: \Formula \rightarrow \Formula$, such
+  that
+  $\denote{\updiff(T)}(\updiff R_1, \dots, \updiff R_n, \downdiff R_1, \dots, \downdiff R_n)
+  \times
+  \denote{\downdiff(T)}(\updiff R_1, \dots, \updiff R_n, \downdiff R_1, \dots, \downdiff R_n)$
+  is a derivative for $\denote{T}$.
+
+  Additionally, let
+  \begin{displaymath}
+    \bothdiff X \defeq X \twist (\updiff(X), \downdiff(X))
+  \end{displaymath}
+  in the following.
+
+  \begin{align*}
+  \updiff(\bot) &\defeq \bot\\
+  \updiff(\top) &\defeq \bot\\
+  \updiff(R_j) &\defeq \updiff R_j \\
+  \updiff(T\vee U) &\defeq \updiff(T) \vee \updiff (U)\\
+  \updiff(T\wedge U) &\defeq (\updiff(T)\wedge \bothdiff(U))
+                           \vee
+                           (\updiff(U) \wedge \bothdiff(T))\\
+  \updiff(\neg T) &\defeq \downdiff(T)\\
+  \updiff(\exists x.T) &\defeq \exists x.\updiff(T)\\
+    \\
+  \downdiff(\bot) &\defeq \bot\\
+  \downdiff(\top) &\defeq \bot\\
+  \downdiff(R_j) &\defeq \downdiff R_j \\
+  \downdiff(T\vee U) &\defeq (\downdiff(T) \wedge \neg \bothdiff(U))
+                           \vee
+                           (\downdiff(U) \wedge \neg \bothdiff(T))\\
+  \downdiff(T\wedge U) &\defeq (\downdiff(T)\wedge U) \vee (T \wedge \downdiff(U))\\
+  \downdiff(\neg T) &\defeq \updiff(T)\\
+  \downdiff(\exists x.T) &\defeq \exists x.\downdiff(T) \wedge \neg \exists x.\bothdiff(T)
+  \end{align*}
+\end{thm}
+\ifproofs
+\begin{proof}
+  Straightforward structural induction.
+\end{proof}
+\fi
+
+There is a symmetry between the cases for $\wedge$ and $\vee$ between $\updiff$
+and $\downdiff$, but the cases for $\exists$ look quite different.
+This is because we have chosen a dialect of Datalog without a primitive universal quantifier.
+If we did have one, its cases would be dual to those for $\exists$, namely:
+\begin{align*}
+\updiff(\forall x.T) &= \exists x. \updiff(T) \wedge \forall x. \bothdiff(T)\\
+\downdiff(\forall x.T) &= \exists x. \downdiff(T)
+\end{align*}
+
+We can now give a derivative for our $treeP$ predicate (assuming only changes to
+$treeP$ itself):
+\begin{align*}
+  \updiff(treeP(x)) \leftarrow & p(x)\\
+    &\wedge
+    \exists y. (
+      child(x, y)
+      \wedge
+      \updiff(treeP(y))
+    )\\
+    &\wedge 
+    \neg \exists y. (
+      child(x, y)
+      \wedge
+      \neg \bothdiff(treeP(y))
+    )\\
+  \downdiff(treeP(x)) \leftarrow & p(x)\\
+  &\wedge \exists y. \left( child(x, y) \wedge \downdiff(treeP(y)) \right)
+\end{align*}
+
+The upwards difference in particular is not especially easy to compute. If we naively compute it, the
+third conjunct requires us to recompute the whole of the recursive part. However,
+the second conjunct gives us a
+guard: we only need to evaluate the third conjunct if the second conjunct is
+non-empty, i.e there is \emph{some} change in the body of the existential.
+
+This shows that our derivatives aren't a panacea: it is simply \emph{hard} to compute
+downwards differences for $\exists$ (and, equivalently, upwards differences for
+$\forall$) because we must check that there is no other way of deriving the same
+facts.\footnote{The ``support'' data structures introduced by
+  \autocite{gupta1993maintaining} are an attempt to avoid this issue by
+  tracking the number of derivations of each tuple.} However, we can still avoid
+the re-evaluation in many cases, and the inefficiency is local to this subformula.
+
 \section{Fixpoints}
 \label{sec:fixpoints}
 
 Fixpoints appear frequently in the semantics of languages with recursion. If we
 can give a generic account of how to compute fixpoints using change actions,
-then this gives us a compositional way of extending a change semantics for a
-language to handle the addition of recursion. We will later do this to handle
-recursion in Datalog (\cref{sec:datalogIncr}).
+then this gives us a compositional way of extending a derivative for the
+non-recursive semantics of a language to a derivative that can handle recursion.
+We will do this later to full recursive Datalog (\cref{sec:datalogIncr}).
 
 \subsection{Iteration functions}
 
@@ -821,9 +1039,7 @@ operators with the lattice over which they operate when it is not obvious from c
 
 The following theorems provide a
 generalization of semi-naive evaluation to any differentiable function over a
-continuous change action. We will want to apply this to the semantics of
-Datalog, for which we will need to differentiate its semantics. We will see the
-details of how to do this in \cref{sec:datalogDifferentiability}.
+continuous change action. 
 
 Since we are trying to incrementalize the iterative step, we start by taking the partial
 derivative of $\iter$ with respect to $n$.
@@ -1010,73 +1226,31 @@ again (which will itself require a fixpoint computation).
   Perhaps we should do that after boolean algebras, then this section, then put
   the pieces together.}
 
-\section{Datalog}
-\label{sec:datalog}
+\section{Derivatives of recursive program semantics}
+\label{sec:recursiveDatalog}
 
-Datalog is a well-known simple logic programming language \autocite[See][part D]{abiteboul1995foundations}.
-It is also a textbook example of the need for incremental computation, since as we have seen
-(\cref{sec:intro}) the naive computation of its semantics can be very expensive.
+Given the non-recursive semantics for a language, we can extend it to handle
+recursive definitions using fixpoints. \Cref{sec:fixpoints} now gives us a way
+to compute those fixpoints incrementally, as well as giving us a derivative for
+our overall program semantics.
 
-The aim of this section is to argue that by viewing the computation
-of Datalog semantics as composed of differentiable functions we can
-bring the machinery that we've developed so far to bear, and give a flexible
-account of incremental evaluation and maintenance. 
+Again, we will demonstrate the technique with Datalog, but the approach is generic.
 
-Firstly, however, we must show that we can see the semantics of Datalog in terms
-of elements that we know how to handle: Boolean algebras and fixpoints.
+\subsection{Semantics of Datalog programs}
 
-\subsection{Denotational semantics}
-
-Datalog is usually given a logical semantics wherein we look for models that
-satisfy the program. We will instead give a simple denotational semantics that treats a Datalog
-program as denoting a family of relations.
-
-We will adopt the usual closed-world assumption to give a denotation to negation.
-
-\begin{defn}[Closed-world assumption and negation]
-  There exists a universal relation $\universalRel$.
-
-  Negation on relations is defined as
-  \begin{displaymath}
-    \neg R \defeq \universalRel \setminus R
-  \end{displaymath}
-\end{defn}
-
-This makes $\Rel$, the set of all relations over $\universalRel$, into a
-complete Boolean
-algebra.\footnote{Technically we need to use the set of relations of a given
-  arity. In practice it is easy to make the arities match up, and we will gloss
-  over them for clarity.}
-
-The semantics of Datalog formulae are usually given in terms of satisfaction by
-structures. We would like to use a more denotational semantics (as is typical
-when working with fixpoints \autocite[see e.g.][]{compton1994stratified}). We are
-going to parameterize by the parts of the structure that are usually variable,
-namely the assignments to variables and relation variables. We will assume we
-are otherwise working in the context of an ambient structure $\Phi$ that
-provides our universe and interpretation of constants.
-
-\begin{defn}[Formula semantics]
-  A Datalog formula $T$ denotes a function from its free relation variables to
-  $\Rel$.
-  \begin{align*}
-    &\denote{\_} : \Formula \rightarrow \Rel^n \rightarrow \Rel\\
-    &\denote{T}(R_1, \dots, R_n) = \left\{ \left(a_1, \dots \right) \mid \Phi \models T\left[R_1, \dots R_n, a_1, \dots \right] \right\}
-  \end{align*}
-\end{defn}
-
-Since $\Rel$ is a complete Boolean algebra, and so is $\Rel^n$, $\denote{T}$ is
-a function between complete Boolean algebras.
+First of all, we define the usual ``immediate consequence operator'' which
+computes ``one step'' of our program semantics.
 
 \begin{defn}[Immediate consequence operator]
-  Given a program $\mathcal{P} = (P_1, \dots, P_m)$, the immediate consequence operator $\consq: \Rel^n \rightarrow \Rel^n$ is defined as follows:
+  Given a program $\mathcal{P} = (P_1, \dots, P_m)$, where $P_i$ is a predicate,
+  the immediate consequence operator $\consq: \Rel^n \rightarrow \Rel^n$ is defined as follows:
   \begin{displaymath}
     \consq(R_1, \dots, R_n) = (\denote{P_1}(R_1, \dots, R_n), \dots, \denote{P_m}(R_1, \dots, R_n))
   \end{displaymath}
 \end{defn}
 
 That is, given a value for the program, we pass in all the relations
-to the denotation of each predicate, to get a new product of relations.
+to the denotation of each predicate, to get a new tuple of relations.
 
 \begin{defn}[Program semantics]
   The semantics of a program $\mathcal{P}$ is defined to be
@@ -1092,164 +1266,6 @@ exists. Typically this is ensured by constraining the program such that $\consq$
 is monotone (or, in the context of a dcpo, continuous). We can be agnostic
 about this when applying \cref{thm:fixpointIter}, but it is a requirement to
 apply \cref{thm:leastFixpointDerivatives}.
-
-\subsection{Differentiability of Datalog semantics}
-\label{sec:datalogDifferentiability}
-
-In order to apply the results in \cref{sec:fixpoints} to Datalog, we need the
-formula semantics $\denote{T}$ to
-be differentiable. Since $\denote{T}$ is a function on complete Boolean algebras, and we know
-that the $\cstr{L}_\superpose$ change action is complete, in fact we
-\emph{do} know that $\denote{T}$ must be differentiable.
-
-However, this does not mean that we have a \emph{good} derivative for
-$\denote{T}$. The derivative that we know we have for complete change actions
-is quite bad:
-\begin{displaymath}
-  \derive{f}(a, \change{a}) = f(a \cplus \change{a}) \cminus f(a)
-\end{displaymath}
-Naively computed, this requires \emph{more} work than evaluating $f(a \cplus \change{a})$ directly!
-
-However, \cref{cor:booleanCharacterization} gives us a range of derivatives to
-choose from, and we can optimize within that range to find one that satisfies
-our constraints.
-
-In the case of Datalog, the change ordering on the change action also
-corresponds to the size of the derivative as a pair of relations. The minimal
-derivative contains precisely the elements that are newly added or removed,
-whereas the maximal derivative contains all the elements that have \emph{ever}
-been added or removed but not re-added. This means that \cref{cor:booleanCharacterization} allows
-us to \emph{approximate} the most precise derivative while still being
-guaranteed that the result is sound.\footnote{The idea of using an approximation
-to the precise derivative, and a soundness condition, appears in \textcite{bancilhon1986amateur}.}
-
-There is also the question of how to compute the derivative. Since the change
-set for $\cstr{\Rel}_\superpose$ is $\left( \Rel, \Rel \right)$, it
-is possible and indeed very natural to compute the two components via a pair of
-Datalog formulae, which allows us to reuse an existing Datalog formula
-evaluator.\footnote{
-  Indeed, if this process is occurring in an optimizing compiler,
-  the derivative formulae can themselves be optimized. This is very 
-  beneficial in practice, since the initial formulae may be quite complex.}
-
-This does give us additional constraints that the derivative formulae must satisfy:
-for example, we need to be able to evaluate them; and we may wish to pick formulae that will be easy or cheap
-for our evaluation engine to compute, even if they compute a less precise derivative.
-
-The upshot of these considerations is that the optimal choice of derivatives is likely
-to be quite dependent on the precise variant of Datalog being evaluated, and the
-specifics of the evaluation engine. Here is one possibility.\footnote{This is
-  the derivative actually in use at Semmle. We arrived at it by starting with the
-  minimal derivative and then simplifying and weakening it while preserving the
-  soundness bound given by the maximal derivative.}
-
-\subsubsection{A concrete Datalog formula derivative}
-
-We will define the derivative as a pair of mutually recursive functions,
-$\updiff$ and $\downdiff$, which turn a formula $T$ into new formulae that compute
-the upwards and downwards parts of the derivative, respectively. As we expect
-from a derviative, the new formulae will have additional free relation variables
-for the upwards and downwards derivatives of the free relation variables of $T$.
-
-\newcommand{\bothdiff}{\diamond}
-
-We will also use an auxilliary function, $\bothdiff$, which computes the
-``next'' value of a term by applying the upwards and downwards derivatives.
-
-\todompj{We're talking about this as a semantic derivative, but with the way
-  we've defined it it's also a derivative for formulae under
-  denotational equivalence. Worth mentioning, perhaps.}
-
-\todompj{This still isn't quite totally clear.}
-
-\newcommand{\bothchanges}{\rho}
-\begin{thm}[Concrete Datalog formula derivatives]
-\label{thm:concreteDatalog}
-  We give two mutually recursive definitions,
-  $\updiff: \Formula \rightarrow \Formula$ and
-  $\downdiff: \Formula \rightarrow \Formula$, such
-  that
-  $\denote{\updiff(T)}(\updiff R_1, \dots, \updiff R_n, \downdiff R_1, \dots, \downdiff R_n)
-  \times
-  \denote{\downdiff(T)}(\updiff R_1, \dots, \updiff R_n, \downdiff R_1, \dots, \downdiff R_n)$
-  is a derivative for $\denote{T}$.
-
-  Additionally, let
-  \begin{displaymath}
-    \bothdiff X \defeq X \twist (\updiff(X), \downdiff(X))
-  \end{displaymath}
-  in the following.
-
-  \begin{align*}
-  \updiff(\bot) &\defeq \bot\\
-  \updiff(\top) &\defeq \bot\\
-  \updiff(R_j) &\defeq \updiff R_j \\
-  \updiff(T\vee U) &\defeq \updiff(T) \vee \updiff (U)\\
-  \updiff(T\wedge U) &\defeq (\updiff(T)\wedge \bothdiff(U))
-                           \vee
-                           (\updiff(U) \wedge \bothdiff(T))\\
-  \updiff(\neg T) &\defeq \downdiff(T)\\
-  \updiff(\exists x.T) &\defeq \exists x.\updiff(T)\\
-    \\
-  \downdiff(\bot) &\defeq \bot\\
-  \downdiff(\top) &\defeq \bot\\
-  \downdiff(R_j) &\defeq \downdiff R_j \\
-  \downdiff(T\vee U) &\defeq (\downdiff(T) \wedge \neg \bothdiff(U))
-                           \vee
-                           (\downdiff(U) \wedge \neg \bothdiff(T))\\
-  \downdiff(T\wedge U) &\defeq (\downdiff(T)\wedge U) \vee (T \wedge \downdiff(U))\\
-  \downdiff(\neg T) &\defeq \updiff(T)\\
-  \downdiff(\exists x.T) &\defeq \exists x.\downdiff(T) \wedge \neg \exists x.\bothdiff(T)
-  \end{align*}
-\end{thm}
-\ifproofs
-\begin{proof}
-  Straightforward structural induction.
-\end{proof}
-\fi
-
-There is a symmetry between the cases for $\wedge$ and $\vee$ between $\updiff$
-and $\downdiff$, but the cases for $\exists$ look quite different.
-This is because we have chosen a dialect of Datalog without a primitive universal quantifier.
-If we did have one, its cases would be dual to those for $\exists$, namely:
-\begin{align*}
-\updiff(\forall x.T) &= \exists x. \updiff(T) \wedge \forall x. \bothdiff(T)\\
-\downdiff(\forall x.T) &= \exists x. \downdiff(T)
-\end{align*}
-
-We can now give a derivative for our $treeP$ program (assuming there to be no
-changes to $p$ and $child$):
-\begin{align*}
-  \updiff(treeP(x)) \leftarrow & p(x)\\
-    &\wedge
-    \exists y. (
-      child(x, y)
-      \wedge
-      \updiff(treeP(y))
-    )\\
-    &\wedge 
-    \neg \exists y. (
-      child(x, y)
-      \wedge
-      \neg \bothdiff(treeP(y))
-    )\\
-  \downdiff(treeP(x)) \leftarrow & p(x)\\
-  &\wedge \exists y. \left( child(x, y) \wedge \downdiff(treeP(y)) \right)
-\end{align*}
-
-The upwards difference in particular is not especially easy to compute. If we naively compute it, the
-third conjunct requires us to recompute the whole of the recursive part. However,
-the second conjunct gives us a
-guard: we only need to evaluate the third conjunct if the second conjunct is
-non-empty, i.e there is \emph{some} change in the body of the existential.
-
-This shows that our derivatives aren't a panacea: it is simply \emph{hard} to compute
-downwards differences for $\exists$ (and, equivalently, upwards differences for
-$\forall$) because we must check that there is no other way of deriving the same
-facts.\footnote{The ``support'' data structures introduced by
-  \autocite{gupta1993maintaining} are an attempt to avoid this issue by
-  tracking the number of derivations of each tuple.} However, we can still avoid
-the re-evaluation in many cases, and the inefficiency is local to this subformula.
 
 \subsection{Incremental evaluation of Datalog}
 \label{sec:datalogIncr}
