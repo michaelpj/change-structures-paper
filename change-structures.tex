@@ -1059,14 +1059,13 @@ provides our universe and interpretation of constants.
 \begin{defn}[Formula semantics]
   A Datalog formula $T$ denotes a function from its free relation variables to
   $\Rel$.
-
   \begin{align*}
     &\denote{\_} : \Formula \rightarrow \Rel^n \rightarrow \Rel\\
     &\denote{T}(R_1, \dots, R_n) = \left\{ \left(a_1, \dots \right) \mid \Phi \models T\left[R_1, \dots R_n, a_1, \dots \right] \right\}
   \end{align*}
 \end{defn}
 
-Since $\Rel$ is a complete Boolean algebra, and so is $\Rel^n$, $\denote{\_}$ is
+Since $\Rel$ is a complete Boolean algebra, and so is $\Rel^n$, $\denote{T}$ is
 a function between complete Boolean algebras.
 
 \begin{defn}[Immediate consequence operator]
@@ -1097,13 +1096,14 @@ apply \cref{thm:leastFixpointDerivatives}.
 \subsection{Differentiability of Datalog semantics}
 \label{sec:datalogDifferentiability}
 
-In order to apply the results in \cref{sec:fixpoints} to Datalog, we need the semantics $\denote{\_}$ to
-be differentiable. Since $\denote{\_}$ is a function on complete Boolean algebras, and we know
+In order to apply the results in \cref{sec:fixpoints} to Datalog, we need the
+formula semantics $\denote{T}$ to
+be differentiable. Since $\denote{T}$ is a function on complete Boolean algebras, and we know
 that the $\cstr{L}_\superpose$ change action is complete, in fact we
-\emph{do} know that $\denote{\_}$ must be differentiable.
+\emph{do} know that $\denote{T}$ must be differentiable.
 
 However, this does not mean that we have a \emph{good} derivative for
-$\denote{\_}$. The derivative that we know we have for complete change actions
+$\denote{T}$. The derivative that we know we have for complete change actions
 is quite bad:
 \begin{displaymath}
   \derive{f}(a, \change{a}) = f(a \cplus \change{a}) \cminus f(a)
@@ -1124,9 +1124,9 @@ guaranteed that the result is sound.\footnote{The idea of using an approximation
 to the precise derivative, and a soundness condition, appears in \textcite{bancilhon1986amateur}.}
 
 There is also the question of how to compute the derivative. Since the change
-action for boolean algebras gives $\changes{\Rel} = \left( \Rel, \Rel \right)$, it
+set for $\cstr{\Rel}_\superpose$ is $\left( \Rel, \Rel \right)$, it
 is possible and indeed very natural to compute the two components via a pair of
-Datalog formulae, which allows us to reuse our existing Datalog formula
+Datalog formulae, which allows us to reuse an existing Datalog formula
 evaluator.\footnote{
   Indeed, if this process is occurring in an optimizing compiler,
   the derivative formulae can themselves be optimized. This is very 
@@ -1134,7 +1134,7 @@ evaluator.\footnote{
 
 This does give us additional constraints that the derivative formulae must satisfy:
 for example, we need to be able to evaluate them; and we may wish to pick formulae that will be easy or cheap
-for our evaluation engine to compute, even if the results are larger.
+for our evaluation engine to compute, even if they compute a less precise derivative.
 
 The upshot of these considerations is that the optimal choice of derivatives is likely
 to be quite dependent on the precise variant of Datalog being evaluated, and the
@@ -1143,8 +1143,10 @@ specifics of the evaluation engine. Here is one possibility.\footnote{This is
   minimal derivative and then simplifying and weakening it while preserving the
   soundness bound given by the maximal derivative.}
 
-We will present the derivative as a pair of mutually recursive functions,
-$\updiff$ and $\downdiff$, which turns a formula $T$ into new formulae that compute
+\subsubsection{A concrete Datalog formula derivative}
+
+We will define the derivative as a pair of mutually recursive functions,
+$\updiff$ and $\downdiff$, which turn a formula $T$ into new formulae that compute
 the upwards and downwards parts of the derivative, respectively. As we expect
 from a derviative, the new formulae will have additional free relation variables
 for the upwards and downwards derivatives of the free relation variables of $T$.
@@ -1253,15 +1255,8 @@ the re-evaluation in many cases, and the inefficiency is local to this subformul
 \label{sec:datalogIncr}
 
 We can easily extend a derivative for the formula semantics to a derivative for
-the immediate consequence operator $\consq$.
-
-\begin{corollary}
-\label{corollary:consqDiff}
-  $\consq$ is differentiable.
-\end{corollary}
-
-Putting this together with the results from \cref{sec:fixpoints}, we get our two
-big results.
+the immediate consequence operator $\consq$. Putting this together with the
+results from \cref{sec:fixpoints}, we get our two big results.
 
 \begin{thm}[Incremental evaluation of Datalog semantics]
 \label{thm:diffEval}
@@ -1287,7 +1282,7 @@ modular now, so we will be able to extend this result more easily.
 \end{proof}
 \fi
 
-Again, we know how to do this (\autocite{gupta1993maintaining} and successors),
+Again, we know how to do this \autocite[see][and successors]{gupta1993maintaining},
 but again, the proof is now modular so we can extend it.
 
 \subsection{Extensions to Datalog}
@@ -1295,17 +1290,9 @@ but again, the proof is now modular so we can extend it.
 
 Our formulation of Datalog formula semantics and incremental evaluation is 
 generic and modular, so it is easy to extend the language with new
-formula constructs.
+formula constructs: all we need to do is add cases for $\updiff$ and $\downdiff$.
 
-A new formula construct must have:
-\begin{itemize}
-  \item An interpretation as a function on its free relation variables.
-  \item An implementation of $\updiff$ and $\downdiff$.
-\end{itemize}
-
-These are easy conditions to satisfy. The former condition is part of the definition of a
-new construct, and because we are using the complete change action
-$\cstr{L}_\superpose$, the latter condition can \emph{always} be satisfied by using the maximal or
+In fact, because we are using a complete change action, we can \emph{always} do this by using the maximal or
 minimal derivative. This justifies our claim that we can support
 \emph{arbitrary} additional formula constructs: although the maximal and minimal
 derivatives are likely to be impractical, having them
