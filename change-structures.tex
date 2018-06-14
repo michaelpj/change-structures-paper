@@ -946,7 +946,7 @@ We will also use an auxilliary function, $\bothdiff$, which computes the
 \newcommand{\bothchanges}{\rho}
 \begin{thm}[Concrete Datalog formula derivatives]
 \label{thm:concreteDatalog}
-  We give two mutually recursive definitions,
+  We define two mutually recursive functions,
   $\updiff: \Formula \rightarrow \Formula$ and
   $\downdiff: \Formula \rightarrow \Formula$, such
   that
@@ -957,7 +957,7 @@ We will also use an auxilliary function, $\bothdiff$, which computes the
 
   Additionally, let
   \begin{displaymath}
-    \bothdiff X \defeq X \twist (\updiff(X), \downdiff(X))
+    \bothdiff(X) \defeq X \twist (\updiff(X), \downdiff(X))
   \end{displaymath}
   in the following.
 
@@ -988,7 +988,6 @@ We will also use an auxilliary function, $\bothdiff$, which computes the
   Straightforward structural induction.
 \end{proof}
 \fi
-
 
 There is a symmetry between the cases for $\wedge$ and $\vee$ between $\updiff$
 and $\downdiff$, but the cases for $\exists$ look quite different.
@@ -1272,9 +1271,10 @@ again (which will itself require a fixpoint computation).
 \label{sec:recursiveDatalog}
 
 Given the non-recursive semantics for a language, we can extend it to handle
-recursive definitions using fixpoints. \Cref{sec:fixpoints} now gives us a way
-to compute those fixpoints incrementally, as well as giving us a derivative for
-our overall program semantics.
+recursive definitions using fixpoints. \Cref{sec:fixpoints} lets us extend our
+derivative for the non-recursive semantics to a derivative for the recursive
+semantics, as well as being able to compute the fixpoints themselves
+incrementally. 
 
 Again, we will demonstrate the technique with Datalog, but the approach is generic.
 
@@ -1354,9 +1354,7 @@ In fact, because we are using a complete change action, we can \emph{always} do 
 minimal derivative. This justifies our claim that we can support
 \emph{arbitrary} additional formula constructs: although the maximal and minimal
 derivatives are likely to be impractical, having them
-available as options means that we can still use the overall process.
-Even if we have a formula construct which we cannot find a good derivative for, we only lose incremental
-evaluation for those subformulae, and not for anything else.
+available as options means that we will never be completely stymied.
 
 This is important in practice for Semmle's variant of Datalog. For example, the
 upwards derivative for recursive aggregates \autocite{demoor2013aggregates} is:
@@ -1364,7 +1362,9 @@ upwards derivative for recursive aggregates \autocite{demoor2013aggregates} is:
   \updiff(\textrm{agg}(vs \mid T \mid U)) \defeq \exists vs. (T \wedge \updiff{U}) \wedge \textrm{agg}(vs \mid T \mid U)
 \end{align*}
 
-While we can't give a precise derivative, we can still provide a guard that prevents us from having to re-evaluate in all cases. 
+While this isn't a precise derivative, it is still substantially cheaper than
+re-evaluating the whole subfomula, as the guard allows us to skip the second conjunct when $U$
+has not changed.
 
 \section{Related work}
 
