@@ -785,6 +785,34 @@ all the derivatives on Boolean algebras:
 This makes \cref{thm:derivativeCharacterization} actually usable in practice, as
 we have concrete definitions for our bounds (which, again, we will make use of in \cref{sec:datalogDifferentiability}).
 
+\subsubsection{Precision}
+
+The change ordering corresponds to a natural notion of precision: if $\change{a}
+\changeOrder \change{b]}$, then $\change{b}$ produces ``bigger'' updates than
+$\change{a}$, and there is some additional information in it that is being
+ignored even when $c \cplus \change{a} = c \cplus \change{b}$.
+
+For example, in $\cstruct{\{A\}}{\{A\}}{\cup}$, $\{1\} \changeOrder \{1,2\}$. Even
+though $\{2\} \cplus \{1\} = \{2\} \cplus \{1,2\} = \{1,2\}$, the second change is
+imprecise because it adds in 2 even though it was already present.
+
+The most precise deriviatives are therefore those that are minimal with respect
+to $\changeOrder$.
+
+\todompj{Something about kernel orderings?}
+
+\begin{defn}[Precision of derivatives]
+  \label{def:precision}
+  A derivative is precise if it is minimal with respect to $\changeOrder$.
+\end{defn}
+
+In a boolean algebra, this corresponds to being the unique minimal derivative.
+
+Precision may be a desirable property because precise derivatives produce
+``smaller'' changes (in the subset lattice it must exactly produce the changes
+with the smallest cardinality). However, we may wish to trade this off against
+other properties, such as how easy the derivative is to compute.
+
 \section{Derivatives of non-recursive program semantics}
 \label{sec:nonRecursiveDatalog}
 
@@ -860,18 +888,19 @@ is quite bad:
 \begin{displaymath}
   \derive{f}(a, \change{a}) = f(a \cplus \change{a}) \cminus f(a)
 \end{displaymath}
-Naively computed, this requires \emph{more} work than evaluating $f(a \cplus \change{a})$ directly!
+While this is precise, if we compute this naiveley, it requires \emph{more}
+work than evaluating $f(a \cplus \change{a})$ directly!
 
 However, \cref{cor:booleanCharacterization} gives us a range of derivatives to
 choose from, and we can optimize within that range to find one that satisfies
-our constraints.
+our constraints, for example trading off ease of computation against precision.
 
 In the case of Datalog, the change ordering on the change action also
-corresponds to the size of the derivative as a pair of relations. The minimal
-derivative contains precisely the elements that are newly added or removed,
+corresponds to the size of the derivative as a pair of relations. The minimal (precise)
+derivative contains only the elements that are newly added or removed,
 whereas the maximal derivative contains all the elements that have \emph{ever}
 been added or removed but not re-added. This means that \cref{cor:booleanCharacterization} allows
-us to \emph{approximate} the most precise derivative while still being
+us to \emph{approximate} the precise derivative while still being
 guaranteed that the result is sound.\footnote{The idea of using an approximation
 to the precise derivative, and a soundness condition, appears in \textcite{bancilhon1986amateur}.}
 
@@ -936,12 +965,12 @@ We will also use an auxilliary function, $\bothdiff$, which computes the
   \updiff(\bot) &\defeq \bot\\
   \updiff(\top) &\defeq \bot\\
   \updiff(R_j) &\defeq \updiff R_j \\
-  \updiff(T\vee U) &\defeq \updiff(T) \vee \updiff (U)\\
+  \updiff(T\vee U) &\defeq \updiff(T) \vee \updiff (U) &\dagger\\
   \updiff(T\wedge U) &\defeq (\updiff(T)\wedge \bothdiff(U))
                            \vee
                            (\updiff(U) \wedge \bothdiff(T))\\
   \updiff(\neg T) &\defeq \downdiff(T)\\
-  \updiff(\exists x.T) &\defeq \exists x.\updiff(T)\\
+  \updiff(\exists x.T) &\defeq \exists x.\updiff(T) &\dagger\\
     \\
   \downdiff(\bot) &\defeq \bot\\
   \downdiff(\top) &\defeq \bot\\
@@ -960,9 +989,10 @@ We will also use an auxilliary function, $\bothdiff$, which computes the
 \end{proof}
 \fi
 
+
 There is a symmetry between the cases for $\wedge$ and $\vee$ between $\updiff$
 and $\downdiff$, but the cases for $\exists$ look quite different.
-This is because we have chosen a dialect of Datalog without a primitive universal quantifier.
+This is because ou rdialect of Datalog does not have a primitive universal quantifier.
 If we did have one, its cases would be dual to those for $\exists$, namely:
 \begin{align*}
 \updiff(\forall x.T) &= \exists x. \updiff(T) \wedge \forall x. \bothdiff(T)\\
@@ -1002,6 +1032,18 @@ facts.\footnote{The ``support'' data structures introduced by
   \autocite{gupta1993maintaining} are an attempt to avoid this issue by
   tracking the number of derivations of each tuple.} However, we can still avoid
 the re-evaluation in many cases, and the inefficiency is local to this subformula.
+
+\subsubsection{Precision}
+
+In practice, while the derivative given in \cref{thm:concreteDatalog} is not
+precise, most of the cases are \emph{preciseness-preserving}, in that if the
+subsidiary recursive cases are precise, then so is that case. The only cases
+which lose precision are labelled with $\dagger$.
+
+This means that we can often statically determine whether a formula will have a
+precise derivative or not, which can be useful in practice.
+
+\todompj{How?}
 
 \section{Fixpoints}
 \label{sec:fixpoints}
