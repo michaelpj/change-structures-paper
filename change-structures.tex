@@ -201,15 +201,12 @@ The core concept we will work with is a \emph{change action}. A change action is
 a set along with a set of \emph{changes} that can be ``applied'' to elements of
 the base set using an operator $\cplus$ (pronounced ``smush''). We also require
 some structure on the changes themselves: they must form a \emph{monoid action}
-on the base set.\footnote{The requirement that the change set be a monoid is convenient but in
-  fact inessential: given any set with an action on the base set, we can take the
-  free monoid over the action set to obtain a monoid action.}\footnote{
-Requiring the change set to be monoid action gives us a reason to think that
+on the base set.\footnote{
+Using monoid actions for change sets gives us a reason to think that
 change actions are an adequate representation of changes: any subset of $A
 \rightarrow A$ which is closed under composition can be
-represented as a monoid action, so we are able to capture all of these as change actions.}
-
-\todompj{These footnotes read weirdly together}
+represented as a monoid action, so we are able to capture all of these as change
+actions.}
 
 \begin{defn}[Change actions]
   A \emph{change action} is defined as:
@@ -309,9 +306,6 @@ semantics as computing an n-tuple of relations. So we need a change action on
 $\Rel^n$, and fortunately we can construct good change actions for Boolean
 algebras in general (\cref{sec:booleanAlgebras}).
 
-\todompj{I think we need to say something about minimality and why we're not
-  worrying about it. Perhaps here?}
-
 \subsection{Complete change actions and minus operators}
 
 Complete change actions are an important class of change actions, because they
@@ -350,119 +344,10 @@ of functions.
   Then $\derive{f}_\cminus$ is a derivative for $f$.
 \end{prop}
 
-\section{The category of change actions}
-\label{sec:category}
+\subsection{Products and sums}
 
-\todompj{Move after the more concrete bits? I think the only bit from here we
-  need is the bits about the evaluation map for the fixpoint section, and we
-  implicitly use products in a few cases.}
-
-We are arguing that change actions provide a good model for incremental
-computation in general. That means we want to be able to easily construct change
-actions over the wide variety of data types that we actually use in programming.
-
-We can do this by showing that the category of change actions has the usual
-useful constructions: products ($A \times B$), coproducts ($A + B$), and
-exponentials ($A \rightarrow B$). These are the
-building blocks from which we create our datatypes, and they will also be useful
-for our proofs in \cref{sec:fixpoints}: in particular, the derivative of the exponential \emph{evaluation map}
-$\ev$ has a deep connection to the incremental evaluation of functions (\cref{prop:incrementalization}).
-
-\begin{defn}[Category of change actions]
-  We define the category $\cat{CAct}$ of change actions. The objects are
-  change actions and the morphisms are differentiable functions. 
-\end{defn}
-
-In \cref{sec:moreStructures} we will look at subsets of $\cat{CAct}$ with
-interesting properties. However, for simplicity we will keep working in $\cat{CAct}$
-throughout, rather than defining subcategories.
-
-\todompj{Maybe we should just define the subcategories? I think they are all
-  straightforwardly CCCs if everything is pointwise, not sure in general.}
-
-\subsection{Equivalence with PreOrd}
-
-There is a natural preorder on the base set of a change action, given by reachability
-under the action:
-
-\begin{defn}[Reachability preorder]
-  $a \reachOrder b$ iff there is a $\change{a} \in \changes{A}$ such that $a \cplus
-  \change{a} = b$.
-\end{defn}
-
-We can characterize many of the properties of change actions in terms of the reachability preorder,
-which suggests a connection between $\cat{CAct}$ and the category of preorders, $\cat{PreOrd}$.
-
-\begin{prop}
-  A function is differentiable iff it is monotone with respect to the
-  reachability preorder. 
-\end{prop}
-
-\begin{corollary}
-  Two change actions are isomorphic iff their posets under the reachability
-  preorder are isomorphic.
-\end{corollary}
-
-\begin{corollary}
-  Any function from a discrete change action or into a complete change
-  action is differentiable.
-\end{corollary}
-
-Indeed, the correspondence between a change action and its reachability preorder gives rise to
-a (full and faithful) functor $\reach : \cat{CAct} \rightarrow \cat{PreOrd}$ that acts as the
-identity on morphisms.
-
-Conversely, any preorder $\leq$ on some set $A$ induces a change action
-$\cstr{A}_\leq \defeq \cstruct{A}{\leq^\star}{\cplus_\star}$.
-The action $\cplus_\star$ is defined as the extension of $\cplus_\leq$ to the free
-monoid $\leq^\star$, where $\cplus_\leq$ is defined as:
-\[
-\begin{aligned}
-   \cplus_\leq &: (A \times \leq) \rightarrow A&\\
-   a \cplus_\leq (b, c) &\defeq
-     \begin{cases}
-     c&\text{ if $a = b$}\\
-     a&\text{ otherwise}
-     \end{cases}
-\end{aligned}
-\]
-
-The mapping to $\cstr{A}_\leq$ gives rise to a (full and faithful) functor
-$\direct : \cat{PreOrd} \rightarrow \cat{CAct}$, again acting as the identity on morphisms.
-
-These two functors are in fact enough to give us an equivalence between the categories
-$\cat{CAct}$ and $\cat{PreOrd}$.
-
-\begin{thm}[name=Equivalence of $\cat{CAct}$ and $\cat{PreOrd}$, restate=preordEquivalence]
-  \label{thm:preordEquivalence}
-  The functor $\reach$ from $\cat{CAct}$ to $\cat{PreOrd}$ together with the
-  functor $\direct$ in the opposite direction form an equivalence of categories.
-\end{thm}
-\ifproofs
-\begin{proof}
-  See \cref{prf:preordEquivalence}.
-\end{proof}
-\fi
-
-Since $\cat{PreOrd}$ is a Cartesian closed category and has all limits and
-colimits, this gives us a proof of the existence of limits, colimits, and exponentials in $\cat{CAct}$.
-
-\begin{corollary}
-  The category $\cat{CAct}$ has all limits, colimits and exponential objects.
-\end{corollary}
-
-In the case of complete change actions, this equivalence degenerates into an
-equivalence with $\cat{Set}$, since all functions are differentiable.
-
-\subsection{Explicit constructions}
-
-Having shown that $\cat{CAct}$ is equivalent to $\cat{PreOrd}$ it may seem
-redundant to give explicit recipes for constructing products, coproducts, and exponentials.
-However, we can give constructions that are much nicer than the ones
-which we get via $\cat{PreOrd}$, which is important for using them in
-practical computation.
-
-The products and coproducts are fairly straightforward.
+We naturally want to have change actions for product and sum types, and
+fortunately these are easy to define.
 
 \begin{prop}[name=Products, restate=products]
   \label{prop:products}
@@ -495,101 +380,6 @@ The products and coproducts are fairly straightforward.
   See \cref{prf:coproducts}.
 \end{proof}
 \fi
-
-The exponential objects in the category $\cat{CAct}$ are difficult to work with,
-because we need to ensure that $f \cplus \change{f}$ continues to be a
-differentiable function. Under some
-conditions, however, we can find a simple representation.
-
-\begin{defn}[Pointwise change actions]
-  \label{def:pointwiseChanges}
-  A change action $\cstr{B}$ is pointwise if every exponential object
-  $\exponential{\cstr{A}}{\cstr{B}}$ is isomorphic to the pointwise change action
-  $\cstruct{\cstr{A} \rightarrow \cstr{B}}{A \rightarrow \changes{B}}{\cplus_\rightarrow}$,
-  where $(f \cplus_\rightarrow \change{f})(x) \defeq f(x) \cplus \change{f}(x)$ and the
-  monoidal structure on $A \rightarrow \changes{B}$ is given by lifting
-  the monoidal structure on $\changes{B}$ pointwise.
-\end{defn}
-
-This corresponds to the intuition about how the correspondence with
-$\cat{PreOrd}$ should work: the preorder on monotone functions in $\cat{PreOrd}$ is
-pointwise.
-
-This pointwise change action is not well defined for all change actions, since
-we require $f \cplus_\rightarrow \change{f}$ to be \emph{differentiable}, which
-may not be true for all pointwise changes $\change{f}$.
-Fortunately, there are useful subcategories of $\cat{CAct}$ formed of pointwise change actions.
-
-\begin{prop}[name=Pointwise change actions, restate=pointwiseChangeActions]
-  \label{prop:pointwiseChangeActions}
-  Every change action $\cstruct{B}{\changes{B}}{\cplus}$ such that the change action
-  $\cstruct{\changes{B}}{\changes{B}}{\splus}$ is complete and $\cplus$ is differentiable with
-  respect to its first argument is pointwise.
-
-  In particular, every change action where $\cplus$ is a group action is pointwise.
-\end{prop}
-\ifproofs
-  See \cref{prf:pointwiseChangeActions}.
-\fi
-
-\begin{prop}[name=Complete implies pointwise, restate=pointwiseComplete]
-  \label{prop:pointwiseComplete}
-   Every complete change action $\cstr{B}$ is pointwise.
-\end{prop}
-\ifproofs
-  See \cref{prf:pointwiseComplete}.
-\fi
-
-Furthermore, since the products and exponentials of complete change actions are complete,
-the full subcategory of $\cat{CAct}$ formed by complete change actions is a Cartesian
-closed category of pointwise change actions.
-
-\todompj{On reflection (hah) I think we can do better: I think complete change
-  actions are a reflective subcategory, where the reflector is the
-  ``completion'' of a change action i.e. pick any complete change action on the
-  set. Or do we? We do if it's set based, since we can use $A \rightarrow A$ but
-  perhaps there are also ``uncompletable'' change actions.}
-
-Derivatives of the evaluation map, irrespective of a particular choice of change action on the
-exponential objects, give us a way to do incremental evaluation of function application:
-\begin{prop}[Incremental application]
-\label{prop:incrementalization}
-  Let $f: \cstr{A} \rightarrow \cstr{B}$, $a \in A$, $\change{a} \in
-  \changes{A}$, $\change{f} \in \changes{(A \rightarrow B)}$, and let
-  $\derive{\ev}$ be a derivative of the evaluation map.
-
-  Then
-  \begin{displaymath}
-    (f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus \derive{\ev}((f, a), (\change{f}, \change{a}))
-  \end{displaymath}
-\end{prop}
-
-Conveniently, \cref{def:pointwiseChanges} gives us a way to compute explicit derivatives for
-the evaluation map on pointwise change actions:
-
-\begin{prop}[Derivatives of the evaluation map]
-\label{prop:evDerivatives}
-  Suppose $\cstr{B}$ is a pointwise change action. Let
-  $f: \cstr{A} \rightarrow \cstr{B}$,
-  $a \in A$, $\change{a} \in \changes{A}$,
-  $\change{f} \in \changes{(A \rightarrow B)}$.
-
-  Then, by taking a derivative of $f$ we obtain the following derivative for the evaluation map:
-  \begin{displaymath}
-    \derive{\ev}_1((f, a), (\change{f}, \change{a})) \defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})
-  \end{displaymath}
-
-  Alternatively, by taking a derivative of $f \cplus \change{f}$ we can obtain another derivative
-  for the evaluation map:
-  \begin{displaymath}
-    \derive{\ev}_2((f, a), (\change{f}, \change{a})) \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})
-  \end{displaymath}
-\end{prop}
-
-This is important for \cref{sec:fixpoints}, where we will need derivatives of
-the evaluation map. In practice, this means that we will only be able to compute
-these results when we have pointwise change actions, since we know how to
-compute derivatives of the evaluation map for them.
 
 \section{Change actions over ordered structures}
 \label{sec:moreStructures}
@@ -953,7 +743,7 @@ We will also use an auxilliary function, $\bothdiff$, which computes the
 \newcommand{\bothchanges}{\rho}
 \begin{thm}[Concrete Datalog formula derivatives]
 \label{thm:concreteDatalog}
-  We give two mutually recursive definitions,
+  We define two mutually recursive functions,
   $\updiff: \Formula \rightarrow \Formula$ and
   $\downdiff: \Formula \rightarrow \Formula$, such
   that
@@ -964,7 +754,7 @@ We will also use an auxilliary function, $\bothdiff$, which computes the
 
   Additionally, let
   \begin{displaymath}
-    \bothdiff X \defeq X \twist (\updiff(X), \downdiff(X))
+    \bothdiff(X) \defeq X \twist (\updiff(X), \downdiff(X))
   \end{displaymath}
   in the following.
 
@@ -995,7 +785,6 @@ We will also use an auxilliary function, $\bothdiff$, which computes the
   Straightforward structural induction.
 \end{proof}
 \fi
-
 
 There is a symmetry between the cases for $\wedge$ and $\vee$ between $\updiff$
 and $\downdiff$, but the cases for $\exists$ look quite different.
@@ -1047,10 +836,9 @@ precise, most of the cases are \emph{preciseness-preserving}, in that if the
 subsidiary recursive cases are precise, then so is that case. The only cases
 which lose precision are labelled with $\dagger$.
 
-This means that we can often statically determine whether a formula will have a
-precise derivative or not, which can be useful in practice.
+\section{Change actions over functions}
 
-\todompj{How?}
+\todompj{Simplified version of the exponentials material}
 
 \section{Fixpoints}
 \label{sec:fixpoints}
@@ -1270,18 +1058,14 @@ lattice \textemdash but this may still be significantly less expensive than the
 alternative ``update strategy'': throw everything away and start
 again (which will itself require a fixpoint computation).
 
-\todompj{Worked example of updating a fixpoint? e.g. a TC. Would be painful, but
-  probably helpful. Annoyingly, we haven't given the Datalog semantics yet.
-  Perhaps we should do that after boolean algebras, then this section, then put
-  the pieces together.}
-
 \section{Derivatives of recursive program semantics}
 \label{sec:recursiveDatalog}
 
 Given the non-recursive semantics for a language, we can extend it to handle
-recursive definitions using fixpoints. \Cref{sec:fixpoints} now gives us a way
-to compute those fixpoints incrementally, as well as giving us a derivative for
-our overall program semantics.
+recursive definitions using fixpoints. \Cref{sec:fixpoints} lets us extend our
+derivative for the non-recursive semantics to a derivative for the recursive
+semantics, as well as being able to compute the fixpoints themselves
+incrementally. 
 
 Again, we will demonstrate the technique with Datalog, but the approach is generic.
 
@@ -1350,6 +1134,83 @@ modular now, so we will be able to extend this result more easily.
 Again, we know how to do this \autocite[see][and successors]{gupta1993maintaining},
 but again, the proof is now modular so we can extend it.
 
+\subsubsection{Worked example of updating a recursive Datalog predicate}
+
+The algorithm in \cref{thm:leastFixpointDerivatives} is very abstract, and it is
+hard to see how it will work out in practice. It is therefore worth doing a
+simple worked example.
+
+% You can recompute the example using ql/Fixpoints.ql, if you want to change the data
+
+Consider the $tc$ program from \cref{sec:intro}:
+\begin{align*}
+  tc(x, y) &\leftarrow e(x, y) \vee \exists z.(e(x, z) \wedge tc(z, y))
+\end{align*}
+
+We will start with an edge relation $e_1$ and change it to a new edge relation
+$e_2$ by applying a change $\change{e}$, which both adds and removes some values.
+\begin{align*}
+  e_1 &= \{(1,2), (2,3), (3,4), (5,6) \}\\
+  \change{e} &= (\{(4,5)\}, \{(2,3)\})\\
+  e_2 &= e_1 \cplus \change{e}\\
+      &=\{ (1,2), (3,4), (4,5), (5,6) \}
+\end{align*}
+
+We want to update the fixpoint of $tc$ using $e_1$, which we will call
+$tc_{e_1}$,  to the fixpoint of $tc$ using $e_2$, which we will call $tc_{e_2}$.
+As we have seen in \cref{thm:leastFixpointDerivatives},
+we can do this by computing the fixpoint $\change{w} = \lfp(\adjust(tc_{e_1}, \change{tc}))$. 
+
+A reminder of the expanded definition of $\adjust$:
+\begin{align*}
+  \adjust(f, \change{f}) &= \lambda\ \change{a}. \change{f}(\lfp(f)) \splus \derive{(f \cplus \change{f})}(\lfp(f), \change{a})
+\end{align*}
+
+We've chosen the second defintion of $\ev$ from \cref{prop:evDerivatives}, since
+we already know what $f \cplus \change{f}$ looks like \textemdash it is simply
+$\denote{tc_{e_2}}$ \textemdash and $\change{tc}(\lfp(tc_{e_1}))$ can be
+computed once up front and reused throughout the computation.
+
+We need the derivative of $tc_{e_2}$:
+\begin{align*}
+  \updiff(tc_{e_2}(x, y)) \leftarrow & \exists z. (e_2(x,z) \wedge \updiff(tc_{e_2}(z, y)))\\
+  \downdiff(tc_{e_2}(x, y)) \leftarrow & \neg e_2(x, y)\\
+    &\wedge
+    \exists z . (e_2(x, z) \wedge \downdiff(tc_{e_2}(z, y)))\\
+    &\wedge
+    \neg \exists z . (e_2(x, z) \wedge \bothdiff(tc_{e_2}(z,y)))
+\end{align*}
+
+We also need $\change{tc}$:
+\begin{align*}
+  \change{tc}(f) = &\\
+  &(e_2(x,y) \vee \exists z . (e_2(x,z) \wedge f(z,y))) \\
+  &\cminus (e_1(x,y) \vee \exists z . (e_1(x,z) \wedge f(z,y)))
+\end{align*}
+
+We can now evaluate the fixpoint.\footnote{we would of course like to evaluate this fixpoint
+  incrementally, which we can do with exactly the same theoretical machinery.}
+Here is how the changes evolve:
+\begin{center}
+  \begin{tabular} {p{3.5em} p{10em} p{10em}}
+    Iteration & Additions to $\updiff$ & Additions to $\downdiff$ \\
+    \toprule
+    1 & $\{ (4,5), (4,6) \}$ & $\{ (2,3), (2,4) \}$\\
+    2 & $\{ (3,5), (3,6) \}$ & $\{ (1,3), (1,4) \}$\\
+    3 & (as above) & (as above) \\
+    \bottomrule
+  \end{tabular}
+\end{center}
+\medskip
+
+This results in $\change{w} = (\{ (3,5), (3,6), (4,5), (4,6)\}, \{(1,3), (1,4), (2,3), (2,4)\})$.
+Applying the change and shows that we have indeed computed the new fixpoint.
+\begin{align*}
+  tc_{e_1} \cplus \change{w} &= \{(1,2), (1,3), (1,4), (2,3), (2,4), (5,6)\} \cplus \change{w}\\
+  &= \{(1,2), (3,5), (3,6), (4,5), (4,6), (5,6)\}\\
+  &= tc_{e_2}
+\end{align*}
+
 \subsection{Extensions to Datalog}
 \label{sec:extensions}
 
@@ -1361,9 +1222,7 @@ In fact, because we are using a complete change action, we can \emph{always} do 
 minimal derivative. This justifies our claim that we can support
 \emph{arbitrary} additional formula constructs: although the maximal and minimal
 derivatives are likely to be impractical, having them
-available as options means that we can still use the overall process.
-Even if we have a formula construct which we cannot find a good derivative for, we only lose incremental
-evaluation for those subformulae, and not for anything else.
+available as options means that we will never be completely stymied.
 
 This is important in practice for Semmle's variant of Datalog. For example, the
 upwards derivative for recursive aggregates \autocite{demoor2013aggregates} is:
@@ -1371,7 +1230,196 @@ upwards derivative for recursive aggregates \autocite{demoor2013aggregates} is:
   \updiff(\textrm{agg}(vs \mid T \mid U)) \defeq \exists vs. (T \wedge \updiff{U}) \wedge \textrm{agg}(vs \mid T \mid U)
 \end{align*}
 
-While we can't give a precise derivative, we can still provide a guard that prevents us from having to re-evaluate in all cases. 
+While this isn't a precise derivative, it is still substantially cheaper than
+re-evaluating the whole subfomula, as the guard allows us to skip the second conjunct when $U$
+has not changed.
+
+\section{The category of change actions}
+\label{sec:category}
+
+The sharp-eyed reader will have noticed that we have defined change actions as a
+set of objects with special functions between them (differentiable functions),
+and where we have change actions for product, sum, and function types. This begs
+the question - is there a category here? And is it Cartesian closed?
+
+The answer to this is yes, and we will gesture in the direction of a categorical
+account of change actions.
+
+\begin{defn}[Category of change actions]
+  We define the category $\cat{CAct}$ of change actions. The objects are
+  change actions and the morphisms are differentiable functions. 
+\end{defn}
+
+\subsection{Equivalence with PreOrd}
+
+There is a natural preorder on the base set of a change action, given by reachability
+under the action:
+
+\begin{defn}[Reachability preorder]
+  $a \reachOrder b$ iff there is a $\change{a} \in \changes{A}$ such that $a \cplus
+  \change{a} = b$.
+\end{defn}
+
+We can characterize many of the properties of change actions in terms of the reachability preorder,
+which suggests a connection between $\cat{CAct}$ and the category of preorders, $\cat{PreOrd}$.
+
+\begin{prop}
+  A function is differentiable iff it is monotone with respect to the
+  reachability preorder. 
+\end{prop}
+
+\begin{corollary}
+  Two change actions are isomorphic iff their posets under the reachability
+  preorder are isomorphic.
+\end{corollary}
+
+\begin{corollary}
+  Any function from a discrete change action or into a complete change
+  action is differentiable.
+\end{corollary}
+
+Indeed, the correspondence between a change action and its reachability preorder gives rise to
+a (full and faithful) functor $\reach : \cat{CAct} \rightarrow \cat{PreOrd}$ that acts as the
+identity on morphisms.
+
+Conversely, any preorder $\leq$ on some set $A$ induces a change action
+$\cstr{A}_\leq \defeq \cstruct{A}{\leq^\star}{\cplus_\star}$.
+The action $\cplus_\star$ is defined as the extension of $\cplus_\leq$ to the free
+monoid $\leq^\star$, where $\cplus_\leq$ is defined as:
+\[
+\begin{aligned}
+   \cplus_\leq &: (A \times \leq) \rightarrow A&\\
+   a \cplus_\leq (b, c) &\defeq
+     \begin{cases}
+     c&\text{ if $a = b$}\\
+     a&\text{ otherwise}
+     \end{cases}
+\end{aligned}
+\]
+
+The mapping to $\cstr{A}_\leq$ gives rise to a (full and faithful) functor
+$\direct : \cat{PreOrd} \rightarrow \cat{CAct}$, again acting as the identity on morphisms.
+
+These two functors are in fact enough to give us an equivalence between the categories
+$\cat{CAct}$ and $\cat{PreOrd}$.
+
+\begin{thm}[name=Equivalence of $\cat{CAct}$ and $\cat{PreOrd}$, restate=preordEquivalence]
+  \label{thm:preordEquivalence}
+  The functor $\reach$ from $\cat{CAct}$ to $\cat{PreOrd}$ together with the
+  functor $\direct$ in the opposite direction form an equivalence of categories.
+\end{thm}
+\ifproofs
+\begin{proof}
+  See \cref{prf:preordEquivalence}.
+\end{proof}
+\fi
+
+Since $\cat{PreOrd}$ is a Cartesian closed category and has all limits and
+colimits, this gives us a proof of the existence of limits, colimits, and exponentials in $\cat{CAct}$.
+
+\begin{corollary}
+  The category $\cat{CAct}$ has all limits, colimits and exponential objects.
+\end{corollary}
+
+In the case of complete change actions, this equivalence degenerates into an
+equivalence with $\cat{Set}$, since all functions are differentiable.
+
+\subsection{Exponentials}
+
+The exponential objects in the category $\cat{CAct}$ are difficult to work with,
+because we need to ensure that $f \cplus \change{f}$ continues to be a
+differentiable function. Under some
+conditions, however, we can find a simple representation.
+
+\begin{defn}[Pointwise change actions]
+  \label{def:pointwiseChanges}
+  A change action $\cstr{B}$ is pointwise if every exponential object
+  $\exponential{\cstr{A}}{\cstr{B}}$ is isomorphic to the pointwise change action
+  $\cstruct{\cstr{A} \rightarrow \cstr{B}}{A \rightarrow \changes{B}}{\cplus_\rightarrow}$,
+  where $(f \cplus_\rightarrow \change{f})(x) \defeq f(x) \cplus \change{f}(x)$ and the
+  monoidal structure on $A \rightarrow \changes{B}$ is given by lifting
+  the monoidal structure on $\changes{B}$ pointwise.
+\end{defn}
+
+This corresponds to the intuition about how the correspondence with
+$\cat{PreOrd}$ should work: the preorder on monotone functions in $\cat{PreOrd}$ is
+pointwise.
+
+This pointwise change action is not well defined for all change actions, since
+we require $f \cplus_\rightarrow \change{f}$ to be \emph{differentiable}, which
+may not be true for all pointwise changes $\change{f}$.
+Fortunately, there are useful subcategories of $\cat{CAct}$ formed of pointwise change actions.
+
+\begin{prop}[name=Pointwise change actions, restate=pointwiseChangeActions]
+  \label{prop:pointwiseChangeActions}
+  Every change action $\cstruct{B}{\changes{B}}{\cplus}$ such that the change action
+  $\cstruct{\changes{B}}{\changes{B}}{\splus}$ is complete and $\cplus$ is differentiable with
+  respect to its first argument is pointwise.
+
+  In particular, every change action where $\cplus$ is a group action is pointwise.
+\end{prop}
+\ifproofs
+  See \cref{prf:pointwiseChangeActions}.
+\fi
+
+\begin{prop}[name=Complete implies pointwise, restate=pointwiseComplete]
+  \label{prop:pointwiseComplete}
+   Every complete change action $\cstr{B}$ is pointwise.
+\end{prop}
+\ifproofs
+  See \cref{prf:pointwiseComplete}.
+\fi
+
+Furthermore, since the products and exponentials of complete change actions are complete,
+the full subcategory of $\cat{CAct}$ formed by complete change actions is a Cartesian
+closed category of pointwise change actions.
+
+\todompj{On reflection (hah) I think we can do better: I think complete change
+  actions are a reflective subcategory, where the reflector is the
+  ``completion'' of a change action i.e. pick any complete change action on the
+  set. Or do we? We do if it's set based, since we can use $A \rightarrow A$ but
+  perhaps there are also ``uncompletable'' change actions.}
+
+Derivatives of the evaluation map, irrespective of a particular choice of change action on the
+exponential objects, give us a way to do incremental evaluation of function application:
+\begin{prop}[Incremental application]
+\label{prop:incrementalization}
+  Let $f: \cstr{A} \rightarrow \cstr{B}$, $a \in A$, $\change{a} \in
+  \changes{A}$, $\change{f} \in \changes{(A \rightarrow B)}$, and let
+  $\derive{\ev}$ be a derivative of the evaluation map.
+
+  Then
+  \begin{displaymath}
+    (f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus \derive{\ev}((f, a), (\change{f}, \change{a}))
+  \end{displaymath}
+\end{prop}
+
+Conveniently, \cref{def:pointwiseChanges} gives us a way to compute explicit derivatives for
+the evaluation map on pointwise change actions:
+
+\begin{prop}[Derivatives of the evaluation map]
+\label{prop:evDerivatives}
+  Suppose $\cstr{B}$ is a pointwise change action. Let
+  $f: \cstr{A} \rightarrow \cstr{B}$,
+  $a \in A$, $\change{a} \in \changes{A}$,
+  $\change{f} \in \changes{(A \rightarrow B)}$.
+
+  Then, by taking a derivative of $f$ we obtain the following derivative for the evaluation map:
+  \begin{displaymath}
+    \derive{\ev}_1((f, a), (\change{f}, \change{a})) \defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})
+  \end{displaymath}
+
+  Alternatively, by taking a derivative of $f \cplus \change{f}$ we can obtain another derivative
+  for the evaluation map:
+  \begin{displaymath}
+    \derive{\ev}_2((f, a), (\change{f}, \change{a})) \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})
+  \end{displaymath}
+\end{prop}
+
+This is important for \cref{sec:fixpoints}, where we will need derivatives of
+the evaluation map. In practice, this means that we will only be able to compute
+these results when we have pointwise change actions, since we know how to
+compute derivatives of the evaluation map for them.
 
 \section{Related work}
 
