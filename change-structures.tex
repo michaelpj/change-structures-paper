@@ -1345,6 +1345,8 @@ but again, the proof is now modular so we can extend it.
 
 \subsubsection{Worked example of updating a recursive Datalog predicate}
 
+% You can recompute the example using ql/Fixpoints.ql, if you want to change the data
+
 Consider the $tc$ program from \cref{sec:intro}:
 \begin{align*}
   tc(x, y) &\leftarrow e(x, y) \vee \exists z.(e(x, z) \wedge tc(z, y))
