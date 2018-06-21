@@ -346,8 +346,9 @@ of functions.
 
 \subsection{Products and sums}
 
-We naturally want to have change actions for product and sum types, and
-fortunately these are easy to define.
+Given change actions on sets $A, B$, the question immediately arises of whether there are
+change structures on their Cartesian product $A \times B$ or disjoint union $A + B$. While there are
+many candidates, there is a clear ``natural'' choice for either.
 
 \begin{prop}[name=Products, restate=products]
   \label{prop:products}
@@ -355,7 +356,23 @@ fortunately these are easy to define.
   \cstruct{B}{\changes{B}}{\cpluss}$ be change actions.
 
   Then $\cstr{A} \times \cstr{B} \defeq \cstruct{A \times B}{\changes{A} \times
-  \changes{B}}{\cplus \times \cpluss}$ is their categorical product.
+  \changes{B}}{\cplus \times \cpluss}$ is a change structure, and the projection maps $\pi_1, \pi_2$
+  are differentiable with respect to it.
+
+  \todomario{
+    This result isn't super interesting, but it's reminiscent from calculus so I like it. Plus,
+    there's no dual to this for coproducts, so I feel like it's worth pointing it out, but if we need
+    space it goes away.
+  }
+  Furthermore, a function 
+  $f : A \times B \into C$ is differentiable as a map from $\cstr{A} \times \cstr{B}$ into $\cstr{C}$ if
+  and only if, for every $a \in A$ and $b \in B$, the partially applied functions 
+  \begin{align*}
+    f(a, \cdot) : B \into C\\
+    f(\cdot, b) : A \into C
+  \end{align*}
+  are differentiable.
+
 \end{prop}
 \ifproofs
 \begin{proof}
@@ -384,6 +401,7 @@ fortunately these are easy to define.
 \section{Change actions over ordered structures}
 \label{sec:moreStructures}
 
+\todomario{Not sure how I feel about this part}
 We are aiming to work over Boolean algebras with fixpoints, which is where we
 will interpret Datalog. We will work up to that gradually, adding power as we
 progress from posets, to directed-complete partial orders, and
@@ -392,10 +410,11 @@ finally to Boolean algebras.
 \subsection{Posets}
 
 Ordered sets give us an interestingly constrained class of functions: monotone
-functions. We can define \emph{ordered} change actions, which are well-behaved
-with respect to monotonicity.\footnote{If we were giving a presentation that was
+functions. We can define \emph{ordered} change actions, which are those that
+are well-behaved with respect to the order on the underlying set.
+\footnote{If we were giving a presentation that was
 generic in the base category, then this would simply be the definition of being
-a change action over posets.}
+a change action in the category of posets and monotone maps.}
 
 \begin{defn}[Ordered change actions]
   A change action $\cstr{A}$ is \emph{ordered} if
@@ -405,15 +424,22 @@ a change action over posets.}
   \end{itemize}
 \end{defn}
 
-In fact, in all cases where the base set is a poset, we can always pick an order on the change
-set which makes $\cplus$ monotone in its second argument.
+In fact, any change action whose base set is a poset induces a particularly convenient preorder
+on the corresponding change set:
 
 \begin{defn}[Change preorder]
   $\change{a} \changeOrder \change{b}$ iff for all $a \in A$ it is the case that $a \cplus \change{a} \leq a \cplus \change{b}$.
 \end{defn}
 
-Ordered change actions are useful because they let us give a sensible pointwise preorder
-to our derivatives.
+\begin{prop}
+  Let $\cstr{A}$ be a change action on a set $A$ equipped with a preorder $\leq$ such that
+  $\cplus$ is monotone in its first argument. Then $\cstr{A}$ is an ordered change action when
+  $\changes{A}$ is equipped with the preorder $\changeOrder$.
+\end{prop}
+
+In what follows, we will abuse the notation and extend the preorder $\changeOrder$ on some change
+set $\cstr{A}$ to functions from some $B$ into $\cstr{A}$. This pointwise preorder is well-behaved
+in the sense of the following lemma:
 
 \begin{thm}[Sandwich lemma]
   \label{thm:sandwich}
