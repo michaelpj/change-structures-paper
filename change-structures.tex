@@ -194,15 +194,12 @@ The core concept we will work with is a \emph{change action}. A change action is
 a set along with a set of \emph{changes} that can be ``applied'' to elements of
 the base set using an operator $\cplus$ (pronounced ``smush''). We also require
 some structure on the changes themselves: they must form a \emph{monoid action}
-on the base set.\footnote{The requirement that the change set be a monoid is convenient but in
-  fact inessential: given any set with an action on the base set, we can take the
-  free monoid over the action set to obtain a monoid action.}\footnote{
-Requiring the change set to be monoid action gives us a reason to think that
+on the base set.\footnote{
+Using monoid actions for change sets gives us a reason to think that
 change actions are an adequate representation of changes: any subset of $A
 \rightarrow A$ which is closed under composition can be
-represented as a monoid action, so we are able to capture all of these as change actions.}
-
-\todompj{These footnotes read weirdly together}
+represented as a monoid action, so we are able to capture all of these as change
+actions.}
 
 \begin{defn}[Change actions]
   A \emph{change action} is defined as:
@@ -301,9 +298,6 @@ Datalog. As we will discuss later (\cref{sec:nonRecursiveDatalog}, \cref{sec:rec
 semantics as computing an n-tuple of relations. So we need a change action on
 $\Rel^n$, and fortunately we can construct good change actions for Boolean
 algebras in general (\cref{sec:booleanAlgebras}).
-
-\todompj{I think we need to say something about minimality and why we're not
-  worrying about it. Perhaps here?}
 
 \subsection{Complete change actions and minus operators}
 
@@ -1039,11 +1033,6 @@ precise, most of the cases are \emph{preciseness-preserving}, in that if the
 subsidiary recursive cases are precise, then so is that case. The only cases
 which lose precision are labelled with $\dagger$.
 
-This means that we can often statically determine whether a formula will have a
-precise derivative or not, which can be useful in practice.
-
-\todompj{How?}
-
 \section{Fixpoints}
 \label{sec:fixpoints}
 
@@ -1262,11 +1251,6 @@ lattice \textemdash but this may still be significantly less expensive than the
 alternative ``update strategy'': throw everything away and start
 again (which will itself require a fixpoint computation).
 
-\todompj{Worked example of updating a fixpoint? e.g. a TC. Would be painful, but
-  probably helpful. Annoyingly, we haven't given the Datalog semantics yet.
-  Perhaps we should do that after boolean algebras, then this section, then put
-  the pieces together.}
-
 \section{Derivatives of recursive program semantics}
 \label{sec:recursiveDatalog}
 
@@ -1345,6 +1329,10 @@ but again, the proof is now modular so we can extend it.
 
 \subsubsection{Worked example of updating a recursive Datalog predicate}
 
+The algorithm in \cref{thm:leastFixpointDerivatives} is very abstract, and it is
+hard to see how it will work out in practice. It is therefore worth doing a
+simple worked example.
+
 % You can recompute the example using ql/Fixpoints.ql, if you want to change the data
 
 Consider the $tc$ program from \cref{sec:intro}:
@@ -1402,14 +1390,14 @@ Here is how the changes evolve:
     \toprule
     1 & $\{ (4,5), (4,6) \}$ & $\{ (2,3), (2,4) \}$\\
     2 & $\{ (3,5), (3,6) \}$ & $\{ (1,3), (1,4) \}$\\
-    6 & (as above) & (as above) \\
+    3 & (as above) & (as above) \\
     \bottomrule
   \end{tabular}
 \end{center}
 \medskip
 
-We can then apply the change and see that indeed we have computed the new
-fixpoint.
+This results in $\change{w} = (\{ (3,5), (3,6), (4,5), (4,6)\}, \{(1,3), (1,4), (2,3), (2,4)\})$.
+Applying the change and shows that we have indeed computed the new fixpoint.
 \begin{align*}
   tc_{e_1} \cplus \change{w} &= \{(1,2), (1,3), (1,4), (2,3), (2,4), (5,6)\} \cplus \change{w}\\
   &= \{(1,2), (3,5), (3,6), (4,5), (4,6), (5,6)\}\\
