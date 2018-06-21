@@ -88,13 +88,14 @@ that $e = \{ (1, 2), (2, 3), (3, 4) \}$, we get the following evaluation trace:
 \end{center}
 \medskip
 
-And then we have reached a fixpoint, so we are done.
+At this point we have reached a fixpoint, so the evaluation ends.
 
 However, this process is quite wasteful. We deduced the fact $(1,2)$ at every iteration,
 even though we had already deduced it in the first iteration. Indeed, for a
 chain of $n$ such edges we will deduce $O(n^2)$ facts along the way.
 
-The standard improvement to this evaluation strategy is ``semi-naive'' evaluation, where we transform
+The standard improvement to this evaluation strategy is what's commonly known as ``semi-naive'' 
+evaluation, where we transform 
 the program into a \emph{delta} program that only deduces the \emph{new} facts at each
 iteration. We can then gradually accumulate these to compute the final relation \autocite[See][section
 13.1]{abiteboul1995foundations}.
@@ -162,13 +163,18 @@ However, \citeauthor{cai2014changes}'s work isn't directly applicable to Datalog
 of Datalog's semantics are recursive definitions and the need for the \emph{fixpoints}, and we need some additional theory to tell us how to
 handle incremental evaluation of fixpoint computations.
 
-This paper bridges that gap.
+This paper aims to bridge that gap by providing a solid semantic foundation for the incremental
+computation of Datalog (and other) programs, and show how it can be used to account for extensions
+to 
+
+
 
 \subsection{Contributions}
 
 We start by generalizing change structures to
-\emph{change actions} (\cref{sec:changeActions}). Change actions are weaker than change structures, but
-have nice categorical properties (\cref{sec:category}), and exist for more structures (\cref{sec:moreStructures}).
+\emph{change actions} (\cref{sec:changeActions}). Change actions are simpler and weaker than change
+structures, while still providing enough information to handle incremental computation,
+having nice categorical behaviour (\cref{sec:category}) and existing for more structures (\cref{sec:moreStructures}).
 
 We then show how to compute fixpoints incrementally, and also how to perform
 incremental maintenance of already computed fixpoint expressions, given a change to
@@ -177,7 +183,8 @@ the function of which the fixpoint is taken (\cref{sec:fixpoints}).
 Finally, we put all this together into a generic account of incremental
 computation and maintenance of recursive Datalog programs, showing how to handle 
 language constructs such as negation, disjunction, and additional well-behaved
-extensions (\cref{sec:nonRecursiveDatalog}, \cref{sec:recursiveDatalog}). This provides the world's first incremental
+extensions (\cref{sec:nonRecursiveDatalog}, \cref{sec:recursiveDatalog}). This provides, to the best
+of our knowledge, the world's first incremental
 evaluation and maintenance mechanism for Datalog that can handle these features. Moreover, the structure of the
 proof is modular, and can accommodate arbitrary additional
 formula constructs (\cref{sec:extensions}). The technique for handling fixpoints
