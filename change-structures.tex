@@ -245,7 +245,8 @@ that we don't have to do any extra work to talk about changes to changes \textem
 Here are some other recurring examples of change actions:
 \begin{itemize}
   \item $\cstr{A}_\discrete \defeq \cstruct{A}{\emptyset}{\lambda(a, da). a}$,
-    which we call the \emph{discrete} change action on any base set.
+    which we call the \emph{discrete} change action on any base set, since it
+    has no changes at all.
   \item $\cstr{A}_\Rightarrow \defeq \cstruct{A}{\exponential{A}{A}}{\ev}$, where $A$ is some
     category, $\exponential{A}{A}$ is the exponential object with the
     composition monoid, and $\ev$ is the evaluation map
@@ -270,9 +271,8 @@ $\change{a}$, but ideally we want to avoid actually computing $f(a \cplus
 \change{a})$ up-front.
 
 A solution to this problem is a function $\derive{f}: A \times \changes{A}
-\rightarrow \changes B$, which tells us how to change $f(a)$ given a change to $a$.
-
-We call this a \emph{derivative} of a function.
+\rightarrow \changes B$, which tells us how to change $f(a)$ given a change to
+$a$. We call this a \emph{derivative} of a function.
 
 \begin{defn}[Derivatives]
   \label{def:derivative}
@@ -282,7 +282,7 @@ We call this a \emph{derivative} of a function.
     f(a \cplus \change{a}) = f(a) \cpluss \derive{f}(a, \change{a})
   \end{displaymath}
 
-  A function which has a derivative is called
+  A function which has a derivative is 
   \emph{differentiable}.\footnote{Note that we do not require that $\derive{f}(a,
     \change{a} \splus \change{b}) = \derive{f}(a, \change{a}) \splus \derive{f}(a
     \cplus \change{a}, \change{b})$. This is a natural condition, and almost all
@@ -960,7 +960,8 @@ This amounts to applying a change to the \emph{function} whose fixpoint we are t
 In Datalog this would allow us to update a recursively defined relation given an
 update to one of its non-recursive dependencies, or the extensional database.
 For example, we might want to take the transitive closure relation
-and update it by changing the edge relation $e$.
+and update it by changing the edge relation $e$.\footnote{See
+  \cref{sec:workedExample} for a worked example of doing exactly that.}
 
 However, this requires us to have a derivative for the fixpoint operator
 $\fixpoint$ with respect to the function which it takes the fixpoint of.
@@ -1150,6 +1151,7 @@ Again, we know how to do this \autocite[see][and successors]{gupta1993maintainin
 but again, the proof is now modular so we can extend it.
 
 \subsubsection{Worked example of updating a recursive Datalog predicate}
+\label{sec:workedExample}
 
 The algorithm in \cref{thm:leastFixpointDerivatives} is very abstract, and it is
 hard to see how it will work out in practice. It is therefore worth doing a
