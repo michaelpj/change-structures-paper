@@ -196,7 +196,7 @@ We have omitted the proofs from this paper. Most of the results have routine
 proofs, but the proofs of the more substantial results
 (especially those in \cref{sec:fixpoints}) are included in an appendix.
 
-\section{Change actions}
+\section{Change actions and derivatives}
 \label{sec:changeActions}
 
 Incremental computation is about understanding how values \emph{change}. For
@@ -212,6 +212,8 @@ change actions are an adequate representation of changes: any subset of $A
 \rightarrow A$ which is closed under composition can be
 represented as a monoid action, so we are able to capture all of these as change
 actions.}
+
+\subsection{Change actions}
 
 \begin{defn}[Change actions]
   A \emph{change action} is defined as:
@@ -266,13 +268,13 @@ algorithms that encode a frame as a series of changes to the previous frame.
 
 When we do incremental computation we are usually trying to save ourselves some
 work. We have an expensive function $f: A \rightarrow B$, which we've evaluated at some point
-$a$. Now we are interested in evaluating it after some change to $a$,
+$a$. Now we are interested in evaluating $f$ after some change to $a$,
 $\change{a}$, but ideally we want to avoid actually computing $f(a \cplus
-\change{a})$ up-front.
+\change{a})$ directly.
 
 A solution to this problem is a function $\derive{f}: A \times \changes{A}
-\rightarrow \changes B$, which tells us how to change $f(a)$ given a change to
-$a$. We call this a \emph{derivative} of a function.
+\rightarrow \changes B$, which given $a$ and $\change{a}$ tells us how to change
+$f(a)$ to $f(a \cplus \change{a})$. We call this a \emph{derivative} of a function.
 
 \begin{defn}[Derivatives]
   \label{def:derivative}
@@ -299,6 +301,26 @@ action \textemdash{} where $a \cplus \change{a} = a \cplus \change{b}$ implies $
 For example, because $\{0\} \cap \{1\} = \{0\}
 \cap \{2\}$, $\cstruct{\mathcal{P}(\NN)}{\mathcal{P}(\NN)}{\cap}$ is not thin.
 
+Derivatives capture the structure of incremental computation, but there are
+important operational considerations that affect whether they actually save us
+any work. As we will see in a moment (\cref{prop:minusDerivatives}), for many change actions we will always have the option
+of picking the ``worst'' derivative which says ``compute $f(a \cplus \change{a})$
+directly and then work out how to get there from $f(a)$''. While this is a correct
+derivative, it certainly does not save us any work! We will be concerned at
+various points with both the possibility of constructing correct derivatives
+(\cref{sec:booleanAlgebras} and \cref{sec:fixpoints} in particular), and also in
+giving ourselves a range of derivatives to choose from so that we can soundly
+optimize for operational value.
+
+For our Datalog case study, we are going to want a good derivative of the semantics of
+Datalog. As we will see later (\cref{sec:nonRecursiveDatalog},
+\cref{sec:recursiveDatalog}), we can get good deriviatives for both the
+non-recursive and full, recursive, semantics of Datalog.
+
+\subsection{Useful facts about change actions and derivatives}
+
+\subsubsection{The Chain Rule}
+
 The derivative of a function can be computed compositionally, because derivatives satisfy the standard chain rule.
 
 \begin{thm}[The Chain Rule]
@@ -313,13 +335,7 @@ The derivative of a function can be computed compositionally, because derivative
   \end{displaymath}
 \end{thm}
 
-For our Datalog case study, we are going to want a derivative of the semantics of
-Datalog. As we will discuss later (\cref{sec:nonRecursiveDatalog}, \cref{sec:recursiveDatalog}), we can see Datalog's
-semantics as computing an n-tuple of relations. So we need a change action on
-$\Rel^n$, and fortunately we can construct good change actions for Boolean
-algebras in general (\cref{sec:booleanAlgebras}).
-
-\subsection{Complete change actions and minus operators}
+\subsubsection{Complete change actions and minus operators}
 
 Complete change actions are an important class of change actions, because they
 have changes between \emph{any} two values in the base set.
@@ -349,6 +365,7 @@ This last property is of the utmost importance, since we are often concerned wit
 of functions.
 
 \begin{prop}[Minus derivative]
+  \label{prop:minusDerivatives}
   Given a minus operator $\cminus$, and a function $f$, let
   \begin{displaymath}
     \derive{f}_\cminus(a, \change{a}) \defeq f(a \cplus \change{a}) \cminus f(a)
@@ -357,7 +374,7 @@ of functions.
   Then $\derive{f}_\cminus$ is a derivative for $f$.
 \end{prop}
 
-\subsection{Products and sums}
+\subsubsection{Products and sums}
 
 We naturally want to have change actions for product and sum types, and
 fortunately these are easy to define.
@@ -397,10 +414,18 @@ fortunately these are easy to define.
 \section{Change actions over ordered structures}
 \label{sec:moreStructures}
 
-We are aiming to work over Boolean algebras with fixpoints, which is where we
-will interpret Datalog. We will work up to that gradually, adding power as we
-progress from posets, to directed-complete partial orders, and
-finally to Boolean algebras.
+We need three things for our analysis:
+\begin{itemize}
+\item Approximation of derivatives
+\item Existence of derivatives for fixpoints
+\item Good change actions for Boolean algebras
+\end{itemize}
+
+Each of the following sections will achieve one of these goals, for which we
+need progressively stronger structures. Posets will allow us to approximate
+derivatives, directed-complete partial orders will give us the continuity
+theorems we need to find derivatives of fixpoints, and Boolean algebras will
+turn out to admit a simple, continuous change action.
 
 \subsection{Posets}
 
@@ -461,10 +486,31 @@ characterisation of all the derivatives for a function.
 \end{proof}
 \fi
 
-This theorem gives us leeway when trying to pick a derivative: we can pick out the
-bounds, and that tells us how much ``wiggle room'' we have. This is helpful
-because some of the intermediary functions may be much easier to compute than
-others, as we will see in \cref{sec:datalogDifferentiability}.
+This theorem gives us the leeway that we need when trying to pick a derivative: we can pick out the
+bounds, and that tells us how much ``wiggle room'' we have above and below.
+
+\subsubsection{Precision}
+
+The change preorder corresponds to a natural notion of precision: if $\change{a}
+\changeOrder \change{b]}$, then $\change{b}$ produces ``bigger'' updates than
+$\change{a}$, and there is some additional information in it that is being
+ignored even when $c \cplus \change{a} = c \cplus \change{b}$.
+
+For example, in $\cstruct{\{A\}}{\{A\}}{\cup}$, $\{1\} \changeOrder \{1,2\}$. Even
+though $\{2\} \cplus \{1\} = \{2\} \cplus \{1,2\} = \{1,2\}$, the second change is
+imprecise because it adds in 2 even though it was already present.
+
+\todompj{Something about kernel orderings?}
+
+\begin{defn}[Precision of derivatives]
+  \label{def:precision}
+  A derivative is precise if it is minimal with respect to $\changeOrder$.
+\end{defn}
+
+Precision may be a desirable property because precise derivatives produce
+``smaller'' changes (in the subset lattice it must exactly produce the changes
+with the smallest cardinality). However, we may wish to trade this off against
+other operational properties, such as how easy the derivative is to compute.
 
 \subsection{Directed-complete partial orders}
 
@@ -544,7 +590,7 @@ Complete Boolean algebras have a complete, continuous change action.
     (p, q) \splus (r, s) \defeq ((p \wedge \neg q) \vee r, (q \wedge \neg r) \vee s)
   \end{displaymath}
 
-  Then $\cstr{L}_\superpose$ is a complete (and hence pointwise), continuous change action on $L$.
+  Then $\cstr{L}_\superpose$ is a complete, continuous change action on $L$.
 \end{prop}
 \ifproofs
 \begin{proof}
@@ -592,36 +638,8 @@ all the derivatives on Boolean algebras:
   \end{displaymath}
 \end{corollary}
 
-This makes \cref{thm:derivativeCharacterization} actually usable in practice, as
-we have concrete definitions for our bounds (which, again, we will make use of in \cref{sec:datalogDifferentiability}).
-
-\subsubsection{Precision}
-
-The change ordering corresponds to a natural notion of precision: if $\change{a}
-\changeOrder \change{b]}$, then $\change{b}$ produces ``bigger'' updates than
-$\change{a}$, and there is some additional information in it that is being
-ignored even when $c \cplus \change{a} = c \cplus \change{b}$.
-
-For example, in $\cstruct{\{A\}}{\{A\}}{\cup}$, $\{1\} \changeOrder \{1,2\}$. Even
-though $\{2\} \cplus \{1\} = \{2\} \cplus \{1,2\} = \{1,2\}$, the second change is
-imprecise because it adds in 2 even though it was already present.
-
-The most precise deriviatives are therefore those that are minimal with respect
-to $\changeOrder$.
-
-\todompj{Something about kernel orderings?}
-
-\begin{defn}[Precision of derivatives]
-  \label{def:precision}
-  A derivative is precise if it is minimal with respect to $\changeOrder$.
-\end{defn}
-
-In a boolean algebra, this corresponds to being the unique minimal derivative.
-
-Precision may be a desirable property because precise derivatives produce
-``smaller'' changes (in the subset lattice it must exactly produce the changes
-with the smallest cardinality). However, we may wish to trade this off against
-other properties, such as how easy the derivative is to compute.
+This makes \cref{thm:derivativeCharacterization} actually usable in practice, since
+we have concrete definitions for our bounds (which we will make use of in \cref{sec:datalogDifferentiability}).
 
 \section{Derivatives of non-recursive program semantics}
 \label{sec:nonRecursiveDatalog}
@@ -631,9 +649,9 @@ interesting functions is \emph{programming language semantics}. If we can give
 good derivatives for the semantics of a programming language, then we can
 incrementally update our programs. We don't yet know how to handle recursion
 (which we will tackle in \cref{sec:recursiveDatalog}), but we can start by
-looking at the non-recursive part of the semantics.
+looking at non-recursive program semantics.
 
-We will use Datalog as our example language, but the approach is generic.
+We will use Datalog as our example language, although the approach is generic.
 Datalog is a well-known simple logic programming language \autocite[See][part D]{abiteboul1995foundations}.
 It is also a textbook example of the need for incremental computation, since as we have seen
 (\cref{sec:intro}) the naive computation of its semantics can be very expensive.
@@ -693,19 +711,18 @@ that the $\cstr{L}_\superpose$ change action is complete, in fact we
 \emph{do} know that $\denote{T}$ must be differentiable.
 
 However, this does not mean that we have a \emph{good} derivative for
-$\denote{T}$. The derivative that we know we have for complete change actions
-is quite bad:
+$\denote{T}$. We have a complete change action, but recall that the minus derivative
+is very bad operationally:
 \begin{displaymath}
-  \derive{f}(a, \change{a}) = f(a \cplus \change{a}) \cminus f(a)
+  \derive{f}_\cminus(a, \change{a}) = f(a \cplus \change{a}) \cminus f(a)
 \end{displaymath}
-While this is precise, if we compute this naiveley, it requires \emph{more}
-work than evaluating $f(a \cplus \change{a})$ directly!
+While this is precise it requires \emph{more} work to compute than computing $f(a \cplus \change{a})$ directly!
 
 However, \cref{cor:booleanCharacterization} gives us a range of derivatives to
 choose from, and we can optimize within that range to find one that satisfies
 our constraints, for example trading off ease of computation against precision.
 
-In the case of Datalog, the change ordering on the change action also
+In the case of Datalog, the change preorder on the change action also
 corresponds to the size of the derivative as a pair of relations. The minimal (precise)
 derivative contains only the elements that are newly added or removed,
 whereas the maximal derivative contains all the elements that have \emph{ever}
@@ -1080,10 +1097,10 @@ recomputing the full new fixpoint.
 Given the non-recursive semantics for a language, we can extend it to handle
 recursive definitions using fixpoints. \Cref{sec:fixpoints} lets us extend our
 derivative for the non-recursive semantics to a derivative for the recursive
-semantics, as well as being able to compute the fixpoints themselves
+semantics, as well as letting us compute the fixpoints themselves
 incrementally. 
 
-Again, we will demonstrate the technique with Datalog, but the approach is generic.
+Again, we will demonstrate the technique with Datalog, although the approach is generic.
 
 \subsection{Semantics of Datalog programs}
 
@@ -1509,7 +1526,7 @@ don't require our changes to always be increasing.
 
 \subsubsection{Incremental evaluation}
 
-The earliest interpretation of semi-naive evaluation as a derivative process
+The earliest interpretation of semi-naive evaluation as a derivative 
 appears in \textcite{bancilhon1986naive}. The idea of using an approximate derivative
 and the requisite soundness condition appears as a throwaway comment in
 \textcite[][section 3.2.2]{bancilhon1986amateur}, and as far as we know nobody has since
@@ -1554,10 +1571,12 @@ few tuples as possible to get below the new fixpoint, and then iterate again
 (possibly using an incremental version of the semantics).
 
 This is a perfectly reasonable approach, and given a good, domain-specific,
-means of getting below the fixpoint, they can be quite efficient (likely more
-efficient than our method). The main defect of these approaches is that they
-\emph{are} domain specific, and hence inflexible with respect to changes in the
-language or structure, whereas our approach is quite generic.
+means of getting below the fixpoint, they can be quite efficient.
+The main defect of these approaches is that they \emph{are} domain specific,
+and hence inflexible with respect to changes in the language or structure,
+whereas our approach is quite generic. Although we know of no theoretical reason
+why either approach should give superior performance when both are applicable,
+an empirical investigation of this could prove interesting.
 
 Other approaches \autocites{dong2000incremental}{urpi1992method} consider only
 restricted subsets of Datalog, or incur other substantial constraints, and our results
