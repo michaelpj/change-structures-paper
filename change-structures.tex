@@ -868,7 +868,66 @@ which lose precision are labelled with $\dagger$.
 
 \section{Change actions over functions}
 
-\todompj{Simplified version of the exponentials material}
+We would like to be able to talk about change actions on \emph{functions}, both
+because we would like to support the semantics of higher-order programming
+languages, but also because the deriviative of a fixpoint $\fixpoint(f)$ is going to be with
+respect to $f$, the function which we are taking the fixpoint of. This only
+makes sense if we have change actions on functions.
+
+\begin{defn}[Pointwise change actions]
+  \label{def:pointwiseChanges}
+  The pointwise change action on functions is defined as
+  $\cstruct{\cstr{A} \rightarrow \cstr{B}}{A \rightarrow \changes{B}}{\cplus_\rightarrow}$,
+  where $(f \cplus_\rightarrow \change{f})(x) \defeq f(x) \cplus \change{f}(x)$ and the
+  monoidal structure on $A \rightarrow \changes{B}$ is given by lifting
+  the monoidal structure on $\changes{B}$ pointwise.
+\end{defn}
+
+This is a very practical and useful definition of changes for functions, just
+lifiting the changes to the output type (for discussions about whether this is
+the ``right'' type for function changes, see \cref{sec:exponentials} and \cref{sec:relatedChangeStructures}).
+
+\subsection{The evaluation map}
+\label{sec:evaluationMap}
+
+Wherever we have functions, we also have the evaluation map, $\ev: ((A
+\rightarrow B) \times A) \rightarrow B$. The derivatives of this map turn out to be
+quite useful, so we will state a few lemmas about them now.
+
+Derivatives of the evaluation map, irrespective of how we choose to define
+function changes, give us a way to do incremental evaluation of function application:
+\begin{prop}[Incremental application]
+\label{prop:incrementalization}
+  Let $f: \cstr{A} \rightarrow \cstr{B}$, $a \in A$, $\change{a} \in
+  \changes{A}$, $\change{f} \in \changes{(A \rightarrow B)}$, and let
+  $\derive{\ev}$ be a derivative of the evaluation map.
+
+  Then
+  \begin{displaymath}
+    (f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus \derive{\ev}((f, a), (\change{f}, \change{a}))
+  \end{displaymath}
+\end{prop}
+
+Conveniently, our definition of function changes gives us a way to compute explicit derivatives for
+the evaluation map:
+\begin{prop}[Derivatives of the evaluation map]
+\label{prop:evDerivatives}
+  Let
+  $f: \cstr{A} \rightarrow \cstr{B}$,
+  $a \in A$, $\change{a} \in \changes{A}$,
+  $\change{f} \in \changes{(A \rightarrow B)}$.
+
+  Then, by taking a derivative of $f$ we obtain the following derivative for the evaluation map:
+  \begin{displaymath}
+    \derive{\ev}_1((f, a), (\change{f}, \change{a})) \defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})
+  \end{displaymath}
+
+  Alternatively, by taking a derivative of $f \cplus \change{f}$ we can obtain another derivative
+  for the evaluation map:
+  \begin{displaymath}
+    \derive{\ev}_2((f, a), (\change{f}, \change{a})) \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})
+  \end{displaymath}
+\end{prop}
 
 \section{Fixpoints}
 \label{sec:fixpoints}
@@ -1003,7 +1062,7 @@ $\derive{\ev}$, a derivative of the evaluation map, in the definition of
 $\adjust$ is also no coincidence: as evaluating a fixpoint consists of many
 steps of applying the evaluation map, so computing the derivative of a fixpoint
 consists of many stages of applying the derivative of the evaluatoin
-map.\footnote{The authors confess that they first discovered an expanded
+map.\footnote{Perhaps surprisingly, the authors first discovered an expanded
   version of this formula, and it was only later that we realised the remarkable
   connection to $\derive{\ev}$.}
 
@@ -1232,7 +1291,7 @@ We also need $\change{tc}$:
   &\cminus (e_1(x,y) \vee \exists z . (e_1(x,z) \wedge f(z,y)))
 \end{align*}
 
-We can now evaluate the fixpoint.\footnote{we would of course like to evaluate this fixpoint
+We can now evaluate the fixpoint.\footnote{We would of course like to evaluate this fixpoint
   incrementally, which we can do with exactly the same theoretical machinery.}
 Here is how the changes evolve:
 \begin{center}
@@ -1369,20 +1428,16 @@ In the case of complete change actions, this equivalence degenerates into an
 equivalence with $\cat{Set}$, since all functions are differentiable.
 
 \subsection{Exponentials}
+\label{sec:exponentials}
 
 The exponential objects in the category $\cat{CAct}$ are difficult to work with,
 because we need to ensure that $f \cplus \change{f}$ continues to be a
-differentiable function. Under some
-conditions, however, we can find a simple representation.
+differentiable function. Under some conditions, however, we can find a simple representation.
 
 \begin{defn}[Pointwise change actions]
-  \label{def:pointwiseChanges}
+  \label{def:pointwiseChangeActions}
   A change action $\cstr{B}$ is pointwise if every exponential object
-  $\exponential{\cstr{A}}{\cstr{B}}$ is isomorphic to the pointwise change action
-  $\cstruct{\cstr{A} \rightarrow \cstr{B}}{A \rightarrow \changes{B}}{\cplus_\rightarrow}$,
-  where $(f \cplus_\rightarrow \change{f})(x) \defeq f(x) \cplus \change{f}(x)$ and the
-  monoidal structure on $A \rightarrow \changes{B}$ is given by lifting
-  the monoidal structure on $\changes{B}$ pointwise.
+  $\exponential{\cstr{A}}{\cstr{B}}$ is isomorphic to a pointwise function change action.
 \end{defn}
 
 This corresponds to the intuition about how the correspondence with
@@ -1394,8 +1449,8 @@ we require $f \cplus_\rightarrow \change{f}$ to be \emph{differentiable}, which
 may not be true for all pointwise changes $\change{f}$.
 Fortunately, there are useful subcategories of $\cat{CAct}$ formed of pointwise change actions.
 
-\begin{prop}[name=Pointwise change actions, restate=pointwiseChangeActions]
-  \label{prop:pointwiseChangeActions}
+\begin{prop}[name=Pointwise change actions, restate=pointwiseChangeActionProps]
+  \label{prop:pointwiseChangeActionProps}
   Every change action $\cstruct{B}{\changes{B}}{\cplus}$ such that the change action
   $\cstruct{\changes{B}}{\changes{B}}{\splus}$ is complete and $\cplus$ is differentiable with
   respect to its first argument is pointwise.
@@ -1403,7 +1458,7 @@ Fortunately, there are useful subcategories of $\cat{CAct}$ formed of pointwise 
   In particular, every change action where $\cplus$ is a group action is pointwise.
 \end{prop}
 \ifproofs
-  See \cref{prf:pointwiseChangeActions}.
+  See \cref{prf:pointwiseChangeActionProps}.
 \fi
 
 \begin{prop}[name=Complete implies pointwise, restate=pointwiseComplete]
@@ -1414,56 +1469,16 @@ Fortunately, there are useful subcategories of $\cat{CAct}$ formed of pointwise 
   See \cref{prf:pointwiseComplete}.
 \fi
 
-Furthermore, since the products and exponentials of complete change actions are complete,
-the full subcategory of $\cat{CAct}$ formed by complete change actions is a Cartesian
-closed category of pointwise change actions.
+Furthermore, since the complete change actions are a reflective subcategory of
+$\cat{CAct}$ (with the reflector being the ``completion'' of a change action,
+i.e. any complete change action, which we can always find), the complete change
+action form a Cartesian closed category of pointwise change actions.
 
-\todompj{On reflection (hah) I think we can do better: I think complete change
-  actions are a reflective subcategory, where the reflector is the
-  ``completion'' of a change action i.e. pick any complete change action on the
-  set. Or do we? We do if it's set based, since we can use $A \rightarrow A$ but
-  perhaps there are also ``uncompletable'' change actions.}
-
-Derivatives of the evaluation map, irrespective of a particular choice of change action on the
-exponential objects, give us a way to do incremental evaluation of function application:
-\begin{prop}[Incremental application]
-\label{prop:incrementalization}
-  Let $f: \cstr{A} \rightarrow \cstr{B}$, $a \in A$, $\change{a} \in
-  \changes{A}$, $\change{f} \in \changes{(A \rightarrow B)}$, and let
-  $\derive{\ev}$ be a derivative of the evaluation map.
-
-  Then
-  \begin{displaymath}
-    (f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus \derive{\ev}((f, a), (\change{f}, \change{a}))
-  \end{displaymath}
-\end{prop}
-
-Conveniently, \cref{def:pointwiseChanges} gives us a way to compute explicit derivatives for
-the evaluation map on pointwise change actions:
-
-\begin{prop}[Derivatives of the evaluation map]
-\label{prop:evDerivatives}
-  Suppose $\cstr{B}$ is a pointwise change action. Let
-  $f: \cstr{A} \rightarrow \cstr{B}$,
-  $a \in A$, $\change{a} \in \changes{A}$,
-  $\change{f} \in \changes{(A \rightarrow B)}$.
-
-  Then, by taking a derivative of $f$ we obtain the following derivative for the evaluation map:
-  \begin{displaymath}
-    \derive{\ev}_1((f, a), (\change{f}, \change{a})) \defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})
-  \end{displaymath}
-
-  Alternatively, by taking a derivative of $f \cplus \change{f}$ we can obtain another derivative
-  for the evaluation map:
-  \begin{displaymath}
-    \derive{\ev}_2((f, a), (\change{f}, \change{a})) \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})
-  \end{displaymath}
-\end{prop}
-
-This is important for \cref{sec:fixpoints}, where we will need derivatives of
-the evaluation map. In practice, this means that we will only be able to compute
-these results when we have pointwise change actions, since we know how to
-compute derivatives of the evaluation map for them.
+Having pointwise changes allows us to actually compute a derivative of the
+evaluation map as shown in \cref{prop:evDerivatives}. In practice, this means
+that we will only be able to use the results in \cref{sec:fixpoints} when
+we have pointwise change actions, or where we have some other way of computing
+a derivative of the evaluation map.
 
 \section{Related work}
 
@@ -1483,11 +1498,13 @@ have a minus operator. Where we can find a change structure with a minus operato
 forced to use unwieldy representations for change sets, and
 \citeauthor{cai2014changes} cite this as their reason for using a dependently
 typed type of changes. For example, the monoidal change actions on sets and lists are clearly
-useful for incremental computation on streams, yet they do not admit minus operators \textemdash{} instead, one would
+useful for incremental computation on streams, yet they do not admit minus
+operators \textemdash{} instead, one would
 be forced to work with e.g. multisets admitting negative arities, as \citeauthor{cai2014changes} do.
 
 Our function changes (when well behaved) correspond to what \citeauthor{cai2014changes} call
-\emph{pointwise differences} \autocite[see][section 2.2]{cai2014changes}. As they point out, you can reconstruct their
+\emph{pointwise differences} \autocite[see][section 2.2]{cai2014changes}. As
+they point out, you can reconstruct their
 function changes from pointwise changes and derivatives, so the two formulations
 are equivalent. However, our function changes correspond to the
 exponentials that we get from the categorical equivalence with $\cat{PreOrd}$,
@@ -1642,17 +1659,18 @@ as its corresponding spectrum, for example).
 \section{Conclusions and future work}
 
 We have presented change actions and their properties, and used them to provide novel
-strategies for incrementally evaluating fixpoints and the semantics of Datalog.
+strategies for incrementally evaluating and maintaining recursive functions, in
+particular the semantics of Datalog.
 
 Our work opens several avenues for future investigation.
 
 Firstly, the concrete definition of change actions can be generalized in a number of
-ways. A 2-categorical version (by analogy with the 2-categorical interpretation
+ways. A 2-categorical presentation (by analogy with the 2-categorical interpretation
 of $\cat{PreOrd}$) would smooth over many of the technical difficulties which
 the current presentation faces due to the fact that the changes produced
 $\derive{f}(a, \change{a})$ can be applied at points other than $f(a)$.
 A description of change actions which is generic in
-the base category would also be easy to provide, which may lead to models of
+the base category could also be provided, which might lead to models of
 the incremental $\lambda$-calculus on different base categories. 
 
 Of those, the theory of change actions on the category of domains is of particular interest. Since
@@ -1662,8 +1680,9 @@ even those that do not fit into the model of \citeauthor{cai2014changes}'s ILC.
 Our fixpoint theorems are proven over dcpos in general, which is crucial since
 fixpoints are often used in domain theory to give a semantics to recursion.
 
-Additionally, the tantalizing connection between change actions, the ILC and synthetic
-differential geometry has only begun to be explored and a denotational semantics for the
+Additionally, we have only begun to explore the tantalizing connection between
+change actions, the ILC and synthetic
+differential geometry, and a denotational semantics for the
 ILC based on smooth spaces is the subject of ongoing research. We believe many concepts
 from standard differential geometry, like gradients, vector fields, curves and flows can
 be defined for general change actions, which could then have implications for higher-order
@@ -1688,37 +1707,7 @@ helpful comments on the manuscript.
 \appendixpage
 \section{Proofs}
 
-\subsection{The category of change actions}
-
-\preordEquivalence*
-\begin{proof}
-  \label{prf:preordEquivalence}
-  On one direction, if $U$ is a preorder, it's trivial to check that $\reach (\direct (U)) = U$.
-
-  On the other direction, we need to find a natural isomorphism between $\direct \circ \reach$
-  and the identity functor. First, we note that the base set for the change action
-  $\direct(\reach(A))$ is the same as the base set for $\cstr{A}$.
-
-  We claim that the desired natural isomorphism is given by the
-  the identity on the base sets. It remains to prove that the identities
-  $id_A : \cstr{A} \rightarrow \direct(\reach(A))$ and
-  $id_{A_{\reachOrder}} : \direct(\reach(A)) \rightarrow \cstr{A}$
-  are indeed differentiable in both directions.
-
-  In one direction, a derivative is given by
-  \begin{displaymath}
-    \derive{id}_A(a, \change{a}) \defeq (a, a \cplus \change{a})
-  \end{displaymath}
-  Conversely, let $(a, b) \in \reachOrder$. By definition of $\reachOrder$, there is some
-  $\change{}_{(a, b)} \in \changes{A}$ satisfying $a \cplus \change{}_{(a,b)} = b$.
-  This gives a definition for the derivative of the identity on pairs:
-  \begin{displaymath}
-    \derive{id}_{A_{\reachOrder}}(a, (a, b)) \defeq \change{}_{(a, b)}
-  \end{displaymath}
-  which can be extended freely to the whole change set
-  $\reachOrder^\star$.\footnote{Note that since we picked arbitrary change
-    representatives, the resulting derivative may not preserve the monoid action.}
-\end{proof}
+\subsection{Change actions and derivatives}
 
 \products*
 \begin{proof}
@@ -1748,79 +1737,6 @@ helpful comments on the manuscript.
     \derive{[f_1, f_2]} (i_1 a, (\change{a}, \change{b})) &\defeq f_1'(a, \change{a})\\
     \derive{[f_1, f_2]} (i_2 b, (\change{a}, \change{b})) &\defeq f_2'(b, \change{b})
   \end{align*}
-\end{proof}
-
-\pointwiseChangeActions*
-\begin{proof}
-\label{prf:pointwiseChangeActions}
-  Let $\cstr{B}$ be a change action, with $\cplus$ differentiable with respect
-  to its first argument, and suppose the change action on $\changes{B}$
-  is complete.
-
-  First, we prove that the pointwise change action is well defined: let
-  $f : \cstr{A} \rightarrow \cstr{B}$ be some differentiable function, and
-  $\change{f} : A \rightarrow \changes{B}$ a pointwise change (which is
-  differentiable, since $\cstr{\changes{B}}$ is complete). Then:
-  \begin{align*}
-    &(f \cplus_\rightarrow \change{f})(a \cplus \change{a})\\
-    &= f(a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})\\
-    &= (f(a) \cplus \derive{f}(a, \change{a})) \cplus (\change{f}(a) \splus \derive{\change{f}}(a, \change{a}) )\\
-    &= f(a) \cplus (\change{f}(a) \splus \derive{\change{f}}(a, \change{a}))
-       \cplus \derive{\cplus}((f(a), \derive{f}(a, \change{a})), \change{f}(a \cplus \change{a}))\\
-    &= (f \cplus_\rightarrow \change{f})(a) \cplus (\derive{\change{f}}(a, \change{a})
-       \splus \derive{\cplus}((f(a), \derive{f}(a, \change{a}), \change{f}(a, \cplus \change{a}))))
-  \end{align*}
-  Hence $(f \cplus_\rightarrow \change{f})$ is differentiable.
-  
-  The evaluation map, defined as $\ev(f, a) \defeq f(a)$ is differentiable as well:
-  \begin{align*}
-    &\ev((f, \change{f}), (a, \change{a}))\\
-    &= (f \cplus_\rightarrow \change{f})(a \cplus \change{a}) \\
-    &= f(a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})\\
-    &= f(a) \cplus (f'(a, \change{a}) \splus \change{f}(a \cplus \change{a}))\\
-    &= \ev(f, a) \cplus (f'(a, \change{a}) \splus \change{f}(a \cplus \change{a}))
-  \end{align*}
-
-  Now, on the one hand, suppose that $f : C \times A \rightarrow B$ is a differentiable function,
-  and $\curry{f} : C \rightarrow (\exponential{\cstr{A}}{\cstr{B}})$ its corresponding curried version:
-  \begin{align*}
-    &\curry{f}(c \cplus \change{c})\\
-    &= \lambda a . f(c \cplus \change{c}, a)\\
-    &= \lambda a . f(c, a) \cplus \derive{f}((c, \change{c}), (a, 0))\\
-    &= (\lambda a . f(c, a)) \cplus_\rightarrow (\lambda a . \derive{f}((c, \change{c}), (a, 0)))
-  \end{align*}
-  Then the function $\lambda a . \derive{f}((c, \change{c}), (a, 0))$ is a derivative for $\curry{f}$,
-  thus $\curry{f}$ is differentiable. Conversely, suppose that $\curry{f}$ is differentiable.
-  Then we note that, by hypothesis, $\curry{f}(a)$ is differentiable for all $f$, with derivative
-  $\derive{f_a}$, and hence:
-  \begin{align*}
-    &f(a \cplus \change{a}, c \cplus \change{c})\\
-    &= \curry{f}(a \cplus \change{a})(c \cplus \change{c})\\
-    &= (\curry{f}(a) \cplus_\rightarrow \derive{\curry{f}}(a, \change{a}))(c \cplus \change{c})\\
-    &= \curry{f}(a)(c \cplus \change{c}) \cplus \derive{\curry{f}}(a, \change{a})(c\cplus\change{c})\\
-    &= \curry{f}(a)(c) \cplus (\derive{f_a}(c, \change{c}) \splus \derive{\curry{f}}(a, \change{a})(c\cplus\change{c}))\\
-    &= f(a, c) \cplus (\derive{f_a}(c, \change{c}) \splus \derive{\curry{f}}(a, \change{a})(c\cplus\change{c}))
-  \end{align*}
-  Thus $f$ is differentiable as a function from $\cstr{C} \times \cstr{A}$ into $\cstr{B}$.
-\end{proof}
-
-\pointwiseComplete*
-\begin{proof}
-\label{prf:pointwiseComplete}
-  Let $\cstr{B}$ be a complete change action.
-  We prove that the pointwise change action is the exponential object $\exponential{\cstr{A}}{\cstr{B}}$.
-
-  First, we note that the pointwise change action is trivially well defined, since
-  every function into $\cstr{B}$ is differentiable. Similarly, the evaluation map
-  is differentiable.
-
-  Now consider two elements $\curry{f}$, $\curry{g}$ of $\exponential{\cstr{A}}{\cstr{B}}$. Since
-  $\cstr{B}$ is complete, it is endowed with a minus operator $\cminus$, so we define
-  $\cminus_\rightarrow : (\exponential{\cstr{A}}{\cstr{B}}) \times (\exponential{\cstr{A}}{\cstr{B}}) \rightarrow A \rightarrow \changes{B}$ by:
-  $$ (g \cminus_\rightarrow f)(a) \defeq g(a) \cminus f(a) $$
-  It's easy to check that this is indeed a minus operator and, therefore, $\exponential{\cstr{A}}{\cstr{B}}$
-  is complete. Thus, trivially, any function $f : C \times A \rightarrow B$ is differentiable
-  if and only if its curried version $\curry{f} : C \rightarrow (\exponential{A}{B})$ is.
 \end{proof}
 
 \subsection{Change actions over other structures}
@@ -2031,5 +1947,111 @@ helpful comments on the manuscript.
     &= \derive{\lfp}(f, \change{f})
   \end{align*}
 \end{proof}
+
+\subsection{The category of change actions}
+
+\preordEquivalence*
+\begin{proof}
+  \label{prf:preordEquivalence}
+  On one direction, if $U$ is a preorder, it's trivial to check that $\reach (\direct (U)) = U$.
+
+  On the other direction, we need to find a natural isomorphism between $\direct \circ \reach$
+  and the identity functor. First, we note that the base set for the change action
+  $\direct(\reach(A))$ is the same as the base set for $\cstr{A}$.
+
+  We claim that the desired natural isomorphism is given by the
+  the identity on the base sets. It remains to prove that the identities
+  $id_A : \cstr{A} \rightarrow \direct(\reach(A))$ and
+  $id_{A_{\reachOrder}} : \direct(\reach(A)) \rightarrow \cstr{A}$
+  are indeed differentiable in both directions.
+
+  In one direction, a derivative is given by
+  \begin{displaymath}
+    \derive{id}_A(a, \change{a}) \defeq (a, a \cplus \change{a})
+  \end{displaymath}
+  Conversely, let $(a, b) \in \reachOrder$. By definition of $\reachOrder$, there is some
+  $\change{}_{(a, b)} \in \changes{A}$ satisfying $a \cplus \change{}_{(a,b)} = b$.
+  This gives a definition for the derivative of the identity on pairs:
+  \begin{displaymath}
+    \derive{id}_{A_{\reachOrder}}(a, (a, b)) \defeq \change{}_{(a, b)}
+  \end{displaymath}
+  which can be extended freely to the whole change set
+  $\reachOrder^\star$.\footnote{Note that since we picked arbitrary change
+    representatives, the resulting derivative may not preserve the monoid action.}
+\end{proof}
+
+\pointwiseChangeActionProps*
+\begin{proof}
+\label{prf:pointwiseChangeActionProps}
+  Let $\cstr{B}$ be a change action, with $\cplus$ differentiable with respect
+  to its first argument, and suppose the change action on $\changes{B}$
+  is complete.
+
+  First, we prove that the pointwise change action is well defined: let
+  $f : \cstr{A} \rightarrow \cstr{B}$ be some differentiable function, and
+  $\change{f} : A \rightarrow \changes{B}$ a pointwise change (which is
+  differentiable, since $\cstr{\changes{B}}$ is complete). Then:
+  \begin{align*}
+    &(f \cplus_\rightarrow \change{f})(a \cplus \change{a})\\
+    &= f(a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})\\
+    &= (f(a) \cplus \derive{f}(a, \change{a})) \cplus (\change{f}(a) \splus \derive{\change{f}}(a, \change{a}) )\\
+    &= f(a) \cplus (\change{f}(a) \splus \derive{\change{f}}(a, \change{a}))
+       \cplus \derive{\cplus}((f(a), \derive{f}(a, \change{a})), \change{f}(a \cplus \change{a}))\\
+    &= (f \cplus_\rightarrow \change{f})(a) \cplus (\derive{\change{f}}(a, \change{a})
+       \splus \derive{\cplus}((f(a), \derive{f}(a, \change{a}), \change{f}(a, \cplus \change{a}))))
+  \end{align*}
+  Hence $(f \cplus_\rightarrow \change{f})$ is differentiable.
+  
+  The evaluation map, defined as $\ev(f, a) \defeq f(a)$ is differentiable as well:
+  \begin{align*}
+    &\ev((f, \change{f}), (a, \change{a}))\\
+    &= (f \cplus_\rightarrow \change{f})(a \cplus \change{a}) \\
+    &= f(a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})\\
+    &= f(a) \cplus (f'(a, \change{a}) \splus \change{f}(a \cplus \change{a}))\\
+    &= \ev(f, a) \cplus (f'(a, \change{a}) \splus \change{f}(a \cplus \change{a}))
+  \end{align*}
+
+  Now, on the one hand, suppose that $f : C \times A \rightarrow B$ is a differentiable function,
+  and $\curry{f} : C \rightarrow (\exponential{\cstr{A}}{\cstr{B}})$ its corresponding curried version:
+  \begin{align*}
+    &\curry{f}(c \cplus \change{c})\\
+    &= \lambda a . f(c \cplus \change{c}, a)\\
+    &= \lambda a . f(c, a) \cplus \derive{f}((c, \change{c}), (a, 0))\\
+    &= (\lambda a . f(c, a)) \cplus_\rightarrow (\lambda a . \derive{f}((c, \change{c}), (a, 0)))
+  \end{align*}
+  Then the function $\lambda a . \derive{f}((c, \change{c}), (a, 0))$ is a derivative for $\curry{f}$,
+  thus $\curry{f}$ is differentiable. Conversely, suppose that $\curry{f}$ is differentiable.
+  Then we note that, by hypothesis, $\curry{f}(a)$ is differentiable for all $f$, with derivative
+  $\derive{f_a}$, and hence:
+  \begin{align*}
+    &f(a \cplus \change{a}, c \cplus \change{c})\\
+    &= \curry{f}(a \cplus \change{a})(c \cplus \change{c})\\
+    &= (\curry{f}(a) \cplus_\rightarrow \derive{\curry{f}}(a, \change{a}))(c \cplus \change{c})\\
+    &= \curry{f}(a)(c \cplus \change{c}) \cplus \derive{\curry{f}}(a, \change{a})(c\cplus\change{c})\\
+    &= \curry{f}(a)(c) \cplus (\derive{f_a}(c, \change{c}) \splus \derive{\curry{f}}(a, \change{a})(c\cplus\change{c}))\\
+    &= f(a, c) \cplus (\derive{f_a}(c, \change{c}) \splus \derive{\curry{f}}(a, \change{a})(c\cplus\change{c}))
+  \end{align*}
+  Thus $f$ is differentiable as a function from $\cstr{C} \times \cstr{A}$ into $\cstr{B}$.
+\end{proof}
+
+\pointwiseComplete*
+\begin{proof}
+\label{prf:pointwiseComplete}
+  Let $\cstr{B}$ be a complete change action.
+  We prove that the pointwise change action is the exponential object $\exponential{\cstr{A}}{\cstr{B}}$.
+
+  First, we note that the pointwise change action is trivially well defined, since
+  every function into $\cstr{B}$ is differentiable. Similarly, the evaluation map
+  is differentiable.
+
+  Now consider two elements $\curry{f}$, $\curry{g}$ of $\exponential{\cstr{A}}{\cstr{B}}$. Since
+  $\cstr{B}$ is complete, it is endowed with a minus operator $\cminus$, so we define
+  $\cminus_\rightarrow : (\exponential{\cstr{A}}{\cstr{B}}) \times (\exponential{\cstr{A}}{\cstr{B}}) \rightarrow A \rightarrow \changes{B}$ by:
+  $$ (g \cminus_\rightarrow f)(a) \defeq g(a) \cminus f(a) $$
+  It's easy to check that this is indeed a minus operator and, therefore, $\exponential{\cstr{A}}{\cstr{B}}$
+  is complete. Thus, trivially, any function $f : C \times A \rightarrow B$ is differentiable
+  if and only if its curried version $\curry{f} : C \rightarrow (\exponential{A}{B})$ is.
+\end{proof}
+
 
 \end{document}
