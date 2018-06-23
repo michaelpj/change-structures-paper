@@ -997,6 +997,16 @@ $\fixpoint$ with respect to the function which it takes the fixpoint of.
   \end{align*}
 \end{defn}
 
+The suggestively named $\derive{\fixpoint_A}$ will in fact turn out to be a
+derivative \textemdash{} for \emph{least} fixpoints. The appearance of
+$\derive{\ev}$, a derivative of the evaluation map, in the definition of
+$\adjust$ is also no coincidence: as evaluating a fixpoint consists of many
+steps of applying the evaluation map, so computing the derivative of a fixpoint
+consists of many stages of applying the derivative of the evaluatoin
+map.\footnote{The authors confess that they first discovered an expanded
+  version of this formula, and it was only later that we realised the remarkable
+  connection to $\derive{\ev}$.}
+
 \begin{thm}[name=Pseudo-derivatives of fixpoints, restate=fixpointPseudoDerivatives]
 \label{thm:fixpointPseudoDerivatives}
   Let
