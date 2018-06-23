@@ -88,7 +88,7 @@ that $e = \{ (1, 2), (2, 3), (3, 4) \}$, we get the following evaluation trace:
 \end{center}
 \medskip
 
-And then we have reached a fixpoint, so we are done.
+At this point we have reached a fixpoint, and so we are done.
 
 However, this process is quite wasteful. We deduced the fact $(1,2)$ at every iteration,
 even though we had already deduced it in the first iteration. Indeed, for a
@@ -118,7 +118,7 @@ iteration. We can then gradually accumulate these to compute the final relation 
 \end{center}
 \medskip
 
-This is much better \textemdash we have turned a quadratic computation into a linear one.
+This is much better \textemdash{} we have turned a quadratic computation into a linear one.
 
 But the delta rule translation works only for traditional Datalog. It is common to
 liberalise the formula syntax with additional features, such as disjunction,
@@ -140,7 +140,7 @@ like to be able to use semi-naive evaluation for this rule too, but the simple d
 transformation does not produce a correct incremental program, and it is unclear how to extend it (and the
 correctness proof) to handle such cases.
 
-This is of more than theoretical interest \textemdash the research
+This is of more than theoretical interest \textemdash{} the research
 in this paper was carried out at Semmle, which
 makes heavy use of a commercial Datalog implementation
 \autocites{semmleWebsite}{avgustinov2016ql}{sereni2008adding}{schafer2010type}.
@@ -151,6 +151,10 @@ Semmle's implementation includes parity-stratified negation\footnote{Parity-stra
 features, so we are faced with a dilemma: either abandon the new language
 features, or abandon incremental computation.
 
+We can tell a similar story about \emph{maintenance} of Datalog programs. Again,
+this problem has known solutions for traditional Datalog
+\autocite{gupta1993maintaining}, but these break down when the language is extended.
+
 There is a piece of folkloric knowledge in the Datalog community that hints at a
 solution: the semi-naive translation of a rule corresponds to the
 \emph{derivative} of that rule \autocites{bancilhon1986naive}[section
@@ -160,28 +164,33 @@ studied recently by \textcite{cai2014changes}, who give an account using
 
 However, \citeauthor{cai2014changes}'s work isn't directly applicable to Datalog: the tricky part
 of Datalog's semantics are recursive definitions and the need for the \emph{fixpoints}, and we need some additional theory to tell us how to
-handle incremental evaluation of fixpoint computations.
+handle incremental evaluation and maintenance of fixpoint computations.
 
 This paper bridges that gap.
-
+ 
 \subsection{Contributions}
 
 We start by generalizing change structures to
 \emph{change actions} (\cref{sec:changeActions}). Change actions are weaker than change structures, but
-have nice categorical properties (\cref{sec:category}), and exist for more structures (\cref{sec:moreStructures}).
+are well-behaved, and exist for more structures (\cref{sec:moreStructures}).
 
-We then show how to compute fixpoints incrementally, and also how to perform
-incremental maintenance of already computed fixpoint expressions, given a change to
-the function of which the fixpoint is taken (\cref{sec:fixpoints}).
+We show how this can be used to perform incremental evaluation and maintenance
+of non-recursive program semantics, including the formula semantics of generalized Datalog as our primary
+example (\cref{sec:nonRecursiveDatalog}).
 
-Finally, we put all this together into a generic account of incremental
-computation and maintenance of recursive Datalog programs, showing how to handle 
-language constructs such as negation, disjunction, and additional well-behaved
-extensions (\cref{sec:nonRecursiveDatalog}, \cref{sec:recursiveDatalog}). This provides the world's first incremental
-evaluation and maintenance mechanism for Datalog that can handle these features. Moreover, the structure of the
+We then show how to incrementally compute and maintain fixpoints
+(\cref{sec:fixpoints}). We use this to perform incremental evaluation and
+maintenance of \emph{recursive} program semantics, including generalized
+recursive Datalog (\cref{sec:recursiveDatalog}).
+
+This provides the world's first incremental
+evaluation and maintenance mechanism for Datalog that can handle negation,
+disjunction, and existential quantification. Moreover, the structure of the
 proof is modular, and can accommodate arbitrary additional
-formula constructs (\cref{sec:extensions}). The technique for handling fixpoints
-is also applicable to other programming languages.
+formula constructs (\cref{sec:extensions}).
+
+Finally, we provide a few remarks about the categorical structure of change
+actions (\cref{sec:category}).
 
 We have omitted the proofs from this paper. Most of the results have routine
 proofs, but the proofs of the more substantial results
@@ -190,11 +199,14 @@ proofs, but the proofs of the more substantial results
 \section{Change actions}
 \label{sec:changeActions}
 
-The core concept we will work with is a \emph{change action}. A change action is
-a set along with a set of \emph{changes} that can be ``applied'' to elements of
-the base set using an operator $\cplus$ (pronounced ``smush''). We also require
-some structure on the changes themselves: they must form a \emph{monoid action}
-on the base set.\footnote{
+Incremental computation is about understanding how values \emph{change}. For
+example, we can change an integer by adding a natural to it.
+Abstractly, we have a set of values (the integers), and a set of changes
+(the naturals) which we can ``apply'' to a value (by addition) to get a new value.
+
+This kind of structure is well-known - it describes an set action. It is
+also very natural to want to combine changes sequentially, and if we do this
+then we find ourselves with a monoid action.\footnote{
 Using monoid actions for change sets gives us a reason to think that
 change actions are an adequate representation of changes: any subset of $A
 \rightarrow A$ which is closed under composition can be
@@ -209,15 +221,18 @@ actions.}
   \end{displaymath}
 
   where $A$ is a set, $\changes{A}$ is a monoid, and $\cplus : A \rightarrow
-  \changes{A} \rightarrow A$ is a monoid action on $A$.
+  \changes{A} \rightarrow A$ is a monoid action on $A$.\footnote{Why not
+    just work with monoid actions? The reason is that while the category of
+    monoid actions and the category of change actions have the same objects, they
+  have different morphisms. See \cref{sec:sacts} for further discussion.}
 
   We will call $A$ the base set, and $\changes{A}$ the change set of the change
   action. We will use $\splus$ for the monoid operation of $\changes{A}$, and
   $\mzero$ for its identity element. We may abbreviate $\cstruct{A}{\changes{A}}{\cplus}$ to $\cstr{A}_\cplus$.
 \end{defn}
 
-A typical change action is $\cstruct{[A]}{[A]}{\doubleplus}$. Here we can change
-a list (or stream) by concatenating another stream onto it. The changes
+A typical change action is $\cstruct{[A]}{[A]}{\doubleplus}$. Here we represent changes
+to a list (or stream) made by concatenating another list onto it. The changes
 themselves can be combined using $\doubleplus$ as the monoid operation, and this
 is a monoid action: $(a \doubleplus b) \doubleplus c = a \doubleplus \left( b \doubleplus c \right)$.
 
@@ -225,7 +240,7 @@ This is a very common case: any monoid $(A, \splus)$ can be seen as a change act
 $\cstruct{A}{A}{\splus}$. Many practical change actions
 can be constructed in this way. In particular, for any change action $\cstruct{A}{\changes{A}}{\cplus}$,
 $\cstruct{\changes{A}}{\changes{A}}{\splus}$ is also a change action. This means
-that we don't have to do any extra work to talk about changes to changes \textemdash we can always take $\changes{\changes{A}} = \changes{A}$.
+that we don't have to do any extra work to talk about changes to changes \textemdash{} we can always take $\changes{\changes{A}} = \changes{A}$.
 
 Here are some other recurring examples of change actions:
 \begin{itemize}
@@ -236,7 +251,8 @@ Here are some other recurring examples of change actions:
     composition monoid, and $\ev$ is the evaluation map
     (for example, functions and function application).
   \item $\{A\}$, the type of sets, has change actions
-    $\cstruct{\{A\}}{\{A\}}{\cup}$, $\cstruct{\{A\}}{\{A\}}{\cap}$.
+    $\cstruct{\{A\}}{\{A\}}{\cup}$, $\cstruct{\{A\}}{\{A\}}{\cap}$, as well as
+    the combination of these which we will see in \cref{sec:booleanAlgebras}.
   \item $\cstr{\NN} \defeq \cstruct{\NN}{\NN}{+}$, the natural numbers with
     itself as the change set under the additive monoid.
 \end{itemize}
@@ -247,12 +263,16 @@ algorithms that encode a frame as a series of changes to the previous frame.
 
 \subsection{Derivatives}
 
-The primary motivation for change actions is that they let us define
-\emph{derivatives} for functions.
+When we do incremental computation we are usually trying to save ourselves some
+work. We have an expensive function $f: A \rightarrow B$, which we've evaluated at some point
+$a$. Now we are interested in evaluating it after some change to $a$,
+$\change{a}$, but ideally we want to avoid actually computing $f(a \cplus
+\change{a})$ up-front.
 
-Derivatives capture the essence of incremental computation: given the value of a
-function at a point, and a change to that point, they tell you how to change the
-the function value to get the new value.
+A solution to this problem is a function $\derive{f}: A \times \changes{A}
+\rightarrow \changes B$, which tells us how to change $f(a)$ given a change to $a$.
+
+We call this a \emph{derivative} of a function.
 
 \begin{defn}[Derivatives]
   \label{def:derivative}
@@ -274,8 +294,8 @@ derivative.\footnote{In several places we will need to pick an arbitrary
   derivative for some construction. In general this needs the Axiom of Choice,
   but in most practical cases we will want to have a computable derivative
   operator for our domain, which alleviates the problem.} A ``thin'' change
-action \textemdash where $a \cplus \change{a} = a \cplus \change{b}$ implies $\change{a} =
-\change{b}$ \textemdash has unique derivatives, but many change actions are not thin.
+action \textemdash{} where $a \cplus \change{a} = a \cplus \change{b}$ implies $\change{a} =
+\change{b}$ \textemdash{} has unique derivatives, but many change actions are not thin.
 For example, because $\{0\} \cap \{1\} = \{0\}
 \cap \{2\}$, $\cstruct{\mathcal{P}(\NN)}{\mathcal{P}(\NN)}{\cap}$ is not thin.
 
@@ -617,8 +637,8 @@ We will use Datalog as our example language, but the approach is generic.
 Datalog is a well-known simple logic programming language \autocite[See][part D]{abiteboul1995foundations}.
 It is also a textbook example of the need for incremental computation, since as we have seen
 (\cref{sec:intro}) the naive computation of its semantics can be very expensive.
-While recursion is a major feature of Datalog, the majority of its semantics is
-the non-recursive semantics of Datalog formulae.
+While recursion is a major feature of Datalog, we already need to do a substantial
+amount of work to handle the the non-recursive semantics of Datalog formulae.
 
 \subsection{Semantics of Datalog formulae}
 
@@ -840,7 +860,7 @@ Fixpoints appear frequently in the semantics of languages with recursion. If we
 can give a generic account of how to compute fixpoints using change actions,
 then this gives us a compositional way of extending a derivative for the
 non-recursive semantics of a language to a derivative that can handle recursion.
-We will do this later to full recursive Datalog (\cref{sec:datalogIncr}).
+We will do this later to handle full recursive Datalog (\cref{sec:datalogIncr}).
 
 \subsection{Iteration functions}
 
@@ -853,7 +873,7 @@ iteration function $\iter$:
   &\iter(f, n) \defeq f^n(\bot)
 \end{align*}
 
-The iteration function is going to be the basis for everything in this section:
+The iteration function is the basis for everything in this section:
 we can take the ``partial derivative'' with respect to $n$, and this will give us a way to get
 to the next iteration incrementally; and we can take the partial derivative
 with respect to $f$, and this will give us a way to get from iterating $f$ to iterating $f
@@ -907,7 +927,9 @@ Which has the property that
   Let $\cstr{A}$ be a continuous change action, $f: \cstr{A} \rightarrow
   \cstr{A}$ be continuous and differentiable.
 
-  Then $\lfp(f) = \sqcup_{n \in \NN}(\pi_1(\nextiter_f^n(\bot)))$.
+  Then $\lfp(f) = \sqcup_{n \in \NN}(\pi_1(\nextiter_f^n(\bot)))$.\footnote{
+    Note that we have \emph{not} taken the fixpoint of $\nextiter_f$, since it is
+    not continuous.}
 \end{thm}
 \ifproofs
 \begin{proof}
@@ -915,18 +937,16 @@ Which has the property that
 \end{proof}
 \fi
 
-This gives us a way to compute our fixpoint incrementally, by adding successive
-changes to our accumulator until we reach fixpoint.
-
-Note that we have \emph{not} taken the fixpoint of $\nextiter_f$, since it is
-not continuous. 
+This gives us a way to compute a fixpoint incrementally, by adding successive
+changes to an accumulator until we reach fixpoint. This is exactly how
+semi-naive evaluation works, with the delta relation and the accumulator relation.
 
 \subsection{Derivatives of fixpoints}
 \label{sec:fixpointDerivatives}
 
 In the previous section we have shown how to use derivatives to compute fixpoints
 more efficiently, but we also want to take the derivative of the fixpoint
-operator itself. The typical use case for this is where we have some fixpoint
+operator itself. A typical use case for this is where we have some fixpoint
 \begin{displaymath}
   \fixpoint (\lambda X . F(E, X))
 \end{displaymath}
@@ -947,7 +967,7 @@ $\fixpoint$ with respect to the function which it takes the fixpoint of.
 
 \begin{defn}[Derivatives of fixpoints]
 \label{def:fixpointDerivatives}
-  Let $\cstr{A}$ be a change action, $\fixpoint$ a fixpoint operator for
+  Let $\cstr{A}$ be a change action, $\fixpoint_A$ a fixpoint operator for
   endofunctions on $A$, and $\derive{\ev}$ be a derivative of the evaluation map.
   
   Then we define
@@ -993,7 +1013,7 @@ Since $\lfp$ is characterized as the limit of a chain of functions,
 $\derive{\iter_n}$ of each iteration map 
 such that the resulting set $\{ \derive{\iter_n} \}$ is directed, then $\sqcup_{n \in \NN}\derive{\iter_n}$ will be a derivative of $\lfp$.
 
-These correspond to the other derivative of $\iter$ \textemdash this time with respect to
+These correspond to the other derivative of $\iter$ \textemdash{} this time with respect to
 $f$. While we are differentiating with respect to $f$, we are still going to
 need to define our derivatives inductively in terms of $n$.
 
@@ -1013,7 +1033,12 @@ need to define our derivatives inductively in terms of $n$.
 \fi
 
 As before, we can now compute $\derive{\iter_n}$ together with $\iter_n$ by
-mutual recursion. 
+mutual recursion.\footnote{
+  In fact, the recursion here is not \emph{mutual}: the first component does not
+  depend on the second. However, writing it in this way makes it
+  amenable to computation by fixpoint, and we will in fact be able to avoid the
+  recomputation of $\iter_n$ when we show that it is equivalent to $\derive{\lfp}$.
+}
 \begin{align*}
   &\nextiter_{f, \change{f}} : (A, \changes{A}) \rightarrow (A, \changes{A})\\
   &\nextiter_{f, \change{f}} (a, \change{a}) \defeq (f(a), \derive{\ev}((f, a), (\change{f}, \change{a})))
@@ -1023,10 +1048,8 @@ Which has the property that
   &\nextiter_{f, \change{f}}^n (\bot, \bot) = (\iter_n(f), \derive{\iter_n}(f, \change{f}))
 \end{align*}
 
-In fact, the recursion here is not \emph{mutual}: $\iter_n$ does
-not depend on $\derive{\iter_n}$. However, writing it in this way makes it
-amenable to computation by fixpoint, and we will in fact be able to avoid the
-recomputation of $\iter_n$ when we show that it is equivalent to $\derive{\lfp}$.
+This indeed provides us with a function that we can take the limit of, showing
+that $\derive{\lfp}$ is a true derivative.
 
 \begin{thm}[name=Derivatives of least fixpoint operators, restate=leastFixpointDerivatives]
   \label{thm:leastFixpointDerivatives}
@@ -1046,10 +1069,9 @@ recomputation of $\iter_n$ when we show that it is equivalent to $\derive{\lfp}$
 \end{proof}
 \fi
 
-Computing this derivative still requires computing a fixpoint \textemdash over the change
-lattice \textemdash but this may still be significantly less expensive than the
-alternative ``update strategy'': throw everything away and start
-again (which will itself require a fixpoint computation).
+Computing this derivative still requires computing a fixpoint \textemdash{} over the change
+lattice \textemdash{} but this may still be significantly less expensive than
+recomputing the full new fixpoint.
 
 \section{Derivatives of recursive program semantics}
 \label{sec:recursiveDatalog}
@@ -1160,8 +1182,8 @@ A reminder of the expanded definition of $\adjust$:
 \end{align*}
 
 We've chosen the second defintion of $\ev$ from \cref{prop:evDerivatives}, since
-we already know what $f \cplus \change{f}$ looks like \textemdash it is simply
-$\denote{tc_{e_2}}$ \textemdash and $\change{tc}(\lfp(tc_{e_1}))$ can be
+we already know what $f \cplus \change{f}$ looks like \textemdash{} it is simply
+$\denote{tc_{e_2}}$ \textemdash{} and $\change{tc}(\lfp(tc_{e_1}))$ can be
 computed once up front and reused throughout the computation.
 
 We need the derivative of $tc_{e_2}$:
@@ -1432,7 +1454,7 @@ have a minus operator. Where we can find a change structure with a minus operato
 forced to use unwieldy representations for change sets, and
 \citeauthor{cai2014changes} cite this as their reason for using a dependently
 typed type of changes. For example, the monoidal change actions on sets and lists are clearly
-useful for incremental computation on streams, yet they do not admit minus operators \textemdash instead, one would
+useful for incremental computation on streams, yet they do not admit minus operators \textemdash{} instead, one would
 be forced to work with e.g. multisets admitting negative arities, as \citeauthor{cai2014changes} do.
 
 Our function changes (when well behaved) correspond to what \citeauthor{cai2014changes} call
@@ -1448,6 +1470,7 @@ less a ``change semantics'' for Datalog \autocite[see][section
 3.5]{cai2014changes}. 
 
 \subsubsection{S-acts}
+\label{sec:sacts}
 
 S-acts and their categorical structure have received a fair amount of attention
 over the years (\textcite{kilp2000monoids} is a good
