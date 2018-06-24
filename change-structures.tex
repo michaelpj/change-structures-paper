@@ -40,8 +40,8 @@
 \input{topmatter-acm}
 
 \begin{abstract}
-  Incremental computation has recently been studied using the concepts of \emph{change
-  structures} and \emph{derivatives} of programs. The derivative of a program allows updating the output
+  Incremental computation has been studied using the concepts of \emph{change
+  structures} and \emph{derivatives} of programs, where the derivative of a program allows updating the output
   of a program based on a change to its input.
 
   We generalise change structures to a Cartesian closed category of \emph{change actions},
@@ -49,15 +49,15 @@
   in computer science, including directed-complete partial orders and Boolean algebras.
 
   We then show how to compute derivatives of fixpoints. This allows us to
-  perform incremental evaluation of Datalog programs, as well as incremental
-  maintenance of evaluated Datalog programs.
+  perform incremental evaluation and maintenance of recursively defined
+  functions such as Datalog programs.
 
-  These results are \emph{modular} in that they are easy to apply to both
-  variants of Datalog and other programming languages.
+  Moreover, unlike previous results our techniques are \emph{modular} in that
+  they are easy to apply both to variants of Datalog and to other programming languages.
 \end{abstract}
 
 \title{Fixing incremental computation}
-\subtitle{Derivatives for dcpos, fixpoints, and the semantics of Datalog}
+\subtitle{Derivatives of fixpoints, and the recursive semantics of Datalog}
 
 \maketitle
 
@@ -88,7 +88,7 @@ that $e = \{ (1, 2), (2, 3), (3, 4) \}$, we get the following evaluation trace:
 \end{center}
 \medskip
 
-At this point we have reached a fixpoint, so the evaluation ends.
+At this point we have reached a fixpoint, and so we are done.
 
 However, this process is quite wasteful. We deduced the fact $(1,2)$ at every iteration,
 even though we had already deduced it in the first iteration. Indeed, for a
@@ -119,7 +119,7 @@ iteration. We can then gradually accumulate these to compute the final relation 
 \end{center}
 \medskip
 
-This is much better \textemdash we have turned a quadratic computation into a linear one.
+This is much better \textemdash{} we have turned a quadratic computation into a linear one.
 
 But the delta rule translation works only for traditional Datalog. It is common to
 liberalise the formula syntax with additional features, such as disjunction,
@@ -141,7 +141,7 @@ like to be able to use semi-naive evaluation for this rule too, but the simple d
 transformation does not produce a correct incremental program, and it is unclear how to extend it (and the
 correctness proof) to handle such cases.
 
-This is of more than theoretical interest \textemdash the research
+This is of more than theoretical interest \textemdash{} the research
 in this paper was carried out at Semmle, which
 makes heavy use of a commercial Datalog implementation
 \autocites{semmleWebsite}{avgustinov2016ql}{sereni2008adding}{schafer2010type}.
@@ -152,6 +152,10 @@ Semmle's implementation includes parity-stratified negation\footnote{Parity-stra
 features, so we are faced with a dilemma: either abandon the new language
 features, or abandon incremental computation.
 
+We can tell a similar story about \emph{maintenance} of Datalog programs. Again,
+this problem has known solutions for traditional Datalog
+\autocite{gupta1993maintaining}, but these break down when the language is extended.
+
 There is a piece of folkloric knowledge in the Datalog community that hints at a
 solution: the semi-naive translation of a rule corresponds to the
 \emph{derivative} of that rule \autocites{bancilhon1986naive}[section
@@ -161,7 +165,7 @@ studied recently by \textcite{cai2014changes}, who give an account using
 
 However, \citeauthor{cai2014changes}'s work isn't directly applicable to Datalog: the tricky part
 of Datalog's semantics are recursive definitions and the need for the \emph{fixpoints}, and we need some additional theory to tell us how to
-handle incremental evaluation of fixpoint computations.
+handle incremental evaluation and maintenance of fixpoint computations.
 
 This paper aims to bridge that gap by providing a solid semantic foundation for the incremental
 computation of Datalog (and other) programs, and show how it can be used to account for extensions
@@ -176,37 +180,46 @@ We start by generalizing change structures to
 structures, while still providing enough information to handle incremental computation,
 having nice categorical behaviour (\cref{sec:category}) and existing for more structures (\cref{sec:moreStructures}).
 
-We then show how to compute fixpoints incrementally, and also how to perform
-incremental maintenance of already computed fixpoint expressions, given a change to
-the function of which the fixpoint is taken (\cref{sec:fixpoints}).
+We then show how change actions can be used to perform incremental evaluation and maintenance
+of non-recursive program semantics, including the formula semantics of generalized Datalog as our primary
+example (\cref{sec:nonRecursiveDatalog}).
 
-Finally, we put all this together into a generic account of incremental
-computation and maintenance of recursive Datalog programs, showing how to handle 
-language constructs such as negation, disjunction, and additional well-behaved
-extensions (\cref{sec:nonRecursiveDatalog}, \cref{sec:recursiveDatalog}). This provides, to the best
-of our knowledge, the world's first incremental
-evaluation and maintenance mechanism for Datalog that can handle these features. Moreover, the structure of the
+We then show how to incrementally compute and maintain fixpoints
+(\cref{sec:fixpoints}). We use this to perform incremental evaluation and
+maintenance of \emph{recursive} program semantics, including generalized
+recursive Datalog (\cref{sec:recursiveDatalog}).
+
+This provides, to the best of our knowledge, the world's first incremental
+evaluation and maintenance mechanism for Datalog that can handle negation,
+disjunction, and existential quantification. Moreover, the structure of the
 proof is modular, and can accommodate arbitrary additional
-formula constructs (\cref{sec:extensions}). The technique for handling fixpoints
-is also applicable to other programming languages.
+formula constructs (\cref{sec:extensions}).
+
+Finally, we provide a few remarks about the categorical structure of change
+actions (\cref{sec:category}).
 
 We have omitted the proofs from this paper. Most of the results have routine
 proofs, but the proofs of the more substantial results
 (especially those in \cref{sec:fixpoints}) are included in an appendix.
 
-\section{Change actions}
+\section{Change actions and derivatives}
 \label{sec:changeActions}
 
-The core concept we will work with is a \emph{change action}. A change action is
-a set along with a set of \emph{changes} that can be ``applied'' to elements of
-the base set using an operator $\cplus$ (pronounced ``smush''). We also require
-some structure on the changes themselves: they must form a \emph{monoid action}
-on the base set.\footnote{
+Incremental computation is about understanding how values \emph{change}. For
+example, we can change an integer by adding a natural to it.
+Abstractly, we have a set of values (the integers), and a set of changes
+(the naturals) which we can ``apply'' to a value (by addition) to get a new value.
+
+This kind of structure is well-known \textemdash{} it describes an set action. It is
+also very natural to want to combine changes sequentially, and if we do this
+then we find ourselves with a monoid action.\footnote{
 Using monoid actions for change sets gives us a reason to think that
 change actions are an adequate representation of changes: any subset of $A
 \rightarrow A$ which is closed under composition can be
 represented as a monoid action, so we are able to capture all of these as change
 actions.}
+
+\subsection{Change actions}
 
 \begin{defn}[Change actions]
   A \emph{change action} is defined as:
@@ -216,15 +229,18 @@ actions.}
   \end{displaymath}
 
   where $A$ is a set, $\changes{A}$ is a monoid, and $\cplus : A \rightarrow
-  \changes{A} \rightarrow A$ is a monoid action on $A$.
+  \changes{A} \rightarrow A$ is a monoid action on $A$.\footnote{Why not
+    just work with monoid actions? The reason is that while the category of
+    monoid actions and the category of change actions have the same objects, they
+  have different morphisms. See \cref{sec:sacts} for further discussion.}
 
   We will call $A$ the base set, and $\changes{A}$ the change set of the change
   action. We will use $\splus$ for the monoid operation of $\changes{A}$, and
   $\mzero$ for its identity element. We may abbreviate $\cstruct{A}{\changes{A}}{\cplus}$ to $\cstr{A}_\cplus$.
 \end{defn}
 
-A typical change action is $\cstruct{[A]}{[A]}{\doubleplus}$. Here we can change
-a list (or stream) by concatenating another stream onto it. The changes
+A typical change action is $\cstruct{[A]}{[A]}{\doubleplus}$. Here we represent changes
+to a list (or stream) made by concatenating another list onto it. The changes
 themselves can be combined using $\doubleplus$ as the monoid operation, and this
 is a monoid action: $(a \doubleplus b) \doubleplus c = a \doubleplus \left( b \doubleplus c \right)$.
 
@@ -232,18 +248,20 @@ This is a very common case: any monoid $(A, \splus)$ can be seen as a change act
 $\cstruct{A}{A}{\splus}$. Many practical change actions
 can be constructed in this way. In particular, for any change action $\cstruct{A}{\changes{A}}{\cplus}$,
 $\cstruct{\changes{A}}{\changes{A}}{\splus}$ is also a change action. This means
-that we don't have to do any extra work to talk about changes to changes \textemdash we can always take $\changes{\changes{A}} = \changes{A}$.
+that we don't have to do any extra work to talk about changes to changes \textemdash{} we can always take $\changes{\changes{A}} = \changes{A}$.
 
 Here are some other recurring examples of change actions:
 \begin{itemize}
   \item $\cstr{A}_\discrete \defeq \cstruct{A}{\emptyset}{\lambda(a, da). a}$,
-    which we call the \emph{discrete} change action on any base set.
+    which we call the \emph{discrete} change action on any base set, since it
+    has no changes at all.
   \item $\cstr{A}_\Rightarrow \defeq \cstruct{A}{\exponential{A}{A}}{\ev}$, where $A$ is some
     category, $\exponential{A}{A}$ is the exponential object with the
     composition monoid, and $\ev$ is the evaluation map
     (for example, functions and function application).
   \item $\{A\}$, the type of sets, has change actions
-    $\cstruct{\{A\}}{\{A\}}{\cup}$, $\cstruct{\{A\}}{\{A\}}{\cap}$.
+    $\cstruct{\{A\}}{\{A\}}{\cup}$, $\cstruct{\{A\}}{\{A\}}{\cap}$, as well as
+    the combination of these which we will see in \cref{sec:booleanAlgebras}.
   \item $\cstr{\NN} \defeq \cstruct{\NN}{\NN}{+}$, the natural numbers with
     itself as the change set under the additive monoid.
 \end{itemize}
@@ -254,12 +272,15 @@ algorithms that encode a frame as a series of changes to the previous frame.
 
 \subsection{Derivatives}
 
-The primary motivation for change actions is that they let us define
-\emph{derivatives} for functions.
+When we do incremental computation we are usually trying to save ourselves some
+work. We have an expensive function $f: A \rightarrow B$, which we've evaluated at some point
+$a$. Now we are interested in evaluating $f$ after some change to $a$,
+$\change{a}$, but ideally we want to avoid actually computing $f(a \cplus
+\change{a})$ directly.
 
-Derivatives capture the essence of incremental computation: given the value of a
-function at a point, and a change to that point, they tell you how to change the
-the function value to get the new value.
+A solution to this problem is a function $\derive{f}: A \times \changes{A}
+\rightarrow \changes B$, which given $a$ and $\change{a}$ tells us how to change
+$f(a)$ to $f(a \cplus \change{a})$. We call this a \emph{derivative} of a function.
 
 \begin{defn}[Derivatives]
   \label{def:derivative}
@@ -269,7 +290,7 @@ the function value to get the new value.
     f(a \cplus \change{a}) = f(a) \cpluss \derive{f}(a, \change{a})
   \end{displaymath}
 
-  A function which has a derivative is called
+  A function which has a derivative is 
   \emph{differentiable}.\footnote{Note that we do not require that $\derive{f}(a,
     \change{a} \splus \change{b}) = \derive{f}(a, \change{a}) \splus \derive{f}(a
     \cplus \change{a}, \change{b})$. This is a natural condition, and almost all
@@ -281,10 +302,30 @@ derivative.\footnote{In several places we will need to pick an arbitrary
   derivative for some construction. In general this needs the Axiom of Choice,
   but in most practical cases we will want to have a computable derivative
   operator for our domain, which alleviates the problem.} A ``thin'' change
-action \textemdash where $a \cplus \change{a} = a \cplus \change{b}$ implies $\change{a} =
-\change{b}$ \textemdash has unique derivatives, but many change actions are not thin.
+action \textemdash{} where $a \cplus \change{a} = a \cplus \change{b}$ implies $\change{a} =
+\change{b}$ \textemdash{} has unique derivatives, but many change actions are not thin.
 For example, because $\{0\} \cap \{1\} = \{0\}
 \cap \{2\}$, $\cstruct{\mathcal{P}(\NN)}{\mathcal{P}(\NN)}{\cap}$ is not thin.
+
+Derivatives capture the structure of incremental computation, but there are
+important operational considerations that affect whether they actually save us
+any work. As we will see in a moment (\cref{prop:minusDerivatives}), for many change actions we will always have the option
+of picking the ``worst'' derivative which says ``compute $f(a \cplus \change{a})$
+directly and then work out how to get there from $f(a)$''. While this is a correct
+derivative, it certainly does not save us any work! We will be concerned at
+various points with both the possibility of constructing correct derivatives
+(\cref{sec:booleanAlgebras} and \cref{sec:fixpoints} in particular), and also in
+giving ourselves a range of derivatives to choose from so that we can soundly
+optimize for operational value.
+
+For our Datalog case study, we are going to want a good derivative of the semantics of
+Datalog. As we will see later (\cref{sec:nonRecursiveDatalog},
+\cref{sec:recursiveDatalog}), we can get good deriviatives for both the
+non-recursive and full, recursive, semantics of Datalog.
+
+\subsection{Useful facts about change actions and derivatives}
+
+\subsubsection{The Chain Rule}
 
 The derivative of a function can be computed compositionally, because derivatives satisfy the standard chain rule.
 
@@ -300,13 +341,7 @@ The derivative of a function can be computed compositionally, because derivative
   \end{displaymath}
 \end{thm}
 
-For our Datalog case study, we are going to want a derivative of the semantics of
-Datalog. As we will discuss later (\cref{sec:nonRecursiveDatalog}, \cref{sec:recursiveDatalog}), we can see Datalog's
-semantics as computing an n-tuple of relations. So we need a change action on
-$\Rel^n$, and fortunately we can construct good change actions for Boolean
-algebras in general (\cref{sec:booleanAlgebras}).
-
-\subsection{Complete change actions and minus operators}
+\subsubsection{Complete change actions and minus operators}
 
 Complete change actions are an important class of change actions, because they
 have changes between \emph{any} two values in the base set.
@@ -336,6 +371,7 @@ This last property is of the utmost importance, since we are often concerned wit
 of functions.
 
 \begin{prop}[Minus derivative]
+  \label{prop:minusDerivatives}
   Given a minus operator $\cminus$, and a function $f$, let
   \begin{displaymath}
     \derive{f}_\cminus(a, \change{a}) \defeq f(a \cplus \change{a}) \cminus f(a)
@@ -344,7 +380,7 @@ of functions.
   Then $\derive{f}_\cminus$ is a derivative for $f$.
 \end{prop}
 
-\subsection{Products and sums}
+\subsubsection{Products and sums}
 
 Given change actions on sets $A, B$, the question immediately arises of whether there are
 change structures on their Cartesian product $A \times B$ or disjoint union $A + B$. While there are
@@ -401,10 +437,18 @@ many candidates, there is a clear ``natural'' choice for either.
 \section{Change actions over ordered structures}
 \label{sec:moreStructures}
 
-We are aiming to work over Boolean algebras with fixpoints, which is where we
-will interpret Datalog. We will work up to that gradually, adding power as we
-progress from posets, to directed-complete partial orders, and
-finally to Boolean algebras.
+We need three things for our analysis:
+\begin{itemize}
+\item Approximation of derivatives
+\item Existence of derivatives for fixpoints
+\item Good change actions for Boolean algebras
+\end{itemize}
+
+Each of the following sections will achieve one of these goals, for which we
+need progressively stronger structures. Posets will allow us to approximate
+derivatives, directed-complete partial orders will give us the continuity
+theorems we need to find derivatives of fixpoints, and Boolean algebras will
+turn out to admit a simple, continuous change action.
 
 \subsection{Posets}
 
@@ -473,10 +517,31 @@ characterisation of all the derivatives for a function.
 \end{proof}
 \fi
 
-This theorem gives us leeway when trying to pick a derivative: we can pick out the
-bounds, and that tells us how much ``wiggle room'' we have. This is helpful
-because some of the intermediary functions may be much easier to compute than
-others, as we will see in \cref{sec:datalogDifferentiability}.
+This theorem gives us the leeway that we need when trying to pick a derivative: we can pick out the
+bounds, and that tells us how much ``wiggle room'' we have above and below.
+
+\subsubsection{Precision}
+
+The change preorder corresponds to a natural notion of precision: if $\change{a}
+\changeOrder \change{b]}$, then $\change{b}$ produces ``bigger'' updates than
+$\change{a}$, and there is some additional information in it that is being
+ignored even when $c \cplus \change{a} = c \cplus \change{b}$.
+
+For example, in $\cstruct{\{A\}}{\{A\}}{\cup}$, $\{1\} \changeOrder \{1,2\}$. Even
+though $\{2\} \cplus \{1\} = \{2\} \cplus \{1,2\} = \{1,2\}$, the second change is
+imprecise because it adds in 2 even though it was already present.
+
+\todompj{Something about kernel orderings?}
+
+\begin{defn}[Precision of derivatives]
+  \label{def:precision}
+  A derivative is precise if it is minimal with respect to $\changeOrder$.
+\end{defn}
+
+Precision may be a desirable property because precise derivatives produce
+``smaller'' changes (in the subset lattice it must exactly produce the changes
+with the smallest cardinality). However, we may wish to trade this off against
+other operational properties, such as how easy the derivative is to compute.
 
 \subsubsection{Directed-complete partial orders}
 \todomario{
@@ -579,7 +644,7 @@ Complete Boolean algebras have a complete, continuous change action.
     (p, q) \splus (r, s) \defeq ((p \wedge \neg q) \vee r, (q \wedge \neg r) \vee s)
   \end{displaymath}
 
-  Then $\cstr{L}_\superpose$ is a complete (and hence pointwise), continuous change action on $L$.
+  Then $\cstr{L}_\superpose$ is a complete, continuous change action on $L$.
 \end{prop}
 \ifproofs
 \begin{proof}
@@ -627,36 +692,8 @@ all the derivatives on Boolean algebras:
   \end{displaymath}
 \end{corollary}
 
-This makes \cref{thm:derivativeCharacterization} actually usable in practice, as
-we have concrete definitions for our bounds (which, again, we will make use of in \cref{sec:datalogDifferentiability}).
-
-\subsubsection{Precision}
-
-The change ordering corresponds to a natural notion of precision: if $\change{a}
-\changeOrder \change{b]}$, then $\change{b}$ produces ``bigger'' updates than
-$\change{a}$, and there is some additional information in it that is being
-ignored even when $c \cplus \change{a} = c \cplus \change{b}$.
-
-For example, in $\cstruct{\{A\}}{\{A\}}{\cup}$, $\{1\} \changeOrder \{1,2\}$. Even
-though $\{2\} \cplus \{1\} = \{2\} \cplus \{1,2\} = \{1,2\}$, the second change is
-imprecise because it adds in 2 even though it was already present.
-
-The most precise deriviatives are therefore those that are minimal with respect
-to $\changeOrder$.
-
-\todompj{Something about kernel orderings?}
-
-\begin{defn}[Precision of derivatives]
-  \label{def:precision}
-  A derivative is precise if it is minimal with respect to $\changeOrder$.
-\end{defn}
-
-In a boolean algebra, this corresponds to being the unique minimal derivative.
-
-Precision may be a desirable property because precise derivatives produce
-``smaller'' changes (in the subset lattice it must exactly produce the changes
-with the smallest cardinality). However, we may wish to trade this off against
-other properties, such as how easy the derivative is to compute.
+This makes \cref{thm:derivativeCharacterization} actually usable in practice, since
+we have concrete definitions for our bounds (which we will make use of in \cref{sec:datalogDifferentiability}).
 
 \section{Derivatives of non-recursive program semantics}
 \label{sec:nonRecursiveDatalog}
@@ -666,14 +703,14 @@ interesting functions is \emph{programming language semantics}. If we can give
 good derivatives for the semantics of a programming language, then we can
 incrementally update our programs. We don't yet know how to handle recursion
 (which we will tackle in \cref{sec:recursiveDatalog}), but we can start by
-looking at the non-recursive part of the semantics.
+looking at non-recursive program semantics.
 
-We will use Datalog as our example language, but the approach is generic.
+We will use Datalog as our example language, although the approach is generic.
 Datalog is a well-known simple logic programming language \autocite[See][part D]{abiteboul1995foundations}.
 It is also a textbook example of the need for incremental computation, since as we have seen
 (\cref{sec:intro}) the naive computation of its semantics can be very expensive.
-While recursion is a major feature of Datalog, the majority of its semantics is
-the non-recursive semantics of Datalog formulae.
+While recursion is a major feature of Datalog, we already need to do a substantial
+amount of work to handle the the non-recursive semantics of Datalog formulae.
 
 \subsection{Semantics of Datalog formulae}
 
@@ -728,19 +765,18 @@ that the $\cstr{L}_\superpose$ change action is complete, in fact we
 \emph{do} know that $\denote{T}$ must be differentiable.
 
 However, this does not mean that we have a \emph{good} derivative for
-$\denote{T}$. The derivative that we know we have for complete change actions
-is quite bad:
+$\denote{T}$. We have a complete change action, but recall that the minus derivative
+is very bad operationally:
 \begin{displaymath}
-  \derive{f}(a, \change{a}) = f(a \cplus \change{a}) \cminus f(a)
+  \derive{f}_\cminus(a, \change{a}) = f(a \cplus \change{a}) \cminus f(a)
 \end{displaymath}
-While this is precise, if we compute this naiveley, it requires \emph{more}
-work than evaluating $f(a \cplus \change{a})$ directly!
+While this is precise it requires \emph{more} work to compute than computing $f(a \cplus \change{a})$ directly!
 
 However, \cref{cor:booleanCharacterization} gives us a range of derivatives to
 choose from, and we can optimize within that range to find one that satisfies
 our constraints, for example trading off ease of computation against precision.
 
-In the case of Datalog, the change ordering on the change action also
+In the case of Datalog, the change preorder on the change action also
 corresponds to the size of the derivative as a pair of relations. The minimal (precise)
 derivative contains only the elements that are newly added or removed,
 whereas the maximal derivative contains all the elements that have \emph{ever}
@@ -886,7 +922,66 @@ which lose precision are labelled with $\dagger$.
 
 \section{Change actions over functions}
 
-\todompj{Simplified version of the exponentials material}
+We would like to be able to talk about change actions on \emph{functions}, both
+because we would like to support the semantics of higher-order programming
+languages, but also because the deriviative of a fixpoint $\fixpoint(f)$ is going to be with
+respect to $f$, the function which we are taking the fixpoint of. This only
+makes sense if we have change actions on functions.
+
+\begin{defn}[Pointwise change actions]
+  \label{def:pointwiseChanges}
+  The pointwise change action on functions is defined as
+  $\cstruct{\cstr{A} \rightarrow \cstr{B}}{A \rightarrow \changes{B}}{\cplus_\rightarrow}$,
+  where $(f \cplus_\rightarrow \change{f})(x) \defeq f(x) \cplus \change{f}(x)$ and the
+  monoidal structure on $A \rightarrow \changes{B}$ is given by lifting
+  the monoidal structure on $\changes{B}$ pointwise.
+\end{defn}
+
+This is a very practical and useful definition of changes for functions, just
+lifiting the changes to the output type (for discussions about whether this is
+the ``right'' type for function changes, see \cref{sec:exponentials} and \cref{sec:relatedChangeStructures}).
+
+\subsection{The evaluation map}
+\label{sec:evaluationMap}
+
+Wherever we have functions, we also have the evaluation map, $\ev: ((A
+\rightarrow B) \times A) \rightarrow B$. The derivatives of this map turn out to be
+quite useful, so we will state a few lemmas about them now.
+
+Derivatives of the evaluation map, irrespective of how we choose to define
+function changes, give us a way to do incremental evaluation of function application:
+\begin{prop}[Incremental application]
+\label{prop:incrementalization}
+  Let $f: \cstr{A} \rightarrow \cstr{B}$, $a \in A$, $\change{a} \in
+  \changes{A}$, $\change{f} \in \changes{(A \rightarrow B)}$, and let
+  $\derive{\ev}$ be a derivative of the evaluation map.
+
+  Then
+  \begin{displaymath}
+    (f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus \derive{\ev}((f, a), (\change{f}, \change{a}))
+  \end{displaymath}
+\end{prop}
+
+Conveniently, our definition of function changes gives us a way to compute explicit derivatives for
+the evaluation map:
+\begin{prop}[Derivatives of the evaluation map]
+\label{prop:evDerivatives}
+  Let
+  $f: \cstr{A} \rightarrow \cstr{B}$,
+  $a \in A$, $\change{a} \in \changes{A}$,
+  $\change{f} \in \changes{(A \rightarrow B)}$.
+
+  Then, by taking a derivative of $f$ we obtain the following derivative for the evaluation map:
+  \begin{displaymath}
+    \derive{\ev}_1((f, a), (\change{f}, \change{a})) \defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})
+  \end{displaymath}
+
+  Alternatively, by taking a derivative of $f \cplus \change{f}$ we can obtain another derivative
+  for the evaluation map:
+  \begin{displaymath}
+    \derive{\ev}_2((f, a), (\change{f}, \change{a})) \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})
+  \end{displaymath}
+\end{prop}
 
 \section{Fixpoints}
 \label{sec:fixpoints}
@@ -895,7 +990,7 @@ Fixpoints appear frequently in the semantics of languages with recursion. If we
 can give a generic account of how to compute fixpoints using change actions,
 then this gives us a compositional way of extending a derivative for the
 non-recursive semantics of a language to a derivative that can handle recursion.
-We will do this later to full recursive Datalog (\cref{sec:datalogIncr}).
+We will do this later to handle full recursive Datalog (\cref{sec:datalogIncr}).
 
 \subsection{Iteration functions}
 
@@ -908,7 +1003,7 @@ iteration function $\iter$:
   &\iter(f, n) \defeq f^n(\bot)
 \end{align*}
 
-The iteration function is going to be the basis for everything in this section:
+The iteration function is the basis for everything in this section:
 we can take the ``partial derivative'' with respect to $n$, and this will give us a way to get
 to the next iteration incrementally; and we can take the partial derivative
 with respect to $f$, and this will give us a way to get from iterating $f$ to iterating $f
@@ -962,7 +1057,9 @@ Which has the property that
   Let $\cstr{A}$ be a continuous change action, $f: \cstr{A} \rightarrow
   \cstr{A}$ be continuous and differentiable.
 
-  Then $\lfp(f) = \sqcup_{n \in \NN}(\pi_1(\nextiter_f^n(\bot)))$.
+  Then $\lfp(f) = \sqcup_{n \in \NN}(\pi_1(\nextiter_f^n(\bot)))$.\footnote{
+    Note that we have \emph{not} taken the fixpoint of $\nextiter_f$, since it is
+    not continuous.}
 \end{thm}
 \ifproofs
 \begin{proof}
@@ -970,18 +1067,16 @@ Which has the property that
 \end{proof}
 \fi
 
-This gives us a way to compute our fixpoint incrementally, by adding successive
-changes to our accumulator until we reach fixpoint.
-
-Note that we have \emph{not} taken the fixpoint of $\nextiter_f$, since it is
-not continuous. 
+This gives us a way to compute a fixpoint incrementally, by adding successive
+changes to an accumulator until we reach fixpoint. This is exactly how
+semi-naive evaluation works, with the delta relation and the accumulator relation.
 
 \subsection{Derivatives of fixpoints}
 \label{sec:fixpointDerivatives}
 
 In the previous section we have shown how to use derivatives to compute fixpoints
 more efficiently, but we also want to take the derivative of the fixpoint
-operator itself. The typical use case for this is where we have some fixpoint
+operator itself. A typical use case for this is where we have some fixpoint
 \begin{displaymath}
   \fixpoint (\lambda X . F(E, X))
 \end{displaymath}
@@ -995,14 +1090,15 @@ This amounts to applying a change to the \emph{function} whose fixpoint we are t
 In Datalog this would allow us to update a recursively defined relation given an
 update to one of its non-recursive dependencies, or the extensional database.
 For example, we might want to take the transitive closure relation
-and update it by changing the edge relation $e$.
+and update it by changing the edge relation $e$.\footnote{See
+  \cref{sec:workedExample} for a worked example of doing exactly that.}
 
 However, this requires us to have a derivative for the fixpoint operator
 $\fixpoint$ with respect to the function which it takes the fixpoint of.
 
 \begin{defn}[Derivatives of fixpoints]
 \label{def:fixpointDerivatives}
-  Let $\cstr{A}$ be a change action, $\fixpoint$ a fixpoint operator for
+  Let $\cstr{A}$ be a change action, $\fixpoint_A$ a fixpoint operator for
   endofunctions on $A$, and $\derive{\ev}$ be a derivative of the evaluation map.
   
   Then we define
@@ -1013,6 +1109,16 @@ $\fixpoint$ with respect to the function which it takes the fixpoint of.
     &\derive{\fixpoint_A}(f, \change{f}) \defeq \fixpoint_{\changes{A}}(\adjust(f, \change{f}))
   \end{align*}
 \end{defn}
+
+The suggestively named $\derive{\fixpoint_A}$ will in fact turn out to be a
+derivative \textemdash{} for \emph{least} fixpoints. The appearance of
+$\derive{\ev}$, a derivative of the evaluation map, in the definition of
+$\adjust$ is also no coincidence: as evaluating a fixpoint consists of many
+steps of applying the evaluation map, so computing the derivative of a fixpoint
+consists of many stages of applying the derivative of the evaluatoin
+map.\footnote{Perhaps surprisingly, the authors first discovered an expanded
+  version of this formula, and it was only later that we realised the remarkable
+  connection to $\derive{\ev}$.}
 
 \begin{thm}[name=Pseudo-derivatives of fixpoints, restate=fixpointPseudoDerivatives]
 \label{thm:fixpointPseudoDerivatives}
@@ -1048,7 +1154,7 @@ Since $\lfp$ is characterized as the limit of a chain of functions,
 $\derive{\iter_n}$ of each iteration map 
 such that the resulting set $\{ \derive{\iter_n} \}$ is directed, then $\sqcup_{n \in \NN}\derive{\iter_n}$ will be a derivative of $\lfp$.
 
-These correspond to the other derivative of $\iter$ \textemdash this time with respect to
+These correspond to the other derivative of $\iter$ \textemdash{} this time with respect to
 $f$. While we are differentiating with respect to $f$, we are still going to
 need to define our derivatives inductively in terms of $n$.
 
@@ -1068,7 +1174,12 @@ need to define our derivatives inductively in terms of $n$.
 \fi
 
 As before, we can now compute $\derive{\iter_n}$ together with $\iter_n$ by
-mutual recursion. 
+mutual recursion.\footnote{
+  In fact, the recursion here is not \emph{mutual}: the first component does not
+  depend on the second. However, writing it in this way makes it
+  amenable to computation by fixpoint, and we will in fact be able to avoid the
+  recomputation of $\iter_n$ when we show that it is equivalent to $\derive{\lfp}$.
+}
 \begin{align*}
   &\nextiter_{f, \change{f}} : (A, \changes{A}) \rightarrow (A, \changes{A})\\
   &\nextiter_{f, \change{f}} (a, \change{a}) \defeq (f(a), \derive{\ev}((f, a), (\change{f}, \change{a})))
@@ -1078,10 +1189,8 @@ Which has the property that
   &\nextiter_{f, \change{f}}^n (\bot, \bot) = (\iter_n(f), \derive{\iter_n}(f, \change{f}))
 \end{align*}
 
-In fact, the recursion here is not \emph{mutual}: $\iter_n$ does
-not depend on $\derive{\iter_n}$. However, writing it in this way makes it
-amenable to computation by fixpoint, and we will in fact be able to avoid the
-recomputation of $\iter_n$ when we show that it is equivalent to $\derive{\lfp}$.
+This indeed provides us with a function that we can take the limit of, showing
+that $\derive{\lfp}$ is a true derivative.
 
 \begin{thm}[name=Derivatives of least fixpoint operators, restate=leastFixpointDerivatives]
   \label{thm:leastFixpointDerivatives}
@@ -1101,10 +1210,9 @@ recomputation of $\iter_n$ when we show that it is equivalent to $\derive{\lfp}$
 \end{proof}
 \fi
 
-Computing this derivative still requires computing a fixpoint \textemdash over the change
-lattice \textemdash but this may still be significantly less expensive than the
-alternative ``update strategy'': throw everything away and start
-again (which will itself require a fixpoint computation).
+Computing this derivative still requires computing a fixpoint \textemdash{} over the change
+lattice \textemdash{} but this may still be significantly less expensive than
+recomputing the full new fixpoint.
 
 \section{Derivatives of recursive program semantics}
 \label{sec:recursiveDatalog}
@@ -1112,10 +1220,10 @@ again (which will itself require a fixpoint computation).
 Given the non-recursive semantics for a language, we can extend it to handle
 recursive definitions using fixpoints. \Cref{sec:fixpoints} lets us extend our
 derivative for the non-recursive semantics to a derivative for the recursive
-semantics, as well as being able to compute the fixpoints themselves
+semantics, as well as letting us compute the fixpoints themselves
 incrementally. 
 
-Again, we will demonstrate the technique with Datalog, but the approach is generic.
+Again, we will demonstrate the technique with Datalog, although the approach is generic.
 
 \subsection{Semantics of Datalog programs}
 
@@ -1183,6 +1291,7 @@ Again, we know how to do this \autocite[see][and successors]{gupta1993maintainin
 but again, the proof is now modular so we can extend it.
 
 \subsubsection{Worked example of updating a recursive Datalog predicate}
+\label{sec:workedExample}
 
 The algorithm in \cref{thm:leastFixpointDerivatives} is very abstract, and it is
 hard to see how it will work out in practice. It is therefore worth doing a
@@ -1215,8 +1324,8 @@ A reminder of the expanded definition of $\adjust$:
 \end{align*}
 
 We've chosen the second defintion of $\ev$ from \cref{prop:evDerivatives}, since
-we already know what $f \cplus \change{f}$ looks like \textemdash it is simply
-$\denote{tc_{e_2}}$ \textemdash and $\change{tc}(\lfp(tc_{e_1}))$ can be
+we already know what $f \cplus \change{f}$ looks like \textemdash{} it is simply
+$\denote{tc_{e_2}}$ \textemdash{} and $\change{tc}(\lfp(tc_{e_1}))$ can be
 computed once up front and reused throughout the computation.
 
 We need the derivative of $tc_{e_2}$:
@@ -1236,7 +1345,7 @@ We also need $\change{tc}$:
   &\cminus (e_1(x,y) \vee \exists z . (e_1(x,z) \wedge f(z,y)))
 \end{align*}
 
-We can now evaluate the fixpoint.\footnote{we would of course like to evaluate this fixpoint
+We can now evaluate the fixpoint.\footnote{We would of course like to evaluate this fixpoint
   incrementally, which we can do with exactly the same theoretical machinery.}
 Here is how the changes evolve:
 \begin{center}
@@ -1288,7 +1397,7 @@ has not changed.
 The sharp-eyed reader will have noticed that we have defined change actions as a
 set of objects with special functions between them (differentiable functions),
 and where we have change actions for product, sum, and function types. This begs
-the question - is there a category here? And is it Cartesian closed?
+the question \textemdash{} is there a category here? And is it Cartesian closed?
 
 The answer to this is yes, and we will gesture in the direction of a categorical
 account of change actions.
@@ -1373,20 +1482,16 @@ In the case of complete change actions, this equivalence degenerates into an
 equivalence with $\cat{Set}$, since all functions are differentiable.
 
 \subsection{Exponentials}
+\label{sec:exponentials}
 
 The exponential objects in the category $\cat{CAct}$ are difficult to work with,
 because we need to ensure that $f \cplus \change{f}$ continues to be a
-differentiable function. Under some
-conditions, however, we can find a simple representation.
+differentiable function. Under some conditions, however, we can find a simple representation.
 
 \begin{defn}[Pointwise change actions]
-  \label{def:pointwiseChanges}
+  \label{def:pointwiseChangeActions}
   A change action $\cstr{B}$ is pointwise if every exponential object
-  $\exponential{\cstr{A}}{\cstr{B}}$ is isomorphic to the pointwise change action
-  $\cstruct{\cstr{A} \rightarrow \cstr{B}}{A \rightarrow \changes{B}}{\cplus_\rightarrow}$,
-  where $(f \cplus_\rightarrow \change{f})(x) \defeq f(x) \cplus \change{f}(x)$ and the
-  monoidal structure on $A \rightarrow \changes{B}$ is given by lifting
-  the monoidal structure on $\changes{B}$ pointwise.
+  $\exponential{\cstr{A}}{\cstr{B}}$ is isomorphic to a pointwise function change action.
 \end{defn}
 
 This corresponds to the intuition about how the correspondence with
@@ -1398,8 +1503,8 @@ we require $f \cplus_\rightarrow \change{f}$ to be \emph{differentiable}, which
 may not be true for all pointwise changes $\change{f}$.
 Fortunately, there are useful subcategories of $\cat{CAct}$ formed of pointwise change actions.
 
-\begin{prop}[name=Pointwise change actions, restate=pointwiseChangeActions]
-  \label{prop:pointwiseChangeActions}
+\begin{prop}[name=Pointwise change actions, restate=pointwiseChangeActionProps]
+  \label{prop:pointwiseChangeActionProps}
   Every change action $\cstruct{B}{\changes{B}}{\cplus}$ such that the change action
   $\cstruct{\changes{B}}{\changes{B}}{\splus}$ is complete and $\cplus$ is differentiable with
   respect to its first argument is pointwise.
@@ -1407,7 +1512,7 @@ Fortunately, there are useful subcategories of $\cat{CAct}$ formed of pointwise 
   In particular, every change action where $\cplus$ is a group action is pointwise.
 \end{prop}
 \ifproofs
-  See \cref{prf:pointwiseChangeActions}.
+  See \cref{prf:pointwiseChangeActionProps}.
 \fi
 
 \begin{prop}[name=Complete implies pointwise, restate=pointwiseComplete]
@@ -1418,56 +1523,16 @@ Fortunately, there are useful subcategories of $\cat{CAct}$ formed of pointwise 
   See \cref{prf:pointwiseComplete}.
 \fi
 
-Furthermore, since the products and exponentials of complete change actions are complete,
-the full subcategory of $\cat{CAct}$ formed by complete change actions is a Cartesian
-closed category of pointwise change actions.
+Furthermore, since the complete change actions are a reflective subcategory of
+$\cat{CAct}$ (with the reflector being the ``completion'' of a change action,
+i.e. any complete change action, which we can always find), the complete change
+action form a Cartesian closed category of pointwise change actions.
 
-\todompj{On reflection (hah) I think we can do better: I think complete change
-  actions are a reflective subcategory, where the reflector is the
-  ``completion'' of a change action i.e. pick any complete change action on the
-  set. Or do we? We do if it's set based, since we can use $A \rightarrow A$ but
-  perhaps there are also ``uncompletable'' change actions.}
-
-Derivatives of the evaluation map, irrespective of a particular choice of change action on the
-exponential objects, give us a way to do incremental evaluation of function application:
-\begin{prop}[Incremental application]
-\label{prop:incrementalization}
-  Let $f: \cstr{A} \rightarrow \cstr{B}$, $a \in A$, $\change{a} \in
-  \changes{A}$, $\change{f} \in \changes{(A \rightarrow B)}$, and let
-  $\derive{\ev}$ be a derivative of the evaluation map.
-
-  Then
-  \begin{displaymath}
-    (f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus \derive{\ev}((f, a), (\change{f}, \change{a}))
-  \end{displaymath}
-\end{prop}
-
-Conveniently, \cref{def:pointwiseChanges} gives us a way to compute explicit derivatives for
-the evaluation map on pointwise change actions:
-
-\begin{prop}[Derivatives of the evaluation map]
-\label{prop:evDerivatives}
-  Suppose $\cstr{B}$ is a pointwise change action. Let
-  $f: \cstr{A} \rightarrow \cstr{B}$,
-  $a \in A$, $\change{a} \in \changes{A}$,
-  $\change{f} \in \changes{(A \rightarrow B)}$.
-
-  Then, by taking a derivative of $f$ we obtain the following derivative for the evaluation map:
-  \begin{displaymath}
-    \derive{\ev}_1((f, a), (\change{f}, \change{a})) \defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})
-  \end{displaymath}
-
-  Alternatively, by taking a derivative of $f \cplus \change{f}$ we can obtain another derivative
-  for the evaluation map:
-  \begin{displaymath}
-    \derive{\ev}_2((f, a), (\change{f}, \change{a})) \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})
-  \end{displaymath}
-\end{prop}
-
-This is important for \cref{sec:fixpoints}, where we will need derivatives of
-the evaluation map. In practice, this means that we will only be able to compute
-these results when we have pointwise change actions, since we know how to
-compute derivatives of the evaluation map for them.
+Having pointwise changes allows us to actually compute a derivative of the
+evaluation map as shown in \cref{prop:evDerivatives}. In practice, this means
+that we will only be able to use the results in \cref{sec:fixpoints} when
+we have pointwise change actions, or where we have some other way of computing
+a derivative of the evaluation map.
 
 \section{Related work}
 
@@ -1487,11 +1552,13 @@ have a minus operator. Where we can find a change structure with a minus operato
 forced to use unwieldy representations for change sets, and
 \citeauthor{cai2014changes} cite this as their reason for using a dependently
 typed type of changes. For example, the monoidal change actions on sets and lists are clearly
-useful for incremental computation on streams, yet they do not admit minus operators \textemdash instead, one would
+useful for incremental computation on streams, yet they do not admit minus
+operators \textemdash{} instead, one would
 be forced to work with e.g. multisets admitting negative arities, as \citeauthor{cai2014changes} do.
 
 Our function changes (when well behaved) correspond to what \citeauthor{cai2014changes} call
-\emph{pointwise differences} \autocite[see][section 2.2]{cai2014changes}. As they point out, you can reconstruct their
+\emph{pointwise differences} \autocite[see][section 2.2]{cai2014changes}. As
+they point out, you can reconstruct their
 function changes from pointwise changes and derivatives, so the two formulations
 are equivalent. However, our function changes correspond to the
 exponentials that we get from the categorical equivalence with $\cat{PreOrd}$,
@@ -1503,6 +1570,7 @@ less a ``change semantics'' for Datalog \autocite[see][section
 3.5]{cai2014changes}. 
 
 \subsubsection{S-acts}
+\label{sec:sacts}
 
 S-acts and their categorical structure have received a fair amount of attention
 over the years (\textcite{kilp2000monoids} is a good
@@ -1539,7 +1607,7 @@ don't require our changes to always be increasing.
 
 \subsubsection{Incremental evaluation}
 
-The earliest interpretation of semi-naive evaluation as a derivative process
+The earliest interpretation of semi-naive evaluation as a derivative 
 appears in \textcite{bancilhon1986naive}. The idea of using an approximate derivative
 and the requisite soundness condition appears as a throwaway comment in
 \textcite[][section 3.2.2]{bancilhon1986amateur}, and as far as we know nobody has since
@@ -1584,10 +1652,12 @@ few tuples as possible to get below the new fixpoint, and then iterate again
 (possibly using an incremental version of the semantics).
 
 This is a perfectly reasonable approach, and given a good, domain-specific,
-means of getting below the fixpoint, they can be quite efficient (likely more
-efficient than our method). The main defect of these approaches is that they
-\emph{are} domain specific, and hence inflexible with respect to changes in the
-language or structure, whereas our approach is quite generic.
+means of getting below the fixpoint, they can be quite efficient.
+The main defect of these approaches is that they \emph{are} domain specific,
+and hence inflexible with respect to changes in the language or structure,
+whereas our approach is quite generic. Although we know of no theoretical reason
+why either approach should give superior performance when both are applicable,
+an empirical investigation of this could prove interesting.
 
 Other approaches \autocites{dong2000incremental}{urpi1992method} consider only
 restricted subsets of Datalog, or incur other substantial constraints, and our results
@@ -1643,17 +1713,18 @@ as its corresponding spectrum, for example).
 \section{Conclusions and future work}
 
 We have presented change actions and their properties, and used them to provide novel
-strategies for incrementally evaluating fixpoints and the semantics of Datalog.
+strategies for incrementally evaluating and maintaining recursive functions, in
+particular the semantics of Datalog.
 
 Our work opens several avenues for future investigation.
 
 Firstly, the concrete definition of change actions can be generalized in a number of
-ways. A 2-categorical version (by analogy with the 2-categorical interpretation
+ways. A 2-categorical presentation (by analogy with the 2-categorical interpretation
 of $\cat{PreOrd}$) would smooth over many of the technical difficulties which
 the current presentation faces due to the fact that the changes produced
 $\derive{f}(a, \change{a})$ can be applied at points other than $f(a)$.
 A description of change actions which is generic in
-the base category would also be easy to provide, which may lead to models of
+the base category could also be provided, which might lead to models of
 the incremental $\lambda$-calculus on different base categories. 
 
 Of those, the theory of change actions on the category of domains is of particular interest. Since
@@ -1663,8 +1734,9 @@ even those that do not fit into the model of \citeauthor{cai2014changes}'s ILC.
 Our fixpoint theorems are proven over dcpos in general, which is crucial since
 fixpoints are often used in domain theory to give a semantics to recursion.
 
-Additionally, the tantalizing connection between change actions, the ILC and synthetic
-differential geometry has only begun to be explored and a denotational semantics for the
+Additionally, we have only begun to explore the tantalizing connection between
+change actions, the ILC and synthetic
+differential geometry, and a denotational semantics for the
 ILC based on smooth spaces is the subject of ongoing research. We believe many concepts
 from standard differential geometry, like gradients, vector fields, curves and flows can
 be defined for general change actions, which could then have implications for higher-order
@@ -1689,37 +1761,7 @@ helpful comments on the manuscript.
 \appendixpage
 \section{Proofs}
 
-\subsection{The category of change actions}
-
-\preordEquivalence*
-\begin{proof}
-  \label{prf:preordEquivalence}
-  On one direction, if $U$ is a preorder, it's trivial to check that $\reach (\direct (U)) = U$.
-
-  On the other direction, we need to find a natural isomorphism between $\direct \circ \reach$
-  and the identity functor. First, we note that the base set for the change action
-  $\direct(\reach(A))$ is the same as the base set for $\cstr{A}$.
-
-  We claim that the desired natural isomorphism is given by the
-  the identity on the base sets. It remains to prove that the identities
-  $id_A : \cstr{A} \rightarrow \direct(\reach(A))$ and
-  $id_{A_{\reachOrder}} : \direct(\reach(A)) \rightarrow \cstr{A}$
-  are indeed differentiable in both directions.
-
-  In one direction, a derivative is given by
-  \begin{displaymath}
-    \derive{id}_A(a, \change{a}) \defeq (a, a \cplus \change{a})
-  \end{displaymath}
-  Conversely, let $(a, b) \in \reachOrder$. By definition of $\reachOrder$, there is some
-  $\change{}_{(a, b)} \in \changes{A}$ satisfying $a \cplus \change{}_{(a,b)} = b$.
-  This gives a definition for the derivative of the identity on pairs:
-  \begin{displaymath}
-    \derive{id}_{A_{\reachOrder}}(a, (a, b)) \defeq \change{}_{(a, b)}
-  \end{displaymath}
-  which can be extended freely to the whole change set
-  $\reachOrder^\star$.\footnote{Note that since we picked arbitrary change
-    representatives, the resulting derivative may not preserve the monoid action.}
-\end{proof}
+\subsection{Change actions and derivatives}
 
 \products*
 \begin{proof}
@@ -1749,79 +1791,6 @@ helpful comments on the manuscript.
     \derive{[f_1, f_2]} (i_1 a, (\change{a}, \change{b})) &\defeq f_1'(a, \change{a})\\
     \derive{[f_1, f_2]} (i_2 b, (\change{a}, \change{b})) &\defeq f_2'(b, \change{b})
   \end{align*}
-\end{proof}
-
-\pointwiseChangeActions*
-\begin{proof}
-\label{prf:pointwiseChangeActions}
-  Let $\cstr{B}$ be a change action, with $\cplus$ differentiable with respect
-  to its first argument, and suppose the change action on $\changes{B}$
-  is complete.
-
-  First, we prove that the pointwise change action is well defined: let
-  $f : \cstr{A} \rightarrow \cstr{B}$ be some differentiable function, and
-  $\change{f} : A \rightarrow \changes{B}$ a pointwise change (which is
-  differentiable, since $\cstr{\changes{B}}$ is complete). Then:
-  \begin{align*}
-    &(f \cplus_\rightarrow \change{f})(a \cplus \change{a})\\
-    &= f(a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})\\
-    &= (f(a) \cplus \derive{f}(a, \change{a})) \cplus (\change{f}(a) \splus \derive{\change{f}}(a, \change{a}) )\\
-    &= f(a) \cplus (\change{f}(a) \splus \derive{\change{f}}(a, \change{a}))
-       \cplus \derive{\cplus}((f(a), \derive{f}(a, \change{a})), \change{f}(a \cplus \change{a}))\\
-    &= (f \cplus_\rightarrow \change{f})(a) \cplus (\derive{\change{f}}(a, \change{a})
-       \splus \derive{\cplus}((f(a), \derive{f}(a, \change{a}), \change{f}(a, \cplus \change{a}))))
-  \end{align*}
-  Hence $(f \cplus_\rightarrow \change{f})$ is differentiable.
-  
-  The evaluation map, defined as $\ev(f, a) \defeq f(a)$ is differentiable as well:
-  \begin{align*}
-    &\ev((f, \change{f}), (a, \change{a}))\\
-    &= (f \cplus_\rightarrow \change{f})(a \cplus \change{a}) \\
-    &= f(a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})\\
-    &= f(a) \cplus (f'(a, \change{a}) \splus \change{f}(a \cplus \change{a}))\\
-    &= \ev(f, a) \cplus (f'(a, \change{a}) \splus \change{f}(a \cplus \change{a}))
-  \end{align*}
-
-  Now, on the one hand, suppose that $f : C \times A \rightarrow B$ is a differentiable function,
-  and $\curry{f} : C \rightarrow (\exponential{\cstr{A}}{\cstr{B}})$ its corresponding curried version:
-  \begin{align*}
-    &\curry{f}(c \cplus \change{c})\\
-    &= \lambda a . f(c \cplus \change{c}, a)\\
-    &= \lambda a . f(c, a) \cplus \derive{f}((c, \change{c}), (a, 0))\\
-    &= (\lambda a . f(c, a)) \cplus_\rightarrow (\lambda a . \derive{f}((c, \change{c}), (a, 0)))
-  \end{align*}
-  Then the function $\lambda a . \derive{f}((c, \change{c}), (a, 0))$ is a derivative for $\curry{f}$,
-  thus $\curry{f}$ is differentiable. Conversely, suppose that $\curry{f}$ is differentiable.
-  Then we note that, by hypothesis, $\curry{f}(a)$ is differentiable for all $f$, with derivative
-  $\derive{f_a}$, and hence:
-  \begin{align*}
-    &f(a \cplus \change{a}, c \cplus \change{c})\\
-    &= \curry{f}(a \cplus \change{a})(c \cplus \change{c})\\
-    &= (\curry{f}(a) \cplus_\rightarrow \derive{\curry{f}}(a, \change{a}))(c \cplus \change{c})\\
-    &= \curry{f}(a)(c \cplus \change{c}) \cplus \derive{\curry{f}}(a, \change{a})(c\cplus\change{c})\\
-    &= \curry{f}(a)(c) \cplus (\derive{f_a}(c, \change{c}) \splus \derive{\curry{f}}(a, \change{a})(c\cplus\change{c}))\\
-    &= f(a, c) \cplus (\derive{f_a}(c, \change{c}) \splus \derive{\curry{f}}(a, \change{a})(c\cplus\change{c}))
-  \end{align*}
-  Thus $f$ is differentiable as a function from $\cstr{C} \times \cstr{A}$ into $\cstr{B}$.
-\end{proof}
-
-\pointwiseComplete*
-\begin{proof}
-\label{prf:pointwiseComplete}
-  Let $\cstr{B}$ be a complete change action.
-  We prove that the pointwise change action is the exponential object $\exponential{\cstr{A}}{\cstr{B}}$.
-
-  First, we note that the pointwise change action is trivially well defined, since
-  every function into $\cstr{B}$ is differentiable. Similarly, the evaluation map
-  is differentiable.
-
-  Now consider two elements $\curry{f}$, $\curry{g}$ of $\exponential{\cstr{A}}{\cstr{B}}$. Since
-  $\cstr{B}$ is complete, it is endowed with a minus operator $\cminus$, so we define
-  $\cminus_\rightarrow : (\exponential{\cstr{A}}{\cstr{B}}) \times (\exponential{\cstr{A}}{\cstr{B}}) \rightarrow A \rightarrow \changes{B}$ by:
-  $$ (g \cminus_\rightarrow f)(a) \defeq g(a) \cminus f(a) $$
-  It's easy to check that this is indeed a minus operator and, therefore, $\exponential{\cstr{A}}{\cstr{B}}$
-  is complete. Thus, trivially, any function $f : C \times A \rightarrow B$ is differentiable
-  if and only if its curried version $\curry{f} : C \rightarrow (\exponential{A}{B})$ is.
 \end{proof}
 
 \subsection{Change actions over other structures}
@@ -2032,5 +2001,111 @@ helpful comments on the manuscript.
     &= \derive{\lfp}(f, \change{f})
   \end{align*}
 \end{proof}
+
+\subsection{The category of change actions}
+
+\preordEquivalence*
+\begin{proof}
+  \label{prf:preordEquivalence}
+  On one direction, if $U$ is a preorder, it's trivial to check that $\reach (\direct (U)) = U$.
+
+  On the other direction, we need to find a natural isomorphism between $\direct \circ \reach$
+  and the identity functor. First, we note that the base set for the change action
+  $\direct(\reach(A))$ is the same as the base set for $\cstr{A}$.
+
+  We claim that the desired natural isomorphism is given by the
+  the identity on the base sets. It remains to prove that the identities
+  $id_A : \cstr{A} \rightarrow \direct(\reach(A))$ and
+  $id_{A_{\reachOrder}} : \direct(\reach(A)) \rightarrow \cstr{A}$
+  are indeed differentiable in both directions.
+
+  In one direction, a derivative is given by
+  \begin{displaymath}
+    \derive{id}_A(a, \change{a}) \defeq (a, a \cplus \change{a})
+  \end{displaymath}
+  Conversely, let $(a, b) \in \reachOrder$. By definition of $\reachOrder$, there is some
+  $\change{}_{(a, b)} \in \changes{A}$ satisfying $a \cplus \change{}_{(a,b)} = b$.
+  This gives a definition for the derivative of the identity on pairs:
+  \begin{displaymath}
+    \derive{id}_{A_{\reachOrder}}(a, (a, b)) \defeq \change{}_{(a, b)}
+  \end{displaymath}
+  which can be extended freely to the whole change set
+  $\reachOrder^\star$.\footnote{Note that since we picked arbitrary change
+    representatives, the resulting derivative may not preserve the monoid action.}
+\end{proof}
+
+\pointwiseChangeActionProps*
+\begin{proof}
+\label{prf:pointwiseChangeActionProps}
+  Let $\cstr{B}$ be a change action, with $\cplus$ differentiable with respect
+  to its first argument, and suppose the change action on $\changes{B}$
+  is complete.
+
+  First, we prove that the pointwise change action is well defined: let
+  $f : \cstr{A} \rightarrow \cstr{B}$ be some differentiable function, and
+  $\change{f} : A \rightarrow \changes{B}$ a pointwise change (which is
+  differentiable, since $\cstr{\changes{B}}$ is complete). Then:
+  \begin{align*}
+    &(f \cplus_\rightarrow \change{f})(a \cplus \change{a})\\
+    &= f(a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})\\
+    &= (f(a) \cplus \derive{f}(a, \change{a})) \cplus (\change{f}(a) \splus \derive{\change{f}}(a, \change{a}) )\\
+    &= f(a) \cplus (\change{f}(a) \splus \derive{\change{f}}(a, \change{a}))
+       \cplus \derive{\cplus}((f(a), \derive{f}(a, \change{a})), \change{f}(a \cplus \change{a}))\\
+    &= (f \cplus_\rightarrow \change{f})(a) \cplus (\derive{\change{f}}(a, \change{a})
+       \splus \derive{\cplus}((f(a), \derive{f}(a, \change{a}), \change{f}(a, \cplus \change{a}))))
+  \end{align*}
+  Hence $(f \cplus_\rightarrow \change{f})$ is differentiable.
+  
+  The evaluation map, defined as $\ev(f, a) \defeq f(a)$ is differentiable as well:
+  \begin{align*}
+    &\ev((f, \change{f}), (a, \change{a}))\\
+    &= (f \cplus_\rightarrow \change{f})(a \cplus \change{a}) \\
+    &= f(a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})\\
+    &= f(a) \cplus (f'(a, \change{a}) \splus \change{f}(a \cplus \change{a}))\\
+    &= \ev(f, a) \cplus (f'(a, \change{a}) \splus \change{f}(a \cplus \change{a}))
+  \end{align*}
+
+  Now, on the one hand, suppose that $f : C \times A \rightarrow B$ is a differentiable function,
+  and $\curry{f} : C \rightarrow (\exponential{\cstr{A}}{\cstr{B}})$ its corresponding curried version:
+  \begin{align*}
+    &\curry{f}(c \cplus \change{c})\\
+    &= \lambda a . f(c \cplus \change{c}, a)\\
+    &= \lambda a . f(c, a) \cplus \derive{f}((c, \change{c}), (a, 0))\\
+    &= (\lambda a . f(c, a)) \cplus_\rightarrow (\lambda a . \derive{f}((c, \change{c}), (a, 0)))
+  \end{align*}
+  Then the function $\lambda a . \derive{f}((c, \change{c}), (a, 0))$ is a derivative for $\curry{f}$,
+  thus $\curry{f}$ is differentiable. Conversely, suppose that $\curry{f}$ is differentiable.
+  Then we note that, by hypothesis, $\curry{f}(a)$ is differentiable for all $f$, with derivative
+  $\derive{f_a}$, and hence:
+  \begin{align*}
+    &f(a \cplus \change{a}, c \cplus \change{c})\\
+    &= \curry{f}(a \cplus \change{a})(c \cplus \change{c})\\
+    &= (\curry{f}(a) \cplus_\rightarrow \derive{\curry{f}}(a, \change{a}))(c \cplus \change{c})\\
+    &= \curry{f}(a)(c \cplus \change{c}) \cplus \derive{\curry{f}}(a, \change{a})(c\cplus\change{c})\\
+    &= \curry{f}(a)(c) \cplus (\derive{f_a}(c, \change{c}) \splus \derive{\curry{f}}(a, \change{a})(c\cplus\change{c}))\\
+    &= f(a, c) \cplus (\derive{f_a}(c, \change{c}) \splus \derive{\curry{f}}(a, \change{a})(c\cplus\change{c}))
+  \end{align*}
+  Thus $f$ is differentiable as a function from $\cstr{C} \times \cstr{A}$ into $\cstr{B}$.
+\end{proof}
+
+\pointwiseComplete*
+\begin{proof}
+\label{prf:pointwiseComplete}
+  Let $\cstr{B}$ be a complete change action.
+  We prove that the pointwise change action is the exponential object $\exponential{\cstr{A}}{\cstr{B}}$.
+
+  First, we note that the pointwise change action is trivially well defined, since
+  every function into $\cstr{B}$ is differentiable. Similarly, the evaluation map
+  is differentiable.
+
+  Now consider two elements $\curry{f}$, $\curry{g}$ of $\exponential{\cstr{A}}{\cstr{B}}$. Since
+  $\cstr{B}$ is complete, it is endowed with a minus operator $\cminus$, so we define
+  $\cminus_\rightarrow : (\exponential{\cstr{A}}{\cstr{B}}) \times (\exponential{\cstr{A}}{\cstr{B}}) \rightarrow A \rightarrow \changes{B}$ by:
+  $$ (g \cminus_\rightarrow f)(a) \defeq g(a) \cminus f(a) $$
+  It's easy to check that this is indeed a minus operator and, therefore, $\exponential{\cstr{A}}{\cstr{B}}$
+  is complete. Thus, trivially, any function $f : C \times A \rightarrow B$ is differentiable
+  if and only if its curried version $\curry{f} : C \rightarrow (\exponential{A}{B})$ is.
+\end{proof}
+
 
 \end{document}
