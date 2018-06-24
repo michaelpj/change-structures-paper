@@ -401,7 +401,6 @@ many candidates, there is a clear ``natural'' choice for either.
 \section{Change actions over ordered structures}
 \label{sec:moreStructures}
 
-\todomario{Not sure how I feel about this part}
 We are aiming to work over Boolean algebras with fixpoints, which is where we
 will interpret Datalog. We will work up to that gradually, adding power as we
 progress from posets, to directed-complete partial orders, and
@@ -454,7 +453,7 @@ in the sense of the following lemma:
   Then $g$ is a derivative for $f$.
 \end{thm}
 
-If we have unique minimal and maximal derivatives then this gives us a full
+If unique minimal and maximal derivatives exist, then this gives us a full
 characterisation of all the derivatives for a function.
 
 \begin{thm}[Characterization of derivatives]
@@ -479,11 +478,19 @@ bounds, and that tells us how much ``wiggle room'' we have. This is helpful
 because some of the intermediary functions may be much easier to compute than
 others, as we will see in \cref{sec:datalogDifferentiability}.
 
-\subsection{Directed-complete partial orders}
+\subsubsection{Directed-complete partial orders}
+\todomario{
+  I'm inclined to make this a sub-subsection of the work on preorders since it doesn't really add
+  anything to it, and the theorems on dcpos really ought to be moved to the part where they're used.
+}
 
-Directed-complete partial orders with least elements (dcpos) give us the well known notion of
-\emph{Scott-continuity}. We can define \emph{continuous} change actions,
-which are well-behaved with respect to continuity.
+An important class of posets orders, of especial importance in semantics, is that of 
+directed-complete partial orders (dcpos) 
+equipped with a least element, and the associated notion of \emph{(Scott) continuous} maps. 
+\todomario{Maybe write the basic definitions of dcpo and continuous maps?}
+As in the previous section, we can define change actions on dcpos, rather than sets, as change
+actions whose sets $A, \Delta A$ are endowed with a dcpo structure, and where the maps $\oplus, +$ are
+continuous.
 
 \begin{defn}[Continuous change actions]
   A change action $\cstr{A}$ is \emph{continuous} if
@@ -493,15 +500,28 @@ which are well-behaved with respect to continuity.
   \end{itemize}
 \end{defn}
 
-We also have the following lemma (which is just a re-statement of a well-known
-property of Scott-continuous functions, see e.g. \cite[Lemma~3.2.6]{abramsky1994domain}):
+\todomario{Not super convinced as to whether number remarks}
+\begin{rem}
+  Unlike in the previous section, the change order $\changeOrder$ does \emph{not}, in general,
+  induce a dcpo structure on $\changes{A}$. As a counterexample, consider 
+  the change structure $(\NN^\star, \NN, +, +, 0)$, where $\NN^\star$ denotes the dcpo of natural numbers
+  extended with a positive infinity.
+\end{rem}
+
+For a general overview of results in domain theory and dcpos, we refer the reader to an
+introductory work such as \cite{abramsky1994domain}, but we state here some specific results that
+we shall be using, such as the following, whose proof can be found in 
+\cite[Lemma~3.2.6]{abramsky1994domain}:
 
 \begin{prop}[Distributivity of limits across arguments]
   \label{prop:distributivityLimit}
-  A function $f : A \times B \rightarrow C$ is continuous iff it is continuous in each variable separately.
+  A function $f : A \times B \rightarrow C$ is continuous iff it is continuous in each variable
+  separately.
 \end{prop}
 
-A direct corollary of this property is the following result, reminiscent of a well-known theorem of calculus:
+A direct corollary of this property is the following result, reminiscent of the well-known result from
+standard calculus that the limit of an absolutely convergent sequence of differentiable functions is
+itself differentiable:
 
 \begin{corollary}[Continuity of differentiation]
   \label{cor:diffContinuous}
@@ -537,6 +557,8 @@ Becik's Theorem \autocite[][section 10.1]{winskel1993formal}, but it has a strai
   See \cref{prf:factoringFixpoints}.
 \end{proof}
 \fi
+\todomario{It bothers me slightly that these theorems appear here and are then never used until much
+later, maybe move to the place of use}
 
 \subsection{Boolean algebras}
 \label{sec:booleanAlgebras}
