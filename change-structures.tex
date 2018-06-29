@@ -523,7 +523,7 @@ bounds, and that tells us how much ``wiggle room'' we have above and below.
 \subsubsection{Precision}
 
 The change preorder corresponds to a natural notion of precision: if $\change{a}
-\changeOrder \change{b]}$, then $\change{b}$ produces ``bigger'' updates than
+\changeOrder \change{b}$, then $\change{b}$ produces ``bigger'' updates than
 $\change{a}$, and there is some additional information in it that is being
 ignored even when $c \cplus \change{a} = c \cplus \change{b}$.
 
@@ -543,11 +543,13 @@ Precision may be a desirable property because precise derivatives produce
 with the smallest cardinality). However, we may wish to trade this off against
 other operational properties, such as how easy the derivative is to compute.
 
-\subsubsection{Directed-complete partial orders}
 \todomario{
-  I'm inclined to make this a sub-subsection of the work on preorders since it doesn't really add
-  anything to it, and the theorems on dcpos really ought to be moved to the part where they're used.
+  I'm inclined to make this chunk a sub-subsection of the work on preorders since it doesn't 
+  really add anything to it, and the theorems on dcpos really ought to be moved to the part where
+  they're used.
 }
+
+\subsubsection{Directed-complete partial orders}
 
 An important class of posets orders, of especial importance in semantics, is that of 
 directed-complete partial orders (dcpos) 
@@ -584,9 +586,10 @@ we shall be using, such as the following, whose proof can be found in
   separately.
 \end{prop}
 
-A direct corollary of this property is the following result, reminiscent of the well-known result from
-standard calculus that the limit of an absolutely convergent sequence of differentiable functions is
-itself differentiable:
+It is a well-known result in standard calculus that the limit of an absolutely convergent sequence of
+differentiable functions $\{f_i\}$ is itself differentiable, and its derivative is equal to the limit
+of the derivatives of the $f_i$. A remarkable consequence of the previous distributivity property
+is the following analogous result:
 
 \begin{corollary}[Continuity of differentiation]
   \label{cor:diffContinuous}
@@ -628,7 +631,9 @@ later, maybe move to the place of use}
 \subsection{Boolean algebras}
 \label{sec:booleanAlgebras}
 
-Complete Boolean algebras have a complete, continuous change action.
+Complete Boolean algebras are of special interest to us due to their role in modelling the semantics of
+Datalog programs. Conveniently, these structures can be endowed with a complete, continuous change
+action.
 
 \begin{prop}[name=Boolean algebra change actions, restate=lsuperpose]
  Let $L$ be a complete Boolean algebra. Define
@@ -639,10 +644,12 @@ Complete Boolean algebras have a complete, continuous change action.
   \begin{displaymath}
     a \twist (p, q) \defeq (a \vee p) \wedge \neg q
   \end{displaymath}
-  and the monoid operator is
+
+  The monoid operation on $L \times L$ is given by:
   \begin{displaymath}
     (p, q) \splus (r, s) \defeq ((p \wedge \neg q) \vee r, (q \wedge \neg r) \vee s)
   \end{displaymath}
+  with identity element $(L, \bot)$.
 
   Then $\cstr{L}_\superpose$ is a complete, continuous change action on $L$.
 \end{prop}
@@ -653,10 +660,10 @@ Complete Boolean algebras have a complete, continuous change action.
 \fi
 
 We can think of $\cstr{L}_\superpose$ as tracking changes as pairs of ``upwards'' and
-``downwards'' changes, where the monoid action simply applies both.\footnote{We
-  can, in fact, make it precise that $\cstr{L}_\superpose$ is an ``upwards''
-  and ``downwards'' change action glued together, but here it is simpler to
-  just go directly to the useful change action.}  
+``downwards'' changes, where the monoid action simply applies one after the other.\footnote{
+  The intuition that $\cstr{L}_\superpose$ is made up of an ``upwards''
+  and a ``downwards'' change action glued together can in fact be made precise, but the specifics
+  are outside the scope of this paper.}
 
 Boolean algebras also have unique maximal and minimal
 derivatives, under the usual preorder based on implication.\footnote{The change
@@ -664,14 +671,15 @@ set is, as usual, given the change preorder, which in this case corresponds to
 the natural order on $L \times L^{\textrm{op}}$.}
 
 \begin{prop}
+  \label{prop:minimalMaximalDerivatives}
   Let $L$ be a Boolean algebra, and let
   \begin{align*}
-    a \cminus_\bot b &= (a \wedge \neg b, b)\\
-    a \cminus_\top b &= (a, b \wedge \neg a)
+    a \cminus_\bot b &= (a \wedge \neg b, b \wedge \neg a)\\
+    a \cminus_\top b &= (\top, \neg a)
   \end{align*}
 
   Then $\derive{f}_{\cminus_{\bot}}$ and $\derive{f}_{\cminus_{\top}}$ 
-  define unique minimal and maximal derivatives for $f$.
+  define least and greatest derivatives for $f$.
 \end{prop}
 
 \Cref{thm:derivativeCharacterization} then gives us bounds for
@@ -679,8 +687,8 @@ all the derivatives on Boolean algebras:
 
 \begin{corollary}
 \label{cor:booleanCharacterization}
-  Let $L$ be a Boolean algebra with the $\cstr{L}_\superpose$ change action, $A$ be
-  a change action, and $f: A \rightarrow
+  Let $L$ be a Boolean algebra considered with the corresponding change action $\cstr{L}_\superpose$, $A$ beA
+  an arbitrary change action, and $f: A \rightarrow
   L$ a function. Then the derivatives of $f$ are precisely those functions
   $\derive{f}$ such that
   \begin{displaymath}
@@ -695,28 +703,28 @@ all the derivatives on Boolean algebras:
 This makes \cref{thm:derivativeCharacterization} actually usable in practice, since
 we have concrete definitions for our bounds (which we will make use of in \cref{sec:datalogDifferentiability}).
 
-\section{Derivatives of non-recursive program semantics}
+\section{Derivatives for non-recursive Datalog}
 \label{sec:nonRecursiveDatalog}
 
-We can now start to give derivatives for interesting functions. One class of
-interesting functions is \emph{programming language semantics}. If we can give
-good derivatives for the semantics of a programming language, then we can
-incrementally update our programs. We don't yet know how to handle recursion
-(which we will tackle in \cref{sec:recursiveDatalog}), but we can start by
-looking at non-recursive program semantics.
+We set our sights now on applying the theory defined so far to the specific setting of the semantics
+of Datalog. Giving a semantics for it that admits derivatives will then lead us to a strategy for
+performing incremental computation of Datalog programs. 
+We will first restrict ourselves to the non-recursive fragment of the language, and we will tackle
+fixpoints in a later section (\cref{sec:recursiveDatalog}).
 
-We will use Datalog as our example language, although the approach is generic.
-Datalog is a well-known simple logic programming language \autocite[See][part D]{abiteboul1995foundations}.
-It is also a textbook example of the need for incremental computation, since as we have seen
-(\cref{sec:intro}) the naive computation of its semantics can be very expensive.
-While recursion is a major feature of Datalog, we already need to do a substantial
-amount of work to handle the the non-recursive semantics of Datalog formulae.
+In principle, any first-order language could have been used as a motivating example. 
+We have decided on Datalog, a well-known simple logic programming language
+\autocite[See][part D]{abiteboul1995foundations}. This was partly for practical reasons, but it is
+also the canonical example of the need for incremental computation since, as we have seen
+(\cref{sec:intro}), the naive computation of its semantics can be very expensive, and significant
+performance gains can be obtained by incrementalization.
 
 \subsection{Semantics of Datalog formulae}
 
-Datalog is usually given a logical semantics wherein we look for models that
-satisfy the program. We will instead give a simple denotational semantics that treats a Datalog
-formula (and later, a Datalog program) as denoting a family of relations.
+Datalog is usually given a logical semantics wherein facts are interpreted as first-order
+logic formulae and the semantics of a program is precisely the set of models of its constituent
+formulae. We will instead give a simpler denotational semantics that treats a Datalog
+formula (and later, a Datalog program) as directly denoting a family of relations.
 
 We will adopt the usual closed-world assumption to give a denotation to negation.
 
@@ -758,23 +766,32 @@ a function between complete Boolean algebras.
 \subsection{Differentiability of Datalog formula semantics}
 \label{sec:datalogDifferentiability}
 
-In order to apply the results in \cref{sec:fixpoints} to Datalog, we need the
-formula semantics $\denote{T}$ to
-be differentiable. Since $\denote{T}$ is a function on complete Boolean algebras, and we know
-that the $\cstr{L}_\superpose$ change action is complete, in fact we
-\emph{do} know that $\denote{T}$ must be differentiable.
+In order to perform incremental evaluation, we first need to provide derivatives for the semantics
+of Datalog formulae. Since $\denote{T}$ is a function between the complete Boolean algebras $\Rel^n$ and
+$\Rel$, and we know that the corresponding change actions 
+$\widehat{\Rel^n}_\superpose, \widehat{\Rel}_\superpose$
+are complete, this immediately guarantees the existence of a derivative for $\denote{T}$.
 
-However, this does not mean that we have a \emph{good} derivative for
-$\denote{T}$. We have a complete change action, but recall that the minus derivative
-is very bad operationally:
-\begin{displaymath}
-  \derive{f}_\cminus(a, \change{a}) = f(a \cplus \change{a}) \cminus f(a)
-\end{displaymath}
-While this is precise it requires \emph{more} work to compute than computing $f(a \cplus \change{a})$ directly!
+Unfortunately, this does not necessarily provide us with a way to compute an \emph{efficient} 
+derivative for $\denote{T}$. 
+Consider, for example, the minimal derivative $\derive{\denote{T}}_{\cminus_\bot}$ as defined in 
+\cref{prop:minimalMaximalDerivatives}. Then:
+\begin{align*}
+  \derive{\denote{T}}_\cminus(a, (p, q)) &= \denote{T}(a \twist (p, q)) \cminus_\bot \denote{T}(a)\\
+                                         &= (\denote{T}((a \vee p) \wedge \neg q) 
+                                           \wedge \neg \denote{T}(a),
+                                           \denote{T}(a) 
+                                           \wedge \neg \denote{T}((a \vee p) \wedge \neg q))
+\end{align*}
+While this derivative is precise (in the sense of \cref{def:precision}),
+it requires \emph{more} work to compute than computing $f(a \cplus \change{a})$ directly!
 
-However, \cref{cor:booleanCharacterization} gives us a range of derivatives to
-choose from, and we can optimize within that range to find one that satisfies
-our constraints, for example trading off ease of computation against precision.
+However, \cref{cor:booleanCharacterization} entails that \emph{any} function bounded by
+$\derive{\denote{T}}_{\cminus_\bot}$ and $\derive{\denote{T}}_{\cminus_\top}$ is a valid derivative,
+and we can therefore search within that range to find one that provides the desired
+trade-off between ease of computation and precision.
+
+\todomario{Rewrite this, because we don't quite have least and greatest derivatives}
 
 In the case of Datalog, the change preorder on the change action also
 corresponds to the size of the derivative as a pair of relations. The minimal (precise)
@@ -786,7 +803,7 @@ guaranteed that the result is sound.\footnote{The idea of using an approximation
 to the precise derivative, and a soundness condition, appears in \textcite{bancilhon1986amateur}.}
 
 There is also the question of how to compute the derivative. Since the change
-set for $\cstr{\Rel}_\superpose$ is $\left( \Rel, \Rel \right)$, it
+set for $\widehat{\Rel}_\superpose$ is $\left( \Rel, \Rel \right)$, it
 is possible and indeed very natural to compute the two components via a pair of
 Datalog formulae, which allows us to reuse an existing Datalog formula
 evaluator.\footnote{
@@ -807,7 +824,7 @@ specifics of the evaluation engine. Here is one possibility.\footnote{This is
 
 \subsubsection{A concrete Datalog formula derivative}
 
-We will define the derivative as a pair of mutually recursive functions,
+We define here a derivative operator as a pair of mutually recursive functions,
 $\updiff$ and $\downdiff$, which turn a formula $T$ into new formulae that compute
 the upwards and downwards parts of the derivative, respectively. As we expect
 from a derviative, the new formulae will have additional free relation variables
@@ -815,7 +832,7 @@ for the upwards and downwards derivatives of the free relation variables of $T$.
 
 \newcommand{\bothdiff}{\diamond}
 
-We will also use an auxilliary function, $\bothdiff$, which computes the
+We will make use of an auxilliary function, $\bothdiff$, which computes the
 ``next'' value of a term by applying the upwards and downwards derivatives.
 
 \todompj{We're talking about this as a semantic derivative, but with the way
@@ -827,42 +844,59 @@ We will also use an auxilliary function, $\bothdiff$, which computes the
 \newcommand{\bothchanges}{\rho}
 \begin{thm}[Concrete Datalog formula derivatives]
 \label{thm:concreteDatalog}
-  We define two mutually recursive functions,
-  $\updiff: \Formula \rightarrow \Formula$ and
-  $\downdiff: \Formula \rightarrow \Formula$, such
-  that
-  $\denote{\updiff(T)}(\updiff R_1, \dots, \updiff R_n, \downdiff R_1, \dots, \downdiff R_n)
-  \times
-  \denote{\downdiff(T)}(\updiff R_1, \dots, \updiff R_n, \downdiff R_1, \dots, \downdiff R_n)$
-  is a derivative for $\denote{T}$.
+  Let $\updiff, \downdiff, \bothdiff : \Formula \rightarrow \Formula$ be mutually recursive functions
+  defined by structural induction as in figure \ref{fig:datalogDerivatives}
+  \todomario{cref references theorem 26 instead of figure 1 for some reason}
 
-  Additionally, let
-  \begin{displaymath}
-    \bothdiff(X) \defeq X \twist (\updiff(X), \downdiff(X))
-  \end{displaymath}
-  in the following.
-
-  \begin{align*}
-  \updiff(\bot) &\defeq \bot\\
-  \updiff(\top) &\defeq \bot\\
-  \updiff(R_j) &\defeq \updiff R_j \\
-  \updiff(T\vee U) &\defeq \updiff(T) \vee \updiff (U) &\dagger\\
-  \updiff(T\wedge U) &\defeq (\updiff(T)\wedge \bothdiff(U))
-                           \vee
-                           (\updiff(U) \wedge \bothdiff(T))\\
-  \updiff(\neg T) &\defeq \downdiff(T)\\
-  \updiff(\exists x.T) &\defeq \exists x.\updiff(T) &\dagger\\
-    \\
-  \downdiff(\bot) &\defeq \bot\\
-  \downdiff(\top) &\defeq \bot\\
-  \downdiff(R_j) &\defeq \downdiff R_j \\
-  \downdiff(T\vee U) &\defeq (\downdiff(T) \wedge \neg \bothdiff(U))
-                           \vee
-                           (\downdiff(U) \wedge \neg \bothdiff(T))\\
-  \downdiff(T\wedge U) &\defeq (\downdiff(T)\wedge U) \vee (T \wedge \downdiff(U))\\
-  \downdiff(\neg T) &\defeq \updiff(T)\\
-  \downdiff(\exists x.T) &\defeq \exists x.\downdiff(T) \wedge \neg \exists x.\bothdiff(T)
-  \end{align*}
+  Then given a Datalog formula $T$ and interpretations for its free relation variables
+  $\denote{R_1} \ldots \denote{R_n}$, we have:
+  \todomario{I have no idea how to make this fit the space.}
+  \begin{gather*}
+      \denote{T}(\denote{R_1} \twist (\denote{\updiff{R_1}}, \denote{\downdiff{R_1}}), \ldots,
+                 \denote{R_n} \twist (\denote{\updiff{R_n}}, \denote{\downdiff{R_n}})) \\=\\
+    \denote{T}(\denote{R_1},\ldots,\denote{R_n}) \twist
+    (\denote{\updiff{T}}(\denote{\updiff{R_1}}, \ldots, \denote{\updiff{R_n}}, 
+                        \denote{\downdiff{R_1}},\ldots, \denote{\downdiff{R_n}}), 
+    \denote{\downdiff{T}}(\denote{\updiff{R_1}}, \ldots, \denote{\updiff{R_n}}, 
+                        \denote{\downdiff{R_1}},\ldots, \denote{\downdiff{R_n}}))
+  \end{gather*}
+  
+  \begin{figure}
+    \fbox{
+      \begin{minipage}[t]{0.9\textwidth}
+      \begin{minipage}[t]{.45\textwidth}
+        \begin{align*}
+          \updiff(\bot) \defeq& \bot\\
+          \updiff(\top) \defeq& \bot\\
+          \updiff(R_j) \defeq& \updiff R_j \\
+          \updiff(T\vee U) \defeq& \updiff(T) \vee \updiff (U) &(\dagger)\\
+          \updiff(T\wedge U) \defeq& (\updiff(T)\wedge \bothdiff(U))\\
+                              & \vee (\updiff(U) \wedge \bothdiff(T))\\
+          \updiff(\neg T) \defeq& \downdiff(T)\\
+          \updiff(\exists x.T) \defeq& \exists x.\updiff(T) &(\dagger)
+        \end{align*}
+      \end{minipage}\hfill\noindent
+      \begin{minipage}[t]{.45\textwidth}
+        \begin{align*}
+          \downdiff(\bot) \defeq& \bot\\
+          \downdiff(\top) \defeq& \bot\\
+          \downdiff(R_j) \defeq& \downdiff R_j \\
+          \downdiff(T\vee U) \defeq& (\downdiff(T) \wedge \neg \bothdiff(U))\\
+                               & \vee (\downdiff(U) \wedge \neg \bothdiff(T))\\
+          \downdiff(T\wedge U) \defeq& (\downdiff(T)\wedge U) \vee (T \wedge \downdiff(U))\\
+          \downdiff(\neg T) \defeq& \updiff(T)\\
+          \downdiff(\exists x.T) \defeq& \exists x.\downdiff(T) \wedge \neg \exists x.\bothdiff(T)
+        \end{align*}
+      \end{minipage}
+      \vspace{12pt}
+      \begin{align*}
+        \bothdiff(X) \defeq X \twist (\updiff(X), \downdiff(X))
+      \end{align*}
+      \end{minipage}
+    }
+    \caption{Upwards and downwards formula derivatives for Datalog}
+    \label{fig:datalogDerivatives}
+  \end{figure}
 \end{thm}
 \ifproofs
 \begin{proof}
