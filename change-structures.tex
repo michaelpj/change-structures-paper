@@ -579,15 +579,16 @@ Complete Boolean algebras have a complete, continuous change action.
 \begin{prop}[name=Boolean algebra change actions, restate=lsuperpose]
  Let $L$ be a complete Boolean algebra. Define
   \begin{displaymath}
-    \cstr{L}_\superpose \defeq \cstruct{L}{L \times L}{\twist}
+    \cstr{L}_\superpose \defeq \cstruct{L}{L \disjointTimes L}{\twist}
   \end{displaymath}
   where
-  \begin{displaymath}
-    a \twist (p, q) \defeq (a \vee p) \wedge \neg q
-  \end{displaymath}
+  \begin{align*}
+    a \twist (p, q) &\defeq (a \vee p) \wedge \neg q\\
+    A \disjointTimes B &\defeq \{ (a, b) \in A \times B \mid a \wedge b = \bot \}
+  \end{align*}
   and the monoid operator is
   \begin{displaymath}
-    (p, q) \splus (r, s) \defeq ((p \wedge \neg q) \vee r, (q \wedge \neg r) \vee s)
+    (p, q) \splus (r, s) \defeq ((p \wedge \neg s) \vee r, (q \wedge \neg r) \vee s)
   \end{displaymath}
 
   Then $\cstr{L}_\superpose$ is a complete, continuous change action on $L$.
@@ -1764,12 +1765,12 @@ helpful comments on the manuscript.
   We show that the monoid action property holds:
   \begin{align*}
     &a \twist \left[(p, q) \splus (r, s)\right]\\
-    &= a \twist ((p \wedge \neg q) \vee r, (q \wedge \neg r) \vee s)\\
+    &= a \twist ((p \wedge \neg s) \vee r, (q \wedge \neg r) \vee s)\\
     &= \left(
       a \vee
       \left(
         \left(
-          p \wedge \neg q
+          p \wedge \neg s
         \right)
         \vee r
       \right)
@@ -1788,7 +1789,7 @@ helpful comments on the manuscript.
         \right)
         \wedge
         \left(
-          a \vee \neg q
+          a \vee \neg s
         \right)
       \right)
       \vee r
@@ -1807,7 +1808,7 @@ helpful comments on the manuscript.
         \right)
         \wedge
         \left(
-          a \vee \neg q
+          a \vee \neg s
         \right)
         \wedge
         \neg q
@@ -1829,21 +1830,25 @@ helpful comments on the manuscript.
     \right)
     \wedge
     \neg s
-    \tag{$(A \vee B) \wedge B = B$}\\
+    \tag{$r \rightarrow \neg s$}\\
     &= a \twist (p, q) \twist (r, s)
   \end{align*}
+
+  It is easy to show that $\twist$ is well-defined, by showing that $(p,q)
+  \twist (r, s) \in L \disjointTimes L$ if $(p, q), (r,s) \in L \disjointTimes L$.
 
   Completeness is easy to show.
 
   $L$ is a complete lattice, so certainly a dcpo. $\cstr{L}_\superpose$ is a
-  dcpo with $\bigvee (p_i, q_i) \defeq (\bigvee p_i, \bigwedge q_i)$.
+  dcpo with $\bigvee (p_i, q_i) \defeq (\bigvee p_i \wedge \neg \bigwedge q_i, \bigwedge q_i)$.
 
   Continuity of $\twist$ in its second argument:
   \begin{align*}
     &a \twist \bigvee (p_i, q_i)\\
     &= a \twist (\bigvee p_i, \bigwedge q_i)\\
-    &= (a \vee \bigvee p_i) \wedge (\neg \bigwedge q_i)\\
-    &= (a \vee \bigvee p_i) \wedge (\bigvee \neg q_i) \tag{applying de Morgan}\\
+    &= (a \vee (\bigvee p_i \wedge \neg \bigwedge q_i)) \wedge \neg \bigwedge q_i\\
+    &= (a \vee \bigvee p_i) \wedge \neg \bigwedge q_i\\
+    &= (a \vee \bigvee p_i) \wedge \bigvee \neg q_i \tag{applying de Morgan}\\
     &= \bigvee (a \vee p_i) \wedge \neg q_i \tag{$\vee$ and $\wedge$ are continuous}\\
     &= \bigvee a \twist (p_i, q_i)
   \end{align*}
