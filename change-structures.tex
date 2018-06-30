@@ -845,8 +845,7 @@ We will make use of an auxilliary function, $\bothdiff$, which computes the
 \begin{thm}[Concrete Datalog formula derivatives]
 \label{thm:concreteDatalog}
   Let $\updiff, \downdiff, \bothdiff : \Formula \rightarrow \Formula$ be mutually recursive functions
-  defined by structural induction as in figure \ref{fig:datalogDerivatives}
-  \todomario{cref references theorem 26 instead of figure 1 for some reason}
+  defined by structural induction as in \cref{fig:datalogDerivatives}
 
   Then given a Datalog formula $T$ and interpretations for its free relation variables
   $\denote{R_1} \ldots \denote{R_n}$, we have:
@@ -861,48 +860,49 @@ We will make use of an auxilliary function, $\bothdiff$, which computes the
                         \denote{\downdiff{R_1}},\ldots, \denote{\downdiff{R_n}}))
   \end{gather*}
   
-  \begin{figure}
-    \fbox{
-      \begin{minipage}[t]{0.9\textwidth}
-      \begin{minipage}[t]{.45\textwidth}
-        \begin{align*}
-          \updiff(\bot) \defeq& \bot\\
-          \updiff(\top) \defeq& \bot\\
-          \updiff(R_j) \defeq& \updiff R_j \\
-          \updiff(T\vee U) \defeq& \updiff(T) \vee \updiff (U) &(\dagger)\\
-          \updiff(T\wedge U) \defeq& (\updiff(T)\wedge \bothdiff(U))\\
-                              & \vee (\updiff(U) \wedge \bothdiff(T))\\
-          \updiff(\neg T) \defeq& \downdiff(T)\\
-          \updiff(\exists x.T) \defeq& \exists x.\updiff(T) &(\dagger)
-        \end{align*}
-      \end{minipage}\hfill\noindent
-      \begin{minipage}[t]{.45\textwidth}
-        \begin{align*}
-          \downdiff(\bot) \defeq& \bot\\
-          \downdiff(\top) \defeq& \bot\\
-          \downdiff(R_j) \defeq& \downdiff R_j \\
-          \downdiff(T\vee U) \defeq& (\downdiff(T) \wedge \neg \bothdiff(U))\\
-                               & \vee (\downdiff(U) \wedge \neg \bothdiff(T))\\
-          \downdiff(T\wedge U) \defeq& (\downdiff(T)\wedge U) \vee (T \wedge \downdiff(U))\\
-          \downdiff(\neg T) \defeq& \updiff(T)\\
-          \downdiff(\exists x.T) \defeq& \exists x.\downdiff(T) \wedge \neg \exists x.\bothdiff(T)
-        \end{align*}
-      \end{minipage}
-      \vspace{12pt}
-      \begin{align*}
-        \bothdiff(X) \defeq X \twist (\updiff(X), \downdiff(X))
-      \end{align*}
-      \end{minipage}
-    }
-    \caption{Upwards and downwards formula derivatives for Datalog}
-    \label{fig:datalogDerivatives}
-  \end{figure}
 \end{thm}
 \ifproofs
 \begin{proof}
   Straightforward structural induction.
 \end{proof}
 \fi
+
+\begin{figure}
+  \fbox{
+    \begin{minipage}[t]{0.9\textwidth}
+    \begin{minipage}[t]{.45\textwidth}
+      \begin{align*}
+        \updiff(\bot) \defeq& \bot\\
+        \updiff(\top) \defeq& \bot\\
+        \updiff(R_j) \defeq& \updiff R_j \\
+        \updiff(T\vee U) \defeq& \updiff(T) \vee \updiff (U) &(\dagger)\\
+        \updiff(T\wedge U) \defeq& (\updiff(T)\wedge \bothdiff(U))\\
+                            & \vee (\updiff(U) \wedge \bothdiff(T))\\
+        \updiff(\neg T) \defeq& \downdiff(T)\\
+        \updiff(\exists x.T) \defeq& \exists x.\updiff(T) &(\dagger)
+      \end{align*}
+    \end{minipage}\hfill\noindent
+    \begin{minipage}[t]{.45\textwidth}
+      \begin{align*}
+        \downdiff(\bot) \defeq& \bot\\
+        \downdiff(\top) \defeq& \bot\\
+        \downdiff(R_j) \defeq& \downdiff R_j \\
+        \downdiff(T\vee U) \defeq& (\downdiff(T) \wedge \neg \bothdiff(U))\\
+                              & \vee (\downdiff(U) \wedge \neg \bothdiff(T))\\
+        \downdiff(T\wedge U) \defeq& (\downdiff(T)\wedge U) \vee (T \wedge \downdiff(U))\\
+        \downdiff(\neg T) \defeq& \updiff(T)\\
+        \downdiff(\exists x.T) \defeq& \exists x.\downdiff(T) \wedge \neg \exists x.\bothdiff(T)
+      \end{align*}
+    \end{minipage}
+    \vspace{12pt}
+    \begin{align*}
+      \bothdiff(X) \defeq X \twist (\updiff(X), \downdiff(X))
+    \end{align*}
+    \end{minipage}
+  }
+  \caption{Upwards and downwards formula derivatives for Datalog}
+  \label{fig:datalogDerivatives}
+\end{figure}
 
 There is a symmetry between the cases for $\wedge$ and $\vee$ between $\updiff$
 and $\downdiff$, but the cases for $\exists$ look quite different.
