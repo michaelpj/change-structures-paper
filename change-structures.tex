@@ -168,10 +168,8 @@ of Datalog's semantics are recursive definitions and the need for the \emph{fixp
 handle incremental evaluation and maintenance of fixpoint computations.
 
 This paper aims to bridge that gap by providing a solid semantic foundation for the incremental
-computation of Datalog (and other) programs, and show how it can be used to account for extensions
-to 
-
-
+computation of Datalog, and other recursive programs, in terms of changes and
+differentiable functions.
 
 \subsection{Contributions}
 
@@ -384,7 +382,7 @@ of functions.
 
 Given change actions on sets $A, B$, the question immediately arises of whether there are
 change structures on their Cartesian product $A \times B$ or disjoint union $A + B$. While there are
-many candidates, there is a clear ``natural'' choice for either.
+many candidates, there is a clear ``natural'' choice for both.
 
 \begin{prop}[name=Products, restate=products]
   \label{prop:products}
@@ -395,11 +393,6 @@ many candidates, there is a clear ``natural'' choice for either.
   \changes{B}}{\cplus \times \cpluss}$ is a change structure, and the projection maps $\pi_1, \pi_2$
   are differentiable with respect to it.
 
-  \todomario{
-    This result isn't super interesting, but it's reminiscent from calculus so I like it. Plus,
-    there's no dual to this for coproducts, so I feel like it's worth pointing it out, but if we need
-    space it goes away.
-  }
   Furthermore, a function 
   $f : A \times B \into C$ is differentiable as a map from $\cstr{A} \times \cstr{B}$ into $\cstr{C}$ if
   and only if, for every $a \in A$ and $b \in B$, the partially applied functions 
