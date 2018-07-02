@@ -653,7 +653,7 @@ provides our universe and interpretation of constants.
   $\Rel$.
   \begin{align*}
     &\denote{\_} : \Formula \rightarrow \Rel^n \rightarrow \Rel\\
-    &\denote{T}(R_1, \dots, R_n) = \left\{ \left(a_1, \dots \right) \mid \Phi \models T\left[R_1, \dots R_n, a_1, \dots \right] \right\}
+    &\denote{T}(R_1, \dots, R_n) = \left\{ \left(a_1, \dots a_m \right) \mid \Phi \models T\left[R_1, \dots R_n, a_1, \dots a_m \right] \right\}
   \end{align*}
 \end{defn}
 
@@ -920,8 +920,6 @@ the evaluation map:
 
 An important class of posets, particularly relevant to programming language semantics, is that of 
 directed-complete partial orders (dcpos) equipped with a least element, and the associated notion of \emph{(Scott) continuous} maps. 
-
-\todomario{Maybe write the basic definitions of dcpo and continuous maps?}
 
 \subsection{Dcpos}
 \label{sec:dcpos}
@@ -1795,24 +1793,7 @@ helpful comments on the manuscript.
   \end{align*}
 \end{proof}
 
-\subsection{Change actions over ordered structures}
-
-\factoringFixpoints*
-\begin{proof}
-  \label{prf:factoringFixpoints}
-  Let
-  \begin{displaymath}
-    p(b) = (\lfp(f), g(\lfp(f), b))
-  \end{displaymath}
-  Then $h(h^i(\bot)) \leq p(p^i(\bot))$ (by simple induction), and so by continuity
-  \begin{displaymath}
-    \lfp(h) = \sqcup_{i \in \NN} h^i(\bot) \leq \sqcup_{i \in \NN} p^i(\bot) = \lfp(p)
-  \end{displaymath}
-
-  But $h(\lfp(p)) = \lfp(p)$, so $\lfp(h) \leq \lfp(p)$, since $\lfp(h)$ is least.
-
-  Hence $\lfp(h) = \lfp(p) = (\lfp(f), \lfp(\lambda b . g(\lfp(f), b)))$.
-\end{proof}
+\subsection{Posets and Boolean algebras}
 
 \lsuperpose*
 \begin{proof}
@@ -1916,6 +1897,23 @@ helpful comments on the manuscript.
 
   Continuity $\twist$ in its first argument and continuity of $\splus$ follow easily from their definitions and the continuity
   of $\vee$ and $\wedge$.
+\end{proof}
+
+\factoringFixpoints*
+\begin{proof}
+  \label{prf:factoringFixpoints}
+  Let
+  \begin{displaymath}
+    p(b) = (\lfp(f), g(\lfp(f), b))
+  \end{displaymath}
+  Then $h(h^i(\bot)) \leq p(p^i(\bot))$ (by simple induction), and so by continuity
+  \begin{displaymath}
+    \lfp(h) = \sqcup_{i \in \NN} h^i(\bot) \leq \sqcup_{i \in \NN} p^i(\bot) = \lfp(p)
+  \end{displaymath}
+
+  But $h(\lfp(p)) = \lfp(p)$, so $\lfp(h) \leq \lfp(p)$, since $\lfp(h)$ is least.
+
+  Hence $\lfp(h) = \lfp(p) = (\lfp(f), \lfp(\lambda b . g(\lfp(f), b)))$.
 \end{proof}
 
 \iterDerivativesN*
