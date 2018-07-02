@@ -320,7 +320,7 @@ optimize for operational value.
 For our Datalog case study, we are going to want a good derivative of the semantics of
 Datalog. As we will see later (\cref{sec:nonRecursiveDatalog},
 \cref{sec:recursiveDatalog}), we can get good deriviatives for both the
-non-recursive and full, recursive, semantics of Datalog.
+non-recursive and the full, recursive, semantics of Datalog.
 
 \subsection{Useful facts about change actions and derivatives}
 
@@ -587,8 +587,8 @@ all the derivatives on Boolean algebras:
 
 \begin{corollary}
 \label{cor:booleanCharacterization}
-  Let $L$ be a Boolean algebra considered with the corresponding change action $\cstr{L}_\superpose$, $A$ beA
-  an arbitrary change action, and $f: A \rightarrow
+  Let $L$ be a Boolean algebra considered with the corresponding change action
+  $\cstr{L}_\superpose$, $A$ be an arbitrary change action, and $f: A \rightarrow
   L$ a function. Then the derivatives of $f$ are precisely those functions
   $\derive{f}$ such that
   \begin{displaymath}
@@ -618,9 +618,9 @@ real and pressing, as we saw in \cref{sec:intro}.
 
 \subsection{Semantics of Datalog formulae}
 
-Datalog is usually given a logical semantics wherein facts are interpreted as first-order
-logic formulae and the semantics of a program is precisely the set of models of its constituent
-formulae. We will instead give a simpler denotational semantics that treats a Datalog
+Datalog is usually given a logical semantics where formulae are interpreted as first-order
+logic predicates and the semantics of a program is the set of models of its constituent
+predicates. We will instead give a simpler denotational semantics that treats a Datalog
 formula (and later, a Datalog program) as directly denoting a family of relations.
 
 We will adopt the usual closed-world assumption to give a denotation to negation.
