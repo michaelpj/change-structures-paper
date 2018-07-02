@@ -251,9 +251,9 @@ that we don't have to do any extra work to talk about changes to changes \textem
 
 Here are some other recurring examples of change actions:
 \begin{itemize}
-  \item $\cstr{A}_\discrete \defeq \cstruct{A}{\emptyset}{\lambda(a, da). a}$,
+  \item $\cstruct{A}{M}{\lambda(a, da). a}$, where $M$ is any monoid,
     which we call the \emph{discrete} change action on any base set, since it
-    has no changes at all.
+    induces no changes at all.
   \item $\cstr{A}_\Rightarrow \defeq \cstruct{A}{\exponential{A}{A}}{\ev}$, where $A$ is some
     category, $\exponential{A}{A}$ is the exponential object with the
     composition monoid, and $\ev$ is the evaluation map
@@ -354,7 +354,8 @@ Complete change actions have convenient ``minus operators'' that allow us to
 compute the difference between two values.
 
 \begin{defn}[Minus operator]
-  A \emph{minus operator} is a function $\cminus: A \times A \rightarrow \changes{A}$ such that $a \cplus (b \cminus a) = b$.
+  A \emph{minus operator} is a function $\cminus: A \times A \rightarrow
+  \changes{A}$ such that $a \cplus (b \cminus a) = b$ for all $a, v \in A$.
 \end{defn}
 
 \begin{prop}[Completeness equivalences]
@@ -382,7 +383,7 @@ of functions.
 \subsubsection{Products and sums}
 
 Given change actions on sets $A, B$, the question immediately arises of whether there are
-change structures on their Cartesian product $A \times B$ or disjoint union $A + B$. While there are
+change actions on their Cartesian product $A \times B$ or disjoint union $A + B$. While there are
 many candidates, there is a clear ``natural'' choice for both.
 
 \begin{prop}[name=Products, restate=products]
@@ -391,12 +392,13 @@ many candidates, there is a clear ``natural'' choice for both.
   \cstruct{B}{\changes{B}}{\cpluss}$ be change actions.
 
   Then $\cstr{A} \times \cstr{B} \defeq \cstruct{A \times B}{\changes{A} \times
-  \changes{B}}{\cplus \times \cpluss}$ is a change structure, and the projection maps $\pi_1, \pi_2$
+  \changes{B}}{\cplus \times \cpluss}$ is a change action, and the projection
+maps $\pi_1$,$\pi_2$
   are differentiable with respect to it.
 
   Furthermore, a function 
   $f : A \times B \into C$ is differentiable as a map from $\cstr{A} \times \cstr{B}$ into $\cstr{C}$ if
-  and only if, for every $a \in A$ and $b \in B$, the partially applied functions 
+  and only if, for every  (fixed) $a \in A$ and $b \in B$, the partially applied functions 
   \begin{align*}
     f(a, \cdot) : B \into C\\
     f(\cdot, b) : A \into C
@@ -416,7 +418,8 @@ many candidates, there is a clear ``natural'' choice for both.
   \cstruct{B}{\changes{B}}{\cpluss}$ be change actions.
 
   Then $\cstr{A} + \cstr{B} \defeq \cstruct{A + B}{\changes{A} \times
-  \changes{B}}{\cplusvee}$ is their categorical coproduct, with $\cplusvee$ defined as:
+  \changes{B}}{\cplusvee}$ is their categorical coproduct, and the injection
+maps $i_1$, $i_2$ are differentiable with $\cplusvee$ defined as:
   \begin{align*}
     i_1 a \cplusvee (\change{a}, \change{b}) &\defeq \iota_1 (a \cplus \change{a})\\
     i_2 b \cplusvee (\change{a}, \change{b}) &\defeq \iota_2 (b \cplus \change{b})
@@ -473,14 +476,15 @@ preorder interacts nicely with derivatives, in that it gives us the following le
 \begin{thm}[Sandwich lemma]
   \label{thm:sandwich}
   Let $\cstr{A}$ be an change action, $\cstr{B}$ be an ordered change action,
-  $f: \cstr{A} \rightarrow \cstr{B}$, and $\supderive{f}$ and $\subderive{f}$ be
+  $f: \cstr{A} \rightarrow \cstr{B}$, and $g: A \time \changes{A} \rightarrow
+  \changes{A}$. If $\supderive{f}$ and $\subderive{f}$ are
   derivatives for $f$ such that
 
   \begin{displaymath}
     \supderive{f} \changeOrder g \changeOrder \subderive{f}
   \end{displaymath}
 
-  Then $g$ is a derivative for $f$.
+  then $g$ is a derivative for $f$.
 \end{thm}
 
 If unique minimal and maximal derivatives exist, then this gives us a full
@@ -489,9 +493,9 @@ characterisation of all the derivatives for a function.
 \begin{thm}[Characterization of derivatives]
 \label{thm:derivativeCharacterization}
   Let $\cstr{A}$ and $\cstr{B}$ be change actions, let
-  $f: \cstr{A} \rightarrow \cstr{B}$ be a function, and let $\subderiveM{f}$ and
-  $\supderiveM{f}$ be unique minimal and maximal derivatives of $f$, respectively.
-  Then the derivatives of $f$ are precisely
+  $f: \cstr{A} \rightarrow \cstr{B}$ be a function. If there exist $\subderiveM{f}$ and
+  $\supderiveM{f}$ which are unique minimal and maximal derivatives of $f$,
+  respectively, then the derivatives of $f$ are precisely
   the functions $\derive{f}$ such that
   \begin{displaymath}
     \subderiveM{f} \changeOrder \derive{f} \changeOrder \supderiveM{f}
@@ -572,7 +576,9 @@ the natural order on $L \times L^{\textrm{op}}$.}
 
 \begin{prop}
   \label{prop:minimalMaximalDerivatives}
-  Let $L$ be a Boolean algebra, and let
+  Let $L$ be a (complete) Boolean algebra with the $\cstr{L}_\superpose$ change action, and
+  $f: A \rightarrow L$ a function.
+  Define minus operators
   \begin{align*}
     a \cminus_\bot b &= (a \wedge \neg b, \neg a)\\
     a \cminus_\top b &= (a, b \wedge \neg a)
@@ -587,10 +593,10 @@ all the derivatives on Boolean algebras:
 
 \begin{corollary}
 \label{cor:booleanCharacterization}
-  Let $L$ be a Boolean algebra considered with the corresponding change action
+  Let $L$ be a (complete) Boolean algebra with the corresponding change action
   $\cstr{L}_\superpose$, $A$ be an arbitrary change action, and $f: A \rightarrow
-  L$ a function. Then the derivatives of $f$ are precisely those functions
-  $\derive{f}$ such that
+  L$ be a function. Then the derivatives of $f$ are precisely those functions
+  $\derive{f}: A \time \changes{A} \rightarrow \changes{A}$ such that
   \begin{displaymath}
     \derive{f}_{\cminus_{\bot}}
     \changeOrder
@@ -864,7 +870,7 @@ makes sense if we have change actions on functions.
 \begin{defn}[Pointwise change actions]
   \label{def:pointwiseChanges}
   The pointwise change action on functions is defined as
-  $\cstruct{\cstr{A} \rightarrow \cstr{B}}{A \rightarrow \changes{B}}{\cplus_\rightarrow}$,
+  $\cstruct{A \rightarrow B}{A \rightarrow \changes{B}}{\cplus_\rightarrow}$,
   where $(f \cplus_\rightarrow \change{f})(x) \defeq f(x) \cplus \change{f}(x)$ and the
   monoidal structure on $A \rightarrow \changes{B}$ is given by lifting
   the monoidal structure on $\changes{B}$ pointwise.
@@ -938,7 +944,7 @@ the maps $\oplus$, $+$ are continuous.
 
 Unlike before, the change order $\changeOrder$ does \emph{not}, in general,
 induce a dcpo structure on $\changes{A}$. As a counterexample, consider 
-the change structure $(\NN^\star, \NN, +, +, 0)$, where $\NN^\star$ denotes the dcpo of natural numbers
+the change action $(\overline{\NN}, \NN, +, +, 0)$, where $\overline{\NN}$ denotes the dcpo of natural numbers
 extended with a positive infinity.
 
 A key example of a continuous change action is the $\cstr{L}_\superpose$ change
@@ -976,8 +982,8 @@ is the following analogous result:
   Let $\cstr{A}$, $\cstr{B}$ be change actions, with $\cstr{B}$ continuous and let $\{f_i\}$ and $\{\derive{f_i}\}$ be
   $I$-indexed directed families of functions in $A \rightarrow B$ and $A \times \changes{A} \rightarrow \changes{B}$.
 
-  Then, if for every $i \in I$ it is the case that $\derive{f_i}$ is a derivative of $f_i$, then $\sqcup_{i \in I} \{ \derive{f_i} \}$ is
-  a derivative of $\sqcup_{i \in I} \{ f_i \}$.
+  Then, if for every $i \in I$ it is the case that $\derive{f_i}$ is a derivative of $f_i$, then $\bigsqcup_{i \in I} \derive{f_i}$ is
+  a derivative of $\bigsqcup_{i \in I} f_i $.
 \end{corollary}
 \ifproofs
 \begin{proof}
@@ -1021,7 +1027,7 @@ Over directed-complete partial orders we can define a least fixpoint operator $\
 iteration function $\iter$:
 \begin{align*}
   &\lfp : (A \rightarrow A) \rightarrow A\\
-  &\lfp \defeq \sqcup_{n \in \NN} \{ \iter_n \}\\
+  &\lfp \defeq \bigsqcup_{n \in \NN} \iter_n \\
   &\iter : (A \rightarrow A) \times \NN \rightarrow A\\
   &\iter(f, n) \defeq f^n(\bot)
 \end{align*}
@@ -1031,8 +1037,8 @@ we can take the ``partial derivative'' with respect to $n$, and this will give u
 to the next iteration incrementally; and we can take the partial derivative
 with respect to $f$, and this will give us a way to get from iterating $f$ to iterating $f
 \cplus \change{f}$.\footnote{The sharp-eyed reader may have noticed that we
-  could also abstract out the base point (which we have just specified as
-  $\bot$) and differentiate with respect to that.}
+  could also abstract out the point from which we begin iterating (which is of
+  course typically $\bot$) and differentiate with respect to that.}
 
 To avoid confusion, we shall write $\iter_f$ when we are holding $f$ constant,
 and $\iter_n$ when we are holding $n$ constant. We will also subscript fixpoint
@@ -1049,7 +1055,7 @@ derivative of $\iter$ with respect to $n$.
 
 \begin{prop}[name=Derivative of the iteration map with respect to $n$, restate=iterDerivativesN]
   \label{prop:iterDerivativesN}
-  Let $\cstr{A}$ be a complete change action. Then $\iter_f$ is differentiable, and a derivative is given by:
+  Let $\cstr{A}$ be a complete change action and $f: A \rightarrow A$ differentiable. Then $\iter_f$ is differentiable, and a derivative is given by:
   \begin{align*}
     &\derive{\iter_f}: \NN \times \changes{\NN} \rightarrow \changes{A}\\
     &\derive{\iter_f}(0, m) \defeq \iter_f(m) \cminus \bot\\
@@ -1062,11 +1068,11 @@ derivative of $\iter$ with respect to $n$.
 \end{proof}
 \fi
 
-We can then compute $\derive{\iter_f(n)}$ along with $\iter_f(n)$ via mutual recursion.
+We can then compute $\derive{\iter_f}(n)$ along with $\iter_f(n)$ via mutual recursion.
 We want to do this by computing a fixpoint, so we can rewrite it as a recurrence
 relation:
 \begin{align*}
-  &\nextiter_f : (A, \changes{A}) \rightarrow (A, \changes{A})\\
+  &\nextiter_f : A \times \changes{A} \rightarrow A \times \changes{A}\\
   &\nextiter_f (\bot, \bot) \defeq (\bot, f(\bot) \cminus \bot)\\
   &\nextiter_f (a, \change{a}) \defeq (a \cplus \change{a}, \derive{f}(a, \change{a}))
 \end{align*}
@@ -1080,7 +1086,7 @@ Which has the property that
   Let $\cstr{A}$ be a continuous change action, $f: \cstr{A} \rightarrow
   \cstr{A}$ be continuous and differentiable.
 
-  Then $\lfp(f) = \sqcup_{n \in \NN}(\pi_1(\nextiter_f^n(\bot)))$.\footnote{
+  Then $\lfp(f) = \bigsqcup_{n \in \NN}(\pi_1(\nextiter_f^n(\bot, \bot)))$.\footnote{
     Note that we have \emph{not} taken the fixpoint of $\nextiter_f$, since it is
     not continuous.}
 \end{thm}
@@ -1117,7 +1123,7 @@ and update it by changing the edge relation $e$.\footnote{See
   \cref{sec:workedExample} for a worked example of doing exactly that.}
 
 However, this requires us to have a derivative for the fixpoint operator
-$\fixpoint$ with respect to the function which it takes the fixpoint of.
+$\fixpoint$ with respect to the function whose fixpoint is being taken.
 
 \begin{defn}[Derivatives of fixpoints]
 \label{def:fixpointDerivatives}
@@ -1175,7 +1181,7 @@ the setting in which we normally compute fixpoints anyway.
 Since $\lfp$ is characterized as the limit of a chain of functions,
 \cref{cor:diffContinuous} suggests a way to compute its derivative. If we can find a derivative
 $\derive{\iter_n}$ of each iteration map 
-such that the resulting set $\{ \derive{\iter_n} \}$ is directed, then $\sqcup_{n \in \NN}\derive{\iter_n}$ will be a derivative of $\lfp$.
+such that the resulting set $\{ \derive{\iter_n} \mid n \in \NN\}$ is directed, then $\bigsqcup_{n \in \NN}\derive{\iter_n}$ will be a derivative of $\lfp$.
 
 These correspond to the other derivative of $\iter$ \textemdash{} this time with respect to
 $f$. While we are differentiating with respect to $f$, we are still going to
@@ -1204,7 +1210,7 @@ mutual recursion.\footnote{
   recomputation of $\iter_n$ when we show that it is equivalent to $\derive{\lfp}$.
 }
 \begin{align*}
-  &\nextiter_{f, \change{f}} : (A, \changes{A}) \rightarrow (A, \changes{A})\\
+  &\nextiter_{f, \change{f}} : A \times \changes{A} \rightarrow A \times \changes{A}\\
   &\nextiter_{f, \change{f}} (a, \change{a}) \defeq (f(a), \derive{\ev}((f, a), (\change{f}, \change{a})))
 \end{align*}
 Which has the property that
@@ -1212,7 +1218,7 @@ Which has the property that
   &\nextiter_{f, \change{f}}^n (\bot, \bot) = (\iter_n(f), \derive{\iter_n}(f, \change{f}))
 \end{align*}
 
-This indeed provides us with a function that we can take the limit of, showing
+This indeed provides us with a function whose limit we can take, showing
 that $\derive{\lfp}$ is a true derivative.
 
 \begin{thm}[name=Derivatives of least fixpoint operators, restate=leastFixpointDerivatives]
@@ -1276,8 +1282,8 @@ to the denotation of each predicate, to get a new tuple of relations.
 Whether or not this program semantics exists will depend on whether the fixpoint
 exists. Typically this is ensured by constraining the program such that $\consq$
 is monotone (or, in the context of a dcpo, continuous). We can be agnostic
-about this when applying \cref{thm:fixpointIter}, but it is a requirement to
-apply \cref{thm:leastFixpointDerivatives}.
+about this when applying \cref{thm:fixpointIter}, but it is a requirement when
+applying \cref{thm:leastFixpointDerivatives}.
 
 \subsection{Incremental evaluation of Datalog}
 \label{sec:datalogIncr}
@@ -1296,8 +1302,8 @@ results from \cref{sec:fixpoints}, we get our two big results.
 \end{proof}
 \fi
 
-We knew how to do this already (semi-naive evaluation), but our proof is more
-modular now, so we will be able to extend this result more easily.
+This is known (semi-naive evaluation), but our proof is more
+modular, so we will be able to extend this result more easily.
 
 \begin{thm}[Incremental maintenance of Datalog semantics]
 \label{thm:diffUpdate}
@@ -1310,7 +1316,7 @@ modular now, so we will be able to extend this result more easily.
 \end{proof}
 \fi
 
-Again, we know how to do this \autocite[see][and successors]{gupta1993maintaining},
+This is known \autocite[see][and successors]{gupta1993maintaining},
 but again, the proof is now modular so we can extend it.
 
 \subsubsection{Worked example of updating a recursive Datalog program}
@@ -1550,8 +1556,8 @@ We have omitted minus operators from our definition because
 there are many interesting change actions that are not complete and so cannot
 have a minus operator. Where we can find a change structure with a minus operator, often we are
 forced to use unwieldy representations for change sets, and
-\citeauthor{cai2014changes} cite this as their reason for using a dependently
-typed type of changes. For example, the monoidal change actions on sets and lists are clearly
+\citeauthor{cai2014changes} cite this as their reason for using a dependent
+type of changes. For example, the monoidal change actions on sets and lists are clearly
 useful for incremental computation on streams, yet they do not admit minus
 operators \textemdash{} instead, one would
 be forced to work with e.g. multisets admitting negative arities, as \citeauthor{cai2014changes} do.
@@ -1565,14 +1571,14 @@ exponentials that we get from the categorical equivalence with $\cat{PreOrd}$,
 and (when we can use them) pointwise differences are easier to work with.
 
 The equivalence of our presentations means that our work should be compatible
-with ILC. The derivatives we give in \cref{sec:datalogDifferentiability} are more or
+with ILC \autocite[see][section 3]{cai2014changes}. The derivatives we give in \cref{sec:datalogDifferentiability} are more or
 less a ``change semantics'' for Datalog \autocite[see][section
 3.5]{cai2014changes}. 
 
 \subsubsection{S-acts}
 \label{sec:sacts}
 
-S-acts and their categorical structure have received a fair amount of attention
+S-acts (i.e the category of monoid actions on sets) and their categorical structure have received a fair amount of attention
 over the years (\textcite{kilp2000monoids} is a good
 overview). However, there is a key difference between our $\cat{CAct}$ and the category of
 S-acts $\cat{SAct}$: the objects of $\cat{SAct}$ all maintain the same monoid
@@ -1749,7 +1755,7 @@ power of this approach.
 \begin{acks}
 
 We would like to thank Semmle Ltd. for supporting this research, as well as Pavel
-Avgustinov, Aditya Sharad, Max Sch\"afer, Katriel Cohn-Gordon, and Simon Peyton Jones for their
+Avgustinov, Aditya Sharad, Max Sch\"afer, Katriel Cohn-Gordon, Luke Ong, and Simon Peyton Jones for their
 helpful comments on the manuscript.
 
 \end{acks}
@@ -1908,7 +1914,7 @@ helpful comments on the manuscript.
   \end{displaymath}
   Then $h(h^i(\bot)) \leq p(p^i(\bot))$ (by simple induction), and so by continuity
   \begin{displaymath}
-    \lfp(h) = \sqcup_{i \in \NN} h^i(\bot) \leq \sqcup_{i \in \NN} p^i(\bot) = \lfp(p)
+    \lfp(h) = \bigsqcup_{i \in \NN} h^i(\bot) \leq \bigsqcup_{i \in \NN} p^i(\bot) = \lfp(p)
   \end{displaymath}
 
   But $h(\lfp(p)) = \lfp(p)$, so $\lfp(h) \leq \lfp(p)$, since $\lfp(h)$ is least.
@@ -1933,8 +1939,8 @@ helpful comments on the manuscript.
   \label{prf:fixpointIter}
   \begin{align*}
     &\lfp(\iter_f)\\
-    &=\sqcup_{n \in \NN} \iter_f(n)\\
-    &=\sqcup_{n \in \NN} \pi_1 (\nextiter_f^n(\bot))
+    &=\bigsqcup_{n \in \NN} \iter_f(n)\\
+    &=\bigsqcup_{n \in \NN} \pi_1 (\nextiter_f^n(\bot))
   \end{align*}
 \end{proof}
 
@@ -1993,14 +1999,14 @@ helpful comments on the manuscript.
   $\derive{\iter_n}$ and $\nextiter_{f, \change{f}}$ are continuous since
   $\derive{\ev}$ and $f$ are.
 
-  Hence the set $\{ \derive{\iter}_n \}$ is directed, and so $\sqcup_{i \in \NN}
+  Hence the set $\{ \derive{\iter}_n \}$ is directed, and so $\bigsqcup_{i \in \NN}
   \derive{\iter_i}$ is indeed a derivative for $\lfp$.
 
   We now show that it is equivalent to $\derive{\lfp}$:
   \begin{align*}
-    &\sqcup_{n \in \NN} \derive{\iter_n}(f, \change{f})\\
-    &=\sqcup_{n \in \NN} \pi_2(\nextiter_{f, \change{f}}^n(\bot))\\
-    &=\pi_2(\sqcup_{n \in \NN} \nextiter_{f, \change{f}}^n(\bot)) \tag{$\pi_2$ is continuous}\\
+    &\bigsqcup_{n \in \NN} \derive{\iter_n}(f, \change{f})\\
+    &=\bigsqcup_{n \in \NN} \pi_2(\nextiter_{f, \change{f}}^n(\bot))\\
+    &=\pi_2(\bigsqcup_{n \in \NN} \nextiter_{f, \change{f}}^n(\bot)) \tag{$\pi_2$ is continuous}\\
     &= \pi_2 (\lfp(\nextiter_{f, \change{f}})) \tag{$\nextiter_{f, \change{f}}$ is continuous, Kleene's Theorem}\\
     &= \pi_2 ((\lfp(f), \lfp (\lambda\ \change{a}. \derive{\ev}((f, \lfp f), (\change{f}, \change{a})))))
     \tag{by \cref{prop:factoringFixpoints}, and the definition of $\nextiter$}\\
