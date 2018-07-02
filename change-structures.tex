@@ -429,21 +429,13 @@ many candidates, there is a clear ``natural'' choice for both.
 \end{proof}
 \fi
 
-\section{Change actions over ordered structures}
+\section{Posets and Boolean algebras}
 \label{sec:moreStructures}
 
-We need three things for our analysis:
-\begin{itemize}
-\item Approximation of derivatives
-\item Existence of derivatives for fixpoints
-\item Good change actions for Boolean algebras
-\end{itemize}
-
-Each of the following sections will achieve one of these goals, for which we
-need progressively stronger structures. Posets will allow us to approximate
-derivatives, directed-complete partial orders will give us the continuity
-theorems we need to find derivatives of fixpoints, and Boolean algebras will
-turn out to admit a simple, continuous change action.
+The semantic domain of Datalog is a complete Boolean algebra, and so our first step needs
+to be to construct a good change action for Boolean algebras. Along the way, we
+will consider change actions over posets, which give us the important ability to
+\emph{approximate} derivatives, which will turn out to be very important in practice.
 
 \subsection{Posets}
 
@@ -476,8 +468,8 @@ on the corresponding change set:
 \end{prop}
 
 In what follows, we will abuse the notation and extend the preorder $\changeOrder$ on some change
-set $\cstr{A}$ to functions from some $B$ into $\cstr{A}$. This pointwise preorder is well-behaved
-in the sense of the following lemma:
+set $\cstr{A}$ to functions from some $B$ into $\cstr{A}$. This pointwise
+preorder interacts nicely with derivatives, in that it gives us the following lemma:
 
 \begin{thm}[Sandwich lemma]
   \label{thm:sandwich}
@@ -526,107 +518,22 @@ For example, in $\cstruct{\{A\}}{\{A\}}{\cup}$, $\{1\} \changeOrder \{1,2\}$. Ev
 though $\{2\} \cplus \{1\} = \{2\} \cplus \{1,2\} = \{1,2\}$, the second change is
 imprecise because it adds in 2 even though it was already present.
 
-\todompj{Something about kernel orderings?}
-
 \begin{defn}[Precision of derivatives]
   \label{def:precision}
   A derivative is precise if it is minimal with respect to $\changeOrder$.
 \end{defn}
 
-Precision may be a desirable property because precise derivatives produce
-``smaller'' changes (in the subset lattice it must exactly produce the changes
-with the smallest cardinality). However, we may wish to trade this off against
-other operational properties, such as how easy the derivative is to compute.
-
-\todomario{
-  I'm inclined to make this chunk a sub-subsection of the work on preorders since it doesn't 
-  really add anything to it, and the theorems on dcpos really ought to be moved to the part where
-  they're used.
-}
-
-\subsubsection{Directed-complete partial orders}
-
-An important class of posets orders, of especial importance in semantics, is that of 
-directed-complete partial orders (dcpos) 
-equipped with a least element, and the associated notion of \emph{(Scott) continuous} maps. 
-\todomario{Maybe write the basic definitions of dcpo and continuous maps?}
-As in the previous section, we can define change actions on dcpos, rather than sets, as change
-actions whose sets $A, \Delta A$ are endowed with a dcpo structure, and where the maps $\oplus, +$ are
-continuous.
-
-\begin{defn}[Continuous change actions]
-  A change action $\cstr{A}$ is \emph{continuous} if
-  \begin{itemize}
-    \item $A$ and $\changes{A}$ are dcpos.
-    \item $\cplus$ and $\splus$ are Scott-continuous in both arguments.
-  \end{itemize}
-\end{defn}
-
-\todomario{Not super convinced as to whether number remarks}
-Unlike in the previous section, the change order $\changeOrder$ does \emph{not}, in general,
-induce a dcpo structure on $\changes{A}$. As a counterexample, consider 
-the change structure $(\NN^\star, \NN, +, +, 0)$, where $\NN^\star$ denotes the dcpo of natural numbers
-extended with a positive infinity.
-
-For a general overview of results in domain theory and dcpos, we refer the reader to an
-introductory work such as \cite{abramsky1994domain}, but we state here some specific results that
-we shall be using, such as the following, whose proof can be found in 
-\cite[Lemma~3.2.6]{abramsky1994domain}:
-
-\begin{prop}[Distributivity of limits across arguments]
-  \label{prop:distributivityLimit}
-  A function $f : A \times B \rightarrow C$ is continuous iff it is continuous in each variable
-  separately.
-\end{prop}
-
-It is a well-known result in standard calculus that the limit of an absolutely convergent sequence of
-differentiable functions $\{f_i\}$ is itself differentiable, and its derivative is equal to the limit
-of the derivatives of the $f_i$. A remarkable consequence of the previous distributivity property
-is the following analogous result:
-
-\begin{corollary}[Continuity of differentiation]
-  \label{cor:diffContinuous}
-  Let $\cstr{A}$, $\cstr{B}$ be change actions, with $\cstr{B}$ continuous and let $\{f_i\}$ and $\{\derive{f_i}\}$ be
-  $I$-indexed directed families of functions in $A \rightarrow B$ and $A \times \changes{A} \rightarrow \changes{B}$.
-
-  Then, if for every $i \in I$ it is the case that $\derive{f_i}$ is a derivative of $f_i$, then $\sqcup_{i \in I} \{ \derive{f_i} \}$ is
-  a derivative of $\sqcup_{i \in I} \{ f_i \}$.
-\end{corollary}
-\ifproofs
-\begin{proof}
-  It suffices to apply $\cplus$ and \cref{prop:distributivityLimit} to the directed families $\{ f_i(a) \}$ and
-  $\{ \derive{f_i}(a, \change{a}) \}$.
-\end{proof}
-\fi
-
-We also state the following additional fixpoint lemma. This is a specialization of
-Becik's Theorem \autocite[][section 10.1]{winskel1993formal}, but it has a straightforward direct proof.
-
-\begin{prop}[name=Factoring of fixpoints, restate=factoringFixpoints]
-  \label{prop:factoringFixpoints}
-  Let $A$ and $B$ be dcpos, $f : A \rightarrow A$ and $g: A \times B \rightarrow B$ be continuous, and let
-  \begin{displaymath}
-    h(a, b) \defeq (f(a), g(a, b))
-  \end{displaymath}
-  Then
-  \begin{displaymath}
-    \lfp(h) = (\lfp(f), \lfp(\lambda b . g(\lfp(f), b)))
-  \end{displaymath}
-\end{prop}
-\ifproofs
-\begin{proof}
-  See \cref{prf:factoringFixpoints}.
-\end{proof}
-\fi
-\todomario{It bothers me slightly that these theorems appear here and are then never used until much
-later, maybe move to the place of use}
+This gives us a sense in which \cref{thm:derivativeCharacterization} is an
+\emph{approximation} theorem \textemdash{} it lets us pick out a sound range of
+derivatives bounded below by a precise derivative. This means we can trade off
+precision for other desirable operational properties, such as how easy the
+derivative is to compute.
 
 \subsection{Boolean algebras}
 \label{sec:booleanAlgebras}
 
 Complete Boolean algebras are of special interest to us due to their role in modelling the semantics of
-Datalog programs. Conveniently, these structures can be endowed with a complete, continuous change
-action.
+Datalog programs. Conveniently, these structures have a complete change action.
 
 \begin{prop}[name=Boolean algebra change actions, restate=lsuperpose]
  Let $L$ be a complete Boolean algebra. Define
@@ -642,9 +549,9 @@ action.
   \begin{displaymath}
     (p, q) \splus (r, s) \defeq ((p \wedge \neg s) \vee r, (q \wedge \neg r) \vee s)
   \end{displaymath}
-  with identity element $(L, \bot)$.
+  with identity element $(\top, \bot)$.
 
-  Then $\cstr{L}_\superpose$ is a complete, continuous change action on $L$.
+  Then $\cstr{L}_\superpose$ is a complete change action on $L$.
 \end{prop}
 \ifproofs
 \begin{proof}
@@ -653,7 +560,8 @@ action.
 \fi
 
 We can think of $\cstr{L}_\superpose$ as tracking changes as pairs of ``upwards'' and
-``downwards'' changes, where the monoid action simply applies one after the other.\footnote{
+``downwards'' changes, where the monoid action simply applies one after the
+other, with an adjustment to make sure that the components remain disjoint.\footnote{
   The intuition that $\cstr{L}_\superpose$ is made up of an ``upwards''
   and a ``downwards'' change action glued together can in fact be made precise, but the specifics
   are outside the scope of this paper.}
@@ -763,23 +671,20 @@ $\widehat{\Rel^n}_\superpose, \widehat{\Rel}_\superpose$
 are complete, this immediately guarantees the existence of a derivative for $\denote{T}$.
 
 Unfortunately, this does not necessarily provide us with a way to compute an \emph{efficient} 
-derivative for $\denote{T}$. 
-Consider, for example, the minimal derivative $\derive{\denote{T}}_{\cminus_\bot}$ as defined in 
-\cref{prop:minimalMaximalDerivatives}. Then:
-\todompj{Not sure if this is actually clearer than the abstract version}
-\begin{align*}
-  \derive{\denote{T}}_\cminus(a, (p, q)) &= \denote{T}(a \twist (p, q)) \cminus_\bot \denote{T}(a)\\
-                                         &= (\denote{T}((a \vee p) \wedge \neg q) 
-                                           \wedge \neg \denote{T}(a),
-                                           \denote{T}(a) 
-                                           \wedge \neg \denote{T}((a \vee p) \wedge \neg q))
-\end{align*}
-While this derivative is precise (in the sense of \cref{def:precision}),
-it requires \emph{more} work to compute than computing $f(a \cplus \change{a})$ directly!
+derivative for $\denote{T}$. The precise derivative that we know how to compute relies on
+a minus operator:
+\begin{displaymath}
+  \derive{f}_{\cminus_\bot}(a, \change{a}) = f(a \cplus \change{a}) \cminus_\bot f(a)
+\end{displaymath}
 
-However, \cref{cor:booleanCharacterization} entails that \emph{any} function bounded by
-$\derive{\denote{T}}_{\cminus_\bot}$ and $\derive{\denote{T}}_{\cminus_\top}$ is a valid derivative,
-and we can therefore search within that range to find one that provides the desired
+Naively computed, this expression requires computing $f(a \cplus \change{a})$
+itself, which is the very thing we were trying to avoid computing!
+
+Of course, given a concrete definition of $\cminus_\bot$ we can simplify this
+expression and hopefully make it easier to compute. But we also know from
+\cref{cor:booleanCharacterization} that \emph{any} function bounded by
+$\derive{f}_{\cminus_\bot}$ and $\derive{f}_{\cminus_\top}$ is a valid derivative,
+and we can therefore weaken our derivative within that range to make a 
 trade-off between ease of computation and precision.
 
 In the case of Datalog, the change preorder on the change action also
@@ -824,31 +729,14 @@ for the upwards and downwards derivatives of the free relation variables of $T$.
 We will make use of an auxilliary function, $\bothdiff$, which computes the
 ``next'' value of a term by applying the upwards and downwards derivatives.
 
-\todompj{We're talking about this as a semantic derivative, but with the way
-  we've defined it it's also a derivative for formulae under
-  denotational equivalence. Worth mentioning, perhaps.}
-
-\todompj{This still isn't quite totally clear.}
-
 \newcommand{\bothchanges}{\rho}
 \begin{thm}[Concrete Datalog formula derivatives]
 \label{thm:concreteDatalog}
   Let $\updiff, \downdiff, \bothdiff : \Formula \rightarrow \Formula$ be mutually recursive functions
   defined by structural induction as in \cref{fig:datalogDerivatives}
 
-  Then given a Datalog formula $T$ and interpretations for its free relation variables
-  $\denote{R_1} \ldots \denote{R_n}$, we have:
-  \todomario{I have no idea how to make this fit the space.}
-  \begin{gather*}
-      \denote{T}(\denote{R_1} \twist (\denote{\updiff{R_1}}, \denote{\downdiff{R_1}}), \ldots,
-                 \denote{R_n} \twist (\denote{\updiff{R_n}}, \denote{\downdiff{R_n}})) \\=\\
-    \denote{T}(\denote{R_1},\ldots,\denote{R_n}) \twist
-    (\denote{\updiff{T}}(\denote{\updiff{R_1}}, \ldots, \denote{\updiff{R_n}}, 
-                        \denote{\downdiff{R_1}},\ldots, \denote{\downdiff{R_n}}), 
-    \denote{\downdiff{T}}(\denote{\updiff{R_1}}, \ldots, \denote{\updiff{R_n}}, 
-                        \denote{\downdiff{R_1}},\ldots, \denote{\downdiff{R_n}}))
-  \end{gather*}
-  
+  Then $\derive{\denote{T}} \defeq (\denote{\updiff(T)}, \denote{\downdiff(T)})$
+  is a derivative for $\denote{T}$.
 \end{thm}
 \ifproofs
 \begin{proof}
@@ -895,7 +783,7 @@ We will make use of an auxilliary function, $\bothdiff$, which computes the
 
 There is a symmetry between the cases for $\wedge$ and $\vee$ between $\updiff$
 and $\downdiff$, but the cases for $\exists$ look quite different.
-This is because ou rdialect of Datalog does not have a primitive universal quantifier.
+This is because our dialect of Datalog does not have a primitive universal quantifier.
 If we did have one, its cases would be dual to those for $\exists$, namely:
 \begin{align*}
 \updiff(\forall x.T) &= \exists x. \updiff(T) \wedge \forall x. \bothdiff(T)\\
@@ -943,7 +831,30 @@ precise, most of the cases are \emph{preciseness-preserving}, in that if the
 subsidiary recursive cases are precise, then so is that case. The only cases
 which lose precision are labelled with $\dagger$.
 
-\section{Change actions over functions}
+\subsection{Extensions to Datalog}
+\label{sec:extensions}
+
+Our formulation of Datalog formula semantics and incremental evaluation is 
+generic and modular, so it is easy to extend the language with new
+formula constructs: all we need to do is add cases for $\updiff$ and $\downdiff$.
+
+In fact, because we are using a complete change action, we can \emph{always} do this by using the maximal or
+minimal derivative. This justifies our claim that we can support
+\emph{arbitrary} additional formula constructs: although the maximal and minimal
+derivatives are likely to be impractical, having them
+available as options means that we will never be completely stymied.
+
+This is important in practice for Semmle's variant of Datalog. For example, the
+upwards derivative for recursive aggregates \autocite{demoor2013aggregates} is:
+\begin{align*}
+  \updiff(\textrm{agg}(vs \mid T \mid U)) \defeq \exists vs. (T \wedge \updiff{U}) \wedge \textrm{agg}(vs \mid T \mid U)
+\end{align*}
+
+While this isn't a precise derivative, it is still substantially cheaper than
+re-evaluating the whole subfomula, as the guard allows us to skip the second conjunct when $U$
+has not changed.
+
+\section{Functions}
 
 We would like to be able to talk about change actions on \emph{functions}, both
 because we would like to support the semantics of higher-order programming
@@ -1006,7 +917,98 @@ the evaluation map:
   \end{displaymath}
 \end{prop}
 
-\section{Fixpoints}
+\section{Directed-complete partial orders and fixpoints}
+
+An important class of posets, particularly relevant to programming language semantics, is that of 
+directed-complete partial orders (dcpos) equipped with a least element, and the associated notion of \emph{(Scott) continuous} maps. 
+
+\todomario{Maybe write the basic definitions of dcpo and continuous maps?}
+
+\subsection{Dcpos}
+
+As before, we can define change actions on dcpos, rather than sets, as change
+actions whose sets $A$, $\Delta A$ are endowed with a dcpo structure, and where
+the maps $\oplus$, $+$ are continuous.
+
+\begin{defn}[Continuous change actions]
+  A change action $\cstr{A}$ is \emph{continuous} if
+  \begin{itemize}
+    \item $A$ and $\changes{A}$ are dcpos.
+    \item $\cplus$ and $\splus$ are Scott-continuous in both arguments.
+  \end{itemize}
+\end{defn}
+
+Unlike before, the change order $\changeOrder$ does \emph{not}, in general,
+induce a dcpo structure on $\changes{A}$. As a counterexample, consider 
+the change structure $(\NN^\star, \NN, +, +, 0)$, where $\NN^\star$ denotes the dcpo of natural numbers
+extended with a positive infinity.
+
+A key example of a continuous change action is the $\cstr{L}_\superpose$ change
+action on Boolean algebras.
+
+\begin{prop}[name=Boolean algebra continuity, restate=booleanAlgebraContinuous]
+  \label{prop:booleanAlgebraContinuous}
+  Let $L$ be a Boolean algebra. Then $\cstr{L}_\superpose$ is a continuous
+  change action.
+\end{prop}
+\ifproofs
+\begin{proof}
+  See \cref{prf:booleanAlgebraContinuous}.
+\end{proof}
+\fi
+
+For a general overview of results in domain theory and dcpos, we refer the reader to an
+introductory work such as \cite{abramsky1994domain}, but we state here some specific results that
+we shall be using, such as the following, whose proof can be found in 
+\cite[Lemma~3.2.6]{abramsky1994domain}:
+
+\begin{prop}[Distributivity of limits across arguments]
+  \label{prop:distributivityLimit}
+  A function $f : A \times B \rightarrow C$ is continuous iff it is continuous in each variable
+  separately.
+\end{prop}
+
+It is a well-known result in standard calculus that the limit of an absolutely convergent sequence of
+differentiable functions $\{f_i\}$ is itself differentiable, and its derivative is equal to the limit
+of the derivatives of the $f_i$. A remarkable consequence of the previous distributivity property
+is the following analogous result:
+
+\begin{corollary}[Continuity of differentiation]
+  \label{cor:diffContinuous}
+  Let $\cstr{A}$, $\cstr{B}$ be change actions, with $\cstr{B}$ continuous and let $\{f_i\}$ and $\{\derive{f_i}\}$ be
+  $I$-indexed directed families of functions in $A \rightarrow B$ and $A \times \changes{A} \rightarrow \changes{B}$.
+
+  Then, if for every $i \in I$ it is the case that $\derive{f_i}$ is a derivative of $f_i$, then $\sqcup_{i \in I} \{ \derive{f_i} \}$ is
+  a derivative of $\sqcup_{i \in I} \{ f_i \}$.
+\end{corollary}
+\ifproofs
+\begin{proof}
+  It suffices to apply $\cplus$ and \cref{prop:distributivityLimit} to the directed families $\{ f_i(a) \}$ and
+  $\{ \derive{f_i}(a, \change{a}) \}$.
+\end{proof}
+\fi
+
+We also state the following additional fixpoint lemma. This is a specialization of
+Becik's Theorem \autocite[][section 10.1]{winskel1993formal}, but it has a straightforward direct proof.
+
+\begin{prop}[name=Factoring of fixpoints, restate=factoringFixpoints]
+  \label{prop:factoringFixpoints}
+  Let $A$ and $B$ be dcpos, $f : A \rightarrow A$ and $g: A \times B \rightarrow B$ be continuous, and let
+  \begin{displaymath}
+    h(a, b) \defeq (f(a), g(a, b))
+  \end{displaymath}
+  Then
+  \begin{displaymath}
+    \lfp(h) = (\lfp(f), \lfp(\lambda b . g(\lfp(f), b)))
+  \end{displaymath}
+\end{prop}
+\ifproofs
+\begin{proof}
+  See \cref{prf:factoringFixpoints}.
+\end{proof}
+\fi
+
+\subsection{Fixpoints}
 \label{sec:fixpoints}
 
 Fixpoints appear frequently in the semantics of languages with recursion. If we
@@ -1015,7 +1017,7 @@ then this gives us a compositional way of extending a derivative for the
 non-recursive semantics of a language to a derivative that can handle recursion.
 We will do this later to handle full recursive Datalog (\cref{sec:datalogIncr}).
 
-\subsection{Iteration functions}
+\subsubsection{Iteration functions}
 
 Over directed-complete partial orders we can define a least fixpoint operator $\lfp$ in terms of the
 iteration function $\iter$:
@@ -1038,7 +1040,7 @@ To avoid confusion, we shall write $\iter_f$ when we are holding $f$ constant,
 and $\iter_n$ when we are holding $n$ constant. We will also subscript fixpoint
 operators with the lattice over which they operate when it is not obvious from context.
 
-\subsection{Incremental computation of fixpoints}
+\subsubsection{Incremental computation of fixpoints}
 
 The following theorems provide a
 generalization of semi-naive evaluation to any differentiable function over a
@@ -1094,7 +1096,7 @@ This gives us a way to compute a fixpoint incrementally, by adding successive
 changes to an accumulator until we reach fixpoint. This is exactly how
 semi-naive evaluation works, with the delta relation and the accumulator relation.
 
-\subsection{Derivatives of fixpoints}
+\subsubsection{Derivatives of fixpoints}
 \label{sec:fixpointDerivatives}
 
 In the previous section we have shown how to use derivatives to compute fixpoints
@@ -1237,7 +1239,7 @@ Computing this derivative still requires computing a fixpoint \textemdash{} over
 lattice \textemdash{} but this may still be significantly less expensive than
 recomputing the full new fixpoint.
 
-\section{Derivatives of recursive program semantics}
+\section{Derivatives for recursive Datalog}
 \label{sec:recursiveDatalog}
 
 Given the non-recursive semantics for a language, we can extend it to handle
@@ -1313,7 +1315,7 @@ modular now, so we will be able to extend this result more easily.
 Again, we know how to do this \autocite[see][and successors]{gupta1993maintaining},
 but again, the proof is now modular so we can extend it.
 
-\subsubsection{Worked example of updating a recursive Datalog predicate}
+\subsubsection{Worked example of updating a recursive Datalog program}
 \label{sec:workedExample}
 
 The algorithm in \cref{thm:leastFixpointDerivatives} is very abstract, and it is
@@ -1390,29 +1392,6 @@ Applying the change and shows that we have indeed computed the new fixpoint.
   &= \{(1,2), (3,5), (3,6), (4,5), (4,6), (5,6)\}\\
   &= tc_{e_2}
 \end{align*}
-
-\subsection{Extensions to Datalog}
-\label{sec:extensions}
-
-Our formulation of Datalog formula semantics and incremental evaluation is 
-generic and modular, so it is easy to extend the language with new
-formula constructs: all we need to do is add cases for $\updiff$ and $\downdiff$.
-
-In fact, because we are using a complete change action, we can \emph{always} do this by using the maximal or
-minimal derivative. This justifies our claim that we can support
-\emph{arbitrary} additional formula constructs: although the maximal and minimal
-derivatives are likely to be impractical, having them
-available as options means that we will never be completely stymied.
-
-This is important in practice for Semmle's variant of Datalog. For example, the
-upwards derivative for recursive aggregates \autocite{demoor2013aggregates} is:
-\begin{align*}
-  \updiff(\textrm{agg}(vs \mid T \mid U)) \defeq \exists vs. (T \wedge \updiff{U}) \wedge \textrm{agg}(vs \mid T \mid U)
-\end{align*}
-
-While this isn't a precise derivative, it is still substantially cheaper than
-re-evaluating the whole subfomula, as the guard allows us to skip the second conjunct when $U$
-has not changed.
 
 \section{The category of change actions}
 \label{sec:category}
@@ -1816,7 +1795,7 @@ helpful comments on the manuscript.
   \end{align*}
 \end{proof}
 
-\subsection{Change actions over other structures}
+\subsection{Change actions over ordered structures}
 
 \factoringFixpoints*
 \begin{proof}
@@ -1914,7 +1893,13 @@ helpful comments on the manuscript.
   \twist (r, s) \in L \disjointTimes L$ if $(p, q), (r,s) \in L \disjointTimes L$.
 
   Completeness is easy to show.
+\end{proof}
 
+\subsection{Directed-complete partial orders and fixpoints}
+
+\booleanAlgebraContinuous*
+\begin{proof}
+  \label{prf:booleanAlgebraContinuous}
   $L$ is a complete lattice, so certainly a dcpo. $\cstr{L}_\superpose$ is a
   dcpo with $\bigvee (p_i, q_i) \defeq (\bigvee p_i \wedge \neg \bigwedge q_i, \bigwedge q_i)$.
 
@@ -1932,8 +1917,6 @@ helpful comments on the manuscript.
   Continuity $\twist$ in its first argument and continuity of $\splus$ follow easily from their definitions and the continuity
   of $\vee$ and $\wedge$.
 \end{proof}
-
-\subsection{Fixpoints}
 
 \iterDerivativesN*
 \begin{proof}
