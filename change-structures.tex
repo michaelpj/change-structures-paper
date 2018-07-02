@@ -64,14 +64,16 @@
 \section{Introduction}
 \label{sec:intro}
 
-Consider the following classic Datalog program, which computes the transitive
-closure of an edge relation $e$:
+Consider the following classic Datalog program\footnote{See \autocite[][part
+  D]{abiteboul1995foundations for an introduction to Datalog.}},
+which computes the transitive closure of an edge relation $e$:
 \begin{align*}
   tc(x, y) &\leftarrow e(x, y)\\
   tc(x, y) &\leftarrow e(x, z) \wedge tc(z, y)
 \end{align*}
 
-The semantics of Datalog tells us that the denotation of this program is the
+
+The semantics of Datalog, tells us that the denotation of this program is the
 least fixpoint of the rule $tc$. Kleene's Theorem tells us that we can in fact
 compute this by repeatedly applying the rule to fixpoint, starting from the empty relation. For example, supposing
 that $e = \{ (1, 2), (2, 3), (3, 4) \}$, we get the following evaluation trace:
@@ -561,12 +563,10 @@ continuous.
 \end{defn}
 
 \todomario{Not super convinced as to whether number remarks}
-\begin{rem}
-  Unlike in the previous section, the change order $\changeOrder$ does \emph{not}, in general,
-  induce a dcpo structure on $\changes{A}$. As a counterexample, consider 
-  the change structure $(\NN^\star, \NN, +, +, 0)$, where $\NN^\star$ denotes the dcpo of natural numbers
-  extended with a positive infinity.
-\end{rem}
+Unlike in the previous section, the change order $\changeOrder$ does \emph{not}, in general,
+induce a dcpo structure on $\changes{A}$. As a counterexample, consider 
+the change structure $(\NN^\star, \NN, +, +, 0)$, where $\NN^\star$ denotes the dcpo of natural numbers
+extended with a positive infinity.
 
 For a general overview of results in domain theory and dcpos, we refer the reader to an
 introductory work such as \cite{abramsky1994domain}, but we state here some specific results that
@@ -699,18 +699,15 @@ we have concrete definitions for our bounds (which we will make use of in \cref{
 \section{Derivatives for non-recursive Datalog}
 \label{sec:nonRecursiveDatalog}
 
-We set our sights now on applying the theory defined so far to the specific setting of the semantics
-of Datalog. Giving a semantics for it that admits derivatives will then lead us to a strategy for
-performing incremental computation of Datalog programs. 
-We will first restrict ourselves to the non-recursive fragment of the language, and we will tackle
+We now want to apply the theory we have developed to the specific case of the semantics
+of Datalog. Giving a semantics for Datalog that admits derivatives will then
+naturally lead us to a strategy for performing incremental evaluation and maintenance of Datalog programs. 
+To begin with, we will restrict ourselves to the non-recursive fragment of the language, and we will tackle
 fixpoints in a later section (\cref{sec:recursiveDatalog}).
 
-In principle, any first-order language could have been used as a motivating example. 
-We have decided on Datalog, a well-known simple logic programming language
-\autocite[See][part D]{abiteboul1995foundations}. This was partly for practical reasons, but it is
-also the canonical example of the need for incremental computation since, as we have seen
-(\cref{sec:intro}), the naive computation of its semantics can be very expensive, and significant
-performance gains can be obtained by incrementalization.
+Although the techniques we are using should work for any language, Datalog
+provides a non-trivial case study where the need for incremental computation is
+real and pressing, as we saw in \cref{sec:intro}.
 
 \subsection{Semantics of Datalog formulae}
 
@@ -769,6 +766,7 @@ Unfortunately, this does not necessarily provide us with a way to compute an \em
 derivative for $\denote{T}$. 
 Consider, for example, the minimal derivative $\derive{\denote{T}}_{\cminus_\bot}$ as defined in 
 \cref{prop:minimalMaximalDerivatives}. Then:
+\todompj{Not sure if this is actually clearer than the abstract version}
 \begin{align*}
   \derive{\denote{T}}_\cminus(a, (p, q)) &= \denote{T}(a \twist (p, q)) \cminus_\bot \denote{T}(a)\\
                                          &= (\denote{T}((a \vee p) \wedge \neg q) 
@@ -783,8 +781,6 @@ However, \cref{cor:booleanCharacterization} entails that \emph{any} function bou
 $\derive{\denote{T}}_{\cminus_\bot}$ and $\derive{\denote{T}}_{\cminus_\top}$ is a valid derivative,
 and we can therefore search within that range to find one that provides the desired
 trade-off between ease of computation and precision.
-
-\todomario{Rewrite this, because we don't quite have least and greatest derivatives}
 
 In the case of Datalog, the change preorder on the change action also
 corresponds to the size of the derivative as a pair of relations. The minimal (precise)

@@ -5,5 +5,5 @@ name: change-structures
 windows:
   - shell: nix-shell --run zsh
   - editor: nix-shell --run emacs
-  - compile: nix-shell --run "latexmk -pdf -pvc -view=none change-structures"
+  - compile: nix-shell --run "latexmk -pdf -pvc -view=none -interaction=nonstopmode change-structures"
   - view: evince change-structures.pdf
