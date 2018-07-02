@@ -64,8 +64,7 @@
 \section{Introduction}
 \label{sec:intro}
 
-Consider the following classic Datalog program\footnote{See \autocite[][part
-  D]{abiteboul1995foundations for an introduction to Datalog.}},
+Consider the following classic Datalog program\footnote{See \autocite[][part D]{abiteboul1995foundations} for an introduction to Datalog.},
 which computes the transitive closure of an edge relation $e$:
 \begin{align*}
   tc(x, y) &\leftarrow e(x, y)\\
@@ -96,7 +95,7 @@ However, this process is quite wasteful. We deduced the fact $(1,2)$ at every it
 even though we had already deduced it in the first iteration. Indeed, for a
 chain of $n$ such edges we will deduce $O(n^2)$ facts along the way.
 
-The standard improvement to this evaluation strategy is what's commonly known as ``semi-naive'' 
+The standard improvement to this evaluation strategy is known as ``semi-naive'' 
 evaluation, where we transform 
 the program into a \emph{delta} program that only deduces the \emph{new} facts at each
 iteration. We can then gradually accumulate these to compute the final relation \autocite[See][section
@@ -149,8 +148,8 @@ makes heavy use of a commercial Datalog implementation
 \autocites{semmleWebsite}{avgustinov2016ql}{sereni2008adding}{schafer2010type}.
 Semmle's implementation includes parity-stratified negation\footnote{Parity-stratified negation means that recursive calls must
   appear under an even number of negations. This ensures that the rule remains
-  monotone, so the least fixpoint still exists and can be found via Kleene's
-  theorem.}, recursive aggregates \autocite{demoor2013aggregates}, and other non-standard
+  monotone, so the least fixpoint still exists.},
+recursive aggregates \autocite{demoor2013aggregates}, and other non-standard
 features, so we are faced with a dilemma: either abandon the new language
 features, or abandon incremental computation.
 
@@ -178,22 +177,22 @@ differentiable functions.
 We start by generalizing change structures to
 \emph{change actions} (\cref{sec:changeActions}). Change actions are simpler and weaker than change
 structures, while still providing enough information to handle incremental computation,
-having nice categorical behaviour (\cref{sec:category}) and existing for more structures (\cref{sec:moreStructures}).
+having nice categorical behaviour (\cref{sec:category}) and fruitful
+interactions with a variety of structures (\cref{sec:moreStructures}, \cref{sec:dcpos}).
 
 We then show how change actions can be used to perform incremental evaluation and maintenance
-of non-recursive program semantics, including the formula semantics of generalized Datalog as our primary
-example (\cref{sec:nonRecursiveDatalog}).
+of non-recursive program semantics, using the formula semantics of generalized Datalog as our primary
+example (\cref{sec:nonRecursiveDatalog}). Moreover, the structure of the
+approach is modular, and can accommodate arbitrary additional
+formula constructs (\cref{sec:extensions}).
 
 We then show how to incrementally compute and maintain fixpoints
 (\cref{sec:fixpoints}). We use this to perform incremental evaluation and
 maintenance of \emph{recursive} program semantics, including generalized
-recursive Datalog (\cref{sec:recursiveDatalog}).
-
-This provides, to the best of our knowledge, the world's first incremental
+recursive Datalog (\cref{sec:recursiveDatalog}). This provides, to the best
+of our knowledge, the world's first incremental
 evaluation and maintenance mechanism for Datalog that can handle negation,
-disjunction, and existential quantification. Moreover, the structure of the
-proof is modular, and can accommodate arbitrary additional
-formula constructs (\cref{sec:extensions}).
+disjunction, and existential quantification. 
 
 Finally, we provide a few remarks about the categorical structure of change
 actions (\cref{sec:category}).
@@ -434,7 +433,7 @@ many candidates, there is a clear ``natural'' choice for both.
 
 The semantic domain of Datalog is a complete Boolean algebra, and so our first step needs
 to be to construct a good change action for Boolean algebras. Along the way, we
-will consider change actions over posets, which give us the important ability to
+will consider change actions over posets, which give us the ability to
 \emph{approximate} derivatives, which will turn out to be very important in practice.
 
 \subsection{Posets}
@@ -718,7 +717,7 @@ specifics of the evaluation engine. Here is one possibility.\footnote{This is
 
 \subsubsection{A concrete Datalog formula derivative}
 
-We define here a derivative operator as a pair of mutually recursive functions,
+We define here a ``symbolic'' derivative operator as a pair of mutually recursive functions,
 $\updiff$ and $\downdiff$, which turn a formula $T$ into new formulae that compute
 the upwards and downwards parts of the derivative, respectively. As we expect
 from a derviative, the new formulae will have additional free relation variables
@@ -925,6 +924,7 @@ directed-complete partial orders (dcpos) equipped with a least element, and the 
 \todomario{Maybe write the basic definitions of dcpo and continuous maps?}
 
 \subsection{Dcpos}
+\label{sec:dcpos}
 
 As before, we can define change actions on dcpos, rather than sets, as change
 actions whose sets $A$, $\Delta A$ are endowed with a dcpo structure, and where
