@@ -41,7 +41,7 @@
 
 \begin{abstract}
   Incremental computation has been studied using the concepts of \emph{change
-  structures} and \emph{derivatives} of programs, where the derivative of a function allows updating the output
+  structures} and \emph{derivatives} of programs, where the deirvative of a function allows updating the output
   of the function based on a change to its input.
 
   We generalise change structures to a Cartesian closed category of \emph{change actions},
@@ -258,8 +258,8 @@ Here are some other recurring examples of change actions:
     category, $\exponential{A}{A}$ is the exponential object with the
     composition monoid, and $\ev$ is the evaluation map
     (for example, functions and function application).
-  \item $\{A\}$, the type of sets, has change actions
-    $\cstruct{\{A\}}{\{A\}}{\cup}$, $\cstruct{\{A\}}{\{A\}}{\cap}$, as well as
+  \item $2^A$, the type of sets, has change actions
+    $\cstruct{2^A}{2^A}{\cup}$, $\cstruct{2^A}{2^A}{\cap}$, as well as
     the combination of these which we will see in \cref{sec:booleanAlgebras}.
   \item $\cstr{\NN} \defeq \cstruct{\NN}{\NN}{+}$, the natural numbers with
     itself as the change set under the additive monoid.
@@ -456,28 +456,28 @@ a change action in the category of posets and monotone maps.}
   \end{itemize}
 \end{defn}
 
-In fact, any change action whose base set is a poset induces a particularly convenient preorder
+In fact, any change action whose base set is a poset induces a particularly convenient partial order
 on the corresponding change set:
 
-\begin{defn}[Change preorder]
+\begin{defn}[Change order]
   $\change{a} \changeOrder \change{b}$ iff for all $a \in A$ it is the case that $a \cplus \change{a} \leq a \cplus \change{b}$.
 \end{defn}
 
 \begin{prop}
-  Let $\cstr{A}$ be a change action on a set $A$ equipped with a preorder $\leq$ such that
+  Let $\cstr{A}$ be a change action on a set $A$ equipped with a partial order $\leq$ such that
   $\cplus$ is monotone in its first argument. Then $\cstr{A}$ is an ordered change action when
-  $\changes{A}$ is equipped with the preorder $\changeOrder$.
+  $\changes{A}$ is equipped with the partial order $\changeOrder$.
 \end{prop}
 
-In what follows, we will abuse the notation and extend the preorder $\changeOrder$ on some change
-set $\cstr{A}$ to functions from some $B$ into $\cstr{A}$. This pointwise
-preorder interacts nicely with derivatives, in that it gives us the following lemma:
+In what follows, we will abuse the notation and extend the partial order $\changeOrder$ on some change
+set $\changes{B}$ pointwise to functions from some $A$ into $\changes{B}$. This pointwise
+order interacts nicely with derivatives, in that it gives us the following lemma:
 
 \begin{thm}[Sandwich lemma]
   \label{thm:sandwich}
   Let $\cstr{A}$ be an change action, $\cstr{B}$ be an ordered change action,
   $f: \cstr{A} \rightarrow \cstr{B}$, and $g: A \time \changes{A} \rightarrow
-  \changes{A}$. If $\supderive{f}$ and $\subderive{f}$ are
+  \changes{B}$. If $\supderive{f}$ and $\subderive{f}$ are
   derivatives for $f$ such that
 
   \begin{displaymath}
@@ -492,7 +492,7 @@ characterisation of all the derivatives for a function.
 
 \begin{thm}[Characterization of derivatives]
 \label{thm:derivativeCharacterization}
-  Let $\cstr{A}$ and $\cstr{B}$ be change actions, let
+  Let $\cstr{A}$ and $\cstr{B}$ be change actions, with $\cstr{B}$ ordered, and let
   $f: \cstr{A} \rightarrow \cstr{B}$ be a function. If there exist $\subderiveM{f}$ and
   $\supderiveM{f}$ which are unique minimal and maximal derivatives of $f$,
   respectively, then the derivatives of $f$ are precisely
@@ -517,7 +517,7 @@ The change preorder corresponds to a natural notion of precision: if $\change{a}
 $\change{a}$, and there is some additional information in it that is being
 ignored even when $c \cplus \change{a} = c \cplus \change{b}$.
 
-For example, in $\cstruct{\{A\}}{\{A\}}{\cup}$, $\{1\} \changeOrder \{1,2\}$. Even
+For example, in $\cstruct{2^A}{2^A}{\cup}$, $\{1\} \changeOrder \{1,2\}$. Even
 though $\{2\} \cplus \{1\} = \{2\} \cplus \{1,2\} = \{1,2\}$, the second change is
 imprecise because it adds in 2 even though it was already present.
 
@@ -702,7 +702,7 @@ guaranteed that the result is sound.\footnote{The idea of using an approximation
 to the precise derivative, and a soundness condition, appears in \textcite{bancilhon1986amateur}.}
 
 There is also the question of how to compute the derivative. Since the change
-set for $\widehat{\Rel}_\superpose$ is $\left( \Rel, \Rel \right)$, it
+set for $\widehat{\Rel}_\superpose$ is a subset of $\Rel \times \Rel$, it
 is possible and indeed very natural to compute the two components via a pair of
 Datalog formulae, which allows us to reuse an existing Datalog formula
 evaluator.\footnote{
@@ -740,7 +740,8 @@ We will make use of an auxilliary function, $\bothdiff$, which computes the
   Let $\updiff, \downdiff, \bothdiff : \Formula \rightarrow \Formula$ be mutually recursive functions
   defined by structural induction as in \cref{fig:datalogDerivatives}
 
-  Then $\derive{\denote{T}} \defeq (\denote{\updiff(T)}, \denote{\downdiff(T)})$
+  Then for any Datalog formula $T$, 
+  $\derive{\denote{T}} \defeq (\denote{\updiff(T)}, \denote{\downdiff(T)})$
   is a derivative for $\denote{T}$.
 \end{thm}
 \ifproofs
@@ -859,66 +860,153 @@ While this isn't a precise derivative, it is still substantially cheaper than
 re-evaluating the whole subfomula, as the guard allows us to skip the second conjunct when $U$
 has not changed.
 
-\section{Functions}
+\section{Changes on functions}
 
-We would like to be able to talk about change actions on \emph{functions}, both
-because we would like to support the semantics of higher-order programming
-languages, but also because the deriviative of a fixpoint $\fixpoint(f)$ is going to be with
-respect to $f$, the function which we are taking the fixpoint of. This only
-makes sense if we have change actions on functions.
+We would like to be able to impose a change action structure on function spaces. This will enable us
+to discuss derivatives in the context of higher-order languages, but in particular derivatives for
+fixpoint operators, which are best thought of as higher-order functions 
+$\fixpoint : (A \rightarrow A) \rightarrow A$. 
 
-\begin{defn}[Pointwise change actions]
-  \label{def:pointwiseChanges}
-  The pointwise change action on functions is defined as
-  $\cstruct{A \rightarrow B}{A \rightarrow \changes{B}}{\cplus_\rightarrow}$,
-  where $(f \cplus_\rightarrow \change{f})(x) \defeq f(x) \cplus \change{f}(x)$ and the
-  monoidal structure on $A \rightarrow \changes{B}$ is given by lifting
-  the monoidal structure on $\changes{B}$ pointwise.
-\end{defn}
+\todomario{Back-references}
+Function spaces, however, differ from products and coproducts in that there is no obvious choice
+of a ``best'' change action structure on $A \rightarrow B$, given change actions $\cstr{A}, \cstr{B}$.
+Instead of settling on a concrete choice of a change action, we restrict ourselves to working
+with change actions that respect the structure of the function space in the following sense:
 
-This is a very practical and useful definition of changes for functions, just
-lifiting the changes to the output type (for discussions about whether this is
-the ``right'' type for function changes, see \cref{sec:exponentials} and \cref{sec:relatedChangeStructures}).
-
-\subsection{The evaluation map}
-\label{sec:evaluationMap}
-
-Wherever we have functions, we also have the evaluation map, $\ev: ((A
-\rightarrow B) \times A) \rightarrow B$. The derivatives of this map turn out to be
-quite useful, so we will state a few lemmas about them now.
-
-Derivatives of the evaluation map, irrespective of how we choose to define
-function changes, give us a way to do incremental evaluation of function application:
-\begin{prop}[Incremental application]
-\label{prop:incrementalization}
-  Let $f: \cstr{A} \rightarrow \cstr{B}$, $a \in A$, $\change{a} \in
-  \changes{A}$, $\change{f} \in \changes{(A \rightarrow B)}$, and let
-  $\derive{\ev}$ be a derivative of the evaluation map.
-
-  Then
+\begin{defn}[Functional change actions]
+  \label{def:functionalChanges}
+  Given change actions $\cstr{A}, \cstr{B}$ and a set $U \subseteq A \rightarrow B$, a change action
+  $(U, \changes U, \cplus)$ is functional whenever the evaluation map $\ev : U \times A \rightarrow B$
+  is differentiable, that is to say, whenever there exists a function 
+  $\ev' : (U \times A) \times (\changes U \times \changes A)$ such that:
   \begin{displaymath}
     (f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus \derive{\ev}((f, a), (\change{f}, \change{a}))
   \end{displaymath}
+  
+  We will write $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$ whenever 
+  $U \subseteq A \rightarrow B$ and $\cstr{U}$ is functional.
+\end{defn}
+
+We have defined functional change actions on arbitrary subsets $U \subseteq A \rightarrow B$ for two
+reasons. First, it will later allow us to restrict ourselves to spaces of monotone or continuous
+functions. But more importantly, functional change actions are necessarily made up of differentiable
+functions, and thus a functional change action may not exist for the entire function space
+$A \rightarrow B$.
+
+\begin{prop}[Differentiability and functional change actions]
+  \label{prop:differentiableFunctionalChanges}
+  Let $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$ be a functional change action. Then every 
+  $f : U$ is differentiable, with a derivative $f'$ given by:
+  \begin{displaymath}
+    f'(x, dx) = \ev'((f, x), (0, dx))
+  \end{displaymath}
 \end{prop}
 
-Conveniently, our definition of function changes gives us a way to compute explicit derivatives for
-the evaluation map:
+Conversely, the derivative of the evaluation map can also be used to compute the effect of a given
+function change $\delta f$:
+\begin{prop}[Evaluating function changes]
+  Let $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$. Then for every $f : U, \delta f : \changes U$
+  we have:
+  \begin{displaymath}
+    (f \cplus \delta f)(x) = f(x) \cplus \ev'((f, x), (\delta f, 0))
+  \end{displaymath}
+\end{prop}
+
+\todomario{
+  There's a classification theorem here, but it's a bit tricky, I'll get around to it eventually.
+}
+\iffalse
+The nature of functional change actions can be quite varied (we will introduce concrete examples later),
+but the previous result shows they can all be classified up to (differentiable) isomorphism:
+\begin{prop}[Functional change sets]
+  Let $\cstr{A}, \cstr{B}$ be change actions and $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$
+  a functional change action. First, we note that the set $U \times A \rightarrow \Delta B$ can be
+  considered as a monoid with addition $+_\Rightarrow$ and neutral element $0_\Rightarrow$ defined by:
+  \begin{align*}
+    (\upsilon f +_\Rightarrow \upsilon g)(h, x) 
+    &\defeq \upsilon f (f, x) + \upsilon g((\lambda x . \upsilon f (h, x)) , x)
+  \end{align*}
+
+  Every functional change action $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$ is equivalent to
+  a (functional) change action of the form $(U, W, \cplus_\Rightarrow)$ where:
+  \begin{itemize}
+  \item $U \times A \rightarrow \Delta B$ is considered as a monoid with
+  \item $W$ is the sub-monoid of 
+  \end{itemize}
+  \begin{align*}
+    V &\subseteq (A \rightarrow B) \times A \rightarrow \Delta B\\
+    V &\defeq \{~
+      \lambda f. \lambda x. \ev'((f, x), (\delta f, 0)) ~|~ \delta f \in \changes U
+    ~\}\\
+    (f \cplus_\Rightarrow \upsilon f)(x) &\defeq f(x) \cplus \upsilon f(f, x)
+  \end{align*}
+\end{prop}
+\fi
+
+\subsection{Pointwise functional change actions}
+
+As we shall see later in \cref{sec:category}, one can always find functional change actions on the set
+of differentiable functions $\cstr{A} \rightarrow_\cplus \cstr{B}$, but these can be unwieldy for 
+the purpose of actual computation. In general it's hard to find convenient presentations of such
+actions. A relatively large family of change actions, however, give rise to a particularly simple
+way of representing spaces of differentiable functions into them.
+
+\begin{defn}[Pointwise functional change actions]
+  Let $\cstr{A}, \cstr{B}$ be change actions. The pointwise functional change action 
+  $\cstr{A} \Rightarrow \cstr{B}$, when it is defined,
+  is given by $(\cstr{A} \rightarrow_\cplus \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$, with
+  the monoid structure $(A \rightarrow \changes{B}, +_\rightarrow, 0_\rightarrow)$ and the action 
+  $\cplus_\rightarrow$ defined by:
+  \begin{align*}
+    (f \cplus \delta f)(x) &\defeq f(x) \cplus \delta_B f\\
+    (\delta f +_\rightarrow \delta g)(x) &\defeq \delta f(x) +_B \delta g(x)\\
+    0_\rightarrow (x) &\defeq 0_B
+  \end{align*}
+\end{defn}
+
+The above definition isn't always well-typed, since given $f : \cstr{A} \rightarrow_\cplus \cstr{B}$ and
+$\delta f : A \rightarrow \changes{B}$ there is, in general, no guarantee that 
+$f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteria that enforce this:
+
+\begin{thm}[Pointwise functional change actions]
+  Let $\cstr{A}, \cstr{B}$ be change actions, and suppose that $\cstr{B}$ satisfies one of the
+  following conditions:
+  \begin{itemize}
+    \item $\cstr{B}$ is a complete change action.
+    \item The monoidal change action $\widehat {\changes{B}} \defeq (\Delta B, \Delta B, +_B)$ is 
+      complete and 
+      $\cplus_B$ is differentiable as a map from $\cstr{B} \times \widehat{\changes{B}}$ into $\cstr{B}$
+  \end{itemize}
+  
+  Then the pointwise functional change action 
+  $(\cstr{A} \rightarrow_\cplus \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$ is well defined.
+  \footnote{
+    These conditions are sufficient, but not necessary, to guarantee the well-formedness of the
+    pointwise change action exist; A more complete account of when pointwise function change actions
+    are applicable has resulted vastly more complex and is entirely outside the scope of this paper.
+  }
+\end{thm}
+
+These pointwise change actions are, furthermore, functional in the sense of 
+\cref{def:functionalChanges}. What's more, the derivative of the evaluation map is quite easy to 
+compute.
 \begin{prop}[Derivatives of the evaluation map]
 \label{prop:evDerivatives}
-  Let
-  $f: \cstr{A} \rightarrow \cstr{B}$,
+  Let $\cstr{A}, \cstr{B}$ be change actions such that the pointwise functional change action
+  $\cstr{A} \Rightarrow \cstr{B}$ is well defined, and let
+  $f: \cstr{A} \rightarrow_\cplus \cstr{B}$,
   $a \in A$, $\change{a} \in \changes{A}$,
-  $\change{f} \in \changes{(A \rightarrow B)}$.
+  $\change{f} \in A \rightarrow \changes{B}$.
 
   Then, by taking a derivative of $f$ we obtain the following derivative for the evaluation map:
   \begin{displaymath}
-    \derive{\ev}_1((f, a), (\change{f}, \change{a})) \defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})
+    \derive{\ev}_1((f, a), (\change{f}, \change{a})) \defeq \derive{f}(a, \change{a}) + \change{f}(a \cplus \change{a})
   \end{displaymath}
 
   Alternatively, by taking a derivative of $f \cplus \change{f}$ we can obtain another derivative
   for the evaluation map:
   \begin{displaymath}
-    \derive{\ev}_2((f, a), (\change{f}, \change{a})) \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})
+    \derive{\ev}_2((f, a), (\change{f}, \change{a})) \defeq \change{f}(a) + \derive{(f \cplus \change{f})}(a, \change{a})
   \end{displaymath}
 \end{prop}
 
@@ -932,7 +1020,7 @@ directed-complete partial orders (dcpos) equipped with a least element, and the 
 
 As before, we can define change actions on dcpos, rather than sets, as change
 actions whose sets $A$, $\Delta A$ are endowed with a dcpo structure, and where
-the maps $\oplus$, $+$ are continuous.
+the maps $\cplus$, $+$ are continuous.
 
 \begin{defn}[Continuous change actions]
   A change action $\cstr{A}$ is \emph{continuous} if
@@ -1961,7 +2049,7 @@ helpful comments on the manuscript.
     &= f(\fixpoint(f))
     \cplus
     \adjust(f, \change{f})(\change{w})
-    \tag{by \cref{prop:incrementalization}}\\
+    \tag{by \cref{def:functionalChanges}}\\
     &= \fixpoint(f)
     \cplus
     \change{w}
@@ -1988,7 +2076,7 @@ helpful comments on the manuscript.
     \tag{ by induction}\\
     &= f(\iter_n(f)) \cplus \derive{\ev}((f, \iter_{n}(f)), (\change{f},
       \derive{\iter_{n}}(f, \change{f})))
-    \tag{by \cref{prop:incrementalization}}\\
+    \tag{by \cref{def:functionalChanges}}\\
     & =\iter_{n+1}(f) \cplus \derive{\iter_{n+1}}(f, \change{f})
   \end{align*}
 \end{proof}
