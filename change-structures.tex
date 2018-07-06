@@ -102,9 +102,9 @@ iteration. We can then gradually accumulate these to compute the final relation 
 13.1]{abiteboul1995foundations}.
 \begin{align*}
   \Delta tc_{0}(x, y) &\leftarrow e(x, y)\\
-  \Delta tc_{i+1}(x, y) &\leftarrow e(x, z) \wedge \Delta_i tc(z, y)\\
+  \Delta tc_{i+1}(x, y) &\leftarrow e(x, z) \wedge \Delta tc_i(z, y)\\
   tc_{0}(x, y) &\leftarrow e(x, z)\\
-  tc_{i+1}(x, y) &\leftarrow tc_{i}(x,y) \vee \Delta_{i+1} tc(x,y)
+  tc_{i+1}(x, y) &\leftarrow tc_{i}(x,y) \vee \Delta tc_{i+1}(x,y)
 \end{align*}
 
 \begin{center}
@@ -224,7 +224,7 @@ actions.}
   A \emph{change action} is defined as:
 
   \begin{displaymath}
-    \cstr{A} \defeq \cstruct{A}{\changes{A}}{\cplus}
+    \cstr{A} \defeq \cstruct{A}{\changes{A}}{\cplus_A}
   \end{displaymath}
 
   where $A$ is a set, $\changes{A}$ is a monoid, and $\cplus : A \rightarrow
@@ -235,7 +235,7 @@ actions.}
 
   We will call $A$ the base set, and $\changes{A}$ the change set of the change
   action. We will use $\splus$ for the monoid operation of $\changes{A}$, and
-  $\mzero$ for its identity element. We may abbreviate $\cstruct{A}{\changes{A}}{\cplus}$ to $\cstr{A}_\cplus$.
+  $\mzero$ for its identity element. We may abbreviate $\cstruct{A}{\changes{A}}{\cplus}$ to $\cstr{A}_\cplus$ or $\cstr{A}$. When there is no risk of confusion, we will simply write $\cplus$ for $\cplus_A$.
 \end{defn}
 
 A typical change action is $\cstruct{[A]}{[A]}{\doubleplus}$. Here we represent changes
@@ -955,11 +955,11 @@ way of representing spaces of differentiable functions into them.
   Let $\cstr{A}, \cstr{B}$ be change actions. The pointwise functional change action 
   $\cstr{A} \Rightarrow \cstr{B}$, when it is defined,
   is given by $(\cstr{A} \rightarrow_\cplus \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$, with
-  the monoid structure $(A \rightarrow \changes{B}, +_\rightarrow, 0_\rightarrow)$ and the action 
+  the monoid structure $(A \rightarrow \changes{B}, \splus_\rightarrow, 0_\rightarrow)$ and the action 
   $\cplus_\rightarrow$ defined by:
   \begin{align*}
     (f \cplus \delta f)(x) &\defeq f(x) \cplus \delta_B f\\
-    (\delta f +_\rightarrow \delta g)(x) &\defeq \delta f(x) +_B \delta g(x)\\
+    (\delta f \splus_\rightarrow \delta g)(x) &\defeq \delta f(x) \splus_B \delta g(x)\\
     0_\rightarrow (x) &\defeq 0_B
   \end{align*}
 \end{defn}
@@ -973,7 +973,7 @@ $f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteri
   following conditions:
   \begin{itemize}
     \item $\cstr{B}$ is a complete change action.
-    \item The monoidal change action $\widehat {\changes{B}} \defeq (\Delta B, \Delta B, +_B)$ is 
+    \item The monoidal change action $\widehat {\changes{B}} \defeq (\Delta B, \Delta B, \splus_B)$ is 
       complete and 
       $\cplus_B$ is differentiable as a map from $\cstr{B} \times \widehat{\changes{B}}$ into $\cstr{B}$
   \end{itemize}
@@ -1000,13 +1000,13 @@ compute.
 
   Then, by taking a derivative of $f$ we obtain the following derivative for the evaluation map:
   \begin{displaymath}
-    \derive{\ev}_1((f, a), (\change{f}, \change{a})) \defeq \derive{f}(a, \change{a}) + \change{f}(a \cplus \change{a})
+    \derive{\ev}_1((f, a), (\change{f}, \change{a})) \defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})
   \end{displaymath}
 
   Alternatively, by taking a derivative of $f \cplus \change{f}$ we can obtain another derivative
   for the evaluation map:
   \begin{displaymath}
-    \derive{\ev}_2((f, a), (\change{f}, \change{a})) \defeq \change{f}(a) + \derive{(f \cplus \change{f})}(a, \change{a})
+    \derive{\ev}_2((f, a), (\change{f}, \change{a})) \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})
   \end{displaymath}
 \end{prop}
 
@@ -1020,7 +1020,7 @@ directed-complete partial orders (dcpos) equipped with a least element, and the 
 
 As before, we can define change actions on dcpos, rather than sets, as change
 actions whose sets $A$, $\Delta A$ are endowed with a dcpo structure, and where
-the maps $\cplus$, $+$ are continuous.
+the maps $\cplus$, $\splus$ are continuous.
 
 \begin{defn}[Continuous change actions]
   A change action $\cstr{A}$ is \emph{continuous} if
