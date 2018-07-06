@@ -283,10 +283,10 @@ $f(a)$ to $f(a \cplus \change{a})$. We call this a \emph{derivative} of a functi
 
 \begin{defn}[Derivatives]
   \label{def:derivative}
-  A \emph{derivative} of a function $f: \cstr{A}_\cplus \rightarrow \cstr{B}_\cpluss$ is a function $\derive{f}: A \times \changes{A} \rightarrow
+  A \emph{derivative} of a function $f: \cstr{A} \rightarrow \cstr{B}$ is a function $\derive{f}: A \times \changes{A} \rightarrow
   \changes{B}$ such that
   \begin{displaymath}
-    f(a \cplus \change{a}) = f(a) \cpluss \derive{f}(a, \change{a})
+    f(a \cplus_A \change{a}) = f(a) \cplus_B \derive{f}(a, \change{a})
   \end{displaymath}
 
   A function which has a derivative is 
@@ -329,7 +329,7 @@ non-recursive and the full, recursive, semantics of Datalog.
 The derivative of a function can be computed compositionally, because derivatives satisfy the standard chain rule.
 
 \begin{thm}[The Chain Rule]
-  Let $f: \cstr{A}_\cplus \rightarrow \cstr{B}_\cpluss$, $g: \cstr{B}_\cpluss \rightarrow \cstr{C}_\cplusss$ be differentiable functions. Then $g \circ f$ is also
+  Let $f: \cstr{A} \rightarrow \cstr{B}$, $g: \cstr{B} \rightarrow \cstr{C}$ be differentiable functions. Then $g \circ f$ is also
   differentiable, with derivative given by
   \begin{displaymath}
     \derive{(g \circ f)}(x, \change{x}) = \derive{g}\left(f(x), \derive{f}(x, \change{x})\right)
@@ -388,11 +388,15 @@ many candidates, there is a clear ``natural'' choice for both.
 
 \begin{prop}[name=Products, restate=products]
   \label{prop:products}
-  Let $\cstr{A} = \cstruct{A}{\changes{A}}{\cplus}$ and $\cstr{B} =
-  \cstruct{B}{\changes{B}}{\cpluss}$ be change actions.
+  Let $\cstr{A} = \cstruct{A}{\changes{A}}{\cplus_A}$ and $\cstr{B} =
+  \cstruct{B}{\changes{B}}{\cplus_B}$ be change actions,
+  and let $\cplus_{\times} : (A \times B) \times (\changes A \times \changes B)$ be defined by
+  \begin{align*}
+    (a, b) \cplus_{A \times B} (da, db) \defeq (a \cplus_A da, b \cplus_B db)
+  \end{align*}
 
   Then $\cstr{A} \times \cstr{B} \defeq \cstruct{A \times B}{\changes{A} \times
-  \changes{B}}{\cplus \times \cpluss}$ is a change action, and the projection
+  \changes{B}}{\cplus_{\times}}$ is a change action, and the projection
 maps $\pi_1$,$\pi_2$
   are differentiable with respect to it.
 
@@ -412,17 +416,18 @@ maps $\pi_1$,$\pi_2$
 \end{proof}
 \fi
 
+\todomario{Move this, rewrite}
 \begin{prop}[name=Coproducts, restate=coproducts]
   \label{prop:coproducts}
-  Let $\cstr{A} = \cstruct{A}{\changes{A}}{\cplus}$ and $\cstr{B} =
-  \cstruct{B}{\changes{B}}{\cpluss}$ be change actions.
+  Let $\cstr{A} = \cstruct{A}{\changes{A}}{\cplus_A}$ and $\cstr{B} =
+  \cstruct{B}{\changes{B}}{\cplus_B}$ be change actions.
 
   Then $\cstr{A} + \cstr{B} \defeq \cstruct{A + B}{\changes{A} \times
-  \changes{B}}{\cplusvee}$ is their categorical coproduct, and the injection
-maps $i_1$, $i_2$ are differentiable with $\cplusvee$ defined as:
+  \changes{B}}{\cplus_{+}}$ is their categorical coproduct, and the injection
+maps $i_1$, $i_2$ are differentiable with $\cplus_{+}$ defined as:
   \begin{align*}
-    i_1 a \cplusvee (\change{a}, \change{b}) &\defeq \iota_1 (a \cplus \change{a})\\
-    i_2 b \cplusvee (\change{a}, \change{b}) &\defeq \iota_2 (b \cplus \change{b})
+    i_1 a \cplus_{+} (\change{a}, \change{b}) &\defeq \iota_1 (a \cplus_A \change{a})\\
+    i_2 b \cplus_{+} (\change{a}, \change{b}) &\defeq \iota_2 (b \cplus_B \change{b})
   \end{align*}
 \end{prop}
 \ifproofs
@@ -1879,7 +1884,7 @@ helpful comments on the manuscript.
   \rightarrow \cstr{Y}$ be differentiable functions.
 
   As before, it suffices to prove that the universal function $[f_1, f_2]$ in $\cat{Set}$ is a differentiable
-  function from $\cstruct{A + B}{\changes{A} \times \changes{B}}{\cplusvee}$ into $Y$. It's easy to see
+  function from $\cstruct{A + B}{\changes{A} \times \changes{B}}{\cplus_{A + B}}$ into $Y$. It's easy to see
   that the following morphism is a derivative:
   \begin{align*}
     \derive{[f_1, f_2]} (i_1 a, (\change{a}, \change{b})) &\defeq f_1'(a, \change{a})\\
