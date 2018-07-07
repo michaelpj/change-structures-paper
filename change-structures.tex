@@ -257,11 +257,12 @@ Here are some other recurring examples of change actions:
     category, $\exponential{A}{A}$ is the exponential object with the
     composition monoid, and $\ev$ is the evaluation map
     (for example, functions and function application).
-  \item $2^A$, the type of sets, has change actions
-    $\cstruct{2^A}{2^A}{\cup}$, $\cstruct{2^A}{2^A}{\cap}$, as well as
-    the combination of these which we will see in \cref{sec:booleanAlgebras}.
+  \item $A$, the type of sets, has change actions
+    $\cstruct{\powerset{A}}{\powerset{A}}{\cup}$, $\cstruct{\powerset{A}}{\powerset{A}}{\cap}$, 
+    as well as the combination of these which we will see in \cref{sec:booleanAlgebras}.
   \item $\cstr{\NN} \defeq \cstruct{\NN}{\NN}{+}$, the natural numbers with
     itself as the change set under the additive monoid.
+  \item AUTOMATA
 \end{itemize}
 
 Many other notions in computer science can be understood in terms of change actions, \emph{e.g.} databases
@@ -303,7 +304,7 @@ derivative.\footnote{In several places we will need to pick an arbitrary
 action \textemdash{} where $a \cplus \change{a} = a \cplus \change{b}$ implies $\change{a} =
 \change{b}$ \textemdash{} has unique derivatives, but many change actions are not thin.
 For example, because $\{0\} \cap \{1\} = \{0\}
-\cap \{2\}$, $\cstruct{\mathcal{P}(\NN)}{\mathcal{P}(\NN)}{\cap}$ is not thin.
+\cap \{2\}$, $\cstruct{\powerset{\NN}}{\powerset{\NN}}{\cap}$ is not thin.
 
 Derivatives capture the structure of incremental computation, but there are
 important operational considerations that affect whether they actually save us
@@ -949,7 +950,7 @@ but the previous result shows they can all be classified up to (differentiable) 
 
 As we shall see later in \cref{sec:category}, one can always find functional change actions on the set
 of differentiable functions between $\cstr{A}$ and $\cstr{B}$ (which we will denote by 
-$\cstr{A} \rightarrow_\cplus \cstr{B}$ to distinguish it from the set of usual set-theoretic funcitons
+$\cstr{A} \difffunc \cstr{B}$ to distinguish it from the set of usual set-theoretic funcitons
 $A \rightarrow B$), but these can be unwieldy for 
 the purpose of actual computation. In general it's hard to find convenient presentations of such
 actions. A relatively large family of change actions, however, give rise to a particularly simple
@@ -957,8 +958,8 @@ way of representing spaces of differentiable functions into them.
 
 \begin{defn}[Pointwise functional change actions]
   Let $\cstr{A}, \cstr{B}$ be change actions. The pointwise functional change action 
-  $\cstr{A} \Rightarrow_{pt} \cstr{B}$, when it is defined,
-  is given by $(\cstr{A} \rightarrow_\cplus \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$, with
+  $\cstr{A} \ptfunc \cstr{B}$, when it is defined,
+  is given by $(\cstr{A} \difffunc \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$, with
   the monoid structure $(A \rightarrow \changes{B}, \splus_\rightarrow, 0_\rightarrow)$ and the action 
   $\cplus_\rightarrow$ defined by:
   \begin{align*}
@@ -968,7 +969,7 @@ way of representing spaces of differentiable functions into them.
   \end{align*}
 \end{defn}
 
-The above definition isn't always well-typed, since given $f : \cstr{A} \rightarrow_\cplus \cstr{B}$ and
+The above definition isn't always well-typed, since given $f : \cstr{A} \difffunc \cstr{B}$ and
 $\delta f : A \rightarrow \changes{B}$ there is, in general, no guarantee that 
 $f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteria that enforce this:
 
@@ -983,7 +984,7 @@ $f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteri
   \end{itemize}
   
   Then the pointwise functional change action 
-  $(\cstr{A} \rightarrow_\cplus \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$ is well defined.
+  $(\cstr{A} \difffunc \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$ is well defined.
   \footnote{
     Either of these conditions is enough to guarantee that the pointwise functional change action
     is well defined, but it can be the case that $\cstr{B}$ satisfies neither and yet pointwise
@@ -998,8 +999,8 @@ compute.
 \begin{prop}[Derivatives of the evaluation map]
 \label{prop:evDerivatives}
   Let $\cstr{A}, \cstr{B}$ be change actions such that the pointwise functional change action
-  $\cstr{A} \Rightarrow_{pt} \cstr{B}$ is well defined, and let
-  $f: \cstr{A} \rightarrow_\cplus \cstr{B}$,
+  $\cstr{A} \ptfunc \cstr{B}$ is well defined, and let
+  $f: \cstr{A} \difffunc \cstr{B}$,
   $a \in A$, $\change{a} \in \changes{A}$,
   $\change{f} \in A \rightarrow \changes{B}$.
 
