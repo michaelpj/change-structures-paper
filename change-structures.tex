@@ -48,7 +48,7 @@
   and study their algebraic properties. We develop change actions for several common structures
   in computer science, including directed-complete partial orders and Boolean algebras.
 
-  We then show how to compute derivatives of fixpoints. This allows us to
+  We then show how to compute derivativeWell, the ending of s of fixpoints. This allows us to
   perform incremental evaluation and maintenance of recursively defined
   functions such as generalized Datalog programs.
 
@@ -227,8 +227,7 @@ actions.}
     \cstr{A} \defeq \cstruct{A}{\changes{A}}{\cplus_A}
   \end{displaymath}
 
-  where $A$ is a set, $\changes{A}$ is a monoid, and $\cplus : A \rightarrow
-  \changes{A} \rightarrow A$ is a monoid action on $A$.\footnote{Why not
+  where $A$ is a set, $\changes{A}$ is a monoid, and $\cplus_A : A \times \changes{A} \rightarrow A$ is a monoid action on $A$.\footnote{Why not
     just work with monoid actions? The reason is that while the category of
     monoid actions and the category of change actions have the same objects, they
   have different morphisms. See \cref{sec:sacts} for further discussion.}
@@ -355,7 +354,7 @@ compute the difference between two values.
 
 \begin{defn}[Minus operator]
   A \emph{minus operator} is a function $\cminus: A \times A \rightarrow
-  \changes{A}$ such that $a \cplus (b \cminus a) = b$ for all $a, v \in A$.
+  \changes{A}$ such that $a \cplus (b \cminus a) = b$ for all $a, b \in A$.
 \end{defn}
 
 \begin{prop}[Completeness equivalences]
@@ -484,11 +483,9 @@ order interacts nicely with derivatives, in that it gives us the following lemma
   $f: \cstr{A} \rightarrow \cstr{B}$, and $g: A \time \changes{A} \rightarrow
   \changes{B}$. If $\supderive{f}$ and $\subderive{f}$ are
   derivatives for $f$ such that
-
   \begin{displaymath}
     \supderive{f} \changeOrder g \changeOrder \subderive{f}
   \end{displaymath}
-
   then $g$ is a derivative for $f$.
 \end{thm}
 
@@ -583,13 +580,12 @@ the natural order on $L \times L^{\textrm{op}}$.}
   \label{prop:minimalMaximalDerivatives}
   Let $L$ be a (complete) Boolean algebra with the $\cstr{L}_\superpose$ change action, and
   $f: A \rightarrow L$ a function.
-  Define minus operators
+  Then, the following are minus operators:
   \begin{align*}
     a \cminus_\bot b &= (a \wedge \neg b, \neg a)\\
     a \cminus_\top b &= (a, b \wedge \neg a)
   \end{align*}
-
-  Then $\derive{f}_{\cminus_{\bot}}$ and $\derive{f}_{\cminus_{\top}}$ 
+  Additionally, $\derive{f}_{\cminus_{\bot}}$ and $\derive{f}_{\cminus_{\top}}$ 
   define least and greatest derivatives for $f$.
 \end{prop}
 
@@ -601,7 +597,7 @@ all the derivatives on Boolean algebras:
   Let $L$ be a (complete) Boolean algebra with the corresponding change action
   $\cstr{L}_\superpose$, $A$ be an arbitrary change action, and $f: A \rightarrow
   L$ be a function. Then the derivatives of $f$ are precisely those functions
-  $\derive{f}: A \time \changes{A} \rightarrow \changes{A}$ such that
+  $\derive{f}: A \times \changes{A} \rightarrow \changes{A}$ such that
   \begin{displaymath}
     \derive{f}_{\cminus_{\bot}}
     \changeOrder
@@ -881,11 +877,12 @@ with change actions that respect the structure of the function space in the foll
 \begin{defn}[Functional change actions]
   \label{def:functionalChanges}
   Given change actions $\cstr{A}, \cstr{B}$ and a set $U \subseteq A \rightarrow B$, a change action
-  $(U, \changes U, \cplus)$ is functional whenever the evaluation map $\ev : U \times A \rightarrow B$
+  $(U, \changes U, \cplus_U)$ is functional whenever the evaluation map $\ev : U \times A \rightarrow B$
   is differentiable, that is to say, whenever there exists a function 
-  $\ev' : (U \times A) \times (\changes U \times \changes A)$ such that:
+  $\ev' : (U \times A) \times (\changes U \times \changes A) \rightarrow \changes{B}$ such that:
   \begin{displaymath}
-    (f \cplus \change{f})(a \cplus \change{a}) = f(a) \cplus \derive{\ev}((f, a), (\change{f}, \change{a}))
+    (f \cplus_U \change{f})(a \cplus_A \change{a}) = 
+    f(a) \cplus_B \derive{\ev}((f, a), (\change{f}, \change{a}))
   \end{displaymath}
   
   We will write $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$ whenever 
@@ -903,7 +900,7 @@ $A \rightarrow B$.
   Let $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$ be a functional change action. Then every 
   $f : U$ is differentiable, with a derivative $f'$ given by:
   \begin{displaymath}
-    f'(x, dx) = \ev'((f, x), (0, dx))
+    f'(x, \change{x}) = \ev'((f, x), (0, \change{x}))
   \end{displaymath}
 \end{prop}
 
@@ -951,19 +948,21 @@ but the previous result shows they can all be classified up to (differentiable) 
 \subsection{Pointwise functional change actions}
 
 As we shall see later in \cref{sec:category}, one can always find functional change actions on the set
-of differentiable functions $\cstr{A} \rightarrow_\cplus \cstr{B}$, but these can be unwieldy for 
+of differentiable functions between $\cstr{A}$ and $\cstr{B}$ (which we will denote by 
+$\cstr{A} \rightarrow_\cplus \cstr{B}$ to distinguish it from the set of usual set-theoretic funcitons
+$A \rightarrow B$), but these can be unwieldy for 
 the purpose of actual computation. In general it's hard to find convenient presentations of such
 actions. A relatively large family of change actions, however, give rise to a particularly simple
 way of representing spaces of differentiable functions into them.
 
 \begin{defn}[Pointwise functional change actions]
   Let $\cstr{A}, \cstr{B}$ be change actions. The pointwise functional change action 
-  $\cstr{A} \Rightarrow \cstr{B}$, when it is defined,
+  $\cstr{A} \Rightarrow_{pt} \cstr{B}$, when it is defined,
   is given by $(\cstr{A} \rightarrow_\cplus \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$, with
   the monoid structure $(A \rightarrow \changes{B}, \splus_\rightarrow, 0_\rightarrow)$ and the action 
   $\cplus_\rightarrow$ defined by:
   \begin{align*}
-    (f \cplus \delta f)(x) &\defeq f(x) \cplus \delta_B f\\
+    (f \cplus \delta f)(x) &\defeq f(x) \cplus_B \delta f\\
     (\delta f \splus_\rightarrow \delta g)(x) &\defeq \delta f(x) \splus_B \delta g(x)\\
     0_\rightarrow (x) &\defeq 0_B
   \end{align*}
@@ -986,9 +985,10 @@ $f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteri
   Then the pointwise functional change action 
   $(\cstr{A} \rightarrow_\cplus \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$ is well defined.
   \footnote{
-    These conditions are sufficient, but not necessary, to guarantee the well-formedness of the
-    pointwise change action exist; A more complete account of when pointwise function change actions
-    are applicable has resulted vastly more complex and is entirely outside the scope of this paper.
+    Either of these conditions is enough to guarantee that the pointwise functional change action
+    is well defined, but it can be the case that $\cstr{B}$ satisfies neither and yet pointwise
+    change actions into $\cstr{B}$ do exist. A precise account of when pointwise funcitonal change
+    actions exist is outside the scope of this paper.
   }
 \end{thm}
 
@@ -998,20 +998,22 @@ compute.
 \begin{prop}[Derivatives of the evaluation map]
 \label{prop:evDerivatives}
   Let $\cstr{A}, \cstr{B}$ be change actions such that the pointwise functional change action
-  $\cstr{A} \Rightarrow \cstr{B}$ is well defined, and let
+  $\cstr{A} \Rightarrow_{pt} \cstr{B}$ is well defined, and let
   $f: \cstr{A} \rightarrow_\cplus \cstr{B}$,
   $a \in A$, $\change{a} \in \changes{A}$,
   $\change{f} \in A \rightarrow \changes{B}$.
 
   Then, by taking a derivative of $f$ we obtain the following derivative for the evaluation map:
   \begin{displaymath}
-    \derive{\ev}_1((f, a), (\change{f}, \change{a})) \defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})
+    \derive{\ev}_1((f, a), (\change{f}, \change{a})) 
+    \defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})
   \end{displaymath}
 
   Alternatively, by taking a derivative of $f \cplus \change{f}$ we can obtain another derivative
   for the evaluation map:
   \begin{displaymath}
-    \derive{\ev}_2((f, a), (\change{f}, \change{a})) \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})
+    \derive{\ev}_2((f, a), (\change{f}, \change{a})) 
+    \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})
   \end{displaymath}
 \end{prop}
 
