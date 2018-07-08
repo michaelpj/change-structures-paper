@@ -429,9 +429,9 @@ $f'_b : A \times \changes{A} \rightarrow \changes{C}$ refer to derivatives for
 $f(a, \cdot), f(\cdot, b)$ respectively, then
 \begin{align*}
   \partial_1 f : A \times \changes{A} \times B \rightarrow \changes{C}\\
-  \partial_1(a, \change{a}, b) \defeq f'_b(a, \change{a})\\
+  \partial_1 f(a, \change{a}, b) \defeq f'_b(a, \change{a})\\
   \partial_2 f : A \times B \times \changes{B} \rightarrow \changes{C}\\
-  \partial_2(a, b, \change{b}) \defeq f'_a(b, \change{b})
+  \partial_2 f(a, b, \change{b}) \defeq f'_a(b, \change{b})
 \end{align*}
 
 \ifproofs
@@ -858,6 +858,7 @@ We will make use of an auxilliary function, $\bothdiff$, which computes the
   \label{fig:datalogDerivatives}
 \end{figure}
 
+\todomario{Maybe move this to a footnote}
 There is a symmetry between the cases for $\wedge$ and $\vee$ between $\updiff$
 and $\downdiff$, but the cases for $\exists$ look quite different.
 This is because our dialect of Datalog does not have a primitive universal quantifier.
@@ -1105,8 +1106,8 @@ the maps $\cplus$, $\splus$ are continuous.
   \end{itemize}
 \end{defn}
 
-Unlike before, the change order $\changeOrder$ does \emph{not}, in general,
-induce a dcpo structure on $\changes{A}$. As a counterexample, consider 
+Unlike the case for posets, the change order $\changeOrder$ does \emph{not}, in general,
+induce a dcpo on $\changes{A}$. As a counterexample, consider 
 the change action $(\overline{\NN}, \NN, +)$, where $\overline{\NN}$ denotes the dcpo of natural numbers
 extended with a positive infinity.
 
@@ -1196,14 +1197,17 @@ iteration function $\iter$:
   &\iter(f, n) \defeq f^n(\bot)
 \end{align*}
 
-The iteration function is the basis for everything in this section:
-we can take the ``partial derivative'' with respect to $n$, and this will give us a way to get
+The iteration function is the basis for all the results in this section:
+we can take its partial derivative with respect to $n$, and this will give us a way to get
 to the next iteration incrementally; and we can take the partial derivative
 with respect to $f$, and this will give us a way to get from iterating $f$ to iterating $f
-\cplus \change{f}$.\footnote{The sharp-eyed reader may have noticed that we
+\cplus \change{f}$.\footnote{
+  The sharp-eyed reader may have noticed that we
   could also abstract out the point from which we begin iterating (which is of
-  course typically $\bot$) and differentiate with respect to that.}
+  course typically $\bot$) and differentiate with respect to that.
+}
 
+\todomario{Not really necessary anymore since we can talk about partial derivatives freely}
 To avoid confusion, we shall write $\iter_f$ when we are holding $f$ constant,
 and $\iter_n$ when we are holding $n$ constant. We will also subscript fixpoint
 operators with the lattice over which they operate when it is not obvious from context.
@@ -1212,18 +1216,23 @@ operators with the lattice over which they operate when it is not obvious from c
 
 The following theorems provide a
 generalization of semi-naive evaluation to any differentiable function over a
-continuous change action. 
+continuous change action. Throughout this section we will assume that we have a contiuous change action
+$\cstr{A}$, and any reference to the change action $\cstr{\NN}$ will refer to the obvious monoidal
+change action.
 
 Since we are trying to incrementalize the iterative step, we start by taking the partial
 derivative of $\iter$ with respect to $n$.
 
 \begin{prop}[name=Derivative of the iteration map with respect to $n$, restate=iterDerivativesN]
   \label{prop:iterDerivativesN}
-  Let $\cstr{A}$ be a complete change action and $f: A \rightarrow A$ differentiable. Then $\iter_f$ is differentiable, and a derivative is given by:
+  Suppose $\cstr{A}$ satisfies $\bot \changeOrder a$ for all $a : A$, and let 
+  $f: A \rightarrow A$ be a differentiable function. We abuse the notation slightly and write $a \ominus \bot$ to denote
+  some change $\change{a}$ such that $\bot \oplus \change{a} = a$. Then $\iter$ is differentiable with respect to its second
+  argument, and its partial derivative is given by:
   \begin{align*}
-    &\derive{\iter_f}: \NN \times \changes{\NN} \rightarrow \changes{A}\\
-    &\derive{\iter_f}(0, m) \defeq \iter_f(m) \cminus \bot\\
-    &\derive{\iter_f}(n+1, m) \defeq \derive{f}(\iter_f(n), \derive{\iter_f}(n, m))
+    &\partial_2{\iter}: (A \rightarrow A) \times \NN \times \changes{\NN} \rightarrow \changes{A}\\
+    &\partial_2{\iter}(f, 0, m) \defeq \iter(f, m) \cminus \bot\\
+    &\partial_2{\iter}(f, n+1, m) \defeq \derive{f}(\iter(f, n), \partial_2{\iter}(f, n, m))
   \end{align*}
 \end{prop}
 \ifproofs
@@ -1232,9 +1241,8 @@ derivative of $\iter$ with respect to $n$.
 \end{proof}
 \fi
 
-We can then compute $\derive{\iter_f}(n)$ along with $\iter_f(n)$ via mutual recursion.
-We want to do this by computing a fixpoint, so we can rewrite it as a recurrence
-relation:
+By using the following recurrence relation, 
+we can then compute $\partial_2{\iter}(f, n, 1)$ along with $\iter(f, n)$ simultaneously:
 \begin{align*}
   &\nextiter_f : A \times \changes{A} \rightarrow A \times \changes{A}\\
   &\nextiter_f (\bot, \bot) \defeq (\bot, f(\bot) \cminus \bot)\\
@@ -1242,8 +1250,12 @@ relation:
 \end{align*}
 Which has the property that
 \begin{align*}
-  &\nextiter_f^n (\bot, \bot) = (\iter_f(n), \derive{\iter_f}(n, 1))
+  &\nextiter_f^n (\bot, \bot) = (\iter(f, n), \partial_2{\iter}(f, n, 1))
 \end{align*}
+
+This gives us a way to compute a fixpoint incrementally, by adding successive
+changes to an accumulator until we reach it. This is exactly how
+semi-naive evaluation works, with the delta relation and the accumulator relation.
 
 \begin{thm}[name=Incremental computation of least fixpoints, restate=fixpointIter]
 \label{thm:fixpointIter}
@@ -1260,46 +1272,47 @@ Which has the property that
 \end{proof}
 \fi
 
-This gives us a way to compute a fixpoint incrementally, by adding successive
-changes to an accumulator until we reach fixpoint. This is exactly how
-semi-naive evaluation works, with the delta relation and the accumulator relation.
-
 \subsubsection{Derivatives of fixpoints}
 \label{sec:fixpointDerivatives}
 
 In the previous section we have shown how to use derivatives to compute fixpoints
 more efficiently, but we also want to take the derivative of the fixpoint
-operator itself. A typical use case for this is where we have some fixpoint
+operator itself. A typical use case for this is where we have calculated some fixpoint
 \begin{displaymath}
-  \fixpoint (\lambda X . F(E, X))
+  F_{E} \defeq \fixpoint (\lambda X . F(E, X))
 \end{displaymath}
-and we now wish to apply a change $\change{E}$ to $E$ and compute
+then update the parameter $E$ with some change $\change{E}$ and wish to compute the new
+value of the fixpoint, i.e.
 \begin{displaymath}
-  \fixpoint (\lambda X . F(E \cplus \change{E}, X))
+  F_{E \cplus \change{E}} \defeq \fixpoint (\lambda X . F(E \cplus \change{E}, X))
 \end{displaymath}
 
-This amounts to applying a change to the \emph{function} whose fixpoint we are taking.
+If $F : B \times A \rightarrow A$ and $\cstr{A}$ is a change action such that 
+$\cstr{A} \ptfunc \cstr{A}$ is well-defined, then 
+$\lambda X . F(E \cplus \change{E}, X) = (\lambda X . F(E, X)) \cplus_{pt} (\lambda X . \change{E})$,
+i.e. we are applying a change to the \emph{function} whose fixpoint we are taking.
 
 In Datalog this would allow us to update a recursively defined relation given an
 update to one of its non-recursive dependencies, or the extensional database.
 For example, we might want to take the transitive closure relation
 and update it by changing the edge relation $e$.\footnote{See
-  \cref{sec:workedExample} for a worked example of doing exactly that.}
+  \cref{sec:workedExample} for a worked example of this process.}
 
-However, this requires us to have a derivative for the fixpoint operator
+However, this requires us to provide a derivative for the fixpoint operator
 $\fixpoint$ with respect to the function whose fixpoint is being taken.
 
 \begin{defn}[Derivatives of fixpoints]
 \label{def:fixpointDerivatives}
-  Let $\cstr{A}$ be a change action, $\fixpoint_A$ a fixpoint operator for
-  endofunctions on $A$, and $\derive{\ev}$ be a derivative of the evaluation map.
+  Let $\cstr{A}$ be a change action, let $\cstr{U} \subseteq \cstr{A} \rightarrow \cstr{A}$ be a functional
+  change action (not necessarily pointwise) and suppose $\fixpoint_U$ and $\fixpoint_{\changes{A}}$ are fixpoint
+  operators for functions in $U$ and $\changes{A}$ respectively.
   
   Then we define
   \begin{align*}
-    &\adjust : (A \rightarrow A) \times \changes{(A \rightarrow A)} \rightarrow (\changes{A} \rightarrow \changes{A})\\
-    &\adjust(f, \change{f}) \defeq \lambda\ \change{a} . \derive{\ev}((f, \fixpoint_A(f)), (\change{f}, \change{a}))\\
-    &\derive{\fixpoint_A} : (A \rightarrow A) \times \changes{(A \rightarrow A)} \rightarrow \changes{A}\\
-    &\derive{\fixpoint_A}(f, \change{f}) \defeq \fixpoint_{\changes{A}}(\adjust(f, \change{f}))
+    &\adjust : U \times \changes{U} \rightarrow (\changes{A} \rightarrow \changes{A})\\
+    &\adjust(f, \change{f}) \defeq \lambda\ \change{a} . \derive{\ev}((f, \fixpoint_U(f)), (\change{f}, \change{a}))\\
+    &\derive{\fixpoint_U} : U \times \changes{U} \rightarrow \changes{A}\\
+    &\derive{\fixpoint_U}(f, \change{f}) \defeq \fixpoint_{\changes{A}}(\adjust(f, \change{f}))
   \end{align*}
 \end{defn}
 
@@ -1315,15 +1328,10 @@ map.\footnote{Perhaps surprisingly, the authors first discovered an expanded
 
 \begin{thm}[name=Pseudo-derivatives of fixpoints, restate=fixpointPseudoDerivatives]
 \label{thm:fixpointPseudoDerivatives}
-  Let
-  \begin{itemize}
-    \item $\cstr{A}$ be a change action
-    \item $\fixpoint : (A \rightarrow A) \rightarrow A$ be a fixpoint operator
-    \item $f: \cstr{A} \rightarrow \cstr{A}$ be a differentiable function
-    \item $\change{f} \in \changes{(A \rightarrow A)}$ be a function change 
-    \item $\derive{\ev}$ be a derivative of the evaluation map
-  \end{itemize}
-  Then $\fixpoint(f) \cplus \derive{\fixpoint}(f, \change{f})$ is a fixpoint
+  Let $\cstr{A}$, $\cstr{U} \subseteq \cstr{A} \rightarrow \cstr{A}$, $\fixpoint_{U}$,
+  $\fixpoint_{\changes A}$ be as in \cref{def:fixpointDerivatives}. Then, for any
+  differentiable function $f : U$ and any change $\change{f} : \changes{U}$,
+  $\fixpoint_U(f) \cplus \derive{\fixpoint_U}(f, \change{f})$ is a fixpoint
   of $f \cplus \change{f}$.
 \end{thm}
 \ifproofs
@@ -1333,31 +1341,33 @@ map.\footnote{Perhaps surprisingly, the authors first discovered an expanded
 \fi
 
 This is not enough to give us a true derivative, because we have only shown
-that $\fixpoint(f) \cplus \derive{\fixpoint}(f, \change{f})$ computes \emph{a} fixpoint, not necessarily
-the same one computed by $\fixpoint{(f \cplus \change{f})}$.
+that $\fixpoint_U(f) \cplus \derive{\fixpoint_U}(f, \change{f})$ computes \emph{a} 
+fixpoint for $f \cplus \change{f}$, but not necessarily
+the same one computed by $\fixpoint_U{(f \cplus \change{f})}$.
 
 However, if we restrict ourselves to directed-complete partial orders, least
 fixpoints, and continuous change actions, then $\derive{\lfp}$ (using the
 derivative definition from \cref{def:fixpointDerivatives}) \emph{is} a
 derivative of $\lfp$. This is not too onerous a restriction, since this is
-the setting in which we normally compute fixpoints anyway.
+a very natural setting for computing fixpoints.
 
 Since $\lfp$ is characterized as the limit of a chain of functions,
-\cref{cor:diffContinuous} suggests a way to compute its derivative. If we can find a derivative
+\cref{cor:diffContinuous} suggests a way to compute its derivative. It suffices to find a derivative
 $\derive{\iter_n}$ of each iteration map 
-such that the resulting set $\{ \derive{\iter_n} \mid n \in \NN\}$ is directed, then $\bigsqcup_{n \in \NN}\derive{\iter_n}$ will be a derivative of $\lfp$.
+such that the resulting set $\{ \derive{\iter_n} \mid n \in \NN\}$ is directed, 
+which will entail that $\bigsqcup_{n \in \NN}\derive{\iter_n}$ is a derivative of $\lfp$.
 
-These correspond to the other derivative of $\iter$ \textemdash{} this time with respect to
+These correspond to the first partial derivative of $\iter$ \textemdash{} this time with respect to
 $f$. While we are differentiating with respect to $f$, we are still going to
 need to define our derivatives inductively in terms of $n$.
 
 \begin{prop}[name=Derivative of the iteration map with respect to $f$, restate=iterDerivativesF]
   \label{prop:iterDerivativesF}
-  $\iter_n$ is differentiable and a derivative is given by:
+  $\iter$ is differentiable with respect to its first argument and a derivative is given by:
   \begin{align*}
-    &\derive{\iter_n} : (A \rightarrow A) \times \changes{(A \rightarrow A)} \rightarrow \changes{A}\\
-    &\derive{\iter_0} (f, \change{f}) \defeq \bot_{\changes{A}}\\
-    &\derive{\iter_{n+1}} (f, \change{f}) \defeq \derive{\ev}((f, \iter_n(f)), (\change{f}, \derive{\iter_n}(f, \change{f})))
+    &\partial_1{\iter} : (A \rightarrow A) \times \changes{(A \rightarrow A)} \times \NN \rightarrow \changes{A}\\
+    &\partial_1{\iter} (f, \change{f}, 0) \defeq \bot_{\changes{A}}\\
+    &\partial_1{\iter} (f, \change{f}, n + 1) \defeq \derive{\ev}((f, \iter(f, n)), (\change{f}, \partial_1{\iter}(f, \change{f}, n)))
   \end{align*}
 \end{prop}
 \ifproofs
@@ -1366,7 +1376,7 @@ need to define our derivatives inductively in terms of $n$.
 \end{proof}
 \fi
 
-As before, we can now compute $\derive{\iter_n}$ together with $\iter_n$ by
+As before, we can now compute $\derive{\iter}$ together with $\iter$ by
 mutual recursion.\footnote{
   In fact, the recursion here is not \emph{mutual}: the first component does not
   depend on the second. However, writing it in this way makes it
@@ -1379,7 +1389,7 @@ mutual recursion.\footnote{
 \end{align*}
 Which has the property that
 \begin{align*}
-  &\nextiter_{f, \change{f}}^n (\bot, \bot) = (\iter_n(f), \derive{\iter_n}(f, \change{f}))
+  &\nextiter_{f, \change{f}}^n (\bot, \bot) = (\iter(f, n), \partial_1{\iter}(f, \change{f}, n))
 \end{align*}
 
 This indeed provides us with a function whose limit we can take, showing
@@ -1390,9 +1400,11 @@ that $\derive{\lfp}$ is a true derivative.
   Let
   \begin{itemize}
     \item $\cstr{A}$ be a continuous change action
-    \item $f : \cstr{A} \rightarrow \cstr{A}$ be a continuous, differentiable function
-    \item $\change{f} \in A \rightarrow \changes{A}$ be a function change
-    \item $\derive{\ev}$ be a derivative of the evaluation map, continuous with
+    \item $U$ be the set of continuous functions $f : A \rightarrow A$, 
+      endowed with a functional change action $\cstr{U} \subseteq \cstr{A} \rightarrow \cstr{A}$
+    \item $f : U$ be a continuous, differentiable function
+    \item $\change{f} \in \changes{U}$ be a function change
+    \item $\derive{\ev}$ be a derivative of the evaluation map which is continuous with
       respect to $a$ and $\change{a}$.
   \end{itemize}
   Then $\derive{\lfp}$ is a derivative of $\lfp$.
