@@ -440,23 +440,25 @@ $f(a, \cdot), f(\cdot, b)$ respectively, then
 \end{proof}
 \fi
 
-\todomario{Move this?, rewrite}
-\begin{prop}[name=Coproducts, restate=coproducts]
-  \label{prop:coproducts}
+\begin{prop}[name=Disjoint unions, restate=disjointUnions]
+  \label{prop:disjointUnions}
   Let $\cstr{A} = \cstruct{A}{\changes{A}}{\cplus_A}$ and $\cstr{B} =
   \cstruct{B}{\changes{B}}{\cplus_B}$ be change actions.
 
   Then $\cstr{A} + \cstr{B} \defeq \cstruct{A + B}{\changes{A} \times
-  \changes{B}}{\cplus_{+}}$ is their categorical coproduct, and the injection
-maps $i_1$, $i_2$ are differentiable with $\cplus_{+}$ defined as:
+  \changes{B}}{\cplus_{+}}$ is a change action, where is $\cplus_{+}$ defined as:
   \begin{align*}
-    i_1 a \cplus_{+} (\change{a}, \change{b}) &\defeq \iota_1 (a \cplus_A \change{a})\\
-    i_2 b \cplus_{+} (\change{a}, \change{b}) &\defeq \iota_2 (b \cplus_B \change{b})
+    \iota_1 a \cplus_{+} (\change{a}, \change{b}) &\defeq \iota_1 (a \cplus_A \change{a})\\
+    \iota_2 b \cplus_{+} (\change{a}, \change{b}) &\defeq \iota_2 (b \cplus_B \change{b})
   \end{align*}
+  
+  The injection maps $\iota_1, \iota_2$ are differentiable with respect to $\cstr{A} + \cstr{B}$. Furthermore,
+  whenever $\cstr{C}$ is a change action and $f : A \rightarrow C, g: B \rightarrow C$ are differentiable,
+  then so is $\[f, g\]$.
 \end{prop}
 \ifproofs
 \begin{proof}
-  See \cref{prf:coproducts}.
+  See \cref{prf:disjointUnions}.
 \end{proof}
 \fi
 
@@ -940,7 +942,7 @@ fixpoint operators, which are best thought of as higher-order functions
 $\fixpoint : (A \rightarrow A) \rightarrow A$. 
 
 \todomario{Back-references}
-Function spaces, however, differ from products and coproducts in that there is no obvious choice
+Function spaces, however, differ from products and disjoint unions in that there is no obvious choice
 of a ``best'' change action structure on $A \rightarrow B$, given change actions $\cstr{A}, \cstr{B}$.
 Instead of settling on a concrete choice of a change action, we restrict ourselves to working
 with change actions that respect the structure of the function space in the following sense:
@@ -1960,9 +1962,9 @@ helpful comments on the manuscript.
   product in the $\cat{Set}$.
 \end{proof}
 
-\coproducts*
+\disjointUnions*
 \begin{proof}
-  \label{prf:coproducts}
+  \label{prf:disjointUnions}
   Let $\cstr{Y}$ be a change action, and $f_1 : \cstr{A} \rightarrow \cstr{Y}$, $f_2 : \cstr{B}
   \rightarrow \cstr{Y}$ be differentiable functions.
 
