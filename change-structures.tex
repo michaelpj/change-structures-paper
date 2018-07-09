@@ -3,6 +3,27 @@
 %\input{preamble-standard}
 \input{preamble-acm}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% BEGIN {Macros / packages by Luke}
+% switch of draft/final version
+\newif\ifdraft\drafttrue
+%\newif\ifdraft\draftfalse
+
+\ifdraft
+\newcommand{\lochanged}[1]{{\color{red}{#1}}}
+\newcommand{\mpchanged}[1]{{\color{blue}{#1}}}
+%\newcommand{\tk}[1]{{\textcolor{DarkGreen}{[{#1}---Tsukada]}}}
+%\newcommand{\mp}[1]{{\color{blue}{[{#1}--Mario]}}}
+\newcommand{\lo}[1]{{\color{red}{[{#1}--Luke]}}}
+\else
+\newcommand{\mpchanged}[1]{{#1}}
+\newcommand{\lochanged}[1]{{#1}}
+%\newcommand{\mp}[1]{}
+\newcommand{\lo}[1]{}
+\fi
+%% END {Macros / packages by Luke}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -938,19 +959,20 @@ has not changed.
 
 We would like to be able to impose a change action structure on function spaces. This will enable us
 to discuss derivatives in the context of higher-order languages, but in particular derivatives for
-fixpoint operators, which are best thought of as higher-order functions 
+fixpoint operators, which are %best thought of as 
+higher-order functions 
 $\fixpoint : (A \rightarrow A) \rightarrow A$. 
 
 \todomario{Back-references}
 Function spaces, however, differ from products and disjoint unions in that there is no obvious choice
-of a ``best'' change action structure on $A \rightarrow B$, given change actions $\cstr{A}, \cstr{B}$.
+of a ``best'' change action structure on \lochanged{(the set-theoretic function space)} $A \rightarrow B$, given change actions $\cstr{A}$ and $\cstr{B}$.
 Instead of settling on a concrete choice of a change action, we restrict ourselves to working
 with change actions that respect the structure of the function space in the following sense:
 
 \begin{defn}[Functional change actions]
   \label{def:functionalChanges}
-  Given change actions $\cstr{A}, \cstr{B}$ and a set $U \subseteq A \rightarrow B$, a change action
-  $(U, \changes U, \cplus_U)$ is functional whenever the evaluation map $\ev : U \times A \rightarrow B$
+  Given change actions $\cstr{A}$ and $\cstr{B}$ and a set $U \subseteq A \rightarrow B$, a change action
+  $(U, \changes U, \cplus_U)$ is \emph{functional} whenever the evaluation map $\ev : U \times A \rightarrow B$
   is differentiable, that is to say, whenever there exists a function 
   $\ev' : (U \times A) \times (\changes U \times \changes A) \rightarrow \changes{B}$ such that:
   \begin{displaymath}
@@ -971,7 +993,7 @@ $A \rightarrow B$.
 \begin{prop}[Differentiability and functional change actions]
   \label{prop:differentiableFunctionalChanges}
   Let $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$ be a functional change action. Then every 
-  $f : U$ is differentiable, with a derivative $f'$ given by:
+  $f \in U$ is differentiable, with a derivative $f'$ given by:
   \begin{displaymath}
     f'(x, \change{x}) = \ev'((f, x), (0, \change{x}))
   \end{displaymath}
@@ -980,7 +1002,7 @@ $A \rightarrow B$.
 Conversely, the derivative of the evaluation map can also be used to compute the effect of a given
 function change $\delta f$:
 \begin{prop}[Evaluating function changes]
-  Let $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$. Then for every $f : U, \delta f : \changes U$
+  Let $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$. Then for every $f \in U$ and $\delta f \in \changes U$
   we have:
   \begin{displaymath}
     (f \cplus \delta f)(x) = f(x) \cplus \ev'((f, x), (\delta f, 0))
@@ -993,12 +1015,12 @@ function change $\delta f$:
 }
 
 \begin{prop}[Functional change sets]
-  Let $\cstr{A}, \cstr{B}$ be change actions and $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$
+  Let $\cstr{A}$ and $\cstr{B}$ be change actions and $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$
   a functional change action. First, we note that the set $U \times A \rightarrow \Delta B$ can be
   considered as a monoid with addition $+_\Rightarrow$ and neutral element $0_\Rightarrow$ defined by:
   \begin{align*}
     (\upsilon f +_\Rightarrow \upsilon g)(h, x) 
-    &\defeq \upsilon f (f, x) + \upsilon g((\lambda x . \upsilon f (h, x)) , x)
+    &\defeq \upsilon f (f, x) \oplus \upsilon g((\lambda x . \upsilon f (h, x)) , x)
   \end{align*}
 
   Every functional change action $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$ is equivalent to
@@ -1020,20 +1042,20 @@ function change $\delta f$:
 
 As we shall see later in \cref{sec:category}, one can always find functional change actions on the set
 of differentiable functions between $\cstr{A}$ and $\cstr{B}$ (which we will denote by 
-$\cstr{A} \difffunc \cstr{B}$ to distinguish it from the set of usual set-theoretic funcitons
+$\cstr{A} \difffunc \cstr{B}$ to distinguish it from the set-theoretic function space
 $A \rightarrow B$), but these can be unwieldy for 
 the purpose of actual computation. In general it's hard to find convenient presentations of such
 actions. A relatively large family of change actions, however, give rise to a particularly simple
 way of representing spaces of differentiable functions into them.
 
 \begin{defn}[Pointwise functional change actions]
-  Let $\cstr{A}, \cstr{B}$ be change actions. The pointwise functional change action 
+  Let $\cstr{A}$ and $\cstr{B}$ be change actions. The \emph{pointwise functional change action} 
   $\cstr{A} \ptfunc \cstr{B}$, when it is defined,
   is given by $(\cstr{A} \difffunc \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$, with
   the monoid structure $(A \rightarrow \changes{B}, \splus_\rightarrow, 0_\rightarrow)$ and the action 
   $\cplus_\rightarrow$ defined by:
   \begin{align*}
-    (f \cplus \delta f)(x) &\defeq f(x) \cplus_B \delta f\\
+    (f \cplus_\to \delta f)(x) &\defeq f(x) \cplus_B \delta f (x)\\
     (\delta f \splus_\rightarrow \delta g)(x) &\defeq \delta f(x) \splus_B \delta g(x)\\
     0_\rightarrow (x) &\defeq 0_B
   \end{align*}
@@ -1044,7 +1066,7 @@ $\delta f : A \rightarrow \changes{B}$ there is, in general, no guarantee that
 $f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteria that enforce this:
 
 \begin{thm}[Pointwise functional change actions]
-  Let $\cstr{A}, \cstr{B}$ be change actions, and suppose that $\cstr{B}$ satisfies one of the
+  Let $\cstr{A}$ and $\cstr{B}$ be change actions, and suppose that $\cstr{B}$ satisfies one of the
   following conditions:
   \begin{itemize}
     \item $\cstr{B}$ is a complete change action.
@@ -1052,9 +1074,9 @@ $f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteri
       complete and 
       $\cplus_B$ is differentiable as a map from $\cstr{B} \times \widehat{\changes{B}}$ into $\cstr{B}$
   \end{itemize}
-  
   Then the pointwise functional change action 
-  $(\cstr{A} \difffunc \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$ is well defined.
+  $(\cstr{A} \difffunc \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$ is well defined. 
+  \lochanged{(Moreover, it is the exponentiation object (up to unique isomorphism) from $\cstr{A}$ to $\cstr{B}$ in the category of change actions and differentiable functions (Section~\ref{sec:exponentials}).)}
   \footnote{
     Either of these conditions is enough to guarantee that the pointwise functional change action
     is well defined, but it can be the case that $\cstr{B}$ satisfies neither and yet pointwise
@@ -1063,12 +1085,11 @@ $f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteri
   }
 \end{thm}
 
-These pointwise change actions are, furthermore, functional in the sense of 
-\cref{def:functionalChanges}. What's more, the derivative of the evaluation map is quite easy to 
+These pointwise change actions are, furthermore, functional in the sense of \cref{def:functionalChanges}. What's more, the derivative of the evaluation map is quite easy to 
 compute.
 \begin{prop}[Derivatives of the evaluation map]
 \label{prop:evDerivatives}
-  Let $\cstr{A}, \cstr{B}$ be change actions such that the pointwise functional change action
+  Let $\cstr{A}$ and $\cstr{B}$ be change actions such that the pointwise functional change action
   $\cstr{A} \ptfunc \cstr{B}$ is well defined, and let
   $f: \cstr{A} \difffunc \cstr{B}$,
   $a \in A$, $\change{a} \in \changes{A}$,
