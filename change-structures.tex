@@ -1039,6 +1039,7 @@ function change $\delta f$:
 \end{prop}
 
 \subsection{Pointwise functional change actions}
+label{sec:pointwiseFunctional}
 
 As we shall see later in \cref{sec:category}, one can always find functional change actions on the set
 of differentiable functions between $\cstr{A}$ and $\cstr{B}$ (which we will denote by 
@@ -1693,25 +1694,26 @@ The exponential objects in the category $\cat{CAct}$ are difficult to work with,
 because we need to ensure that $f \cplus \change{f}$ continues to be a
 differentiable function. Under some conditions, however, we can find a simple representation.
 
-\todomario{Not super happy about this name - maybe convenient? (by analogy to convenient vector spaces)}
-\begin{defn}[Pointwise change actions]
-  \label{def:pointwiseChangeActions}
-  A change action $\cstr{B}$ is pointwise if every exponential object
+\todomario{Not super happy about calling these ``pointwise'' - maybe convenient? (by analogy to convenient vector spaces)}
+\begin{defn}[Convenient change actions]
+  \label{def:convenientChangeActions}
+  A change action $\cstr{B}$ is convenient if every exponential object
   $\exponential{\cstr{A}}{\cstr{B}}$ is isomorphic to a pointwise functional change action.
 \end{defn}
 
 This corresponds to the intuition about how the correspondence with
-$\cat{PreOrd}$ should work: the preorder on monotone functions in $\cat{PreOrd}$ is
-pointwise.
+$\cat{PreOrd}$ should work, since exponentials $A \Rightarrow B$ in $\cat{PreOrd}$ inherit the
+structure of $B$, lifted pointwise.
 
-This pointwise functional change action is not well defined for all change actions, since
-we require $f \cplus_\rightarrow \change{f}$ to be \emph{differentiable}, which
-may not be true for all pointwise function changes $\change{f}$.
-Fortunately, there are useful subcategories of $\cat{CAct}$ formed of pointwise functional
-change actions.
+As we mentioned in \cref{sec:pointwiseFunctional}, 
+the pointwise functional change action is not well defined for all change actions.
+This is because we require every pointwise change $\change{f}$ to map a differentiable
+function $f$ into a differentiable function $f \cplus \change{f}$, but there is no way
+to guarantee that this is the case for arbitrary pointwise changes.
+Fortunately, convenient change actions form a relatively large subcategory of $\cat{CAct}$.
 
-\begin{prop}[name=Pointwise change actions, restate=pointwiseChangeActionProps]
-  \label{prop:pointwiseChangeActionProps}
+\begin{prop}[name=Pointwise change actions, restate=convenientChangeActionProps]
+  \label{prop:convenientChangeActionProps}
   Every change action $\cstruct{B}{\changes{B}}{\cplus}$ such that the change action
   $\cstruct{\changes{B}}{\changes{B}}{\splus}$ is complete and $\cplus$ is differentiable with
   respect to its first argument is pointwise.
@@ -1719,7 +1721,7 @@ change actions.
   In particular, every change action where $\cplus$ is a group action is pointwise.
 \end{prop}
 \ifproofs
-  See \cref{prf:pointwiseChangeActionProps}.
+  See \cref{prf:convenientChangeActionProps}.
 \fi
 
 \begin{prop}[name=Complete implies pointwise, restate=pointwiseComplete]
@@ -1730,12 +1732,22 @@ change actions.
   See \cref{prf:pointwiseComplete}.
 \fi
 
-Furthermore, since the complete change actions are a reflective subcategory of
+\todomario{
+  Beware this part, we should give the reflector explicitly and prove it preserves products.
+  It is in fact much easier to establish this fact directly by showing $A \Rightarrow B$ is
+  complete whenever $B$ is.
+}
+Since the complete change actions are a reflective subcategory of
 $\cat{CAct}$ (with the reflector being the ``completion'' of a change action,
 i.e. any complete change action, which we can always find), the complete change
-action form a Cartesian closed category of pointwise change actions.
+actions form a Cartesian closed category of pointwise change actions.
 
-Having pointwise changes allows us to actually compute a derivative of the
+\todomario{This is new, and it's kind of cool. It's also trivial to prove}
+Furthermore, it can be shown that convenient change actions are themselves a Cartesian closed
+subcategory of $\cat{CAct}$, and therefore constitute a viable setting for general, higher-order
+incremental computation.
+
+Having pointwise function changes allows us to actually compute a derivative of the
 evaluation map as shown in \cref{prop:evDerivatives}. In practice, this means
 that we will only be able to use the results in \cref{sec:fixpoints} when
 we have pointwise change actions, or where we have some other way of computing
@@ -2249,9 +2261,9 @@ helpful comments on the manuscript.
     representatives, the resulting derivative may not preserve the monoid action.}
 \end{proof}
 
-\pointwiseChangeActionProps*
+\convenientChangeActionProps*
 \begin{proof}
-\label{prf:pointwiseChangeActionProps}
+\label{prf:convenientChangeActionProps}
   Let $\cstr{B}$ be a change action, with $\cplus$ differentiable with respect
   to its first argument, and suppose the change action on $\changes{B}$
   is complete.
