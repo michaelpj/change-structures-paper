@@ -1672,20 +1672,22 @@ The exponential objects in the category $\cat{CAct}$ are difficult to work with,
 because we need to ensure that $f \cplus \change{f}$ continues to be a
 differentiable function. Under some conditions, however, we can find a simple representation.
 
+\todomario{Not super happy about this name - maybe convenient? (by analogy to convenient vector spaces)}
 \begin{defn}[Pointwise change actions]
   \label{def:pointwiseChangeActions}
   A change action $\cstr{B}$ is pointwise if every exponential object
-  $\exponential{\cstr{A}}{\cstr{B}}$ is isomorphic to a pointwise function change action.
+  $\exponential{\cstr{A}}{\cstr{B}}$ is isomorphic to a pointwise functional change action.
 \end{defn}
 
 This corresponds to the intuition about how the correspondence with
 $\cat{PreOrd}$ should work: the preorder on monotone functions in $\cat{PreOrd}$ is
 pointwise.
 
-This pointwise change action is not well defined for all change actions, since
+This pointwise functional change action is not well defined for all change actions, since
 we require $f \cplus_\rightarrow \change{f}$ to be \emph{differentiable}, which
-may not be true for all pointwise changes $\change{f}$.
-Fortunately, there are useful subcategories of $\cat{CAct}$ formed of pointwise change actions.
+may not be true for all pointwise function changes $\change{f}$.
+Fortunately, there are useful subcategories of $\cat{CAct}$ formed of pointwise functional
+change actions.
 
 \begin{prop}[name=Pointwise change actions, restate=pointwiseChangeActionProps]
   \label{prop:pointwiseChangeActionProps}
@@ -2105,10 +2107,10 @@ helpful comments on the manuscript.
   \label{prf:iterDerivativesN}
   By induction on $n$. We show the inductive step.
   \begin{align*}
-    &\iter_f((n+1) + m)\\
-    &=f(\iter_f(n + m)) \tag{definition of $\iter_f$}\\
-    &=f(\iter_f(n) \cplus \derive{\iter_f}(n, m)) \tag{by induction}\\
-    &=\iter_f(n+1) \cplus \derive{f}(\iter_f(n), \derive{\iter_f}(n, m)) \tag{$f$ is differentiable, definition of $\iter_f$}
+    &\partial_2\iter(f, (n+1) + m)\\
+    &=f(\iter(f, n + m)) \tag{definition of $\iter$}\\
+    &=f(\iter(f, n) \cplus \partial_2{\iter}(f, n, m)) \tag{by induction}\\
+    &=\iter(f, n+1) \cplus \derive{f}(\iter(f, n), \partial_2{\iter}(f, n, m)) \tag{$f$ is differentiable, definition of $\iter$}
   \end{align*}
 \end{proof}
 
@@ -2117,7 +2119,7 @@ helpful comments on the manuscript.
   \label{prf:fixpointIter}
   \begin{align*}
     &\lfp(\iter_f)\\
-    &=\bigsqcup_{n \in \NN} \iter_f(n)\\
+    &=\bigsqcup_{n \in \NN} \iter(f, n)\\
     &=\bigsqcup_{n \in \NN} \pi_1 (\nextiter_f^n(\bot))
   \end{align*}
 \end{proof}
@@ -2157,32 +2159,32 @@ helpful comments on the manuscript.
 
   For the inductive step:
   \begin{align*}
-    &\iter_{n+1}(f \cplus \change{f})\\
-    &=(f \cplus \change{f})(\iter_{n}(f \cplus \change{f}))\\
+    &\iter(f \cplus \change{f}, n + 1)\\
+    &=(f \cplus \change{f})(\iter(f \cplus \change{f}, n))\\
     &= (f \cplus \change{f})(
-        \iter_{n}(f)
-        \cplus \derive{\iter_{n}}(f, \change{f})
+        \iter(f, n)
+        \cplus \partial_1{\iter}(f, \change{f}, n)
       )
     \tag{ by induction}\\
-    &= f(\iter_n(f)) \cplus \derive{\ev}((f, \iter_{n}(f)), (\change{f},
-      \derive{\iter_{n}}(f, \change{f})))
+    &= f(\iter(f, n)) \cplus \derive{\ev}((f, \iter(f, n)), (\change{f},
+      \partial_1{\iter}(f, \change{f}, n)))
     \tag{by \cref{def:functionalChanges}}\\
-    & =\iter_{n+1}(f) \cplus \derive{\iter_{n+1}}(f, \change{f})
+    & =\iter(f, n + 1) \cplus \partial_1{\iter}(f, \change{f}, n)
   \end{align*}
 \end{proof}
 
 \leastFixpointDerivatives*
 \begin{proof}
   \label{prf:leastFixpointDerivatives}
-  $\derive{\iter_n}$ and $\nextiter_{f, \change{f}}$ are continuous since
+  $\partial_1{\iter}$ and $\nextiter_{f, \change{f}}$ are continuous since
   $\derive{\ev}$ and $f$ are.
 
-  Hence the set $\{ \derive{\iter}_n \}$ is directed, and so $\bigsqcup_{i \in \NN}
-  \derive{\iter_i}$ is indeed a derivative for $\lfp$.
+  Hence the set $\{ \partial_1{\iter}(\cdot, \cdot, n) \}$ is directed, and so $\bigsqcup_{i \in \NN}
+  \{ \partial_1{\iter}(\cdot, \cdot, n) \}$ is indeed a derivative for $\lfp$.
 
   We now show that it is equivalent to $\derive{\lfp}$:
   \begin{align*}
-    &\bigsqcup_{n \in \NN} \derive{\iter_n}(f, \change{f})\\
+    &\bigsqcup_{n \in \NN} \partial_1{\iter}(f, \change{f}, n)\\
     &=\bigsqcup_{n \in \NN} \pi_2(\nextiter_{f, \change{f}}^n(\bot))\\
     &=\pi_2(\bigsqcup_{n \in \NN} \nextiter_{f, \change{f}}^n(\bot)) \tag{$\pi_2$ is continuous}\\
     &= \pi_2 (\lfp(\nextiter_{f, \change{f}})) \tag{$\nextiter_{f, \change{f}}$ is continuous, Kleene's Theorem}\\
