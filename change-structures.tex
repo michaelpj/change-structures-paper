@@ -1712,7 +1712,7 @@ function $f$ into a differentiable function $f \cplus \change{f}$, but there is 
 to guarantee that this is the case for arbitrary pointwise changes.
 Fortunately, convenient change actions form a relatively large subcategory of $\cat{CAct}$.
 
-\begin{prop}[name=Pointwise change actions, restate=convenientChangeActionProps]
+\begin{prop}[name=Convenient change actions, restate=convenientChangeActionProps]
   \label{prop:convenientChangeActionProps}
   Every change action $\cstruct{B}{\changes{B}}{\cplus}$ such that the change action
   $\cstruct{\changes{B}}{\changes{B}}{\splus}$ is complete and $\cplus$ is differentiable with
@@ -1724,7 +1724,7 @@ Fortunately, convenient change actions form a relatively large subcategory of $\
   See \cref{prf:convenientChangeActionProps}.
 \fi
 
-\begin{prop}[name=Complete implies pointwise, restate=pointwiseComplete]
+\begin{prop}[name=Complete change actions are convenient, restate=pointwiseComplete]
   \label{prop:pointwiseComplete}
    Every complete change action $\cstr{B}$ is pointwise.
 \end{prop}
@@ -1746,6 +1746,15 @@ actions form a Cartesian closed category of pointwise change actions.
 Furthermore, it can be shown that convenient change actions are themselves a Cartesian closed
 subcategory of $\cat{CAct}$, and therefore constitute a viable setting for general, higher-order
 incremental computation.
+
+\begin{prop}[name=Convenient category of change actions]
+  Let $\cstr{A}$ and $\cstr{B}$ be convenient change actions. Then the product 
+  $\cstr{A} \times \cstr{B}$ and the exponential $\cstr{A} \Rightarrow \cstr{B}$ are also convenient
+  change actions.
+  
+  Hence $\cat{Conv}$, the full subcategory of $\cat{CAct}$ whose objects are all the convenient change
+  actions, is a Cartesian closed category.
+\end{prop}
 
 Having pointwise function changes allows us to actually compute a derivative of the
 evaluation map as shown in \cref{prop:evDerivatives}. In practice, this means
