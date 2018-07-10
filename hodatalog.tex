@@ -10,23 +10,25 @@
 \newcommand{\smng}[1]{\mathcal{S}\llbracket #1 \rrbracket}
 \newcommand\makeset[1]{\{#1\}}
 \newcommand\disjointTimesS{\disjointTimes_S}
-\newcommand\twistS{\twist_S}
+%\newcommand\twistS{\twist_S}
 \newcommand\superposeS{{\superpose_S}}
+\newcommand{\twistS}{\cplus_{\superpose_S}}
+\newcommand\lub{\bigsqcup}
 
 \subsection{Extension to higher-order datalog}
 
 For the syntax of higher-order logic, we use a standard presentation as a simply-typed $\lambda$-calculus with \emph{types}
 \[
-\sigma \; ::= \; \boolsort \mid \intsort \mid \sigma_1 \to \sigma
+\sigma \; ::= \; \boolsort \mid \intsort \mid \sigma_1 \to \sigma_2
 \]
-and \emph{logical constants}: $\neg, \wedge, \vee, \forall_\sigma, \exists_\sigma$, etc.
-\[ \neg : \boolsort \to \boolsort \qquad \forall_\sigma, \exists_\sigma : (\sigma \to \boolsort) \to \boolsort\]
-Standardly we write $\exists_\sigma(\abs{x\!\!:\!\!\sigma}{M})$ as $\exists x\!\!:\!\!\sigma .\, M$.
-Relational types are defined as:
+and \emph{logical constants}, $\neg, \wedge, \vee, \forall_\sigma, \exists_\sigma$, etc., typed as follows:
+\[ \neg : \boolsort \to \boolsort \qquad \vee, \wedge : \boolsort \to \boolsort \to \boolsort \qquad \forall_\sigma, \exists_\sigma : (\sigma \to \boolsort) \to \boolsort\]
+Standardly we write $\exists_\sigma(\abs{x\!\!:\!\!\sigma}{M})$ as $\exists x\!\!:\!\!\sigma .\, M$; similarly for $\forall_\sigma(\abs{x\!\!:\!\!\sigma}{M})$.
+Types of the following shape are called \emph{relational}:
 \[
 \rho \; ::= \; \intsort \to \boolsort \mid \intsort \to \rho \mid \rho \to \rho'
 \]
-Note that relational types are types that have the $\boolsort$ as the result type.
+Note that a relational type has $\boolsort$ as the result type.
 
 \subsubsection{Semantics of types, terms and formulas: standard, monotone and continuous}
 The \emph{standard semantics} of types $\smng{\sigma}$ is defined as follows.
@@ -38,17 +40,28 @@ The \emph{standard semantics} of types $\smng{\sigma}$ is defined as follows.
   \smng{\sigma_1 \to \sigma_2} & \coloneqq  & \smng{\sigma_1} \to \smng{\sigma_2} \quad \hbox{(set-theoretic function space)}
 \end{array}
 \]
-The \emph{monotone semantics} $\mmng{\sigma}$ is defined similarly: $\mmng{\boolsort} := (\makeset{\bot, \top}, \leq)$; $\mmng{\intsort} := (\mathbb{Z}, =)$; and $\mmng{\sigma_1 \to \sigma_2} := (\mmng{\sigma_1} \to_{\rm m} \mmng{\sigma_2}, \leq)$, the monotone function space.
+We define the \emph{monotone semantics} $\mmng{\sigma}$ as follows: 
+$\mmng{\boolsort} := (\makeset{\bot, \top}, \leq)$; $\mmng{\intsort} := (\mathbb{Z}, =)$; and $\mmng{\sigma_1 \to \sigma_2} := (\mmng{\sigma_1} \to_{\rm m} \mmng{\sigma_2}, \leq)$, the monotone function space, with the extensional ordering.
 
-The \emph{continuous semantics} $\cmng{\sigma}$ is also defined similarly: $\cmng{\boolsort} := (\makeset{\bot, \top}, \leq)$; $\cmng{\intsort} := (\mathbb{Z}, =)$; and $\cmng{\sigma_1 \to \sigma_2} := (\cmng{\sigma_1} \to_{\rm c} \cmng{\sigma_2}, \leq)$, the Scott-continuous function space.
+The \emph{continuous semantics} $\cmng{\sigma}$ is defined similarly: $\cmng{\boolsort} := (\makeset{\bot, \top}, \leq)$; $\cmng{\intsort} := (\mathbb{Z}, =)$; and $\cmng{\sigma_1 \to \sigma_2} := (\cmng{\sigma_1} \to_{\rm c} \cmng{\sigma_2}, \leq)$, the continuous function space.
+
+Let $L$ be a poset. 
+Recall that a subset $X \subset L$ is \emph{open} (written $X \in \tau_S$, the Scott topology) if (i) $X$ is up-closed, and (ii) for every $\omega$-increasing chain $(x_i)_{i \in \omega}$, if $\lub_{i \in \omega} x_i$ exists and is in $X$ then $x_i \in X$ for some $i$. 
+
+
+Let $D$ and $E$ be cpos. 
+A function $f:D \to E$ is \emph{continuous} just if it is monotone, and preserves lubs of $\omega$-increasing chains.
+Recall that a function $f : D \to E$ is continuous iff it is continuous w.r.t.~the Scott topology.
 
 The semantics of terms and formula-terms are defined standardly. 
 \lo{TODO}
 
 \begin{prop}[name=Scott change actions, restate=hodatalog]
- Let $L$ be a poset. Define
+ Let $(L, \leq)$ be a poset. Define
   \begin{displaymath}
-    \cstr{L}_\superposeS \defeq \cstruct{L}{L \disjointTimesS L}{\twistS}
+    \cstr{L}_{\superposeS} 
+    \defeq \cstruct{\tau_S
+    }{L \disjointTimesS L}{\twistS}
   \end{displaymath}
   where
   \begin{align*}
