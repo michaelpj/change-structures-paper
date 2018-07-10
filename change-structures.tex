@@ -2163,28 +2163,43 @@ helpful comments on the manuscript.
   Conjunction:
   \begin{align*}
     &\sem{T \wedge U}(\semR \twist \diffR)\\
+    %
     &= \sem{T}(\semR \twist \diffR) \cap \sem{U}(\semR \twist \diffR)\\
-    &= \sem{T}(\semR) \twist (\upsem{T}, \downsem{T}) \cap \sem{U}(\semR) \twist (\upsem{U}, \downsem{U})\\
-    &= (\sem{T}(\semR) \cup \upsem{T}) \cap \neg \downsem{T} \cap (\sem{U}(\semR) \cup \upsem{U}) \cap \neg \downsem{U}\\
-    &= (\sem{T}(\semR) \cap \neg \downsem{T}) \cap (\sem{U}(\semR) \cap \neg \downsem{U})\\
+    %
+    &= \sem{T}(\semR) \twist (\upsem{T}, \downsem{T}) 
+      \cap \sem{U}(\semR) \twist (\upsem{U}, \downsem{U}) \tag{induction hypothesis}\\
+    %
+    &= (\sem{T}(\semR) \cup \upsem{T}) \cap \neg \downsem{T} 
+      \cap (\sem{U}(\semR) \cup \upsem{U}) \cap \neg \downsem{U} \tag{definition of $\twist$}\\
+    &= (\sem{T}(\semR) \cap \neg \downsem{T} \cup \upsem{T})
+      \cap (\sem{U}(\semR) \cap \neg \downsem{U} \cup \upsem{U}) \tag{disjointness of $\upsem{}, \downsem{}$}\\
+    %
+    &= (\sem{T}(\semR) \cap \neg \downsem{T}) \cap (\sem{U}(\semR) \cap \neg \downsem{U}) \tag{Boolean algebra}\\
     & \cup ((\upsem{T} \cap (\sem{U}(\semR) \cup \upsem{U}) \cap \neg \downsem{U})
       \cap (\upsem{U} \cap (\sem{T}(\semR) \cup \upsem{T}) \cap \neg \downsem{T}))\\
-    &= (\sem{T}(\semR) \cap \neg \downsem{T}) \cap (\sem{U}(\semR) \cap \neg \downsem{U})\\
+    %
+    &= (\sem{T}(\semR) \cap \neg \downsem{T}) \cap (\sem{U}(\semR) \cap \neg \downsem{U}) \tag{induction hypothesis on $\bothdiff$}\\
     & \cup ((\upsem{T} \cap \bothsem{U}(\semR, \diffR))
             \cup (\upsem{U} \cap \bothsem{T}(\semR, \diffR)))\\
-    &= \sem{T}(\semR) \cap \sem{U}(\semR) \cap \neg (\downsem{T} \cup \downsem{U})\\
+    %
+    &= \sem{T}(\semR) \cap \sem{U}(\semR) \cap \neg (\downsem{T} \cup \downsem{U}) \tag{Boolean algebra}\\
       &\cup ((\upsem{T} \cap \bothsem{U}(\semR, \diffR))
             \cup (\upsem{U} \cap \bothsem{T}(\semR, \diffR)))\\
-    &= \sem{T}(\semR) \cap \sem{U}(\semR) 
-      \cup ((\upsem{T} \cap \bothsem{U})
+    %
+    &= \sem{T}(\semR) \cap \sem{U}(\semR) \tag{Boolean algebra}\\
+    & \cup ((\upsem{T} \cap \bothsem{U})
             \cup (\upsem{U} \cap \bothsem{T}))
       \cap \neg (\downsem{T} \cup \downsem{U})\\
+    %
     &= \sem{T \wedge U}(\semR)
-      \twist (\upsem{T \wedge U}, \downsem{T} \cup \downsem{U})\\
+      \twist (\upsem{(T \wedge U)}, \downsem{T} \cup \downsem{U}) \tag{definition of $\twist, \updiff$}\\
+    %
     &= \sem{T \wedge U}(\semR)
-      \twist (\upsem{T \wedge U}, (\downsem{T} \cap \sem{U}(\semR)) \cup (\downsem{U} \cap \sem{T}(\semR)))\\
+      \twist (\upsem{(T \wedge U)}, 
+      (\downsem{T} \cap \sem{U}(\semR)) \cup (\downsem{U} \cap \sem{T}(\semR))) \tag{Boolean algebra}\\
+    %
     &= \sem{T \wedge U}(\semR)
-      \twist (\upsem{T \wedge U}, \downsem{T \wedge U})
+      \twist (\upsem{(T \wedge U)}, \downsem{(T \wedge U)}) \tag{definition of $\downdiff{}$}
   \end{align*}
   
   Disjunction: like conjunction.
