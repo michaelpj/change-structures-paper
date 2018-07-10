@@ -891,6 +891,19 @@ $\updiff$ and $\downdiff$, which turn a formula $T$ into new formulae that compu
 the upwards and downwards parts of the derivative, respectively. As we expect
 from a derviative, the new formulae will have additional free relation variables
 for the upwards and downwards derivatives of the free relation variables of $T$.
+\footnote{While the definitions usually exhibit the dualities we would expect
+  between corresponding operators, there are a few asymmetries to explain.
+
+  The asymmetry between the cases for $\updiff(T \vee U)$ and
+  $\downdiff(T \wedge U)$ is for operational reasons. The symmetrical version of
+  $\updiff(T \vee U)$ is $(\updiff(T) \wedge \neg U) \vee (\updiff(U) \wedge \neg
+  T)$ (which is also precise). The reason we omit the negated conjuncts is simply
+  that they are costly to commpute and not especially helpful to our evaluation engine.
+
+  The asymmetry between the cases for $\exists$ is because our
+  dialect of Datalog does not have a primitive universal quantifier.
+  If we did have one, the cases for $\exists$ would be dual to the corresponding
+  cases for $\forall$.}
 
 \newcommand{\bothdiff}{\diamond}
 
@@ -901,11 +914,7 @@ We will make use of an auxilliary function, $\bothdiff$, which computes the
 \begin{thm}[name=Concrete Datalog formula derivatives, restate=concreteDatalog]
 \label{thm:concreteDatalog}
   Let $\updiff, \downdiff, \bothdiff : \Formula \rightarrow \Formula$ be mutually recursive functions
-  defined by structural induction as in \cref{fig:datalogDerivatives}.\footnote{
-  There is a symmetry between the cases for $\wedge$ and $\vee$ between $\updiff$
-  and $\downdiff$, but the cases for $\exists$ look quite different.
-  This is because our dialect of Datalog does not have a primitive universal quantifier.
-  If we did have one, its cases would be dual to those for $\exists$.}
+  defined by structural induction as in \cref{fig:datalogDerivatives}.
 
   Then for any schema $\Gamma$ and any Datalog formula $T$ whose free term variables are contained
   in $\Gamma$,
