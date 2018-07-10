@@ -261,6 +261,7 @@ actions.}
 \end{defn}
 
 \subsubsection{Examples}
+\label{sec:examples}
 
 A typical change action is $\cstruct{[A]}{[A]}{\doubleplus}$. Here we represent changes
 to a list (or stream) made by concatenating another list onto it. The changes
@@ -277,7 +278,7 @@ always take $\changes{\changes{A}} = \changes{A}$.
 Within this category of change actions, three are of particular interest to us. First, whenever
 $L$ is a Boolean algebra, we can give it the change actions $(L, L, \vee)$ and $(L, L, \wedge)$, 
 as well as a combination of these (see \cref{sec:booleanAlgebras}). Second,
-the natural numbers with addition have a change action $\cstr{NN} \defeq (\NN, \NN, +)$, which we will
+the natural numbers with addition have a change action $\cstr{\NN} \defeq (\NN, \NN, +)$, which we will
 use to define a derivative for an iteration function in \cref{sec:iteration}.
 
 Another interesting case of change actions is \textit{semiautomata}. A semiautomaton is a triple
@@ -1041,8 +1042,10 @@ $A \rightarrow B$.
   \end{displaymath}
 \end{prop}
 
-\todompj{Is this useful? Surely you can just do $f \cplus \change{f}$ normally?}
 
+\todomario{
+  The rest of this section won't go into the actual paper and can be deleted safely.
+}
 Conversely, the derivative of the evaluation map can also be used to compute the effect of a given
 function change $\delta f$:
 \begin{prop}[Evaluating function changes]
@@ -1052,13 +1055,6 @@ function change $\delta f$:
     (f \cplus \delta f)(x) = f(x) \cplus \ev'((f, x), (\delta f, 0))
   \end{displaymath}
 \end{prop}
-
-\todomario{
-  There's a classification theorem here, but it's a bit tricky and I'm not sure it's worth including.
-  It's here for completeness' sake.
-}
-
-\todompj{What is $\upsilon$? Also missing $0_\Rightarrow$, generally seems incomplete.}
 
 \begin{prop}[Functional change sets]
   Let $\cstr{A}$ and $\cstr{B}$ be change actions and $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$
@@ -1294,9 +1290,7 @@ The following theorems provide a
 generalization of semi-naive evaluation to any differentiable function over a
 continuous change action. Throughout this section we will assume that we have a contiuous change action
 $\cstr{A}$, and any reference to the change action $\cstr{\NN}$ will refer to the obvious monoidal
-change action.
-
-\todompj{backreference for $\cstr{\NN}$}
+change action on the naturals defined in \cref{sec:examples}.
 
 Since we are trying to incrementalize the iterative step, we start by taking the partial
 derivative of $\iter$ with respect to $n$.
@@ -1475,9 +1469,6 @@ Which has the property that
 
 This indeed provides us with a function whose limit we can take, showing
 that $\derive{\lfp}$ is a true derivative.
-
-\todompj{I think we can simplify this a bit, in particular $f$ being continuous
-  and differentiable is now implied, I think.}
 
 \begin{thm}[name=Derivatives of least fixpoint operators, restate=leastFixpointDerivatives]
   \label{thm:leastFixpointDerivatives}
@@ -1755,7 +1746,6 @@ because we need to ensure that $f \cplus \change{f}$ continues to be a
 differentiable function. Fortunately, under some circumstances these correspond
 to the pointwise functional change actions we saw earlier (in \cref{sec:pointwiseFunctional}).
 
-\todomario{Not super happy about calling these ``pointwise'' - maybe convenient? (by analogy to convenient vector spaces)}
 \begin{defn}[Convenient change actions]
   \label{def:convenientChangeActions}
   A change action $\cstr{B}$ is convenient if every exponential object
@@ -1793,17 +1783,10 @@ Fortunately, convenient change actions form a relatively large subcategory of $\
   See \cref{prf:pointwiseComplete}.
 \fi
 
-\todomario{
-  Beware this part, we should give the reflector explicitly and prove it preserves products.
-  It is in fact much easier to establish this fact directly by showing $A \Rightarrow B$ is
-  complete whenever $B$ is.
-}
-Since the complete change actions are a reflective subcategory of
-$\cat{CAct}$ (with the reflector being the ``completion'' of a change action,
-i.e. any complete change action, which we can always find), the complete change
-actions form a Cartesian closed category of pointwise change actions.
+Since the product and exponential of complete change actions is also complete,  the complete change
+actions are a Cartesian closed full subcategory of $\cat{CAct}$ which is, in fact equivalent
+to $\cat{Set}$ (as every set-theoretic function between complete change actions is differentiable).
 
-\todomario{This is new, and it's kind of cool. It's also trivial to prove}
 Furthermore, it can be shown that convenient change actions are themselves a Cartesian closed
 subcategory of $\cat{CAct}$, and therefore constitute a viable setting for general, higher-order
 incremental computation.
