@@ -535,7 +535,7 @@ another:
   $\cstr{A}_2$.
 \end{prop}
 
-\subsection{Kernels and precision}
+\subsection{Kernels}
 
 \begin{defn}[Kernel]
   Let $\cstr{A}$ be a change action and $\change{a} \in \changes{A}$. Then the
@@ -714,24 +714,29 @@ all the derivatives on Boolean algebras:
 This makes \cref{thm:derivativeCharacterization} actually usable in practice, since
 we have concrete definitions for our bounds (which we will make use of in \cref{sec:datalogDifferentiability}).
 
-Moreover, we have one more minus operator that gives us a \emph{precise}
-derivative.
+Moreover, we have a nice definition of the kernel ordering, which gives us a
+minus operator with a corresponding \emph{precise} derivative.
 
-\todompj{PROVE THIS - is this even true?}
+\todompj{Proof. The second part follows easily from the charaterization of
+  $\kernelOrder$. Pretty sure it's true!}
 
 \begin{prop}
   Let $L$ be a (complete) Boolean algebra with the $\cstr{L}_\superpose$ change action, and
   $f: A \rightarrow L$ a function.
-  Then, the following is a minus operator:
-  \begin{align*}
-    a \cminus_\kernel b &= (a \wedge \neg b, b \wedge \neg a)\\
-  \end{align*}
+
+  Then $(p, q) \kernelOrder (r, s)$ iff $p \leq r$ and $q \leq s$.
+
+  Additionally, the following is a minus operator:
+  \begin{displaymath}
+    a \cminus_\kernel b = (a \wedge \neg b, b \wedge \neg a)
+  \end{displaymath}
 
   Moreover $\derive{f}_{\cminus_\kernel}$ is a minimal derivative of $f$ with respect to $\kernelOrder$.
 \end{prop}
 
-This derivative is precise in the sense that the components are as small as
-possible (in the usual Boolean algebra ordering).
+This shows us in what sense minimality with respect to the kernel orering gives
+us precision: the derivative is precise in that the components are as small as
+possible.
 
 \section{Derivatives for non-recursive Datalog}
 \label{sec:nonRecursiveDatalog}
