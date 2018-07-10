@@ -259,6 +259,7 @@ actions.}
 \end{defn}
 
 \subsubsection{Examples}
+\label{sec:examples}
 
 A typical change action is $\cstruct{[A]}{[A]}{\doubleplus}$. Here we represent changes
 to a list (or stream) made by concatenating another list onto it. The changes
@@ -275,7 +276,7 @@ always take $\changes{\changes{A}} = \changes{A}$.
 Within this category of change actions, three are of particular interest to us. First, whenever
 $L$ is a Boolean algebra, we can give it the change actions $(L, L, \vee)$ and $(L, L, \wedge)$, 
 as well as a combination of these (see \cref{sec:booleanAlgebras}). Second,
-the natural numbers with addition have a change action $\cstr{NN} \defeq (\NN, \NN, +)$, which we will
+the natural numbers with addition have a change action $\cstr{\NN} \defeq (\NN, \NN, +)$, which we will
 use to define a derivative for an iteration function in \cref{sec:iteration}.
 
 Another interesting case of change actions is \textit{semiautomata}. A semiautomaton is a triple
@@ -316,13 +317,15 @@ $f(a)$ to $f(a \cplus \change{a})$. We call this a \emph{derivative} of a functi
 
 \begin{defn}[Derivatives]
   \label{def:derivative}
-  A \emph{derivative} of a function $f: \cstr{A} \rightarrow \cstr{B}$ is a function $\derive{f}: A \times \changes{A} \rightarrow
+  A \emph{derivative} of a function $f: A \rightarrow B$, where $A$ and $B$ have
+  change ations $\cstr{A}$ and $\cstr{B}$ respectively, is a function $\derive{f}: A \times \changes{A} \rightarrow
   \changes{B}$ such that
   \begin{displaymath}
     f(a \cplus_A \change{a}) = f(a) \cplus_B \derive{f}(a, \change{a})
   \end{displaymath}
   A function which has a derivative is 
-  \emph{differentiable}.\footnote{Note that we do not require that $\derive{f}(a,
+  \emph{differentiable}, and we will write $\cstr{A} \rightarrow \cstr{B}$ for
+  the set of differentiable functions between $\cstr{A}$ and $\cstr{B}$.\footnote{Note that we do not require that $\derive{f}(a,
     \change{a} \splus \change{b}) = \derive{f}(a, \change{a}) \splus \derive{f}(a
     \cplus \change{a}, \change{b})$. This is a natural condition, and almost all
     derivatives satisfy it, but we have not found it to be necessary so far.}
@@ -528,6 +531,27 @@ another:
   $\cstr{A}_2$.
 \end{prop}
 
+\subsection{Kernels}
+
+\begin{defn}[Kernel]
+  Let $\cstr{A}$ be a change action and $\change{a} \in \changes{A}$. Then the
+  \emph{kernel} of $\change{a}$ is an equivalence relation $\kernel_{\change{a}}
+  : \mathcal{P}(A \times A)$ defined by
+  \begin{displaymath}
+    a \kernel_{\change{a}} b \Leftrightarrow a \cplus \change{a} = b \cplus \change{a}
+  \end{displaymath}
+
+  The \emph{kernel ordering} on $\changes{A}$ is defined by
+  \begin{displaymath}
+    \change{a} \kernelOrder \change{b} \Leftrightarrow \kernel_{\change{a}} \subseteq \kernel_{\change{b}}
+  \end{displaymath}
+
+  The \emph{kernel ordering} on derivatives is defined pointwise.
+\end{defn}
+
+As we will see later (\cref{sec:booleanAlgebras}), minimal derivatives under
+the kernel order correspond to ``precise'' derivatives
+
 \section{Posets and Boolean algebras}
 \label{sec:moreStructures}
 
@@ -576,7 +600,7 @@ order interacts nicely with derivatives, in that it gives us the following lemma
 \begin{thm}[Sandwich lemma]
   \label{thm:sandwich}
   Let $\cstr{A}$ be an change action, $\cstr{B}$ be an ordered change action,
-  $f: \cstr{A} \rightarrow \cstr{B}$, and $g: A \time \changes{A} \rightarrow
+  $f: \cstr{A} \rightarrow \cstr{B}$, and $g: A \times \changes{A} \rightarrow
   \changes{B}$. If $\supderive{f}$ and $\subderive{f}$ are
   derivatives for $f$ such that
   \begin{displaymath}
@@ -607,28 +631,6 @@ characterisation of all the derivatives for a function.
 
 This theorem gives us the leeway that we need when trying to pick a derivative: we can pick out the
 bounds, and that tells us how much ``wiggle room'' we have above and below.
-
-\subsubsection{Precision}
-
-The change preorder corresponds to a natural notion of precision: if $\change{a}
-\changeOrder \change{b}$, then $\change{b}$ produces ``bigger'' updates than
-$\change{a}$, and there is some additional information in it that is being
-ignored even when $c \cplus \change{a} = c \cplus \change{b}$.
-
-For example, in $\cstruct{\mathcal{P}(A)}{\mathcal{P}(A)}{\cup}$, $\{1\} \changeOrder \{1,2\}$. Even
-though $\{2\} \cplus \{1\} = \{2\} \cplus \{1,2\} = \{1,2\}$, the second change is
-imprecise because it adds in 2 even though it was already present.
-
-\begin{defn}[Precision of derivatives]
-  \label{def:precision}
-  A derivative is precise if it is minimal with respect to $\changeOrder$.
-\end{defn}
-
-This gives us a sense in which \cref{thm:derivativeCharacterization} is an
-\emph{approximation} theorem \textemdash{} it lets us pick out a sound range of
-derivatives bounded below by a precise derivative. This means we can trade off
-precision for other desirable operational properties, such as how easy the
-derivative is to compute.
 
 \subsection{Boolean algebras}
 \label{sec:booleanAlgebras}
@@ -708,6 +710,30 @@ all the derivatives on Boolean algebras:
 This makes \cref{thm:derivativeCharacterization} actually usable in practice, since
 we have concrete definitions for our bounds (which we will make use of in \cref{sec:datalogDifferentiability}).
 
+Moreover, we have a nice definition of the kernel ordering, which gives us a
+minus operator with a corresponding \emph{precise} derivative.
+
+\todompj{Proof. The second part follows easily from the charaterization of
+  $\kernelOrder$. Pretty sure it's true!}
+
+\begin{prop}
+  Let $L$ be a (complete) Boolean algebra with the $\cstr{L}_\superpose$ change action, and
+  $f: A \rightarrow L$ a function.
+
+  Then $(p, q) \kernelOrder (r, s)$ iff $p \leq r$ and $q \leq s$.
+
+  Additionally, the following is a minus operator:
+  \begin{displaymath}
+    a \cminus_\kernel b = (a \wedge \neg b, b \wedge \neg a)
+  \end{displaymath}
+
+  Moreover $\derive{f}_{\cminus_\kernel}$ is a minimal derivative of $f$ with respect to $\kernelOrder$.
+\end{prop}
+
+This shows us in what sense minimality with respect to the kernel orering gives
+us precision: the derivative is precise in that the components are as small as
+possible.
+
 \section{Derivatives for non-recursive Datalog}
 \label{sec:nonRecursiveDatalog}
 
@@ -730,65 +756,94 @@ real and pressing, as we saw in \cref{sec:intro}.
 Datalog is usually given a logical semantics where formulae are interpreted as first-order
 logic predicates and the semantics of a program is the set of models of its constituent
 predicates. We will instead give a simpler denotational semantics that treats a Datalog
-formula (and later, a Datalog program) as directly denoting a family of relations.
+formula (and later, a Datalog program) as directly denoting a relation, i.e.
+a set of named tuples over a certain schema.
 
 We will adopt the usual closed-world assumption to give a denotation to negation.
 
 \begin{defn}[Closed-world assumption and negation]
-  There exists a universal relation $\universalRel$.
+  For any schema $\Gamma$ (i.e. a finite set of names),
+  there exists a universal relation $\universalRel_\Gamma$.
 
   Negation on relations is defined as
   \begin{displaymath}
-    \neg R \defeq \universalRel \setminus R
+    \neg R \defeq \universalRel_\Gamma \setminus R
   \end{displaymath}
 \end{defn}
 
-This makes $\Rel$, the set of all relations over $\universalRel$, into a
-complete Boolean
-algebra.\footnote{Technically we need to use the set of relations of a given
-  arity. In practice it is easy to make the arities match up, and we will gloss
-  over them for clarity.}
+This makes $\Rel_\Gamma$, the set of all subsets of $\universalRel_\Gamma$ with schema $\Gamma$,
+into a complete Boolean algebra.
 
 The semantics of Datalog formulae are usually given in terms of satisfaction by
 structures. We would like to use a more denotational semantics (as is typical
-when working with fixpoints \autocite[see e.g.][]{compton1994stratified}). We are
-going to parameterize by the parts of the structure that are usually variable,
-namely the assignments to variables and relation variables. We will assume we
-are otherwise working in the context of an ambient structure $\Phi$ that
-provides our universe and interpretation of constants.
+when working with fixpoints \autocite[see e.g.][]{compton1994stratified}). We give a semantics
+which is parmeterized by the assignments to the free relation variables.
+
+\begin{figure}
+  \fbox{
+    \begin{minipage}[t]{0.9\textwidth}
+      \vspace{-5pt}
+      \begin{minipage}[t]{.45\textwidth}
+      \begin{align*}
+        \sem{\top}_\Gamma(\semR) &\defeq \universalRel_\Gamma\\
+        \sem{\bot}_\Gamma(\semR) &\defeq \emptyset\\
+        \sem{R_j}_\Gamma(\semR) &\defeq \semR_j\\
+      \end{align*}
+    \end{minipage}\hfill\noindent
+    \begin{minipage}[t]{.45\textwidth}
+      \begin{align*}
+        \sem{T \wedge U}_\Gamma(\semR) &\defeq \sem{T}_\Gamma(\semR) \cap \sem{U}_\Gamma(\semR)\\
+        \sem{T \vee U}_\Gamma(\semR) &\defeq \sem{T}_\Gamma(\semR) \cup \sem{U}_\Gamma(\semR)\\
+        \sem{\neg T}_\Gamma(\semR) &\defeq \universalRel_\Gamma \setminus \sem{T}_\Gamma(\semR)\\
+      \end{align*}
+    \end{minipage}
+    \vspace{-12pt}
+    \begin{align*}
+      \sem{\exists x . T}_\Gamma(\semR) &\defeq \sigma(\sem{T}_{\Gamma, x})
+    \end{align*}
+    \end{minipage}
+  }
+  \caption{Formula semantics for Datalog}
+  \label{fig:datalogSemantics}
+  \vspace{-12pt}
+\end{figure}
 
 \begin{defn}[Formula semantics]
-  A Datalog formula $T$ denotes a function from its free relation variables to
-  $\Rel$.
-  \begin{align*}
-    &\denote{\_} : \Formula \rightarrow \Rel^n \rightarrow \Rel\\
-    &\denote{T}(R_1, \dots, R_n) = \left\{ \left(a_1, \dots a_m \right) \mid \Phi \models T\left[R_1, \dots R_n, a_1, \dots a_m \right] \right\}
-  \end{align*}
+  A Datalog formula $T$ whose free term variables are contained in $\Gamma$ denotes a function from 
+  its free relation variables $R_1, \ldots, R_n$ 
+  to $\Rel_\Gamma$.
+  \begin{displaymath}
+    \denote{\_}_\Gamma : \Formula_\Gamma \rightarrow \Rel_\Gamma^n \rightarrow \Rel_\Gamma
+  \end{displaymath}
+  If $\semR = (\semR_1, \ldots, \semR_n)$ is a choice of a relation for each of the variables $R_i$,
+  $\denote{T}(\semR)$ is inductively defined according to the rules in \cref{fig:datalogSemantics}.
 \end{defn}
 
-Since $\Rel$ is a complete Boolean algebra, and so is $\Rel^n$, $\denote{T}$ is
-a function between complete Boolean algebras.
+Since $\Rel_\Gamma$ is a complete Boolean algebra, and so is $\Rel_\Gamma^n$, $\denote{T}_\Gamma$ is
+a function between complete Boolean algebras. For brevity, we will often leave the schema implicit,
+as it is clear from the context.
 
 \subsection{Differentiability of Datalog formula semantics}
 \label{sec:datalogDifferentiability}
 
 In order to perform incremental evaluation, we first need to provide derivatives for the semantics
-of Datalog formulae. Since $\denote{T}$ is a function between the complete Boolean algebras $\Rel^n$ and
-$\Rel$, and we know that the corresponding change actions 
-$\widehat{\Rel^n}_\superpose, \widehat{\Rel}_\superpose$
+of Datalog formulae. Since $\denote{T}_\Gamma$ is a function between the complete Boolean algebras 
+$\Rel_\Gamma^n$ and
+$\Rel_\Gamma$, and we know that the corresponding change actions 
+$\widehat{\Rel_\Gamma^n}_\superpose, \widehat{\Rel_\Gamma}_\superpose$
 are complete, this immediately guarantees the existence of a derivative for $\denote{T}$.
 
 Unfortunately, this does not necessarily provide us with a way to compute an \emph{efficient} 
 derivative for $\denote{T}$. The precise derivative that we know how to compute relies on
 a minus operator:
 \begin{displaymath}
-  \derive{f}_{\cminus_\bot}(a, \change{a}) = f(a \cplus \change{a}) \cminus_\bot f(a)
+  \derive{f}_{\cminus_\kernel}(a, \change{a}) = f(a \cplus \change{a}) \cminus_\kernel f(a)
 \end{displaymath}
 
 Naively computed, this expression requires computing $f(a \cplus \change{a})$
 itself, which is the very thing we were trying to avoid computing!
 
-Of course, given a concrete definition of $\cminus_\bot$ we can simplify this
+Of course, given a concrete definition of $\cminus_\kernel$ we can simplify this
 expression and hopefully make it easier to compute. But we also know from
 \cref{cor:booleanCharacterization} that \emph{any} function bounded by
 $\derive{f}_{\cminus_\bot}$ and $\derive{f}_{\cminus_\top}$ is a valid derivative,
@@ -845,15 +900,12 @@ We will make use of an auxilliary function, $\bothdiff$, which computes the
   There is a symmetry between the cases for $\wedge$ and $\vee$ between $\updiff$
   and $\downdiff$, but the cases for $\exists$ look quite different.
   This is because our dialect of Datalog does not have a primitive universal quantifier.
-  If we did have one, its cases would be dual to those for $\exists$, namely:
-  \begin{align*}
-  \updiff(\forall x.T) &= \exists x. \updiff(T) \wedge \forall x. \bothdiff(T)\\
-  \downdiff(\forall x.T) &= \exists x. \downdiff(T)
-  \end{align*}}
+  If we did have one, its cases would be dual to those for $\exists$.}
 
-  Then for any Datalog formula $T$, 
-  $\derive{\denote{T}} \defeq (\denote{\updiff(T)}, \denote{\downdiff(T)})$
-  is a derivative for $\denote{T}$.
+  Then for any schema $\Gamma$ and any Datalog formula $T$ whose free term variables are contained
+  in $\Gamma$,
+  $\derive{\denote{T}_\Gamma} \defeq (\denote{\updiff(T)}_\Gamma, \denote{\downdiff(T)}_\Gamma)$
+  is a derivative for $\denote{T}_\Gamma$.
 \end{thm}
 \ifproofs
 \begin{proof}
@@ -864,6 +916,7 @@ We will make use of an auxilliary function, $\bothdiff$, which computes the
 \begin{figure}
   \fbox{
     \begin{minipage}[t]{0.9\textwidth}
+    \vspace{-5pt}
     \begin{minipage}[t]{.45\textwidth}
       \begin{align*}
         \updiff(\bot) \defeq& \bot\\
@@ -888,7 +941,7 @@ We will make use of an auxilliary function, $\bothdiff$, which computes the
         \downdiff(\exists x.T) \defeq& \exists x.\downdiff(T) \wedge \neg \exists x.\bothdiff(T)
       \end{align*}
     \end{minipage}
-    \vspace{12pt}
+    \vspace{6pt}
     \begin{align*}
       \bothdiff(X) \defeq X \twist (\updiff(X), \downdiff(X))
     \end{align*}
@@ -896,6 +949,7 @@ We will make use of an auxilliary function, $\bothdiff$, which computes the
   }
   \caption{Upwards and downwards formula derivatives for Datalog}
   \label{fig:datalogDerivatives}
+  \vspace{-12pt}
 \end{figure}
 
 \subsubsection{Examples}
@@ -1004,14 +1058,16 @@ $A \rightarrow B$.
 \begin{prop}[Differentiability and functional change actions]
   \label{prop:differentiableFunctionalChanges}
   Let $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$ be a functional change action. Then every 
-  $f \in U$ is differentiable, with a derivative $f'$ given by:
+  $f \in U$ is differentiable, with a derivative $\derive{f}$ given by:
   \begin{displaymath}
-    f'(x, \change{x}) = \ev'((f, x), (0, \change{x}))
+    \derive{f}(x, \change{x}) = \derive{\ev}((f, x), (0, \change{x}))
   \end{displaymath}
 \end{prop}
 
-\todompj{Is this useful? Surely you can just do $f \cplus \change{f}$ normally?}
-
+\iffalse
+\todomario{
+  The rest of this section won't go into the actual paper and can be deleted safely.
+}
 Conversely, the derivative of the evaluation map can also be used to compute the effect of a given
 function change $\delta f$:
 \begin{prop}[Evaluating function changes]
@@ -1021,13 +1077,6 @@ function change $\delta f$:
     (f \cplus \delta f)(x) = f(x) \cplus \ev'((f, x), (\delta f, 0))
   \end{displaymath}
 \end{prop}
-
-\todomario{
-  There's a classification theorem here, but it's a bit tricky and I'm not sure it's worth including.
-  It's here for completeness' sake.
-}
-
-\todompj{What is $\upsilon$? Also missing $0_\Rightarrow$, generally seems incomplete.}
 
 \begin{prop}[Functional change sets]
   Let $\cstr{A}$ and $\cstr{B}$ be change actions and $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$
@@ -1051,24 +1100,20 @@ function change $\delta f$:
     \end{gather*}
   \end{itemize}
 \end{prop}
+\fi
 
 \subsection{Pointwise functional change actions}
 \label{sec:pointwiseFunctional}
 
-\todompj{Wasn't $\cstr{A} \rightarrow \cstr{B}$ going to be differentiable
-  functions? We've drifted from that now, we should pick one thing.}
-
 As we shall see later in \cref{sec:category}, one can always find functional change actions on the set
-of differentiable functions between $\cstr{A}$ and $\cstr{B}$ (which we will denote by 
-$\cstr{A} \difffunc \cstr{B}$ to distinguish it from the set-theoretic function space
-$A \rightarrow B$), but these can be unwieldy for 
+of differentiable functions $\cstr{A} \rightarrow \cstr{B}$, but these can be unwieldy for 
 the purpose of actual computation. Fortunately, in many cases there is a simple
 way of representing spaces of differentiable functions.
 
 \begin{defn}[Pointwise functional change actions]
   Let $\cstr{A}$ and $\cstr{B}$ be change actions. The \emph{pointwise functional change action} 
   $\cstr{A} \ptfunc \cstr{B}$, when it is defined,
-  is given by $(\cstr{A} \difffunc \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$, with
+  is given by $(\cstr{A} \rightarrow \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$, with
   the monoid structure $(A \rightarrow \changes{B}, \splus_\rightarrow, 0_\rightarrow)$ and the action 
   $\cplus_\rightarrow$ defined by:
   \begin{align*}
@@ -1078,7 +1123,7 @@ way of representing spaces of differentiable functions.
   \end{align*}
 \end{defn}
 
-The above definition isn't always well-typed, since given $f : \cstr{A} \difffunc \cstr{B}$ and
+The above definition isn't always well-typed, since given $f : \cstr{A} \rightarrow \cstr{B}$ and
 $\delta f : A \rightarrow \changes{B}$ there is, in general, no guarantee that 
 $f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteria that enforce this:
 
@@ -1092,7 +1137,7 @@ $f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteri
       $\cplus_B$ is differentiable as a map from $\cstr{B} \times \widehat{\changes{B}}$ into $\cstr{B}$
   \end{itemize}
   Then the pointwise functional change action 
-  $(\cstr{A} \difffunc \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$ is well defined. 
+  $(\cstr{A} \rightarrow \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$ is well defined. 
   (Moreover, it is the exponentiation object (up to unique isomorphism) from $\cstr{A}$ to $\cstr{B}$ in the category of change actions and differentiable functions (Section~\ref{sec:exponentials}).)
   \footnote{
     Either of these conditions is enough to guarantee that the pointwise functional change action
@@ -1108,7 +1153,7 @@ compute.
 \label{prop:evDerivatives}
   Let $\cstr{A}$ and $\cstr{B}$ be change actions such that the pointwise functional change action
   $\cstr{A} \ptfunc \cstr{B}$ is well defined, and let
-  $f: \cstr{A} \difffunc \cstr{B}$,
+  $f: \cstr{A} \rightarrow \cstr{B}$,
   $a \in A$, $\change{a} \in \changes{A}$,
   $\change{f} \in A \rightarrow \changes{B}$.
 
@@ -1263,9 +1308,7 @@ The following theorems provide a
 generalization of semi-naive evaluation to any differentiable function over a
 continuous change action. Throughout this section we will assume that we have a contiuous change action
 $\cstr{A}$, and any reference to the change action $\cstr{\NN}$ will refer to the obvious monoidal
-change action.
-
-\todompj{backreference for $\cstr{\NN}$}
+change action on the naturals defined in \cref{sec:examples}.
 
 Since we are trying to incrementalize the iterative step, we start by taking the partial
 derivative of $\iter$ with respect to $n$.
@@ -1444,9 +1487,6 @@ Which has the property that
 
 This indeed provides us with a function whose limit we can take, showing
 that $\derive{\lfp}$ is a true derivative.
-
-\todompj{I think we can simplify this a bit, in particular $f$ being continuous
-  and differentiable is now implied, I think.}
 
 \begin{thm}[name=Derivatives of least fixpoint operators, restate=leastFixpointDerivatives]
   \label{thm:leastFixpointDerivatives}
@@ -1724,7 +1764,6 @@ because we need to ensure that $f \cplus \change{f}$ continues to be a
 differentiable function. Fortunately, under some circumstances these correspond
 to the pointwise functional change actions we saw earlier (in \cref{sec:pointwiseFunctional}).
 
-\todomario{Not super happy about calling these ``pointwise'' - maybe convenient? (by analogy to convenient vector spaces)}
 \begin{defn}[Convenient change actions]
   \label{def:convenientChangeActions}
   A change action $\cstr{B}$ is convenient if every exponential object
@@ -1762,17 +1801,10 @@ Fortunately, convenient change actions form a relatively large subcategory of $\
   See \cref{prf:pointwiseComplete}.
 \fi
 
-\todomario{
-  Beware this part, we should give the reflector explicitly and prove it preserves products.
-  It is in fact much easier to establish this fact directly by showing $A \Rightarrow B$ is
-  complete whenever $B$ is.
-}
-Since the complete change actions are a reflective subcategory of
-$\cat{CAct}$ (with the reflector being the ``completion'' of a change action,
-i.e. any complete change action, which we can always find), the complete change
-actions form a Cartesian closed category of pointwise change actions.
+Since the product and exponential of complete change actions is also complete,  the complete change
+actions are a Cartesian closed full subcategory of $\cat{CAct}$ which is, in fact equivalent
+to $\cat{Set}$ (as every set-theoretic function between complete change actions is differentiable).
 
-\todomario{This is new, and it's kind of cool. It's also trivial to prove}
 Furthermore, it can be shown that convenient change actions are themselves a Cartesian closed
 subcategory of $\cat{CAct}$, and therefore constitute a viable setting for general, higher-order
 incremental computation.
@@ -2131,19 +2163,11 @@ helpful comments on the manuscript.
 \subsection {Derivatives of Datalog formulae}
 \concreteDatalog*
 \begin{proof}
-  \newcommand{\sem}[1]{\denote{#1}}
   \label{prf:concreteDatalog}
   Let $T$ be a Datalog formula with free relation variables $R_1, \ldots, R_n$,
   a choice of a semantics for the free relation variables $\sem{R_1}, \ldots, \sem{R_n} : \Rel$
   and differences $\change{R_1}, \ldots, \change{R_n} : \Rel \disjointTimes \Rel$.
 
-  
-  \newcommand{\upsem}[1]{\sem{\updiff{#1}}}
-  \newcommand{\downsem}[1]{\sem{\downdiff{#1}}}
-  \newcommand{\bothsem}[1]{\sem{\bothdiff{#1}}}
-
-  \newcommand{\semR}[0]{\mathcal{R}}
-  \newcommand{\diffR}[0]{\change{\semR}}
   For clarity, we refer to the tuple $(\sem{R_1}, \ldots, \sem{R_n})$ as $\semR$ and
   the tuple $(\change{R_1}, \ldots, \change{R_n})$ as $\diffR$. We abuse the notation
   and refer to $(\sem{R_1} \twist \change{R_1}, \ldots, \sem{R_n} \twist \change{R_n})$
@@ -2166,7 +2190,7 @@ helpful comments on the manuscript.
   \begin{align*}
     &\sem{T \wedge U}(\semR \twist \diffR)\\
     %
-    &= \sem{T}(\semR \twist \diffR) \cap \sem{U}(\semR \twist \diffR)\\
+    &= \sem{T}(\semR \twist \diffR) \cap \sem{U}(\semR \twist \diffR) \tag{semantics of $\wedge$}\\
     %
     &= \sem{T}(\semR) \twist (\upsem{T}, \downsem{T}) 
       \cap \sem{U}(\semR) \twist (\upsem{U}, \downsem{U}) \tag{induction hypothesis}\\
@@ -2204,9 +2228,19 @@ helpful comments on the manuscript.
       \twist (\upsem{(T \wedge U)}, \downsem{(T \wedge U)}) \tag{definition of $\downdiff{}$}
   \end{align*}
   
-  Disjunction: like conjunction.
+  Disjunction: identical to conjunction.
   
   Negation:
+  \begin{align*}
+    &\sem{\neg T}(\semR \twist \diffR)\\
+    &= \neg \sem{T}(\semR \twist \diffR) \tag{semantics of $\neg$}\\
+    &= \neg ((\sem{T}(\semR) \cup \upsem{T}) \cap \neg \downsem{T}) \tag{definition of $\twist$}\\
+    &= \neg (\sem{T}(\semR) \cup \upsem{T}) \cup \downsem{T} \tag{Boolean algebra}\\
+    &= \neg \sem{T}(\semR) \cap \neg \upsem{T} \cup \downsem{T} \tag{Boolean algebra}\\
+    &= (\neg \sem{T}(\semR) \cup \downsem{T}) \cap \neg \upsem{T} \tag{disjointness of $\upsem{}, \downsem{}$}\\
+    &= \sem{\neg T}(\semR) \twist (\downsem{T}, \upsem{T}) \tag{definition of $\twist$}\\
+    &= \sem{\neg T}(\semR) \twist (\upsem{\neg T}, \downsem{\neg T}) \tag{definition of $\updiff{}, \downdiff{}$}
+  \end{align*}
 
   Existential:
 
