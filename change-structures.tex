@@ -580,7 +580,8 @@ a change action in the category of posets and monotone maps.}
   A change action $\cstr{A}$ is \emph{ordered} if
   \begin{itemize}
     \item $A$ and $\changes{A}$ are posets.
-    \item $\cplus$ and $\splus$ are monotone in both arguments.
+    \item $\cplus$ is monotone as a map from $A \times \changes{A} \rightarrow A$
+    \item $\splus$ is monotone as a map from $\changes{A} \times \changes{A} \rightarrow \changes{A}$
   \end{itemize}
 \end{defn}
 
@@ -1146,7 +1147,7 @@ $f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteri
     \item $\cstr{B}$ is a complete change action.
     \item The change action $\widehat {\changes{B}} \defeq (\Delta B, \Delta B, \splus_B)$ is 
       complete and 
-      $\cplus_B$ is differentiable as a map from $\cstr{B} \times \widehat{\changes{B}}$ into $\cstr{B}$
+      $\cplus_B$ is differentiable as a map from $B \times \changes{B}$ into $B$
   \end{itemize}
   Then the pointwise functional change action 
   $(\cstr{A} \rightarrow \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$ is well defined. 
@@ -1207,7 +1208,8 @@ the maps $\cplus$, $\splus$ are continuous.
   A change action $\cstr{A}$ is \emph{continuous} if
   \begin{itemize}
     \item $A$ and $\changes{A}$ are dcpos.
-    \item $\cplus$ and $\splus$ are Scott-continuous in both arguments.
+    \item $\cplus$ is Scott-continuous as a map from $A \times \changes{A} \rightarrow A$.
+    \item $\cplus$ is Scott-continuous as a map from $\changes{A} \times \changes{A} \rightarrow \changes{A}$.
   \end{itemize}
 \end{defn}
 
