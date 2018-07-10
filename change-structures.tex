@@ -535,6 +535,27 @@ another:
   $\cstr{A}_2$.
 \end{prop}
 
+\subsection{Kernels and precision}
+
+\begin{defn}[Kernel]
+  Let $\cstr{A}$ be a change action and $\change{a} \in \changes{A}$. Then the
+  \emph{kernel} of $\change{a}$ is an equivalence relation $\kernel_{\change{a}}
+  : \mathcal{P}(A \times A)$ defined by
+  \begin{displaymath}
+    a \kernel_{\change{a}} b \Leftrightarrow a \cplus \change{a} = b \cplus \change{a}
+  \end{displaymath}
+
+  The \emph{kernel ordering} on $\changes{A}$ is defined by
+  \begin{displaymath}
+    \change{a} \kernelOrder \change{b} \Leftrightarrow \kernel_{\change{a}} \subseteq \kernel_{\change{b}}
+  \end{displaymath}
+
+  The \emph{kernel ordering} on derivatives is defined pointwise.
+\end{defn}
+
+As we will see later (\cref{sec:booleanAlgebras}), minimal derivatives under
+the kernel order correspond to ``precise'' derivatives
+
 \section{Posets and Boolean algebras}
 \label{sec:moreStructures}
 
@@ -615,28 +636,6 @@ characterisation of all the derivatives for a function.
 This theorem gives us the leeway that we need when trying to pick a derivative: we can pick out the
 bounds, and that tells us how much ``wiggle room'' we have above and below.
 
-\subsubsection{Precision}
-
-The change preorder corresponds to a natural notion of precision: if $\change{a}
-\changeOrder \change{b}$, then $\change{b}$ produces ``bigger'' updates than
-$\change{a}$, and there is some additional information in it that is being
-ignored even when $c \cplus \change{a} = c \cplus \change{b}$.
-
-For example, in $\cstruct{\mathcal{P}(A)}{\mathcal{P}(A)}{\cup}$, $\{1\} \changeOrder \{1,2\}$. Even
-though $\{2\} \cplus \{1\} = \{2\} \cplus \{1,2\} = \{1,2\}$, the second change is
-imprecise because it adds in 2 even though it was already present.
-
-\begin{defn}[Precision of derivatives]
-  \label{def:precision}
-  A derivative is precise if it is minimal with respect to $\changeOrder$.
-\end{defn}
-
-This gives us a sense in which \cref{thm:derivativeCharacterization} is an
-\emph{approximation} theorem \textemdash{} it lets us pick out a sound range of
-derivatives bounded below by a precise derivative. This means we can trade off
-precision for other desirable operational properties, such as how easy the
-derivative is to compute.
-
 \subsection{Boolean algebras}
 \label{sec:booleanAlgebras}
 
@@ -715,6 +714,25 @@ all the derivatives on Boolean algebras:
 This makes \cref{thm:derivativeCharacterization} actually usable in practice, since
 we have concrete definitions for our bounds (which we will make use of in \cref{sec:datalogDifferentiability}).
 
+Moreover, we have one more minus operator that gives us a \emph{precise}
+derivative.
+
+\todompj{PROVE THIS - is this even true?}
+
+\begin{prop}
+  Let $L$ be a (complete) Boolean algebra with the $\cstr{L}_\superpose$ change action, and
+  $f: A \rightarrow L$ a function.
+  Then, the following is a minus operator:
+  \begin{align*}
+    a \cminus_\kernel b &= (a \wedge \neg b, b \wedge \neg a)\\
+  \end{align*}
+
+  Moreover $\derive{f}_{\cminus_\kernel}$ is a minimal derivative of $f$ with respect to $\kernelOrder$.
+\end{prop}
+
+This derivative is precise in the sense that the components are as small as
+possible (in the usual Boolean algebra ordering).
+
 \section{Derivatives for non-recursive Datalog}
 \label{sec:nonRecursiveDatalog}
 
@@ -789,13 +807,13 @@ Unfortunately, this does not necessarily provide us with a way to compute an \em
 derivative for $\denote{T}$. The precise derivative that we know how to compute relies on
 a minus operator:
 \begin{displaymath}
-  \derive{f}_{\cminus_\bot}(a, \change{a}) = f(a \cplus \change{a}) \cminus_\bot f(a)
+  \derive{f}_{\cminus_\kernel}(a, \change{a}) = f(a \cplus \change{a}) \cminus_\kernel f(a)
 \end{displaymath}
 
 Naively computed, this expression requires computing $f(a \cplus \change{a})$
 itself, which is the very thing we were trying to avoid computing!
 
-Of course, given a concrete definition of $\cminus_\bot$ we can simplify this
+Of course, given a concrete definition of $\cminus_\kernel$ we can simplify this
 expression and hopefully make it easier to compute. But we also know from
 \cref{cor:booleanCharacterization} that \emph{any} function bounded by
 $\derive{f}_{\cminus_\bot}$ and $\derive{f}_{\cminus_\top}$ is a valid derivative,
