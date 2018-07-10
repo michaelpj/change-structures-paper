@@ -1,0 +1,66 @@
+%!TEX root = change-structures.tex
+
+\newcommand{\abs}[2]{\lambda #1.{#2}}
+
+\newcommand{\boolsort}{o}
+\newcommand{\intsort}{\iota}
+\newcommand{\mng}[1]{\llbracket #1 \rrbracket}
+\newcommand{\mmng}[1]{\mathcal{M}\llbracket #1 \rrbracket}
+\newcommand{\cmng}[1]{\mathcal{C}\llbracket #1 \rrbracket}
+\newcommand{\smng}[1]{\mathcal{S}\llbracket #1 \rrbracket}
+\newcommand\makeset[1]{\{#1\}}
+\newcommand\disjointTimesS{\disjointTimes_S}
+\newcommand\twistS{\twist_S}
+\newcommand\superposeS{{\superpose_S}}
+
+\subsection{Extension to higher-order datalog}
+
+For the syntax of higher-order logic, we use a standard presentation as a simply-typed $\lambda$-calculus with \emph{types}
+\[
+\sigma \; ::= \; \boolsort \mid \intsort \mid \sigma_1 \to \sigma
+\]
+and \emph{logical constants}: $\neg, \wedge, \vee, \forall_\sigma, \exists_\sigma$, etc.
+\[ \neg : \boolsort \to \boolsort \qquad \forall_\sigma, \exists_\sigma : (\sigma \to \boolsort) \to \boolsort\]
+Standardly we write $\exists_\sigma(\abs{x\!\!:\!\!\sigma}{M})$ as $\exists x\!\!:\!\!\sigma .\, M$.
+Relational types are defined as:
+\[
+\rho \; ::= \; \intsort \to \boolsort \mid \intsort \to \rho \mid \rho \to \rho'
+\]
+Note that relational types are types that have the $\boolsort$ as the result type.
+
+\subsubsection{Semantics of types, terms and formulas: standard, monotone and continuous}
+The \emph{standard semantics} of types $\smng{\sigma}$ is defined as follows.
+\[
+\begin{array}{rll}
+%  \smng{\mathsf{one}} & \coloneqq  & \makeset{\star} \\  
+  \smng{\boolsort} & \coloneqq  & \makeset{0, 1} \\ 
+  \smng{\intsort} & \coloneqq  & \mathbb{Z} \\
+  \smng{\sigma_1 \to \sigma_2} & \coloneqq  & \smng{\sigma_1} \to \smng{\sigma_2} \quad \hbox{(set-theoretic function space)}
+\end{array}
+\]
+The \emph{monotone semantics} $\mmng{\sigma}$ is defined similarly: $\mmng{\boolsort} := (\makeset{\bot, \top}, \leq)$; $\mmng{\intsort} := (\mathbb{Z}, =)$; and $\mmng{\sigma_1 \to \sigma_2} := (\mmng{\sigma_1} \to_{\rm m} \mmng{\sigma_2}, \leq)$, the monotone function space.
+
+The \emph{continuous semantics} $\cmng{\sigma}$ is also defined similarly: $\cmng{\boolsort} := (\makeset{\bot, \top}, \leq)$; $\cmng{\intsort} := (\mathbb{Z}, =)$; and $\cmng{\sigma_1 \to \sigma_2} := (\cmng{\sigma_1} \to_{\rm c} \cmng{\sigma_2}, \leq)$, the Scott-continuous function space.
+
+The semantics of terms and formula-terms are defined standardly. 
+\lo{TODO}
+
+\begin{prop}[name=Scott change actions, restate=hodatalog]
+ Let $L$ be a poset. Define
+  \begin{displaymath}
+    \cstr{L}_\superposeS \defeq \cstruct{L}{L \disjointTimesS L}{\twistS}
+  \end{displaymath}
+  where
+  \begin{align*}
+    L \disjointTimesS L &\defeq \{ (a, b) \in A \times B \mid a \wedge b = \bot \}\\
+    a \twist (p, q) &\defeq (a \vee p) \wedge \neg q
+  \end{align*}
+  and the monoid operator is
+  \begin{displaymath}
+    (p, q) \splus (r, s) \defeq ((p \wedge \neg s) \vee r, (q \wedge \neg r) \vee s)
+  \end{displaymath}
+  with identity element $(\top, \bot)$.
+
+  Then $\cstr{L}_\superpose$ is a complete change action on $L$.
+\end{prop}
+
