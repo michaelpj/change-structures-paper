@@ -26,6 +26,7 @@
 \newcommand{\equalizer}[2]{Eq(#1, #2)}
 \newcommand{\powerset}[1]{\mathcal{P}(#1)}
 \newcommand{\denote}[1]{\llbracket #1 \rrbracket}
+\newcommand{\sem}[1]{\denote{#1}} % Small abbreviation
 \newcommand{\ev}{\operatorname{ev}}
 \newcommand{\id}{\operatorname{id}}
 \newcommand{\doubleplus}{\ensuremath{\mathbin{+\mkern-10mu+}}}
@@ -74,6 +75,13 @@
 
 \newcommand{\NN}{\mathbb{N}}
 \newcommand{\ZZ}{\mathbb{Z}}
+  
+\newcommand{\upsem}[1]{\sem{\updiff{#1}}}
+\newcommand{\downsem}[1]{\sem{\downdiff{#1}}}
+\newcommand{\bothsem}[1]{\sem{\bothdiff{#1}}}
+
+\newcommand{\semR}[0]{\mathcal{R}}
+\newcommand{\diffR}[0]{\change{\semR}}
 
 % Some kinds of function spaces
 \newcommand{\ra}{\rightarrow}

@@ -581,7 +581,7 @@ order interacts nicely with derivatives, in that it gives us the following lemma
 \begin{thm}[Sandwich lemma]
   \label{thm:sandwich}
   Let $\cstr{A}$ be an change action, $\cstr{B}$ be an ordered change action,
-  $f: \cstr{A} \rightarrow \cstr{B}$, and $g: A \time \changes{A} \rightarrow
+  $f: \cstr{A} \rightarrow \cstr{B}$, and $g: A \times \changes{A} \rightarrow
   \changes{B}$. If $\supderive{f}$ and $\subderive{f}$ are
   derivatives for $f$ such that
   \begin{displaymath}
@@ -735,52 +735,81 @@ real and pressing, as we saw in \cref{sec:intro}.
 Datalog is usually given a logical semantics where formulae are interpreted as first-order
 logic predicates and the semantics of a program is the set of models of its constituent
 predicates. We will instead give a simpler denotational semantics that treats a Datalog
-formula (and later, a Datalog program) as directly denoting a family of relations.
+formula (and later, a Datalog program) as directly denoting a relation, i.e.
+a set of named tuples over a certain schema.
 
 We will adopt the usual closed-world assumption to give a denotation to negation.
 
 \begin{defn}[Closed-world assumption and negation]
-  There exists a universal relation $\universalRel$.
+  For any schema $\Gamma$ (i.e. a finite set of names),
+  there exists a universal relation $\universalRel_\Gamma$.
 
   Negation on relations is defined as
   \begin{displaymath}
-    \neg R \defeq \universalRel \setminus R
+    \neg R \defeq \universalRel_\Gamma \setminus R
   \end{displaymath}
 \end{defn}
 
-This makes $\Rel$, the set of all relations over $\universalRel$, into a
-complete Boolean
-algebra.\footnote{Technically we need to use the set of relations of a given
-  arity. In practice it is easy to make the arities match up, and we will gloss
-  over them for clarity.}
+This makes $\Rel_\Gamma$, the set of all subsets of $\universalRel_\Gamma$ with schema $\Gamma$,
+into a complete Boolean algebra.
 
 The semantics of Datalog formulae are usually given in terms of satisfaction by
 structures. We would like to use a more denotational semantics (as is typical
-when working with fixpoints \autocite[see e.g.][]{compton1994stratified}). We are
-going to parameterize by the parts of the structure that are usually variable,
-namely the assignments to variables and relation variables. We will assume we
-are otherwise working in the context of an ambient structure $\Phi$ that
-provides our universe and interpretation of constants.
+when working with fixpoints \autocite[see e.g.][]{compton1994stratified}). We give a semantics
+which is parmeterized by the assignments to the free relation variables.
+
+\begin{figure}
+  \fbox{
+    \begin{minipage}[t]{0.9\textwidth}
+      \vspace{-5pt}
+      \begin{minipage}[t]{.45\textwidth}
+      \begin{align*}
+        \sem{\top}_\Gamma(\semR) &\defeq \universalRel_\Gamma\\
+        \sem{\bot}_\Gamma(\semR) &\defeq \emptyset\\
+        \sem{R_j}_\Gamma(\semR) &\defeq \semR_j\\
+      \end{align*}
+    \end{minipage}\hfill\noindent
+    \begin{minipage}[t]{.45\textwidth}
+      \begin{align*}
+        \sem{T \wedge U}_\Gamma(\semR) &\defeq \sem{T}_\Gamma(\semR) \cap \sem{U}_\Gamma(\semR)\\
+        \sem{T \vee U}_\Gamma(\semR) &\defeq \sem{T}_\Gamma(\semR) \cup \sem{U}_\Gamma(\semR)\\
+        \sem{\neg T}_\Gamma(\semR) &\defeq \universalRel_\Gamma \setminus \sem{T}_\Gamma(\semR)\\
+      \end{align*}
+    \end{minipage}
+    \vspace{-12pt}
+    \begin{align*}
+      \sem{\exists x . T}_\Gamma(\semR) &\defeq \sigma(\sem{T}_{\Gamma, x})
+    \end{align*}
+    \end{minipage}
+  }
+  \caption{Formula semantics for Datalog}
+  \label{fig:datalogSemantics}
+  \vspace{-12pt}
+\end{figure}
 
 \begin{defn}[Formula semantics]
-  A Datalog formula $T$ denotes a function from its free relation variables to
-  $\Rel$.
-  \begin{align*}
-    &\denote{\_} : \Formula \rightarrow \Rel^n \rightarrow \Rel\\
-    &\denote{T}(R_1, \dots, R_n) = \left\{ \left(a_1, \dots a_m \right) \mid \Phi \models T\left[R_1, \dots R_n, a_1, \dots a_m \right] \right\}
-  \end{align*}
+  A Datalog formula $T$ whose free term variables are contained in $\Gamma$ denotes a function from 
+  its free relation variables $R_1, \ldots, R_n$ 
+  to $\Rel_\Gamma$.
+  \begin{displaymath}
+    \denote{\_}_\Gamma : \Formula_\Gamma \rightarrow \Rel_\Gamma^n \rightarrow \Rel_\Gamma
+  \end{displaymath}
+  If $\semR = (\semR_1, \ldots, \semR_n)$ is a choice of a relation for each of the variables $R_i$,
+  $\denote{T}(\semR)$ is inductively defined according to the rules in \cref{fig:datalogSemantics}.
 \end{defn}
 
-Since $\Rel$ is a complete Boolean algebra, and so is $\Rel^n$, $\denote{T}$ is
-a function between complete Boolean algebras.
+Since $\Rel_\Gamma$ is a complete Boolean algebra, and so is $\Rel_\Gamma^n$, $\denote{T}_\Gamma$ is
+a function between complete Boolean algebras. For brevity, we will often leave the schema implicit,
+as it is clear from the context.
 
 \subsection{Differentiability of Datalog formula semantics}
 \label{sec:datalogDifferentiability}
 
 In order to perform incremental evaluation, we first need to provide derivatives for the semantics
-of Datalog formulae. Since $\denote{T}$ is a function between the complete Boolean algebras $\Rel^n$ and
-$\Rel$, and we know that the corresponding change actions 
-$\widehat{\Rel^n}_\superpose, \widehat{\Rel}_\superpose$
+of Datalog formulae. Since $\denote{T}_\Gamma$ is a function between the complete Boolean algebras 
+$\Rel_\Gamma^n$ and
+$\Rel_\Gamma$, and we know that the corresponding change actions 
+$\widehat{\Rel_\Gamma^n}_\superpose, \widehat{\Rel_\Gamma}_\superpose$
 are complete, this immediately guarantees the existence of a derivative for $\denote{T}$.
 
 Unfortunately, this does not necessarily provide us with a way to compute an \emph{efficient} 
@@ -850,15 +879,12 @@ We will make use of an auxilliary function, $\bothdiff$, which computes the
   There is a symmetry between the cases for $\wedge$ and $\vee$ between $\updiff$
   and $\downdiff$, but the cases for $\exists$ look quite different.
   This is because our dialect of Datalog does not have a primitive universal quantifier.
-  If we did have one, its cases would be dual to those for $\exists$, namely:
-  \begin{align*}
-  \updiff(\forall x.T) &= \exists x. \updiff(T) \wedge \forall x. \bothdiff(T)\\
-  \downdiff(\forall x.T) &= \exists x. \downdiff(T)
-  \end{align*}}
+  If we did have one, its cases would be dual to those for $\exists$.}
 
-  Then for any Datalog formula $T$, 
-  $\derive{\denote{T}} \defeq (\denote{\updiff(T)}, \denote{\downdiff(T)})$
-  is a derivative for $\denote{T}$.
+  Then for any schema $\Gamma$ and any Datalog formula $T$ whose free term variables are contained
+  in $\Gamma$,
+  $\derive{\denote{T}_\Gamma} \defeq (\denote{\updiff(T)}_\Gamma, \denote{\downdiff(T)}_\Gamma)$
+  is a derivative for $\denote{T}_\Gamma$.
 \end{thm}
 \ifproofs
 \begin{proof}
@@ -869,6 +895,7 @@ We will make use of an auxilliary function, $\bothdiff$, which computes the
 \begin{figure}
   \fbox{
     \begin{minipage}[t]{0.9\textwidth}
+    \vspace{-5pt}
     \begin{minipage}[t]{.45\textwidth}
       \begin{align*}
         \updiff(\bot) \defeq& \bot\\
@@ -893,7 +920,7 @@ We will make use of an auxilliary function, $\bothdiff$, which computes the
         \downdiff(\exists x.T) \defeq& \exists x.\downdiff(T) \wedge \neg \exists x.\bothdiff(T)
       \end{align*}
     \end{minipage}
-    \vspace{12pt}
+    \vspace{6pt}
     \begin{align*}
       \bothdiff(X) \defeq X \twist (\updiff(X), \downdiff(X))
     \end{align*}
@@ -901,6 +928,7 @@ We will make use of an auxilliary function, $\bothdiff$, which computes the
   }
   \caption{Upwards and downwards formula derivatives for Datalog}
   \label{fig:datalogDerivatives}
+  \vspace{-12pt}
 \end{figure}
 
 \subsubsection{Examples}
@@ -2134,19 +2162,11 @@ helpful comments on the manuscript.
 \subsection {Derivatives of Datalog formulae}
 \concreteDatalog*
 \begin{proof}
-  \newcommand{\sem}[1]{\denote{#1}}
   \label{prf:concreteDatalog}
   Let $T$ be a Datalog formula with free relation variables $R_1, \ldots, R_n$,
   a choice of a semantics for the free relation variables $\sem{R_1}, \ldots, \sem{R_n} : \Rel$
   and differences $\change{R_1}, \ldots, \change{R_n} : \Rel \disjointTimes \Rel$.
 
-  
-  \newcommand{\upsem}[1]{\sem{\updiff{#1}}}
-  \newcommand{\downsem}[1]{\sem{\downdiff{#1}}}
-  \newcommand{\bothsem}[1]{\sem{\bothdiff{#1}}}
-
-  \newcommand{\semR}[0]{\mathcal{R}}
-  \newcommand{\diffR}[0]{\change{\semR}}
   For clarity, we refer to the tuple $(\sem{R_1}, \ldots, \sem{R_n})$ as $\semR$ and
   the tuple $(\change{R_1}, \ldots, \change{R_n})$ as $\diffR$. We abuse the notation
   and refer to $(\sem{R_1} \twist \change{R_1}, \ldots, \sem{R_n} \twist \change{R_n})$
@@ -2169,7 +2189,7 @@ helpful comments on the manuscript.
   \begin{align*}
     &\sem{T \wedge U}(\semR \twist \diffR)\\
     %
-    &= \sem{T}(\semR \twist \diffR) \cap \sem{U}(\semR \twist \diffR)\\
+    &= \sem{T}(\semR \twist \diffR) \cap \sem{U}(\semR \twist \diffR) \tag{semantics of $\wedge$}\\
     %
     &= \sem{T}(\semR) \twist (\upsem{T}, \downsem{T}) 
       \cap \sem{U}(\semR) \twist (\upsem{U}, \downsem{U}) \tag{induction hypothesis}\\
@@ -2207,9 +2227,19 @@ helpful comments on the manuscript.
       \twist (\upsem{(T \wedge U)}, \downsem{(T \wedge U)}) \tag{definition of $\downdiff{}$}
   \end{align*}
   
-  Disjunction: like conjunction.
+  Disjunction: identical to conjunction.
   
   Negation:
+  \begin{align*}
+    &\sem{\neg T}(\semR \twist \diffR)\\
+    &= \neg \sem{T}(\semR \twist \diffR) \tag{semantics of $\neg$}\\
+    &= \neg ((\sem{T}(\semR) \cup \upsem{T}) \cap \neg \downsem{T}) \tag{definition of $\twist$}\\
+    &= \neg (\sem{T}(\semR) \cup \upsem{T}) \cup \downsem{T} \tag{Boolean algebra}\\
+    &= \neg \sem{T}(\semR) \cap \neg \upsem{T} \cup \downsem{T} \tag{Boolean algebra}\\
+    &= (\neg \sem{T}(\semR) \cup \downsem{T}) \cap \neg \upsem{T} \tag{disjointness of $\upsem{}, \downsem{}$}\\
+    &= \sem{\neg T}(\semR) \twist (\downsem{T}, \upsem{T}) \tag{definition of $\twist$}\\
+    &= \sem{\neg T}(\semR) \twist (\upsem{\neg T}, \downsem{\neg T}) \tag{definition of $\updiff{}, \downdiff{}$}
+  \end{align*}
 
   Existential:
 
