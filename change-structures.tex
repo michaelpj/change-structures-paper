@@ -245,11 +245,9 @@ actions.}
 
 \begin{defn}[Change actions]
   A \emph{change action} is defined as:
-
   \begin{displaymath}
     \cstr{A} \defeq \cstruct{A}{\changes{A}}{\cplus_A}
   \end{displaymath}
-
   where $A$ is a set, $\changes{A}$ is a monoid, and $\cplus_A : A \times \changes{A} \rightarrow A$ is a monoid action on $A$.\footnote{Why not
     just work with monoid actions? The reason is that while the category of
     monoid actions and the category of change actions have the same objects, they
@@ -323,7 +321,6 @@ $f(a)$ to $f(a \cplus \change{a})$. We call this a \emph{derivative} of a functi
   \begin{displaymath}
     f(a \cplus_A \change{a}) = f(a) \cplus_B \derive{f}(a, \change{a})
   \end{displaymath}
-
   A function which has a derivative is 
   \emph{differentiable}.\footnote{Note that we do not require that $\derive{f}(a,
     \change{a} \splus \change{b}) = \derive{f}(a, \change{a}) \splus \derive{f}(a
@@ -414,7 +411,6 @@ of functions.
   \begin{displaymath}
     \derive{f}_\cminus(a, \change{a}) \defeq f(a \cplus \change{a}) \cminus f(a)
   \end{displaymath}
-
   Then $\derive{f}_\cminus$ is a derivative for $f$.
 \end{prop}
 
@@ -432,7 +428,6 @@ many candidates, there is a clear ``natural'' choice for both.
   \begin{align*}
     (a, b) \cplus_{A \times B} (\change{a}, \change{b}) \defeq (a \cplus_A \change{a}, b \cplus_B \change{b})
   \end{align*}
-
   Then $\cstr{A} \times \cstr{B} \defeq \cstruct{A \times B}{\changes{A} \times
   \changes{B}}{\cplus_{\times}}$ is a change action, and the projection maps $\pi_1$,$\pi_2$
   are differentiable with respect to it.
