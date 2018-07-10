@@ -2163,22 +2163,22 @@ helpful comments on the manuscript.
 \begin{proof}
   \label{prf:concreteDatalog}
   Let $T$ be a Datalog formula with free relation variables $R_1, \ldots, R_n$,
-  a choice of a semantics for the free relation variables $\sem{R_1}, \ldots, \sem{R_n} : \Rel$
-  and differences $\change{R_1}, \ldots, \change{R_n} : \Rel \disjointTimes \Rel$.
+  a choice of a semantics for the free relation variables $\semR_1, \ldots, \semR_n : \Rel_\Gamma$
+  and differences $\change{\semR_1}, \ldots, \change{\semR_n} : \Rel_\Gamma \disjointTimes \Rel_\Gamma$.
 
-  For clarity, we refer to the tuple $(\sem{R_1}, \ldots, \sem{R_n})$ as $\semR$ and
-  the tuple $(\change{R_1}, \ldots, \change{R_n})$ as $\diffR$. We abuse the notation
-  and refer to $(\sem{R_1} \twist \change{R_1}, \ldots, \sem{R_n} \twist \change{R_n})$
+  For brevity, we refer to the tuple $(\semR_1, \ldots, \semR_n)$ as $\semR$ and
+  the tuple $(\change{\semR_1}, \ldots, \change{\semR_n})$ as $\diffR$. We abuse the notation
+  and refer to $(\semR_1 \twist \change{\semR_1}, \ldots, \semR_n \twist \change{\semR_n})$
   as $\semR \twist \diffR$. We will also omit the arguments to $\upsem{T}$ and
   $\downsem{T}$ often, as there is never room for ambiguity.
 
   Then, it is the case that 
   \begin{displaymath}
-    \sem{T}(\semR \twist \diffR)
+    \sem{T}_\Gamma(\semR \twist \diffR)
     =
-    \sem{T}(\semR) \twist 
-    (\sem{\updiff{T}}(\diffR), 
-    \sem{\downdiff{T}}(\diffR))
+    \sem{T}_\Gamma(\semR) \twist 
+    (\sem{\updiff{T}}_\Gamma(\diffR), 
+    \sem{\downdiff{T}}_\Gamma(\diffR))
   \end{displaymath}
 
   We proceed by structural induction on $T$. We omit the cases for $\top$, $\bot$
@@ -2186,61 +2186,98 @@ helpful comments on the manuscript.
   
   Conjunction:
   \begin{align*}
-    &\sem{T \wedge U}(\semR \twist \diffR)\\
+    &\sem{T \wedge U}_\Gamma(\semR \twist \diffR)\\
     %
-    &= \sem{T}(\semR \twist \diffR) \cap \sem{U}(\semR \twist \diffR) \tag{semantics of $\wedge$}\\
+    &= \sem{T}_\Gamma(\semR \twist \diffR) \cap \sem{U}_\Gamma(\semR \twist \diffR) \tag{semantics of $\wedge$}\\
     %
-    &= \sem{T}(\semR) \twist (\upsem{T}, \downsem{T}) 
-      \cap \sem{U}(\semR) \twist (\upsem{U}, \downsem{U}) \tag{induction hypothesis}\\
+    &= \sem{T}_\Gamma(\semR) \twist (\upsem{T}_\Gamma, \downsem{T}_\Gamma) 
+      \cap \sem{U}_\Gamma(\semR) \twist (\upsem{U}_\Gamma, \downsem{U}_\Gamma) \tag{induction hypothesis}\\
     %
-    &= (\sem{T}(\semR) \cup \upsem{T}) \cap \neg \downsem{T} 
-      \cap (\sem{U}(\semR) \cup \upsem{U}) \cap \neg \downsem{U} \tag{definition of $\twist$}\\
-    &= (\sem{T}(\semR) \cap \neg \downsem{T} \cup \upsem{T})
-      \cap (\sem{U}(\semR) \cap \neg \downsem{U} \cup \upsem{U}) \tag{disjointness of $\upsem{}, \downsem{}$}\\
+    &= (\sem{T}_\Gamma(\semR) \cup \upsem{T}_\Gamma) \cap \neg \downsem{T}_\Gamma 
+      \cap (\sem{U}_\Gamma(\semR) \cup \upsem{U}_\Gamma) \cap \neg \downsem{U}_\Gamma \tag{definition of $\twist$}\\
+    &= (\sem{T}_\Gamma(\semR) \cap \neg \downsem{T}_\Gamma \cup \upsem{T}_\Gamma)
+      \cap (\sem{U}_\Gamma(\semR) \cap \neg \downsem{U}_\Gamma \cup \upsem{U}_\Gamma) \tag{disjointness of $\upsem{}, \downsem{}$}\\
     %
-    &= (\sem{T}(\semR) \cap \neg \downsem{T}) \cap (\sem{U}(\semR) \cap \neg \downsem{U}) \tag{Boolean algebra}\\
-    & \cup ((\upsem{T} \cap (\sem{U}(\semR) \cup \upsem{U}) \cap \neg \downsem{U})
-      \cap (\upsem{U} \cap (\sem{T}(\semR) \cup \upsem{T}) \cap \neg \downsem{T}))\\
+    &= (\sem{T}_\Gamma(\semR) \cap \neg \downsem{T}_\Gamma) \cap (\sem{U}_\Gamma(\semR) \cap \neg \downsem{U}_\Gamma) \tag{Boolean algebra}\\
+    & \cup ((\upsem{T}_\Gamma \cap (\sem{U}_\Gamma(\semR) \cup \upsem{U}_\Gamma) \cap \neg \downsem{U}_\Gamma)
+      \cap (\upsem{U}_\Gamma \cap (\sem{T}_\Gamma(\semR) \cup \upsem{T}_\Gamma) \cap \neg \downsem{T}_\Gamma))\\
     %
-    &= (\sem{T}(\semR) \cap \neg \downsem{T}) \cap (\sem{U}(\semR) \cap \neg \downsem{U}) \tag{induction hypothesis on $\bothdiff$}\\
-    & \cup ((\upsem{T} \cap \bothsem{U}(\semR, \diffR))
-            \cup (\upsem{U} \cap \bothsem{T}(\semR, \diffR)))\\
+    &= (\sem{T}_\Gamma(\semR) \cap \neg \downsem{T}_\Gamma) \cap (\sem{U}_\Gamma(\semR) \cap \neg \downsem{U}_\Gamma) \tag{induction hypothesis on $\bothdiff$}\\
+    & \cup ((\upsem{T}_\Gamma \cap \bothsem{U}_\Gamma(\semR, \diffR))
+            \cup (\upsem{U}_\Gamma \cap \bothsem{T}_\Gamma(\semR, \diffR)))\\
     %
-    &= \sem{T}(\semR) \cap \sem{U}(\semR) \cap \neg (\downsem{T} \cup \downsem{U}) \tag{Boolean algebra}\\
-      &\cup ((\upsem{T} \cap \bothsem{U}(\semR, \diffR))
-            \cup (\upsem{U} \cap \bothsem{T}(\semR, \diffR)))\\
+    &= \sem{T}_\Gamma(\semR) \cap \sem{U}_\Gamma(\semR) \cap \neg (\downsem{T}_\Gamma \cup \downsem{U}_\Gamma) \tag{Boolean algebra}\\
+      &\cup ((\upsem{T}_\Gamma \cap \bothsem{U}_\Gamma(\semR, \diffR))
+            \cup (\upsem{U}_\Gamma \cap \bothsem{T}_\Gamma(\semR, \diffR)))\\
     %
-    &= \sem{T}(\semR) \cap \sem{U}(\semR) \tag{Boolean algebra}\\
-    & \cup ((\upsem{T} \cap \bothsem{U})
-            \cup (\upsem{U} \cap \bothsem{T}))
-      \cap \neg (\downsem{T} \cup \downsem{U})\\
+    &= \sem{T}_\Gamma(\semR) \cap \sem{U}_\Gamma(\semR) \tag{Boolean algebra}\\
+    & \cup ((\upsem{T}_\Gamma \cap \bothsem{U}_\Gamma)
+            \cup (\upsem{U}_\Gamma \cap \bothsem{T}_\Gamma))
+      \cap \neg (\downsem{T}_\Gamma \cup \downsem{U}_\Gamma)\\
     %
-    &= \sem{T \wedge U}(\semR)
-      \twist (\upsem{(T \wedge U)}, \downsem{T} \cup \downsem{U}) \tag{definition of $\twist, \updiff$}\\
+    &= \sem{T \wedge U}_\Gamma(\semR)
+      \twist (\upsem{(T \wedge U)}_\Gamma, \downsem{T}_\Gamma \cup \downsem{U}_\Gamma) \tag{definition of $\twist, \updiff$}\\
     %
-    &= \sem{T \wedge U}(\semR)
-      \twist (\upsem{(T \wedge U)}, 
-      (\downsem{T} \cap \sem{U}(\semR)) \cup (\downsem{U} \cap \sem{T}(\semR))) \tag{Boolean algebra}\\
+    &= \sem{T \wedge U}_\Gamma(\semR)
+      \twist (\upsem{(T \wedge U)}_\Gamma, 
+      (\downsem{T}_\Gamma \cap \sem{U}_\Gamma(\semR)) \cup (\downsem{U}_\Gamma \cap \sem{T}_\Gamma(\semR))) \tag{Boolean algebra}\\
     %
-    &= \sem{T \wedge U}(\semR)
-      \twist (\upsem{(T \wedge U)}, \downsem{(T \wedge U)}) \tag{definition of $\downdiff{}$}
+    &= \sem{T \wedge U}_\Gamma(\semR)
+      \twist (\upsem{(T \wedge U)}_\Gamma, \downsem{(T \wedge U)}_\Gamma) \tag{definition of $\downdiff{}$}
   \end{align*}
   
   Disjunction: identical to conjunction.
   
   Negation:
   \begin{align*}
-    &\sem{\neg T}(\semR \twist \diffR)\\
-    &= \neg \sem{T}(\semR \twist \diffR) \tag{semantics of $\neg$}\\
-    &= \neg ((\sem{T}(\semR) \cup \upsem{T}) \cap \neg \downsem{T}) \tag{definition of $\twist$}\\
-    &= \neg (\sem{T}(\semR) \cup \upsem{T}) \cup \downsem{T} \tag{Boolean algebra}\\
-    &= \neg \sem{T}(\semR) \cap \neg \upsem{T} \cup \downsem{T} \tag{Boolean algebra}\\
-    &= (\neg \sem{T}(\semR) \cup \downsem{T}) \cap \neg \upsem{T} \tag{disjointness of $\upsem{}, \downsem{}$}\\
-    &= \sem{\neg T}(\semR) \twist (\downsem{T}, \upsem{T}) \tag{definition of $\twist$}\\
-    &= \sem{\neg T}(\semR) \twist (\upsem{\neg T}, \downsem{\neg T}) \tag{definition of $\updiff{}, \downdiff{}$}
+    &\sem{\neg T}_\Gamma(\semR \twist \diffR)\\
+    &= \neg \sem{T}_\Gamma(\semR \twist \diffR) \tag{semantics of $\neg$}\\
+    &= \neg ((\sem{T}_\Gamma(\semR) \cup \upsem{T}_\Gamma) \cap \neg \downsem{T}_\Gamma) \tag{induction hypothesis, definition of $\twist$}\\
+    &= \neg (\sem{T}_\Gamma(\semR) \cup \upsem{T}_\Gamma) \cup \downsem{T}_\Gamma \tag{Boolean algebra}\\
+    &= \neg \sem{T}_\Gamma(\semR) \cap \neg \upsem{T}_\Gamma \cup \downsem{T}_\Gamma \tag{Boolean algebra}\\
+    &= (\neg \sem{T}_\Gamma(\semR) \cup \downsem{T}_\Gamma) \cap \neg \upsem{T}_\Gamma \tag{disjointness of $\upsem{}, \downsem{}$}\\
+    &= \sem{\neg T}_\Gamma(\semR) \twist (\downsem{T}_\Gamma, \upsem{T}_\Gamma) \tag{definition of $\twist$}\\
+    &= \sem{\neg T}_\Gamma(\semR) \twist (\upsem{\neg T}_\Gamma, \downsem{\neg T}_\Gamma) \tag{definition of $\updiff{}, \downdiff{}$}
   \end{align*}
 
   Existential:
+  Before proving the existential, we state the following (trivial) properties of the selection map $\sigma_\Gamma$:
+  \begin{prop}[Distributivity of $\sigma_\Gamma$]
+    \label{prop:sigmaDist}
+    For any $A, B \in \Rel_{\Gamma, x}$ we have:
+    \begin{align*}
+      \sigma_\Gamma(A \cup B) &= \sigma_\Gamma(A) \cup \sigma_\Gamma(B)\\
+      \sigma_\Gamma (A \cap \neg B) &= \sigma_\Gamma(A) \cap \neg \sigma_\Gamma(B) \cup \sigma_\Gamma(A \cap \neg B)
+    \end{align*}
+  \end{prop}
+  
+  With these in mind, we can proceed with the proof proper:
+  \begin{align*}
+    &\sem{\exists x . T}_\Gamma(\semR \twist \diffR)\\
+    &=\sigma_\Gamma(\sem{T}_{\Gamma, x}(\semR \twist \diffR)) \tag{semantics of $\exists$}\\
+    &=\sigma_\Gamma(\sem{T}_{\Gamma, x}(\semR) \twist (\upsem{T}_{\Gamma, x}, \downsem{T}_{\Gamma, x})) \tag{induction hypothesis}\\
+    &=\sigma_\Gamma((\sem{T}_{\Gamma, x}(\semR) \cup \upsem{T}_{\Gamma, x}) \cap \neg \downsem{T}_{\Gamma, x}) \tag{definition of $\twist$}\\
+    %
+    &=\sigma_\Gamma(\sem{T}_{\Gamma, x}(\semR) \cup \upsem{T}_{\Gamma, x}) \tag{\cref{prop:sigmaDist}}\\
+    &  \cap \neg \sigma_\Gamma(\downsem{T}_{\Gamma, x})
+      \cup \sigma_\Gamma((\sem{T}_{\Gamma, x}(\semR) \cup \upsem{T}_{\Gamma, x}) \cap \downsem{T}_{\Gamma, x})\\
+    %
+    &=(\sigma_\Gamma(\sem{T}_{\Gamma, x}(\semR)) \cup \sigma_\Gamma(\upsem{T}_{\Gamma, x})) \tag{\cref{prop:sigmaDist}}\\
+    &\cap \neg \sigma_\Gamma(\downsem{T}_{\Gamma, x})
+      \cup \sigma_\Gamma((\sem{T}_{\Gamma, x}(\semR) \cup \upsem{T}_{\Gamma, x}) \cap \downsem{T}_{\Gamma, x})
+      \\
+    %
+    &=(\sigma_\Gamma(\sem{T}_{\Gamma, x}(\semR)) \cup \sigma_\Gamma(\upsem{T}_{\Gamma, x})) \tag{Boolean algebra}\\
+    & \cap \neg 
+      (\sigma_\Gamma(\downsem{T}_{\Gamma, x} \cap \neg \sigma_\Gamma((\sem{T}_{\Gamma, x}(\semR) \cup \upsem{T}_{\Gamma, x}) \cap \downsem{T}_{\Gamma, x})))
+    \\
+    %
+    &=(\sem{\exists x . T}_{\Gamma}(\semR) \cup \upsem{\exists x . T}_{\Gamma})
+      \cap \neg 
+      (\downsem{\exists x . T}_{\Gamma} \cap \neg \bothsem{\exists x . T}_\Gamma) \tag{definition of $\updiff{}, \downdiff{}$}\\
+    %
+    &= \sem{\exists x . T}_\Gamma \twist (\upsem{\exists x . T}_\Gamma, \downsem{\exists x . T}_\Gamma) \tag{definition of $\twist$}
+  \end{align*}
 
 \end{proof}
 
