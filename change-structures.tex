@@ -972,21 +972,21 @@ We will make use of an auxilliary function, $\bothdiff$, which computes the
 We can now give a derivative for our $treeP$ predicate (assuming only changes to
 $treeP$ itself):
 \begin{align*}
-  \updiff(treeP(x)) \leftarrow & p(x)\\
-    &\wedge
-    \exists y. (
-      child(x, y)
-      \wedge
-      \updiff(treeP(y))
-    )\\
-    &\wedge 
-    \neg \exists y. (
-      child(x, y)
-      \wedge
-      \neg \bothdiff(treeP(y))
-    )\\
-  \downdiff(treeP(x)) \leftarrow & p(x)\\
-  &\wedge \exists y. \left( child(x, y) \wedge \downdiff(treeP(y)) \right)
+  &\updiff(treeP(x))\\
+  &= \updiff(p(x) \wedge \neg \exists y. (child(x, y) \wedge \neg treeP(y)))\\
+  &= p(x) \wedge \updiff(\neg \exists y. (child(x, y) \wedge \neg treeP(y)))\\
+  &= p(x) \wedge \downdiff(\exists y. (child(x, y) \wedge \neg treeP(y)))\\
+  &= p(x) \wedge \exists y. \downdiff(child(x, y) \wedge \neg treeP(y)) \wedge \neg \exists y. \bothdiff(child(x,y) \wedge \neg treeP(y))\\
+  &= p(x) \wedge \exists y. (child(x, y) \wedge \downdiff(\neg treeP(y))) \wedge \neg \exists y. (child(x,y) \wedge \neg \bothdiff(treeP(y)))\\
+  &= p(x) \wedge \exists y. (child(x, y) \wedge \updiff(treeP(y))) \wedge \neg \exists y. (child(x,y) \wedge \neg \bothdiff(treeP(y)))\\
+  \\
+  &\downdiff(treeP(x))\\
+  &= \downdiff(p(x) \wedge \neg \exists y. (child(x, y) \wedge \neg treeP(y)))\\
+  &= p(x) \wedge \downdiff(\neg \exists y. (child(x, y) \wedge \neg treeP(y)))\\
+  &= p(x) \wedge \updiff(\exists y. (child(x, y) \wedge \neg treeP(y)))\\
+  &= p(x) \wedge \exists y. \updiff(child(x, y) \wedge \neg treeP(y))\\
+  &= p(x) \wedge \exists y. (child(x, y) \wedge \updiff(\neg treeP(y)))\\
+  &= p(x) \wedge \exists y. (child(x, y) \wedge \downdiff(treeP(y)))
 \end{align*}
 
 The upwards difference in particular is not especially easy to compute. If we naively compute it, the
