@@ -1332,9 +1332,8 @@ derivative of $\iter$ with respect to $n$.
   completeness? It reads oddly.}
 \begin{prop}[name=Derivative of the iteration map with respect to $n$, restate=iterDerivativesN]
   \label{prop:iterDerivativesN}
-  Suppose $\cstr{A}$ satisfies $\bot \changeOrder a$ for all $a : A$, and let 
-  $f: A \rightarrow A$ be a differentiable function. We abuse the notation slightly and write $a \ominus \bot$ to denote
-  some change $\change{a}$ such that $\bot \oplus \change{a} = a$. Then $\iter$ is differentiable with respect to its second
+  Let $\cstr{A}$ be a complete change action and let $f: A \rightarrow A$ be a differentiable function. 
+  Then $\iter$ is differentiable with respect to its second
   argument, and its partial derivative is given by:
   \begin{align*}
     &\partial_2{\iter}: (A \rightarrow A) \times \NN \times \changes{\NN} \rightarrow \changes{A}\\
@@ -1366,7 +1365,7 @@ semi-naive evaluation works, with the delta relation and the accumulator relatio
 
 \begin{thm}[name=Incremental computation of least fixpoints, restate=fixpointIter]
 \label{thm:fixpointIter}
-  Let $\cstr{A}$ be a continuous change action, $f: \cstr{A} \rightarrow
+  Let $\cstr{A}$ be a complete, continuous change action, $f: \cstr{A} \rightarrow
   \cstr{A}$ be continuous and differentiable.
 
   Then $\lfp(f) = \bigsqcup_{n \in \NN}(\pi_1(\nextiter_f^n(\bot, \bot)))$.\footnote{
