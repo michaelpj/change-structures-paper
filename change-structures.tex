@@ -1023,10 +1023,26 @@ minimal derivative. This justifies our claim that we can support
 derivatives are likely to be impractical, having them
 available as options means that we will never be completely stymied.
 
-This is important in practice for Semmle's variant of Datalog. For example, the
-upwards derivative for recursive aggregates \autocite{demoor2013aggregates} is:
+This is important in practice for Semmle's variant of Datalog. This includes a
+kind of aggregates which have well-defined recursive semantics. Aggregates have
+the form
+\begin{displaymath}
+  r = \mathrm{agg}(p)(vs \mid T \mid U)
+\end{displaymath}
+where $\mathrm{agg}$ refers to an aggregation function (such as ``sum'' or
+``min''), $vs$ is a sequence of variables, $p$ and $r$ are variables,
+$T$ is a formula possibly mentioning $vs$, and $U$ is a formula
+possibly mentioning $vs$ and $p$. The full details can been found in
+\textcite{demoor2013aggregates}, but for example this allows us to write
 \begin{align*}
-  \updiff(\textrm{agg}(vs \mid T \mid U)) \defeq \exists vs. (T \wedge \updiff{U}) \wedge \textrm{agg}(vs \mid T \mid U)
+  height(n, h) \leftarrow& \neg \exists c. (child(n, c)) \wedge d = 0\\
+  &\vee \exists h'. (h' = max(p)(c \mid child(n, c) \mid height(c, p)) \wedge h = h' + 1)
+\end{align*}
+which recursively computes the height of a node in a tree.
+
+Here is an upwards derivative for an aggregate formula:
+\begin{align*}
+  \updiff(r = \mathrm{agg}(p)(vs \mid T \mid U)) \defeq \exists vs. (T \wedge \updiff{U}) \wedge r = \mathrm{agg}(p)(vs \mid T \mid U)
 \end{align*}
 
 While this isn't a precise derivative, it is still substantially cheaper than
