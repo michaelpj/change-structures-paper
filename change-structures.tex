@@ -161,7 +161,7 @@ changes to its inputs.
 
 But the delta rule translation works only for traditional Datalog. It is common to
 liberalise the formula syntax with additional features, such as disjunction,
-existential quantification, negation, and aggregation.\footnote{ See, for
+existential quantification, negation, and aggregation.\footnote{See, for
   example, \autocites(LogiQL)(){logicbloxWebsite}{halpin2014logiql},
   \autocites(Datomic)(){datomicWebsite},
   \autocites(Souffle)(){souffleWebsite}{scholz2016fast}, and
@@ -613,7 +613,7 @@ on the corresponding change set:
 \begin{prop}
   Let $\cstr{A}$ be a change action on a set $A$ equipped with a partial order $\leq$ such that
   $\cplus$ is monotone in its first argument. Then $\cstr{A}$ is an ordered change action when
-  $\changes{A}$ is equipped with induced the partial order $\changeOrder$.
+  $\changes{A}$ is equipped with the partial order $\changeOrder$.
 \end{prop}
 
 In what follows, we will extend the partial order $\changeOrder$ on some change
@@ -622,8 +622,8 @@ order interacts nicely with derivatives, in that it gives us the following lemma
 
 \begin{thm}[Sandwich lemma]
   \label{thm:sandwich}
-  Let $\cstr{A}$ be an change action, and $\cstr{B}$ be an ordered change action, and \lochanged{given functions
-  $f: {A} \rightarrow {B}$} and $g: A \times \changes{A} \rightarrow
+  Let $\cstr{A}$ be an change action, and $\cstr{B}$ be an ordered change action, and given functions
+  $f: {A} \rightarrow {B}$ and $g: A \times \changes{A} \rightarrow
   \changes{B}$. If $\supderive{f}$ and $\subderive{f}$ are
   derivatives for $f$ such that
   \begin{displaymath}
@@ -637,8 +637,8 @@ characterisation of all the derivatives for a function.
 
 \begin{thm}[Characterization of derivatives]
 \label{thm:derivativeCharacterization}
-  Let $\cstr{A}$ and $\cstr{B}$ be change actions, with $\cstr{B}$ ordered, and \lochanged{given a function
-  $f: {A} \rightarrow {B}$}. If there exist $\subderiveM{f}$ and
+  Let $\cstr{A}$ and $\cstr{B}$ be change actions, with $\cstr{B}$ ordered, and given a function
+  $f: {A} \rightarrow {B}$. If there exist $\subderiveM{f}$ and
   $\supderiveM{f}$ which are unique minimal and maximal derivatives of $f$,
   respectively, then the derivatives of $f$ are precisely
   the functions $\derive{f}$ such that
@@ -669,13 +669,9 @@ differences, and indeed Boolean algebras have a complete change action.
   \end{displaymath}
   where
   \begin{align*}
-    A \disjointTimes B &\defeq \{ (a, b) : A \times B \mid a \wedge b = \bot \}\\
+    L \disjointTimes L &\defeq \{ (a, b) : L \times L \mid a \wedge b = \bot \}\\
     a \twist (p, q) &\defeq (a \vee p) \wedge \neg q
   \end{align*}
-  \lo{I think we should replacing the definition two lines above by
-  \[L \disjointTimes L \; \defeq \; \{ (a, b) : L \times L \mid a \wedge b = \bot \}\]
-  because it is not clear what $A$ and $B$ are, nor whether $\wedge$ is defined...}
-  and the monoid operator is
   \begin{displaymath}
     (p, q) \splus (r, s) \defeq ((p \wedge \neg s) \vee r, (q \wedge \neg r) \vee s)
   \end{displaymath}
@@ -897,10 +893,9 @@ There is also the question of how to compute the derivative. Since the change
 set for $\widehat{\Rel}_\superpose$ is a subset of $\Rel \times \Rel$, it
 is possible and indeed very natural to compute the two components via a pair of
 Datalog formulae, which allows us to reuse an existing Datalog formula
-evaluator.\footnote{
-  Indeed, if this process is occurring in an optimizing compiler,
-  the derivative formulae can themselves be optimized. This is very 
-  beneficial in practice, since the initial formulae may be quite complex.}
+evaluator. Indeed, if this process is occurring in an optimizing compiler,
+the derivative formulae can themselves be optimized. This is very 
+beneficial in practice, since the initial formulae may be quite complex.
 
 This does give us additional constraints that the derivative formulae must satisfy:
 for example, we need to be able to evaluate them; and we may wish to pick formulae that will be easy or cheap
@@ -1083,17 +1078,15 @@ has not changed.
 
 \section{Changes on functions}
 
-\todompj{signposting}
-
-We would like to have a change action structure on function spaces. This would enable us
-to discuss derivatives in the context of higher-order languages, but in particular derivatives for
+So far we have found change actions for spaces that are a good representation of
+simple data, but we would also like to have change actions on
+\emph{function} spaces. This would enable us have derivatives for higher-order languages, and in particular derivatives for
 fixpoint operators, which are higher-order functions $\fixpoint : (A \rightarrow A) \rightarrow A$. 
 
-\todomario{Back-references}
 Function spaces, however, differ from products and disjoint unions in that there is no obvious choice
 of a ``best'' change action structure on $A \rightarrow B$, given change actions $\cstr{A}$ and $\cstr{B}$.
-Instead of settling on a concrete choice of a change action, we restrict ourselves to working
-with change actions that respect the structure of the function space in the following sense:
+Instead of settling on a concrete choice of a change action, we will instead
+pick out subsets of ``well-behaved'' change actions on function spaces.
 
 \begin{defn}[Functional change actions]
   \label{def:functionalChanges}
@@ -1240,10 +1233,10 @@ a derivative of the evaluation map.
 
 \section{Directed-complete partial orders and fixpoints}
 
-\todompj{signposting}
-
-An important class of posets, particularly relevant to programming language semantics, is that of 
-directed-complete partial orders (dcpos) equipped with a least element, and the associated notion of \emph{(Scott-)continuous} maps. 
+Directed-complete partial orders (dcpos) equipped with a least element, are an
+important class of posets. They provide us with the ability to take
+\emph{fixpoints} of (Scott-)continuous maps, which is especially important for
+encoding recursion in program semantics.
 
 \subsection{Dcpos}
 \label{sec:dcpos}
@@ -1334,12 +1327,10 @@ Beki\'c's Theorem \autocite[][section 10.1]{winskel1993formal}, but it has a str
 \subsection{Fixpoints}
 \label{sec:fixpoints}
 
-\todompj{signposting}
-
 Fixpoints appear frequently in the semantics of languages with recursion. If we
 can give a generic account of how to compute fixpoints using change actions,
 then this gives us a compositional way of extending a derivative for the
-non-recursive semantics of a language to a derivative that can handle recursion.
+non-recursive semantics of a language to a derivative that can also handle recursion.
 We will do this later to handle full recursive Datalog (\cref{sec:datalogIncr}).
 
 \subsubsection{Iteration functions}
@@ -1358,11 +1349,7 @@ The iteration function is the basis for all the results in this section:
 we can take its partial derivative with respect to $n$, and this will give us a way to get
 to the next iteration incrementally; and we can take the partial derivative
 with respect to $f$, and this will give us a way to get from iterating $f$ to iterating $f
-\cplus \change{f}$.\footnote{
-  The sharp-eyed reader may have noticed that we
-  could also abstract out the point from which we begin iterating (which is of
-  course typically $\bot$) and differentiate with respect to that.
-}
+\cplus \change{f}$.
 
 \subsubsection{Incremental computation of fixpoints}
 
