@@ -118,10 +118,16 @@ even though we had already deduced it in the first iteration. Indeed, for a
 chain of $n$ such edges we will deduce $O(n^2)$ facts along the way.
 
 The standard improvement to this evaluation strategy is known as ``semi-naive'' 
-evaluation, where we transform 
-the program into a \emph{delta} program that only deduces the \emph{new} facts at each
-iteration. We can then gradually accumulate these to compute the final relation \autocite[See][section
-13.1]{abiteboul1995foundations}.
+evaluation\autocite[See][section 13.1]{abiteboul1995foundations}, where we transform 
+the program into a \emph{delta} program with two parts:
+\begin{itemize}
+  \item A \emph{delta} rule that computes the \emph{new} facts at each
+    iteration. 
+  \item An \emph{accumulator} rule that accumulates the delta at each
+    iteration to compute the final result
+\end{itemize}
+In this case our delta rule is simple: we only get new transitive edges at iteration $n+1$ if we
+can deduce them from transitive edges we deduced at iteration $n$.
 \begin{align*}
   \Delta tc_{0}(x, y) &\leftarrow e(x, y)\\
   \Delta tc_{i+1}(x, y) &\leftarrow e(x, z) \wedge \Delta tc_i(z, y)\\
@@ -143,7 +149,10 @@ iteration. We can then gradually accumulate these to compute the final relation 
 \end{center}
 \medskip
 
-This is much better \textemdash{} we have turned a quadratic computation into a linear one.
+This is much better textemdash{} we have turned a quadratic computation into a
+linear one. The delta transformation is a kind of \emph{incremental
+  computation}: at each stage we compute the changes in the rule given the previous
+changes to its inputs.
 
 But the delta rule translation works only for traditional Datalog. It is common to
 liberalise the formula syntax with additional features, such as disjunction,
@@ -162,8 +171,11 @@ nodes in a subtree given by $child$ have some property $p$:
 Here the combination of negation and explicit existential quantification amounts
 to recursion through a \emph{universal} quantifier. We would
 like to be able to use semi-naive evaluation for this rule too, but the simple delta
-transformation does not produce a correct incremental program, and it is unclear how to extend it (and the
-correctness proof) to handle such cases.
+transformation is not well defined for the extended program syntax, and it is unclear how to extend it (and the
+correctness proof) to handle such cases.\footnote{A simple approach is to just
+  keep applying the algorithm of ``replace each recursive call in turn with its
+  delta, and take the union of each of those''. But this is in fact incorrect
+  and does not produce correct incremental programs in general.}
 
 This is of more than theoretical interest \textemdash{} the research
 in this paper was carried out at Semmle, which
@@ -176,8 +188,10 @@ recursive aggregates \autocite{demoor2013aggregates}, and other non-standard
 features, so we are faced with a dilemma: either abandon the new language
 features, or abandon incremental computation.
 
-We can tell a similar story about \emph{maintenance} of Datalog programs. Again,
-this problem has known solutions for traditional Datalog
+We can tell a similar story about \emph{maintenance} of Datalog programs.
+Maintenance means updating the results of the program when its inputs change,
+for example, updating the value of $tc$ given a change to $e$. Again, this is a
+kind of incremental computation, and there are known solutions for traditional Datalog
 \autocite{gupta1993maintaining}, but these break down when the language is extended.
 
 There is a piece of folkloric knowledge in the Datalog community that hints at a
