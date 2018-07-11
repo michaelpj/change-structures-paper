@@ -1079,17 +1079,15 @@ has not changed.
 
 \section{Changes on functions}
 
-\todompj{signposting}
-
-We would like to have a change action structure on function spaces. This would enable us
-to discuss derivatives in the context of higher-order languages, but in particular derivatives for
+So far we have found change actions for spaces that are a good representation of
+simple data, but we would also like to have change actions on
+\emph{function} spaces. This would enable us have derivatives for higher-order languages, and in particular derivatives for
 fixpoint operators, which are higher-order functions $\fixpoint : (A \rightarrow A) \rightarrow A$. 
 
-\todomario{Back-references}
 Function spaces, however, differ from products and disjoint unions in that there is no obvious choice
 of a ``best'' change action structure on $A \rightarrow B$, given change actions $\cstr{A}$ and $\cstr{B}$.
-Instead of settling on a concrete choice of a change action, we restrict ourselves to working
-with change actions that respect the structure of the function space in the following sense:
+Instead of settling on a concrete choice of a change action, we will instead
+pick out subsets of ``well-behaved'' change actions on function spaces.
 
 \begin{defn}[Functional change actions]
   \label{def:functionalChanges}
@@ -1236,10 +1234,10 @@ a derivative of the evaluation map.
 
 \section{Directed-complete partial orders and fixpoints}
 
-\todompj{signposting}
-
-An important class of posets, particularly relevant to programming language semantics, is that of 
-directed-complete partial orders (dcpos) equipped with a least element, and the associated notion of \emph{(Scott-)continuous} maps. 
+Directed-complete partial orders (dcpos) equipped with a least element, are an
+important class of posets. They provide us with the ability to take
+\emph{fixpoints} of (Scott-)continuous maps, which is especially important for
+encoding recursion in program semantics.
 
 \subsection{Dcpos}
 \label{sec:dcpos}
@@ -1330,12 +1328,10 @@ Beki\'c's Theorem \autocite[][section 10.1]{winskel1993formal}, but it has a str
 \subsection{Fixpoints}
 \label{sec:fixpoints}
 
-\todompj{signposting}
-
 Fixpoints appear frequently in the semantics of languages with recursion. If we
 can give a generic account of how to compute fixpoints using change actions,
 then this gives us a compositional way of extending a derivative for the
-non-recursive semantics of a language to a derivative that can handle recursion.
+non-recursive semantics of a language to a derivative that can also handle recursion.
 We will do this later to handle full recursive Datalog (\cref{sec:datalogIncr}).
 
 \subsubsection{Iteration functions}
@@ -1354,11 +1350,7 @@ The iteration function is the basis for all the results in this section:
 we can take its partial derivative with respect to $n$, and this will give us a way to get
 to the next iteration incrementally; and we can take the partial derivative
 with respect to $f$, and this will give us a way to get from iterating $f$ to iterating $f
-\cplus \change{f}$.\footnote{
-  The sharp-eyed reader may have noticed that we
-  could also abstract out the point from which we begin iterating (which is of
-  course typically $\bot$) and differentiate with respect to that.
-}
+\cplus \change{f}$.
 
 \subsubsection{Incremental computation of fixpoints}
 
