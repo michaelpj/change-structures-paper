@@ -1879,7 +1879,13 @@ a typical size is over 30,000 lines of Datalog. The databases represent
 real-world programs that are subject to analysis, for example the Linux kernel,
 which is 1.8 MLOC and produces a database of size 783Mb.
 
-Comparing the ``full'' and ``semi-naive only'' deltafication strategies gives
+The profiler runs each query on each database with each version of the compiler
+\textemdash{} in this case the ``full'' version described in this paper, and the
+``semi-naive only'' version which evaluates predicates which cannot be handled
+by semi-naive using naive evaluation. Queries are run with a (generous) timeout
+\textemdash{} as we will see, many of the queries will in fact time out.
+
+Comparing the results for the two incrementalization strategies gives
 the following high-level picture:
 
 \begin{center}
@@ -1887,9 +1893,9 @@ the following high-level picture:
     Statistic & Value \\
     \toprule
     Total runs & 2308\\
-    New timeouts & 629 (27\%)\\
-    Non-timeout regressions & 1049 (45\%)\\
-    Improvements & 630 (27\%)\\
+    New timeouts compared to ``full'' & 629 (27\% of all runs)\\
+    Non-timeout regressions compared to ``full'' & 1049 (45\% of all runs)\\
+    Improvements compared to ``full'' & 630 (27\% of all runs)\\
     \bottomrule
   \end{tabular}
 \end{center}
