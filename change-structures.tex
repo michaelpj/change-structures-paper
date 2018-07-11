@@ -3,28 +3,6 @@
 %\input{preamble-standard}
 \input{preamble-acm}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% BEGIN {Macros / packages by Luke}
-% switch of draft/final version
-\newif\ifdraft\drafttrue
-%\newif\ifdraft\draftfalse
-
-\ifdraft
-\newcommand{\lochanged}[1]{{\color{red}{#1}}}
-\newcommand{\mpchanged}[1]{{\color{blue}{#1}}}
-%\newcommand{\tk}[1]{{\textcolor{DarkGreen}{[{#1}---Tsukada]}}}
-%\newcommand{\mp}[1]{{\color{blue}{[{#1}--Mario]}}}
-\newcommand{\lo}[1]{{\color{red}{[{#1}--Luke]}}}
-\else
-\newcommand{\mpchanged}[1]{{#1}}
-\newcommand{\lochanged}[1]{{#1}}
-%\newcommand{\mp}[1]{}
-\newcommand{\lo}[1]{}
-\fi
-\usepackage{bbm}
-%% END {Macros / packages by Luke}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -44,9 +22,36 @@
 \usepackage{cleveref}
 \usepackage{hyperref}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% BEGIN {Macros / packages by Luke}
+% switch of draft/final version
+\newif\ifdraft\drafttrue
+%\newif\ifdraft\draftfalse
+
+\ifdraft
+\newcommand{\lochanged}[1]{{\color{red}{#1}}}
+\newcommand{\mpchanged}[1]{{\color{blue}{#1}}}
+%\newcommand{\tk}[1]{{\textcolor{DarkGreen}{[{#1}---Tsukada]}}}
+%\newcommand{\mp}[1]{{\color{blue}{[{#1}--Mario]}}}
+\newcommand{\lo}[1]{{\color{red}{[{#1}--Luke]}}}
+
 \newcommand{\todoall}[1]{\todo[inline,color=black!30,author=All]{#1}}
 \newcommand{\todompj}[1]{\todo[inline,color=yellow!40,author=Michael]{#1}}
 \newcommand{\todomario}[1]{\todo[inline,color=blue!40,author=Mario]{#1}}
+
+\else
+\newcommand{\mpchanged}[1]{{#1}}
+\newcommand{\lochanged}[1]{{#1}}
+%\newcommand{\mp}[1]{}
+\newcommand{\lo}[1]{}
+
+\newcommand{\todoall}[1]{}
+\newcommand{\todompj}[1]{}
+\newcommand{\todomario}[1]{}
+\fi
+\usepackage{bbm}
+%% END {Macros / packages by Luke}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \input{notation}
 

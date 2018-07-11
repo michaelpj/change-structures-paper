@@ -31,9 +31,9 @@
 \newcommand{\forallfn}{\mathsf{forall}}
 \newcommand{\dom}{\mathrm{dom}}
 
-\subsection{Extension to higher-order datalog}
+\subsection{Extension to higher-order Datalog}
 
-\lo{TODO: Check that the following definitions are consistent extensions of datalog in the preceding.}
+\lo{TODO: Check that the following definitions are consistent extensions of Datalog in the preceding.}
 
 \subsubsection{Syntax} 
 We use a standard presentation of higher-order logic as a simply-typed $\lambda$-calculus with \emph{types}
@@ -70,6 +70,8 @@ In the last alternative, $X \in \dom(\Delta)$ and $\overline{x} = x_1 \cdots x_n
 \subsection{Continuous semantics}
 
 \begin{figure*}
+  \fbox{
+    \begin{minipage}[t]{0.9\textwidth}
 \[
   \begin{array}{rcl}
     \cmng{\Delta \vdash x : \rho}(\alpha) &=& \alpha(x) \\
@@ -81,7 +83,10 @@ In the last alternative, $X \in \dom(\Delta)$ and $\overline{x} = x_1 \cdots x_n
     \abs{x' \in \cmng{\sigma}}{\cmng{\Delta, x:\sigma \vdash G : \sigma}(\alpha[x \mapsto x'])}
   \end{array}
 \]
+\end{minipage}
+}
 \caption{Continuous semantics of terms.}\label{fig:cts-term-semantics}
+\vspace{-12pt}
 \end{figure*}
 
 Let $L$ be a poset. 
@@ -186,4 +191,4 @@ As for standard semantics, we write $\cmng{G}$ for $\cmng{\Delta \vdash  G : \rh
 
 \lo{Let $a, b \in \tau_S$. Then $a \twistS (b, \overline b) = b$.}
 
-\lo{There is a version of Theorem~\ref{thm:concreteDatalog} for higher-order datalog.}
+\lo{There is a version of Theorem~\ref{thm:concreteDatalog} for higher-order Datalog.}
