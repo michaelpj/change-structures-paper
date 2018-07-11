@@ -161,7 +161,7 @@ changes to its inputs.
 
 But the delta rule translation works only for traditional Datalog. It is common to
 liberalise the formula syntax with additional features, such as disjunction,
-existential quantification, negation, and aggregation.\footnote{ See, for
+existential quantification, negation, and aggregation.\footnote{See, for
   example, \autocites(LogiQL)(){logicbloxWebsite}{halpin2014logiql},
   \autocites(Datomic)(){datomicWebsite},
   \autocites(Souffle)(){souffleWebsite}{scholz2016fast}, and
@@ -893,10 +893,9 @@ There is also the question of how to compute the derivative. Since the change
 set for $\widehat{\Rel}_\superpose$ is a subset of $\Rel \times \Rel$, it
 is possible and indeed very natural to compute the two components via a pair of
 Datalog formulae, which allows us to reuse an existing Datalog formula
-evaluator.\footnote{
-  Indeed, if this process is occurring in an optimizing compiler,
-  the derivative formulae can themselves be optimized. This is very 
-  beneficial in practice, since the initial formulae may be quite complex.}
+evaluator. Indeed, if this process is occurring in an optimizing compiler,
+the derivative formulae can themselves be optimized. This is very 
+beneficial in practice, since the initial formulae may be quite complex.
 
 This does give us additional constraints that the derivative formulae must satisfy:
 for example, we need to be able to evaluate them; and we may wish to pick formulae that will be easy or cheap
