@@ -264,7 +264,7 @@ actions.}
 \subsection{Change actions}
 \label{sec:changeAction}
 
-\begin{defn}[Change actions]
+\begin{defn}
   A \emph{change action} is defined as:
   \begin{displaymath}
     \cstr{A} \defeq \cstruct{A}{\changes{A}}{\cplus_A}
@@ -336,7 +336,7 @@ A solution to this problem is a function $\derive{f}: A \times \changes{A}
 \rightarrow \changes B$, which given $a$ and $\change{a}$ tells us how to change
 $f(a)$ to $f(a \cplus \change{a})$. We call this a \emph{derivative} of a function.
 
-\begin{defn}[Derivatives]
+\begin{defn}
   \label{def:derivative}
   Let $\cstr{A}$ and $\cstr{B}$ be change actions.
   A \emph{derivative} of a function $f: A \rightarrow B$ is a function $\derive{f}: A \times \changes{A} \rightarrow
@@ -404,7 +404,7 @@ The derivative of a function can be computed compositionally, because derivative
 Complete change actions are an important class of change actions, because they
 have changes between \emph{any} two values in the base set.
 
-\begin{defn}[Complete change actions]
+\begin{defn}
   A change action is \emph{complete} if for any $a, b \in A$, there is
   a change $\change{a} \in \changes{A}$ such that $a \cplus \change{a} = b$.
 \end{defn}
@@ -412,12 +412,12 @@ have changes between \emph{any} two values in the base set.
 Complete change actions have convenient ``minus operators'' that allow us to
 compute the difference between two values.
 
-\begin{defn}[Minus operator]
+\begin{defn}
   A \emph{minus operator} is a function $\cminus: A \times A \rightarrow
   \changes{A}$ such that $a \cplus (b \cminus a) = b$ for all $a, b \in A$.
 \end{defn}
 
-\begin{prop}[Completeness equivalences]
+\begin{prop}
   Let $\cstr{A}$ be a change action. Then the following are equivalent:
   \begin{itemize}
     \item $\cstr{A}$ is complete.
@@ -429,7 +429,7 @@ compute the difference between two values.
 This last property is of the utmost importance, since we are often concerned with the differentiability
 of functions.
 
-\begin{prop}[Minus derivative]
+\begin{prop}
   \label{prop:minusDerivatives}
   Given a minus operator $\cminus$, and a function $f$, let
   \begin{displaymath}
@@ -513,7 +513,7 @@ base set according to coarseness. This
 is useful since differentiability of functions between change actions is characterized
 entirely by the coarseness of the actions.
 
-\begin{defn}[Finer and coarser change actions]
+\begin{defn}
   Let $\cstr{A}_1$ and $ \cstr{A}_2$ be 
   change actions. We say that $\cstr{A}_1$ is coarser than $\cstr{A}_2$ (or that $\cstr{A}_2$ is finer
   than $\cstr{A}_1$) whenever for every pair of points $x, y \in A$ and change $\change{a}_1 \in \changes{A}_1$
@@ -530,7 +530,7 @@ respectively to the empty change action $\cstr{A}_1$ and any complete change
 action, such as the change action $\cstr{A}_\Rightarrow$,
 defined in \cref{sec:changeAction}.
 
-\begin{prop}[Variance and coarseness]
+\begin{prop}
   Let $\cstr{A}_2 \leq \cstr{A}_1$, $\cstr{B}_1 \leq \cstr{B}_2$ be change actions, and suppose
   the function $f : A \rightarrow B$ is differentiable as a function from $\cstr{A}_1$ into
   $\cstr{B}_1$. Then $f$ is differentiable as a function from $\cstr{A}_2$ into $\cstr{B}_2$.
@@ -541,7 +541,7 @@ they can be used interchangeably without affecting which functions are different
 is the following result, which establishes a simple criterion for when a change action is coarser than
 another:
 
-\begin{prop}[Identity criterion]
+\begin{prop}
   Let $\cstr{A}_1, \cstr{A}_2$ be change actions on $A$. Then $\cstr{A}_1$ is coarser than $\cstr{A}_2$
   if and only if the identity function $\id : A \rightarrow A$ is differentiable from $\cstr{A}_1$ to
   $\cstr{A}_2$.
@@ -557,7 +557,7 @@ work, in that it captures all the information about the target value instead of
 just the difference between them.
 
 This intuition that a change may do too much can be captured by the following definition:
-\begin{defn}[Kernel of a change]
+\begin{defn}
   Let $\cstr{A}$ be a change action and $\change{a} \in \changes{A}$. Then the
   \emph{kernel} of $\change{a}$ is the equivalence relation $\kernel_{\change{a}}$ on $A$
   defined by
@@ -593,7 +593,7 @@ are well-behaved with respect to the order on the underlying set.
 generic in the base category, then this would simply be the definition of being
 a change action in the category of posets and monotone maps.}
 
-\begin{defn}[Ordered change actions]
+\begin{defn}
   A change action $\cstr{A}$ is \emph{ordered} if
   \begin{itemize}
     \item $A$ and $\changes{A}$ are posets.
@@ -605,7 +605,7 @@ a change action in the category of posets and monotone maps.}
 In fact, any change action whose base set is a poset induces a particularly convenient partial order
 on the corresponding change set:
 
-\begin{defn}[Change order]
+\begin{defn}
   $\change{a} \changeOrder \change{b}$ just if for all $a \in A$ it is the case that
   $a \cplus \change{a} \leq a \cplus \change{b}$.
 \end{defn}
@@ -635,7 +635,7 @@ order interacts nicely with derivatives, in that it gives us the following lemma
 If unique minimal and maximal derivatives exist, then this gives us a 
 characterisation of all the derivatives for a function.
 
-\begin{thm}[Characterization of derivatives]
+\begin{thm}
 \label{thm:derivativeCharacterization}
   Let $\cstr{A}$ and $\cstr{B}$ be change actions, with $\cstr{B}$ ordered, and given a function
   $f: {A} \rightarrow {B}$. If there exist $\subderiveM{f}$ and
@@ -734,7 +734,7 @@ we have concrete definitions for our bounds (which we will make use of in \cref{
 Moreover, we have a nice definition of the kernel ordering, which gives us a
 minus operator with a corresponding \emph{precise} derivative.
 
-\begin{defn}[Pointwise order]
+\begin{defn}
   The \emph{pointwise} order $\pointwiseOrder$ is the product order on $L \times
   L$.
 \end{defn}
@@ -792,7 +792,7 @@ typical when working with fixpoints \autocite[See e.g.][]{compton1994stratified}
 formula (and later, a Datalog program) as directly denoting a relation, i.e.
 a set of named tuples, with variables ranging over a finite schema.
 
-\begin{defn}[Schema]
+\begin{defn}
   A \emph{schema} $\Gamma$ is a finite set of names. A \emph{named tuple} over $\Gamma$ is an assignment
   of a value $v_i$ for each name $x_i$ in $\Gamma$. Given disjoint schemata 
   $\Gamma = \{ x_1, \ldots, x_n \}$ and $\Sigma = \{ y_1, \ldots, y_n \}$,
@@ -808,7 +808,7 @@ a set of named tuples, with variables ranging over a finite schema.
 
 We will adopt the usual closed-world assumption to give a denotation to negation.
 
-\begin{defn}[Closed-world assumption and negation]
+\begin{defn}
   For any schema $\Gamma$,
   there exists a universal relation $\universalRel_\Gamma$.
 
@@ -1094,7 +1094,7 @@ of a ``best'' change action structure on $A \rightarrow B$, given change actions
 Instead of settling on a concrete choice of a change action, we will instead
 pick out subsets of ``well-behaved'' change actions on function spaces.
 
-\begin{defn}[Functional change actions]
+\begin{defn}
   \label{def:functionalChanges}
   Given change actions $\cstr{A}$ and $\cstr{B}$ and a set $U \subseteq A \rightarrow B$, a change action
   $(U, \changes U, \cplus_U)$ is \emph{functional} whenever the evaluation map $\ev : U \times A \rightarrow B$
@@ -1115,7 +1115,7 @@ functions. But more importantly, functional change actions are necessarily made 
 functions, and thus a functional change action may not exist for the entire function space
 $A \rightarrow B$.
 
-\begin{prop}[Differentiability and functional change actions]
+\begin{prop}
   \label{prop:differentiableFunctionalChanges}
   Let $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$ be a functional change action. Then every 
   $f \in U$ is differentiable, with a derivative $\derive{f}$ given by:
@@ -1130,7 +1130,7 @@ $A \rightarrow B$.
 }
 Conversely, the derivative of the evaluation map can also be used to compute the effect of a given
 function change $\delta f$:
-\begin{prop}[Evaluating function changes]
+\begin{prop}
   Let $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$. Then for every $f \in U$ and $\delta f \in \changes U$
   we have:
   \begin{displaymath}
@@ -1138,7 +1138,7 @@ function change $\delta f$:
   \end{displaymath}
 \end{prop}
 
-\begin{prop}[Functional change sets]
+\begin{prop}
   Let $\cstr{A}$ and $\cstr{B}$ be change actions and $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$
   a functional change action. First, we note that the set $U \times A \rightarrow \changes{B}$ is
   a monoid with addition $+_\Rightarrow$ and neutral element $0_\Rightarrow$ defined by:
@@ -1170,7 +1170,7 @@ of differentiable functions $\cstr{A} \rightarrow \cstr{B}$, but these can be un
 the purpose of actual computation. Fortunately, in many cases there is a simple
 way of representing spaces of differentiable functions.
 
-\begin{defn}[Pointwise functional change actions]
+\begin{defn}
   Let $\cstr{A}$ and $\cstr{B}$ be change actions. The \emph{pointwise functional change action} 
   $\cstr{A} \ptfunc \cstr{B}$, when it is defined,
   is given by $(\cstr{A} \rightarrow \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$, with
@@ -1187,7 +1187,7 @@ The above definition isn't always well-typed, since given $f : \cstr{A} \rightar
 $\delta f : A \rightarrow \changes{B}$ there is, in general, no guarantee that 
 $f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteria that enforce this:
 
-\begin{thm}[Pointwise functional change actions]
+\begin{thm}
   Let $\cstr{A}$ and $\cstr{B}$ be change actions, and suppose that $\cstr{B}$ satisfies one of the
   following conditions:
   \begin{itemize}
@@ -1253,7 +1253,7 @@ As before, we can define change actions on dcpos, rather than sets, as change
 actions whose sets $A$, $\changes{A}$ are endowed with a dcpo structure, and where
 the maps $\cplus$, $\splus$ are continuous.
 
-\begin{defn}[Continuous change actions]
+\begin{defn}
   A change action $\cstr{A}$ is \emph{continuous} if
   \begin{itemize}
     \item $A$ and $\changes{A}$ are dcpos.
@@ -1286,7 +1286,7 @@ introductory work such as \cite{abramsky1994domain}, but we state here some spec
 we shall be using, such as the following, whose proof can be found in 
 \cite[Lemma~3.2.6]{abramsky1994domain}:
 
-\begin{prop}[Distributivity of limits across arguments]
+\begin{prop}
   \label{prop:distributivityLimit}
   A function $f : A \times B \rightarrow C$ is continuous iff it is continuous in each variable
   separately.
@@ -1297,7 +1297,7 @@ differentiable functions $\{f_i\}$ is itself differentiable, and its derivative 
 of the derivatives of the $f_i$. A remarkable consequence of the previous distributivity property
 is the following analogous result:
 
-\begin{corollary}[Continuity of differentiation]
+\begin{corollary}
   \label{cor:diffContinuous}
   Let $\cstr{A}$, $\cstr{B}$ be change actions, with $\cstr{B}$ continuous and let $\{f_i\}$ and $\{\derive{f_i}\}$ be
   $I$-indexed directed families of functions in $A \rightarrow B$ and $A \times \changes{A} \rightarrow \changes{B}$.
@@ -1581,9 +1581,9 @@ Again, we will demonstrate the technique with Datalog, although the approach is 
 First of all, we define the usual ``immediate consequence operator'' which
 computes ``one step'' of our program semantics.
 
-\begin{defn}[Immediate consequence operator]
+\begin{defn}
   Given a program $\mathbb{P} = (P_1, \dots, P_n)$, where $P_i$ is a predicate,
-  with schema $\Gamma_i$ the immediate consequence operator $\consq: \Rel^n \rightarrow \Rel^n$ is defined 
+  with schema $\Gamma_i$ the \emph{immediate consequence operator} $\consq: \Rel^n \rightarrow \Rel^n$ is defined 
   as follows:
   \begin{displaymath}
     \consq(\semR_1, \dots, \semR_n) 
@@ -1594,7 +1594,7 @@ computes ``one step'' of our program semantics.
 That is, given a value for the program, we pass in all the relations
 to the denotation of each predicate, to get a new tuple of relations.
 
-\begin{defn}[Program semantics]
+\begin{defn}
   The semantics of a program $\mathbb{P}$ is defined to be
   \begin{displaymath}
     \denote{\mathbb{P}} \defeq \lfp_{\Rel^n}(\consq)
@@ -1616,7 +1616,7 @@ We can easily extend a derivative for the formula semantics to a derivative for
 the immediate consequence operator $\consq$. Putting this together with the
 results from \cref{sec:fixpoints}, we get our two big results.
 
-\begin{corollary}[Incremental evaluation of Datalog semantics]
+\begin{corollary}
 \label{thm:diffEval}
   Datalog program semantics can be evaluated incrementally.
 \end{corollary}
@@ -1629,7 +1629,7 @@ results from \cref{sec:fixpoints}, we get our two big results.
 This is known (semi-naive evaluation), but our proof is more
 modular, so we will be able to extend this result more easily.
 
-\begin{corollary}[Incremental maintenance of Datalog semantics]
+\begin{corollary}
 \label{thm:diffUpdate}
   Datalog program semantics can be incrementally maintained with changes to
   extensional relations.
@@ -1732,7 +1732,7 @@ the question \textemdash{} is there a category here? And is it Cartesian closed?
 The answer to this is yes, and we will gesture in the direction of a categorical
 account of change actions, although a full treatment is beyond the scope of this paper.
 
-\begin{defn}[Category of change actions]
+\begin{defn}
   The category $\cat{CAct}$ of change actions has change actions as its objects and
   differentiable functions as its morphisms. 
 \end{defn}
@@ -1742,7 +1742,7 @@ account of change actions, although a full treatment is beyond the scope of this
 There is a natural preorder on the base set of a change action, given by reachability
 under the action:
 
-\begin{defn}[Reachability preorder]
+\begin{defn}
   $a \reachOrder b$ iff there is a $\change{a} \in \changes{A}$ such that $a \cplus
   \change{a} = b$.
 \end{defn}
@@ -1819,7 +1819,7 @@ because we need to ensure that $f \cplus \change{f}$ continues to be a
 differentiable function. Fortunately, under some circumstances these correspond
 to the pointwise functional change actions we saw earlier (in \cref{sec:pointwiseFunctional}).
 
-\begin{defn}[Convenient change actions]
+\begin{defn}
   \label{def:convenientChangeActions}
   A change action $\cstr{B}$ is convenient if every exponential object
   $\exponential{\cstr{A}}{\cstr{B}}$ is isomorphic to a pointwise functional change action.
@@ -1864,7 +1864,7 @@ Furthermore, it can be shown that convenient change actions are themselves a Car
 subcategory of $\cat{CAct}$, and therefore constitute a viable setting for general, higher-order
 incremental computation.
 
-\begin{prop}[name=Convenient category of change actions]
+\begin{prop}
   Let $\cstr{A}$ and $\cstr{B}$ be convenient change actions. Then the product 
   $\cstr{A} \times \cstr{B}$ and the exponential $\cstr{A} \Rightarrow \cstr{B}$ are also convenient
   change actions.
