@@ -962,9 +962,9 @@ specifics of the evaluation engine. Here is one possibility.\footnote{This is
 In~\cref{fig:datalogDerivatives}, we define a ``symbolic'' derivative operator as a pair of mutually recursive functions,
 $\updiff$ and $\downdiff$, which turn a formula $T$ into new formulae that compute
 the upwards and downwards parts of the derivative, respectively. 
-Our definition uses an auxilliary function, $\bothdiff$, which computes the ``neXt'' value of a term by applying the upwards and downwards derivatives.
+Our definition uses an auxiliary function, $\bothdiff$, which computes the ``neXt'' value of a term by applying the upwards and downwards derivatives.
 As we expect
-from a derviative, the new formulae will have additional free relation variables
+from a derivative, the new formulae will have additional free relation variables
 for the upwards and downwards derivatives of the free relation variables of $T$.
 
 \begin{rem}
@@ -975,7 +975,7 @@ While the definitions usually exhibit the dualities we would expect
   $\downdiff(T \wedge U)$ is for operational reasons. The symmetrical version of
   $\updiff(T \vee U)$ is $(\updiff(T) \wedge \neg U) \vee (\updiff(U) \wedge \neg
   T)$ (which is also precise). The reason we omit the negated conjuncts is simply
-  that they are costly to commpute and not especially helpful to our evaluation engine.
+  that they are costly to compute and not especially helpful to our evaluation engine.
 
   The asymmetry between the cases for $\exists$ is because our
   dialect of Datalog does not have a primitive universal quantifier.
@@ -1079,7 +1079,7 @@ Here is an upwards derivative for an aggregate formula:
 \end{align*}
 
 While this isn't a precise derivative, it is still substantially cheaper than
-re-evaluating the whole subfomula, as the guard allows us to skip the second conjunct when $U$
+re-evaluating the whole subformula, as the guard allows us to skip the second conjunct when $U$
 has not changed.
 
 % We're not planning to include this currently
@@ -1245,15 +1245,14 @@ a derivative of the evaluation map.
 
 Directed-complete partial orders (dcpos) equipped with a least element, are an
 important class of posets. They provide us with the ability to take
-\emph{fixpoints} of (Scott-)continuous maps, which is especially important for
-encoding recursion in program semantics.
+\emph{fixpoints} of (Scott-)continuous maps, which is especially important for interpreting recursion in program semantics.
 
 \subsection{Dcpos}
 \label{sec:dcpos}
 
 As before, we can define change actions on dcpos, rather than sets, as change
-actions whose sets $A$, $\changes{A}$ are endowed with a dcpo structure, and where
-the maps $\cplus$, $\splus$ are continuous.
+actions whose base and change sets are endowed with a dcpo structure, and where
+the monoid operation and action are continuous.
 
 \begin{defn}
   A change action $\cstr{A}$ is \emph{continuous} if
@@ -1267,7 +1266,7 @@ the maps $\cplus$, $\splus$ are continuous.
 Unlike the case for posets, the change order $\changeOrder$ does \emph{not}, in general,
 induce a dcpo on $\changes{A}$. As a counterexample, consider 
 the change action $(\overline{\NN}, \NN, +)$, where $\overline{\NN}$ denotes the dcpo of natural numbers
-extended with a positive infinity.
+extended with positive infinity.
 
 A key example of a continuous change action is the $\cstr{L}_\superpose$ change
 action on Boolean algebras.
@@ -1301,8 +1300,8 @@ is the following analogous result:
 
 \begin{corollary}
   \label{cor:diffContinuous}
-  Let $\cstr{A}$, $\cstr{B}$ be change actions, with $\cstr{B}$ continuous and let $\{f_i\}$ and $\{\derive{f_i}\}$ be
-  $I$-indexed directed families of functions in $A \rightarrow B$ and $A \times \changes{A} \rightarrow \changes{B}$.
+  Let $\cstr{A}$ and $\cstr{B}$ be change actions, with $\cstr{B}$ continuous and let $\{f_i\}$ and $\{\derive{f_i}\}$ be
+  $I$-indexed directed families of functions in $A \rightarrow B$ and $A \times \changes{A} \rightarrow \changes{B}$ respectively.
 
   Then, if for every $i \in I$ it is the case that $\derive{f_i}$ is a derivative of $f_i$, then $\bigsqcup_{i \in I} \derive{f_i}$ is
   a derivative of $\bigsqcup_{i \in I} f_i $.
@@ -1341,7 +1340,7 @@ Fixpoints appear frequently in the semantics of languages with recursion. If we
 can give a generic account of how to compute fixpoints using change actions,
 then this gives us a compositional way of extending a derivative for the
 non-recursive semantics of a language to a derivative that can also handle recursion.
-We will do this later to handle full recursive Datalog (\cref{sec:datalogIncr}).
+We will later apply this to full recursive Datalog (\cref{sec:datalogIncr}).
 
 \subsubsection{Iteration functions}
 \label{sec:iteration}
@@ -1365,7 +1364,7 @@ with respect to $f$, and this will give us a way to get from iterating $f$ to it
 
 The following theorems provide a
 generalization of semi-naive evaluation to any differentiable function over a
-continuous change action. Throughout this section we will assume that we have a contiuous change action
+continuous change action. Throughout this section we will assume that we have a continuous change action
 $\cstr{A}$, and any reference to the change action $\cstr{\NN}$ will refer to the obvious monoidal
 change action on the naturals defined in \cref{sec:examples}.
 
@@ -1469,7 +1468,7 @@ derivative \textemdash{} for \emph{least} fixpoints. The appearance of
 $\derive{\ev}$, a derivative of the evaluation map, in the definition of
 $\adjust$ is also no coincidence: as evaluating a fixpoint consists of many
 steps of applying the evaluation map, so computing the derivative of a fixpoint
-consists of many stages of applying the derivative of the evaluatoin
+consists of many stages of applying the derivative of the evaluation
 map.\footnote{Perhaps surprisingly, the authors first discovered an expanded
   version of this formula, and it was only later that we realised the remarkable
   connection to $\derive{\ev}$.}
@@ -1678,7 +1677,7 @@ A reminder of the expanded definition of $\adjust$:
   \adjust(f, \change{f}) &= \lambda\ \change{a}. \change{f}(\lfp(f)) \splus \derive{(f \cplus \change{f})}(\lfp(f), \change{a})
 \end{align*}
 
-We've chosen the second defintion of $\ev$ from \cref{prop:evDerivatives}, since
+We've chosen the second definition of $\ev$ from \cref{prop:evDerivatives}, since
 we already know what $f \cplus \change{f}$ looks like \textemdash{} it is simply
 $\denote{tc_{e_2}}$ \textemdash{} and $\change{tc}(\lfp(tc_{e_1}))$ can be
 computed once up front and reused throughout the computation.
