@@ -21,6 +21,7 @@
 %\newcommand{\mp}[1]{}
 \newcommand{\lo}[1]{}
 \fi
+\usepackage{bbm}
 %% END {Macros / packages by Luke}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -745,7 +746,7 @@ of Datalog. Giving a differentiable semantics for Datalog will then
 lead us to a strategy for performing incremental evaluation and maintenance of Datalog programs. 
 To begin with, we will restrict ourselves to the non-recursive fragment of the
 language \textemdash{} the formulae that make up the right hand sides of Datalog
-rules. We will tackle the full programm semantics in a later section, once we
+rules. We will tackle the full program semantics in a later section, once we
 know how to handle fixpoints (\cref{sec:recursiveDatalog}).
 
 Although the techniques we are using should work for any language, Datalog
@@ -818,6 +819,7 @@ which is parmeterized by the assignments to the free relation variables.
   \end{displaymath}
   If $\semR = (\semR_1, \ldots, \semR_n)$ is a choice of a relation for each of the variables $R_i$,
   $\denote{T}(\semR)$ is inductively defined according to the rules in \cref{fig:datalogSemantics}.
+  \lo{TODO: Define the function $\sigma$ in  \cref{fig:datalogSemantics}.}
 \end{defn}
 
 Since $\Rel_\Gamma$ is a complete Boolean algebra, and so is $\Rel_\Gamma^n$, $\denote{T}_\Gamma$ is
@@ -901,10 +903,11 @@ for the upwards and downwards derivatives of the free relation variables of $T$.
   If we did have one, the cases for $\exists$ would be dual to the corresponding
   cases for $\forall$.}
 
-\newcommand{\bothdiff}{\diamond}
+%\newcommand{\bothdiff}{\diamond}
+\newcommand{\bothdiff}{{\mathsf X}} 
 
 We will make use of an auxilliary function, $\bothdiff$, which computes the
-``next'' value of a term by applying the upwards and downwards derivatives.
+\lochanged{``neXt''} value of a term by applying the upwards and downwards derivatives.
 
 \newcommand{\bothchanges}{\rho}
 \begin{thm}[name=Concrete Datalog formula derivatives, restate=concreteDatalog]
@@ -929,26 +932,26 @@ We will make use of an auxilliary function, $\bothdiff$, which computes the
     \vspace{-5pt}
     \begin{minipage}[t]{.45\textwidth}
       \begin{align*}
-        \updiff(\bot) \defeq& \bot\\
-        \updiff(\top) \defeq& \bot\\
-        \updiff(R_j) \defeq& \updiff R_j \\
-        \updiff(T\vee U) \defeq& \updiff(T) \vee \updiff (U) &(\dagger)\\
-        \updiff(T\wedge U) \defeq& (\updiff(T)\wedge \bothdiff(U))\\
+        \updiff(\bot) &\defeq \bot\\
+        \updiff(\top) &\defeq \bot\\
+        \updiff(R_j) &\defeq \updiff R_j \\
+        \updiff(T\vee U) &\defeq \updiff(T) \vee \updiff (U) &(\dagger)\\
+        \updiff(T\wedge U) &\defeq (\updiff(T)\wedge \bothdiff(U))\\
                             & \vee (\updiff(U) \wedge \bothdiff(T))\\
-        \updiff(\neg T) \defeq& \downdiff(T)\\
-        \updiff(\exists x.T) \defeq& \exists x.\updiff(T) &(\dagger)
+        \updiff(\neg T) &\defeq \downdiff(T)\\
+        \updiff(\exists x.T) &\defeq \exists x.\updiff(T) &(\dagger)
       \end{align*}
     \end{minipage}\hfill\noindent
     \begin{minipage}[t]{.45\textwidth}
       \begin{align*}
-        \downdiff(\bot) \defeq& \bot\\
-        \downdiff(\top) \defeq& \bot\\
-        \downdiff(R_j) \defeq& \downdiff R_j \\
-        \downdiff(T\vee U) \defeq& (\downdiff(T) \wedge \neg \bothdiff(U))\\
+        \downdiff(\bot) &\defeq \bot\\
+        \downdiff(\top) &\defeq \bot\\
+        \downdiff(R_j) &\defeq \downdiff R_j \\
+        \downdiff(T\vee U) &\defeq (\downdiff(T) \wedge \neg \bothdiff(U))\\
                               & \vee (\downdiff(U) \wedge \neg \bothdiff(T))\\
-        \downdiff(T\wedge U) \defeq& (\downdiff(T)\wedge U) \vee (T \wedge \downdiff(U))\\
-        \downdiff(\neg T) \defeq& \updiff(T)\\
-        \downdiff(\exists x.T) \defeq& \exists x.\downdiff(T) \wedge \neg \exists x.\bothdiff(T)
+        \downdiff(T\wedge U) &\defeq (\downdiff(T)\wedge U) \vee (T \wedge \downdiff(U))\\
+        \downdiff(\neg T) &\defeq \updiff(T)\\
+        \downdiff(\exists x.T) &\defeq \exists x.\downdiff(T) \wedge \neg \exists x.\bothdiff(T)
       \end{align*}
     \end{minipage}
     \vspace{6pt}

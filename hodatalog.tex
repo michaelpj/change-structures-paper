@@ -1,6 +1,6 @@
 %!TEX root = change-structures.tex
 
-\newcommand{\abs}[2]{\lambda #1.{#2}}
+\newcommand{\abs}[2]{\lambda #1.\,{#2}}
 
 \newcommand{\boolsort}{o}
 \newcommand{\intsort}{\iota}
@@ -8,55 +8,161 @@
 \newcommand{\mmng}[1]{\mathcal{M}\llbracket #1 \rrbracket}
 \newcommand{\cmng}[1]{\mathcal{C}\llbracket #1 \rrbracket}
 \newcommand{\smng}[1]{\mathcal{S}\llbracket #1 \rrbracket}
-\newcommand\makeset[1]{\{#1\}}
-\newcommand\disjointTimesS{\disjointTimes_S}
-%\newcommand\twistS{\twist_S}
-\newcommand\superposeS{{\superpose_S}}
+\newcommand{\makeset}[1]{\{#1\}}
+\newcommand{\disjointTimesS}{\disjointTimes_S}
+\newcommand{\superposeS}{{\superpose_S}}
 \newcommand{\twistS}{\cplus_{\superpose_S}}
-\newcommand\lub{\bigsqcup}
+\newcommand{\lub}{\bigsqcup}
+\newcommand{\truetm}{\mathsf{true}}
+\newcommand{\falsetm}{\mathsf{false}}
+\newcommand{\cTo}{\Rightarrow_{\rm c}}
+\newcommand{\mTo}{\Rightarrow_{\rm m}}
+\newcommand{\mexistsfn}{\mathsf{mexists}}
+\newcommand{\mfunc}{T^\mathcal{M}}
+\newcommand{\impliesfn}{\mathsf{implies}}
+
+\newcommand{\andfn}{\mathsf{and}}
+\newcommand{\mandfn}{\mathsf{mand}}
+\newcommand{\andterm}{\mathsf{and}}
+\newcommand{\orfn}{\mathsf{or}}
+\newcommand{\morfn}{\mathsf{mor}}
+\newcommand{\notfn}{\mathsf{not}}
+\newcommand{\existsfn}{\mathsf{exists}}
+\newcommand{\forallfn}{\mathsf{forall}}
+\newcommand{\dom}{\mathrm{dom}}
 
 \subsection{Extension to higher-order datalog}
 
-For the syntax of higher-order logic, we use a standard presentation as a simply-typed $\lambda$-calculus with \emph{types}
+\lo{TODO: Check that the following definitions are consistent extensions of datalog in the preceding.}
+
+\subsubsection{Syntax} 
+We use a standard presentation of higher-order logic as a simply-typed $\lambda$-calculus with \emph{types}
 \[
 \sigma \; ::= \; \boolsort \mid \intsort \mid \sigma_1 \to \sigma_2
 \]
-and \emph{logical constants}, $\neg, \wedge, \vee, \forall_\sigma, \exists_\sigma$, etc., typed as follows:
-\[ \neg : \boolsort \to \boolsort \qquad \vee, \wedge : \boolsort \to \boolsort \to \boolsort \qquad \forall_\sigma, \exists_\sigma : (\sigma \to \boolsort) \to \boolsort\]
-Standardly we write $\exists_\sigma(\abs{x\!\!:\!\!\sigma}{M})$ as $\exists x\!\!:\!\!\sigma .\, M$; similarly for $\forall_\sigma(\abs{x\!\!:\!\!\sigma}{M})$.
 Types of the following shape are called \emph{relational}:
 \[
 \rho \; ::= \; \intsort \to \boolsort \mid \intsort \to \rho \mid \rho \to \rho'
 \]
 Note that a relational type has $\boolsort$ as the result type.
+\emph{Terms} are just the standard simply-typed $\lambda$-terms generated from a given first-order signature $\Sigma$, and the following set of \emph{logical constants}, typed as follows:
+\[ \neg : \boolsort \to \boolsort \qquad \vee, \wedge, \Rightarrow : \boolsort \to \boolsort \to \boolsort \qquad \forall_\sigma, \exists_\sigma : (\sigma \to \boolsort) \to \boolsort\]
+Standardly we write $\exists_\sigma(\abs{x\!\!:\!\!\sigma}{M})$ as $\exists x\!\!:\!\!\sigma .\, M$; similarly for $\forall_\sigma(\abs{x\!\!:\!\!\sigma}{M})$.
+\emph{Formulas} are just terms of type $\boolsort$.
+We will write variables generally using $x,y,z$, or $X,Y,Z$ when we want to emphasise that they are of higher-order types.
+Given a typing environment $\Delta$ of relational variables (i.e.~variables of relational types), \emph{valid typing judgement}, $\Delta \vdash s : \sigma$, is defined by induction over the standard typing rules.
 
-\subsubsection{Semantics of types, terms and formulas: standard, monotone and continuous}
-The \emph{standard semantics} of types $\smng{\sigma}$ is defined as follows.
+\paragraph{Horn clauses}
+Fix a typing environment $\Delta$ of relational variables (i.e.~variables of relational types). 
+The \emph{goal formulas} over $\Delta$, typically $G$, and the \emph{definite formulas} over $\Delta$, typically $D$, are the subset of all formulas defined by induction:
 \[
-\begin{array}{rll}
-%  \smng{\mathsf{one}} & \coloneqq  & \makeset{\star} \\  
-  \smng{\boolsort} & \coloneqq  & \makeset{0, 1} \\ 
-  \smng{\intsort} & \coloneqq  & \mathbb{Z} \\
-  \smng{\sigma_1 \to \sigma_2} & \coloneqq  & \smng{\sigma_1} \to \smng{\sigma_2} \quad \hbox{(set-theoretic function space)}
-\end{array}
+  \begin{array}{rcl}
+    G & \Coloneqq & M \mid G \wedge G \mid G \vee G \mid \exists x\!\!:\!\!\sigma.\: G  \\
+    D & \Coloneqq & \truetm \mid \forall x\!\!:\!\!\sigma.\: D \mid D \wedge D \mid G \Rightarrow X \, \overline x \\
+  \end{array}
 \]
-We define the \emph{monotone semantics} $\mmng{\sigma}$ as follows: 
-$\mmng{\boolsort} := (\makeset{\bot, \top}, \leq)$; $\mmng{\intsort} := (\mathbb{Z}, =)$; and $\mmng{\sigma_1 \to \sigma_2} := (\mmng{\sigma_1} \to_{\rm m} \mmng{\sigma_2}, \leq)$, the monotone function space, with the extensional ordering.
+in which $\sigma$ is either the type of individuals $\intsort$ or a relational type $\rho$, $M$---called \emph{atom}---is an applicative formula of shape ${X \, M_1 \cdots M_k}$
+in which $X$ is a relational variable and each $M_i$ is a term.
+%\footnote{We do not require the head variable of $M$ to be in $\dom(\Delta)$.},
+In the last alternative, $X \in \dom(\Delta)$ and $\overline{x} = x_1 \cdots x_n$ a sequence of pairwise distinct variables.
 
-The \emph{continuous semantics} $\cmng{\sigma}$ is defined similarly: $\cmng{\boolsort} := (\makeset{\bot, \top}, \leq)$; $\cmng{\intsort} := (\mathbb{Z}, =)$; and $\cmng{\sigma_1 \to \sigma_2} := (\cmng{\sigma_1} \to_{\rm c} \cmng{\sigma_2}, \leq)$, the continuous function space.
+\subsection{Continuous semantics}
+
+\begin{figure*}
+\[
+  \begin{array}{rcl}
+    \cmng{\Delta \vdash x : \rho}(\alpha) &=& \alpha(x) \\
+    \cmng{\Delta \vdash c : \rho}(\alpha) &=& c^\rho \\
+    %\cmng{\Delta \vdash \phi : \boolsort}(\alpha) &=& \smng{\Delta \vdash \phi : \boolsort}(\alpha) \\
+    \cmng{\Delta \vdash {G \, H} : \rho_2}(\alpha) &=& \cmng{\Delta \vdash G : \rho_1 \to \rho_2}(\alpha)(\cmng{\Delta \vdash H : \sigma_1}(\alpha)) \\
+    \cmng{\Delta \vdash {G \, N} : \rho}(\alpha) &=& \cmng{\Delta \vdash G : \iota \to \rho}(\alpha)(\cmng{\Delta \vdash N : \iota}(\alpha)) \\
+    \cmng{\Delta \vdash \abs{x:\sigma}{G} : \sigma}(\alpha) &=& %\abs{x \in \cmng{\sigma}}{\cmng{\Delta, x:\sigma \vdash G : \sigma}(\alpha)} \\
+    \abs{x' \in \cmng{\sigma}}{\cmng{\Delta, x:\sigma \vdash G : \sigma}(\alpha[x \mapsto x'])}
+  \end{array}
+\]
+\caption{Continuous semantics of terms.}\label{fig:cts-term-semantics}
+\end{figure*}
+
+\paragraph{Continuous type frame.}
+We define the \emph{continuous type frame} by induction:
+\[
+   \cmng{\iota} \coloneqq (A_\iota, =)
+   \qquad\quad \cmng{\boolsort} \coloneqq (\mathbbm{2}, \leq)
+   \qquad\quad \cmng{\sigma_1 \to \sigma_2} \coloneqq (\cmng{\sigma_1} \cTo \cmng{\sigma_2}, \leq)
+\]
+where $X \cTo Y$ is the continuous function space between CPOs $X$ and $Y$, which is itself a CPO with respect to the pointwise ordering $\leq$.
+Of course, in case $X$ is discrete poset $A_\iota$, this coincides with the full function space.
+%We extend the lattice structure of $\mathbbm{2}$ to all relations $\cmng{\rho}$, analogously to the case of the full function space (and we reuse the same notation since there will be no confusion);
+Define $\cmng{\Delta} \coloneqq \Pi x \in \dom(\Delta).\,\cmng{\Delta(x)}$.
+
+Note that an element $f$ of $X_1 \cTo \cdots{} \cTo X_n \cTo \mathbbm{2}$ is the \emph{characteristic function} of the relation $f^{-1}(1) \subseteq X_1 \times \cdots \times X_n$, which is always Scott open.
+
+
+\paragraph{Continuous interpretation.}
+We interpret a typing environment $\Delta$ by the indexed product:
+$
+  \cmng{\Delta} \coloneqq \Pi x \in \dom(\Delta).\cmng{\Delta(x)}
+$,
+that is, the set of all functions on $\dom(\Delta)$ that map $x$ to an element of $\cmng{\Delta(x)}$;
+these functions, typically $\alpha$, are called \emph{valuations}.
+The interpretation of a term $\Delta \vdash M : \sigma$ is a function $\cmng{\Delta \vdash M : \sigma}$ that belongs to the set $\cmng{\Delta} \cTo \cmng{\sigma}$, and which is defined in Figure~\ref{fig:cts-term-semantics}.
+%As for the standard interpretation, we assume a fixed interpretation $A$ of the background theory, which is left implicit in the notation.
+The logical constants $c : \rho$ are interpreted by the following functions:
+\[
+  \begin{array}{cc}
+  \begin{array}{rcl}
+    \orfn(b_1)(b_2) &=& \max \{b_1,b_2\} \\
+    \andfn(b_1)(b_2) &=& \min \{b_1,b_2\} \\
+    \existsfn_\sigma(f) &=& \max \{ f(v) \mid v \in \cmng{\sigma} \}
+  \end{array}
+  &
+  \begin{array}{rcl}
+    \notfn(b) &=& 1 - b \\
+    \impliesfn(b_1)(b_2) &=& \orfn(\notfn(b_1))(b_2) \\
+    \forallfn_\sigma(f) &=& \notfn (\existsfn_\sigma(\notfn \circ f))
+  \end{array}
+  \end{array}
+\]
+Whilst the standard interpretation of the positive logical constants for conjunction and disjunction will suffice, the interpretation of existential quantification needs to be relativised to the monotone setting:
+$
+  \mexistsfn_\sigma(r) = \mathit{max} \{r(d) \mid d \in \cmng{\sigma}\}
+$.
+As for standard semantics, we write $\cmng{G}$ for $\cmng{\Delta \vdash  G : \rho}$, whenever the judgement $\Delta \vdash  G : \rho$ is clear from the context.
+
+Since the implication function $\impliesfn$ is not monotone (in its first argument), definite formulas are not interpretable in a monotone frame.
+However, it is possible to interpret logic programs.
+% To that end, we define the functional $\mfunc_{P:\Delta}$ on semantic environments by: $\mfunc_{P:\Delta}(\alpha)(x) = \cmng{\Delta \vdash  P(x) : \Delta(x)}(\alpha)$.
+% In analogy with the Horn clause problem, we call a prefixed point of $\mfunc_{P:\Delta}$ a \emph{model} of the program $P$.
+% This construction preserves the logical order.
+
+
+
+% \subsubsection{Semantics of types, terms and formulas: standard, monotone and continuous}
+% The \emph{standard semantics} of types $\smng{\sigma}$ is defined as follows.
+% \[
+% \begin{array}{rll}
+% %  \smng{\mathsf{one}} & \coloneqq  & \makeset{\star} \\  
+%   \smng{\boolsort} & \coloneqq  & \makeset{0, 1} \\ 
+%   \smng{\intsort} & \coloneqq  & \mathbbm{Z} \\
+%   \smng{\sigma_1 \to \sigma_2} & \coloneqq  & \smng{\sigma_1} \to \smng{\sigma_2} \quad \hbox{(set-theoretic function space)}
+% \end{array}
+% \]
+% We define the \emph{monotone semantics} $\cmng{\sigma}$ as follows: 
+% $\cmng{\boolsort} := (\makeset{\bot, \top}, \leq)$; $\cmng{\intsort} := (\mathbbm{Z}, =)$; and $\cmng{\sigma_1 \to \sigma_2} := (\cmng{\sigma_1} \to_{\rm m} \cmng{\sigma_2}, \leq)$, the monotone function space, with the extensional ordering.
+
+% The \emph{continuous semantics} $\cmng{\sigma}$ is defined similarly: $\cmng{\boolsort} := (\makeset{\bot, \top}, \leq)$; $\cmng{\intsort} := (\mathbbm{Z}, =)$; and $\cmng{\sigma_1 \to \sigma_2} := (\cmng{\sigma_1} \to_{\rm c} \cmng{\sigma_2}, \leq)$, the continuous function space.
 
 Let $L$ be a poset. 
 Recall that a subset $X \subset L$ is \emph{open} (written $X \in \tau_S$, the Scott topology) if (i) $X$ is up-closed, and (ii) for every $\omega$-increasing chain $(x_i)_{i \in \omega}$, if $\lub_{i \in \omega} x_i$ exists and is in $X$ then $x_i \in X$ for some $i$. 
+We write $\overline{\tau_S} := \makeset{\overline X \mid X \in \tau_S}$ for the collection of closed sets.
 
 
 Let $D$ and $E$ be cpos. 
 A function $f:D \to E$ is \emph{continuous} just if it is monotone, and preserves lubs of $\omega$-increasing chains.
 Recall that a function $f : D \to E$ is continuous iff it is continuous w.r.t.~the Scott topology.
 
-The semantics of terms and formula-terms are defined standardly. 
-\lo{TODO}
-
 \begin{prop}[name=Scott change actions, restate=hodatalog]
+\lo{TODO: Find better notations.}
  Let $(L, \leq)$ be a poset. Define
   \begin{displaymath}
     \cstr{L}_{\superposeS} 
@@ -65,15 +171,18 @@ The semantics of terms and formula-terms are defined standardly.
   \end{displaymath}
   where
   \begin{align*}
-    L \disjointTimesS L &\defeq \{ (a, b) \in A \times B \mid a \wedge b = \bot \}\\
-    a \twist (p, q) &\defeq (a \vee p) \wedge \neg q
+    L \disjointTimesS L &\defeq \{ (a, b) \in \tau_S \times \overline{\tau_S} \mid a \cap b = \emptyset \}\\
+    a \twistS (p, q) &\defeq (a \cup p) \cap \overline q
   \end{align*}
   and the monoid operator is
   \begin{displaymath}
-    (p, q) \splus (r, s) \defeq ((p \wedge \neg s) \vee r, (q \wedge \neg r) \vee s)
+    (p, q) \splus (r, s) \defeq ((p \cap \overline s) \cup r, (q \cap \overline r) \cup s)
   \end{displaymath}
-  with identity element $(\top, \bot)$.
+  with identity element $(L, \emptyset)$.
 
   Then $\cstr{L}_\superpose$ is a complete change action on $L$.
 \end{prop}
 
+\lo{Let $a, b \in \tau_S$. Then $a \twistS (b, \overline b) = b$.}
+
+\lo{There is a version of Theorem~\ref{thm:concreteDatalog} for higher-order datalog.}
