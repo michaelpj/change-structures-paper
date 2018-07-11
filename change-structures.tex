@@ -802,10 +802,9 @@ a set of named tuples, with variables ranging over a finite schema.
     \sigma_\Gamma(\{x_1 \mapsto v_1, \ldots, x_n \mapsto v_n, y_1 \mapsto w_1, \ldots, y_m \mapsto w_m \})
     \defeq \{ x_1 \mapsto v_1, \ldots, x_n \mapsto v_n \}
   \end{displaymath}
-  I.e. $\sigma_\Gamma$ restricts a named tuple over \lochanged{$\Gamma \cup \Sigma$} into a tuple over $\Gamma$
+  I.e. $\sigma_\Gamma$ restricts a named tuple over $\Gamma \cup \Sigma$ into a tuple over $\Gamma$
   with the same values for the names in $\Gamma$.
-  %We will often apply $\sigma_\Gamma$ elementwise to sets of tuples.
-\lochanged{By abuse of notation, we denote the elementwise extension of $\sigma_\Gamma$ to sets of tuples also as $\sigma_\Gamma$.}
+  We denote the elementwise extension of $\sigma_\Gamma$ to sets of tuples also as $\sigma_\Gamma$.
 \end{defn}
 
 We will adopt the usual closed-world assumption to give a denotation to negation.
@@ -853,8 +852,7 @@ into a complete Boolean algebra.
 
 \begin{defn}
   A Datalog formula $T$ whose free term variables are contained in $\Gamma$ denotes a function from 
-  %its free relation variables $R_1, \ldots, R_n$ 
-  \lochanged{$\Rel_\Gamma^n$ to $\Rel_\Gamma$}.
+  $\Rel_\Gamma^n$ to $\Rel_\Gamma$.
   \begin{displaymath}
     \denote{\_}_\Gamma : \Formula \rightarrow \Rel_\Gamma^n \rightarrow \Rel_\Gamma
   \end{displaymath}
@@ -1436,9 +1434,9 @@ value of the fixpoint, i.e.
 
 If $F : B \times A \rightarrow A$ and $\cstr{A}$ is a change action such that 
 $\cstr{A} \ptfunc \cstr{A}$ is well-defined, then 
-\[
-\lambda X . F(E \cplus \change{E}, X) = (\lambda X . F(E, X)) \cplus_{pt} (\lambda X . \change{E})
-\]
+\begin{displaymath}
+  \lambda X . F(E \cplus \change{E}, X) = (\lambda X . F(E, X)) \cplus_{pt} (\lambda X . \change{E})
+\end{displaymath}
 i.e. we are applying a change to the \emph{function} whose fixpoint we are taking.
 
 In Datalog this would allow us to update a recursively defined relation given an
