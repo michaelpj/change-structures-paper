@@ -553,25 +553,24 @@ another:
 \subsection{Change kernels and kernel orderings}
 
 Consider the full change action $\cstr{\ZZ}_\Rightarrow$ on the integers.
-If one wishes to find a change that transports $0$ to $1$, there
-are a few options available: for example, one can pick the function $\lambda x . 1$, or
-the function $\lambda x . x + 1$. Clearly, the second one is more natural, since
-it does the minimum amount of ``effort''.
+If we want to find a change that turns $99$ into $100$, there
+are a few options available: for example, we can pick the function $\lambda x . 100$, or
+the function $\lambda x . x + 1$. In a sense, the second one does ``too much''
+work, in that it captures all the information about the target value instead of
+just the difference between them.
 
-This intuition that a change may do too much can be captured %in an elegant way 
-by the following definition:
+This intuition that a change may do too much can be captured by the following definition:
 \begin{defn}[Kernel of a change]
   Let $\cstr{A}$ be a change action and $\change{a} : \changes{A}$. Then the
   \emph{kernel} of $\change{a}$ is the equivalence relation $\kernel_{\change{a}}$ on $A$
-  %: \mathcal{P}(A \times A)$ 
   defined by
   \begin{displaymath}
-    a \kernel_{\change{a}} b \defeq
+    a \kernel_{\change{a}} b \iff 
      a \cplus \change{a} = b \cplus \change{a}
   \end{displaymath}
   The \emph{kernel ordering} on $\changes{A}$ is defined by
   \begin{displaymath}
- {\change{a} \kernelOrder \change{b}} \defeq {{\kernel_{\change{a}}} \subseteq {\kernel_{\change{b}}}}
+    {\change{a} \kernelOrder \change{b}} \iff {{\kernel_{\change{a}}} \subseteq {\kernel_{\change{b}}}}
   \end{displaymath}
 \end{defn}
 
@@ -744,7 +743,7 @@ minus operator with a corresponding \emph{precise} derivative.
 \todompj{Proof. The second part follows easily from the charaterization of
   $\kernelOrder$. Pretty sure it's true!}
 
-\begin{prop}
+\begin{prop}[name=Boolean algebra kernels, restate=booleanAlgebraKernels]
   Let $L$ be a (complete) Boolean algebra with the $\cstr{L}_\superpose$ change action, and
   $f: A \rightarrow L$ a function.
 
@@ -757,10 +756,16 @@ minus operator with a corresponding \emph{precise} derivative.
 
   Moreover $\derive{f}_{\cminus_\kernel}$ is a minimal derivative of $f$ with respect to $\kernelOrder$.
 \end{prop}
+\ifproofs
+\begin{proof}
+  See \cref{prf:booleanAlgebraKernels}.
+\end{proof}
+\fi
 
 This shows us in what sense minimality with respect to the kernel orering gives
 us precision: the derivative is precise in that the components are as small as
-possible.
+possible. When we are working with sets or relations, this is important since it
+will correspond to the actual size of components of the derivative.
 
 \section{Derivatives for non-recursive Datalog}
 \label{sec:nonRecursiveDatalog}
@@ -2213,6 +2218,28 @@ helpful comments on the manuscript.
   \twist (r, s) : L \disjointTimes L$ if $(p, q), (r,s) : L \disjointTimes L$.
 
   Completeness is easy to show.
+\end{proof}
+
+\booleanAlgebraKernels*
+\begin{proof}
+  \label{prf:booleanAlgebraKernels}
+
+  First we show $p \leq r, q \leq s$ implies $(p, q) \kernelOrder (r, s)$. We
+  note that the condition implies
+  \begin{align*}
+    &(p, q) \twist (r,s)\\
+    &= ((p \wedge \neg s) \vee r, (q \wedge \neg r) \vee s)\\
+    &= (r,s)
+  \end{align*}
+  Let $a, b \in L$. Then
+  \begin{align*}
+    &a \twist (p, q) = b \twist (p, q)\\
+    &\Rightarrow a \twist (p, q) \twist (r, s) = b \twist (p, q) \twist (r, s)\\
+    &\Rightarrow a \twist (r, s) = b \twist (r, s)
+  \end{align*}
+  Hence $\kernel_{(p,q)} \subseteq \kernel_{(r,s)}$, so $(p, q) \kernelOrder (r, s)$.
+ 
+  The other results follow easily.
 \end{proof}
 
 \subsection {Derivatives of Datalog formulae}
