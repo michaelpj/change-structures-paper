@@ -2305,8 +2305,10 @@ helpful comments on the manuscript.
   \end{gather*}
   
   First, note that $\bot \twist (p, q) = p = p \twist (p, q)$ and hence $\bot \kernel_{(p, q)} p$,
-  therefore $\bot \kernel_{(r, s)} p$. This implies
-    \[ r = \bot \twist (r, s) =  p \twist (r, s) = p \vee r \wedge \neg s \]
+  therefore $\bot \kernel_{(r, s)} p$ since $(p, q) \kernelOrder (r,s)$. This implies
+  \begin{displaymath}
+    r = \bot \twist (r, s) =  p \twist (r, s) = p \vee r \wedge \neg s
+  \end{displaymath}
   i.e. $r = p \vee r \wedge \neg s$ and hence $p \leq r \vee s$. Since $r$ and $s$ are disjoint,
   in order to prove $p \leq r$ it suffices to show that $p \wedge s = \bot$. 
 
@@ -2316,7 +2318,8 @@ helpful comments on the manuscript.
                &=b \twist (r, s)\\
                &\leq \neg s
   \end{align*}
-  Hence $p \wedge s \leq \neg s$, therefore $p \wedge s = \bot$, which concludes the proof.
+  Hence $p \wedge s \leq \neg s$, therefore $p \wedge s = \bot$, which concludes
+  the proof that $p \leq r$. The proof that $q \leq s$ is symmetric.
 \end{proof}
 
 \subsection {Derivatives of Datalog formulae}
