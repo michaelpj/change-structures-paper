@@ -673,6 +673,9 @@ differences, and indeed Boolean algebras have a complete change action.
     A \disjointTimes B &\defeq \{ (a, b) : A \times B \mid a \wedge b = \bot \}\\
     a \twist (p, q) &\defeq (a \vee p) \wedge \neg q
   \end{align*}
+  \lo{I think we should replacing the definition two lines above by
+  \[L \disjointTimes L \; \defeq \; \{ (a, b) : L \times L \mid a \wedge b = \bot \}\]
+  because it is not clear what $A$ and $B$ are, nor whether $\wedge$ is defined...}
   and the monoid operator is
   \begin{displaymath}
     (p, q) \splus (r, s) \defeq ((p \wedge \neg s) \vee r, (q \wedge \neg r) \vee s)
@@ -702,7 +705,7 @@ the natural order on $L \times L^{\textrm{op}}$.}
 \begin{prop}
   \label{prop:minimalMaximalDerivatives}
   Let $L$ be a (complete) Boolean algebra with the $\cstr{L}_\superpose$ change action, and
-  $f: A \rightarrow L$ a function.
+  $f: A \rightarrow L$ be a function.
   Then, the following are minus operators:
   \begin{align*}
     a \cminus_\bot b &= (a \wedge \neg b, \neg a)\\
