@@ -783,9 +783,9 @@ formula (and later, a Datalog program) as directly denoting a relation, i.e.
 a set of named tuples, with variables ranging over a finite schema.
 
 \begin{defn}[Schema]
-  A schema $\Gamma$ is a finite set of names. A named tuple over $\Gamma$ is an assignment
+  A \emph{schema} $\Gamma$ is a finite set of names. A \emph{named tuple} over $\Gamma$ is an assignment
   of a value $v_i$ for each name $x_i$ in $\Gamma$. Given disjoint schemata 
-  $\Gamma = \{ x_1, \ldots, x_n \}, \Sigma = \{ y_1, \ldots, y_n \}$,
+  $\Gamma = \{ x_1, \ldots, x_n \}$ and $\Sigma = \{ y_1, \ldots, y_n \}$,
   the selection function $\sigma_\Gamma$ defined as
   \begin{displaymath}
     \sigma_\Gamma(\{x_1 \mapsto v_1, \ldots, x_n \mapsto v_n, y_1 \mapsto w_1, \ldots, y_m \mapsto w_m \})
@@ -831,7 +831,7 @@ into a complete Boolean algebra.
     \end{minipage}
     \vspace{-12pt}
     \begin{align*}
-      \sem{\exists x . T}_\Gamma(\semR) &\defeq \sigma(\sem{T}_{\Gamma, x})
+      \sem{\exists x . T}_\Gamma(\semR) &\defeq \sigma_\Gamma(\sem{T}_{\Gamma, x}(\semR))
     \end{align*}
     \end{minipage}
   }
@@ -1196,9 +1196,11 @@ $f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteri
     actions exist is outside the scope of this paper.
   }
 \end{thm}
+As a direct consequence of this, it follows that whenever $L$ is a Boolean algebra, the
+pointwise functional change action $\cstr{A} \ptfunc \cstr{L}_\superpose$ is well-defined.
 
-These pointwise change actions are functional in the sense of \cref{def:functionalChanges}. Moreover, the derivative of the evaluation map is quite easy to 
-compute.
+Pointwise functional change actions are functional in the sense of \cref{def:functionalChanges}. 
+Moreover, the derivative of the evaluation map is quite easy to compute. 
 \begin{prop}[Derivatives of the evaluation map]
 \label{prop:evDerivatives}
   Let $\cstr{A}$ and $\cstr{B}$ be change actions such that the pointwise functional change action
@@ -1225,7 +1227,7 @@ Having pointwise function changes allows us to actually compute a derivative of 
 evaluation map as shown. In practice, this means
 that we will only be able to use the results in \cref{sec:fixpoints} when
 we have pointwise change actions, or where we have some other way of computing
-a derivative of the evaluation map.
+a derivative of the evaluation map. 
 
 \section{Directed-complete partial orders and fixpoints}
 
@@ -1246,7 +1248,7 @@ the maps $\cplus$, $\splus$ are continuous.
   \begin{itemize}
     \item $A$ and $\changes{A}$ are dcpos.
     \item $\cplus$ is Scott-continuous as a map from $A \times \changes{A} \rightarrow A$.
-    \item $\cplus$ is Scott-continuous as a map from $\changes{A} \times \changes{A} \rightarrow \changes{A}$.
+    \item $\splus$ is Scott-continuous as a map from $\changes{A} \times \changes{A} \rightarrow \changes{A}$.
   \end{itemize}
 \end{defn}
 
