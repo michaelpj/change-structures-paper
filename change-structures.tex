@@ -1743,8 +1743,9 @@ account of change actions, although a full treatment is beyond the scope of this
 There is a natural preorder on the base set of a change action, given by reachability
 under the action:
 
-\begin{defn}
-  $a \reachOrder b$ iff there is a $\change{a} \in \changes{A}$ such that $a \cplus
+\begin{defn}[Reachability preorder]
+Let $\cstr{A}$ a change action. 
+We define ${\reachOrder} \subseteq A \times A$ by: $a \reachOrder b$ just if there is a $\change{a} \in \changes{A}$ such that $a \cplus_A
   \change{a} = b$.
 \end{defn}
 
@@ -1770,7 +1771,7 @@ Indeed, the correspondence between a change action and its reachability preorder
 a (full and faithful) functor $\reach : \cat{CAct} \rightarrow \cat{PreOrd}$ that acts as the
 identity on morphisms.
 
-Conversely, any preorder $\leq$ on some set $A$ induces a change action
+Conversely, any preorder $(A, \leq)$ induces a change action
 $\cstr{A}_\leq \defeq \cstruct{A}{A^\ast}{\cplus^\ast_\leq}$.
 The action $\cplus^\ast_\leq$ is defined as the extension of $\cplus_\leq$ to the free
 monoid $A^\ast$, where $\cplus_\leq$ is defined as:
@@ -1785,7 +1786,7 @@ monoid $A^\ast$, where $\cplus_\leq$ is defined as:
 \end{aligned}
 \]
 
-The mapping to $\cstr{A}_\leq$ gives rise to a (full and faithful) functor
+The mapping $(A, \leq) \mapsto \cstr{A}_\leq$ gives rise to a (full and faithful) functor
 $\direct : \cat{PreOrd} \rightarrow \cat{CAct}$, again acting as the identity on morphisms.
 
 These two functors are in fact enough to give us an equivalence between the categories
@@ -1822,7 +1823,7 @@ to the pointwise functional change actions we saw earlier (in \cref{sec:pointwis
 
 \begin{defn}
   \label{def:convenientChangeActions}
-  A change action $\cstr{B}$ is convenient if every exponential object
+  A change action $\cstr{B}$ is \emph{convenient} if every exponential object
   $\exponential{\cstr{A}}{\cstr{B}}$ is isomorphic to a pointwise functional change action.
 \end{defn}
 
@@ -1831,7 +1832,7 @@ $\cat{PreOrd}$ should work, since exponentials $A \Rightarrow B$ in $\cat{PreOrd
 structure of $B$, lifted pointwise.
 
 As we mentioned in \cref{sec:pointwiseFunctional}, 
-the pointwise functional change action is not well defined for all change actions.
+the pointwise functional change action is not well-defined for all change actions.
 This is because we require every pointwise change $\change{f}$ to map a differentiable
 function $f$ into a differentiable function $f \cplus \change{f}$, but there is no way
 to guarantee that this is the case for arbitrary pointwise changes.
@@ -1843,7 +1844,7 @@ Fortunately, convenient change actions form a relatively large subcategory of $\
   $\cstruct{\changes{B}}{\changes{B}}{\splus}$ is complete and $\cplus$ is differentiable with
   respect to its first argument is convenient.
 
-  In particular, every change action where $\cplus$ is a group action is convenient.
+  In particular, every change action $\cstruct{B}{\changes{B}}{\cplus}$ where $\cplus$ is a group action is convenient.
 \end{prop}
 \ifproofs
   See \cref{prf:convenientChangeActionProps}.
