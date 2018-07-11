@@ -3,28 +3,6 @@
 %\input{preamble-standard}
 \input{preamble-acm}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% BEGIN {Macros / packages by Luke}
-% switch of draft/final version
-\newif\ifdraft\drafttrue
-%\newif\ifdraft\draftfalse
-
-\ifdraft
-\newcommand{\lochanged}[1]{{\color{red}{#1}}}
-\newcommand{\mpchanged}[1]{{\color{blue}{#1}}}
-%\newcommand{\tk}[1]{{\textcolor{DarkGreen}{[{#1}---Tsukada]}}}
-%\newcommand{\mp}[1]{{\color{blue}{[{#1}--Mario]}}}
-\newcommand{\lo}[1]{{\color{red}{[{#1}--Luke]}}}
-\else
-\newcommand{\mpchanged}[1]{{#1}}
-\newcommand{\lochanged}[1]{{#1}}
-%\newcommand{\mp}[1]{}
-\newcommand{\lo}[1]{}
-\fi
-\usepackage{bbm}
-%% END {Macros / packages by Luke}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -44,9 +22,36 @@
 \usepackage{cleveref}
 \usepackage{hyperref}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% BEGIN {Macros / packages by Luke}
+% switch of draft/final version
+\newif\ifdraft\drafttrue
+%\newif\ifdraft\draftfalse
+
+\ifdraft
+\newcommand{\lochanged}[1]{{\color{red}{#1}}}
+\newcommand{\mpchanged}[1]{{\color{blue}{#1}}}
+%\newcommand{\tk}[1]{{\textcolor{DarkGreen}{[{#1}---Tsukada]}}}
+%\newcommand{\mp}[1]{{\color{blue}{[{#1}--Mario]}}}
+\newcommand{\lo}[1]{{\color{red}{[{#1}--Luke]}}}
+
 \newcommand{\todoall}[1]{\todo[inline,color=black!30,author=All]{#1}}
 \newcommand{\todompj}[1]{\todo[inline,color=yellow!40,author=Michael]{#1}}
 \newcommand{\todomario}[1]{\todo[inline,color=blue!40,author=Mario]{#1}}
+
+\else
+\newcommand{\mpchanged}[1]{{#1}}
+\newcommand{\lochanged}[1]{{#1}}
+%\newcommand{\mp}[1]{}
+\newcommand{\lo}[1]{}
+
+\newcommand{\todoall}[1]{}
+\newcommand{\todompj}[1]{}
+\newcommand{\todomario}[1]{}
+\fi
+\usepackage{bbm}
+%% END {Macros / packages by Luke}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \input{notation}
 
@@ -784,7 +789,7 @@ formula (and later, a Datalog program) as directly denoting a relation, i.e.
 a set of named tuples, with variables ranging over a finite schema.
 
 \begin{defn}[Schema]
-  A schema $\Gamma$ is a finite set of names. A named tuple over $\Gamma$ is an assignemt
+  A schema $\Gamma$ is a finite set of names. A named tuple over $\Gamma$ is an assignment
   of a value $v_i$ for each name $x_i$ in $\Gamma$. Given disjoint schemata 
   $\Gamma = \{ x_1, \ldots, x_n \}, \Sigma = \{ y_1, \ldots, y_n \}$,
   the selection function $\sigma_\Gamma$ defined as
@@ -850,7 +855,6 @@ into a complete Boolean algebra.
   \end{displaymath}
   If $\semR = (\semR_1, \ldots, \semR_n)$ is a choice of a relation for each of the variables $R_i$,
   $\denote{T}(\semR)$ is inductively defined according to the rules in \cref{fig:datalogSemantics}.
-  \lo{TODO: Define the function $\sigma$ in  \cref{fig:datalogSemantics}.}
 \end{defn}
 
 Since $\Rel_\Gamma$ is a complete Boolean algebra, and so is $\Rel_\Gamma^n$, $\denote{T}_\Gamma$ is
@@ -1072,7 +1076,8 @@ While this isn't a precise derivative, it is still substantially cheaper than
 re-evaluating the whole subfomula, as the guard allows us to skip the second conjunct when $U$
 has not changed.
 
-\input{hodatalog}
+% We're not planning to include this currently
+%\input{hodatalog}
 
 \section{Changes on functions}
 
@@ -1583,12 +1588,12 @@ First of all, we define the usual ``immediate consequence operator'' which
 computes ``one step'' of our program semantics.
 
 \begin{defn}[Immediate consequence operator]
-  Given a program $\mathbb{P} = (P_1, \dots, P_m)$, where $P_i$ is a predicate,
-  the immediate consequence operator $\consq: \Rel_\Gamma^n \rightarrow \Rel_\Gamma^n$ is defined 
+  Given a program $\mathbb{P} = (P_1, \dots, P_n)$, where $P_i$ is a predicate,
+  with schema $\Gamma_i$ the immediate consequence operator $\consq: \Rel^n \rightarrow \Rel^n$ is defined 
   as follows:
   \begin{displaymath}
     \consq(\semR_1, \dots, \semR_n) 
-    = (\denote{P_1}_\Gamma(\semR_1, \dots, \semR_n), \dots, \denote{P_m}_\Gamma(\semR_1, \dots, \semR_n))
+    = (\denote{P_1}_{\Gamma_1}(\semR_1, \dots, \semR_n), \dots, \denote{P_n}_{\Gamma_n}(\semR_1, \dots, \semR_n))
   \end{displaymath}
 \end{defn}
 
