@@ -98,7 +98,7 @@ which computes the transitive closure of an edge relation $e$:
   tc(x, y) &\leftarrow e(x, z) \wedge tc(z, y)
 \end{align*}
 
-The semantics of Datalog, tells us that the denotation of this program is the
+The semantics of Datalog tells us that the denotation of this program is the
 least fixpoint of the rule $tc$. Kleene's Theorem tells us that we can in fact
 compute this by repeatedly applying the rule to fixpoint, starting from the empty relation. For example, supposing
 that $e = \{ (1, 2), (2, 3), (3, 4) \}$, we get the following evaluation trace:
@@ -527,7 +527,7 @@ entirely by the coarseness of the actions.
 The relation $\leq$  defines a preorder (but not a partial order) on the set of all change actions 
 over a fixed set A. Least and greatest elements do exist up to equivalence, and correspond
 respectively to the empty change action $\cstr{A}_1$ and any complete change
-action, such as the change action $\cstr{A}_\Rightarrow$,
+action, such as the full change action $\cstr{A}_\Rightarrow$,
 defined in \cref{sec:changeAction}.
 
 \begin{prop}
@@ -536,7 +536,7 @@ defined in \cref{sec:changeAction}.
   $\cstr{B}_1$. Then $f$ is differentiable as a function from $\cstr{A}_2$ into $\cstr{B}_2$.
 \end{prop}
 
-A straightforward consequence of this fact is that, whenever two change actions are equivalent,
+A consequence of this fact is that whenever two change actions are equivalent
 they can be used interchangeably without affecting which functions are differentiable. One last parallel with topology
 is the following result, which establishes a simple criterion for when a change action is coarser than
 another:
@@ -552,7 +552,7 @@ another:
 Consider the full change action $\cstr{\ZZ}_\Rightarrow$ on the integers.
 If we want to find a change that turns $99$ into $100$, there
 are a few options available: for example, we can pick the function $\lambda x . 100$, or
-the function $\lambda x . x + 1$. In a sense, the second one does ``too much''
+the function $\lambda x . x + 1$. In a sense, the first one does ``too much''
 work, in that it captures all the information about the target value instead of
 just the difference between them.
 
@@ -606,7 +606,7 @@ In fact, any change action whose base set is a poset induces a particularly conv
 on the corresponding change set:
 
 \begin{defn}
-  $\change{a} \changeOrder \change{b}$ just if for all $a \in A$ it is the case that
+  $\change{a} \changeOrder \change{b}$ iff for all $a \in A$ it is the case that
   $a \cplus \change{a} \leq a \cplus \change{b}$.
 \end{defn}
 
@@ -763,10 +763,11 @@ minus operator with a corresponding \emph{precise} derivative.
 \end{proof}
 \fi
 
-This shows us in what sense minimality with respect to the kernel orering gives
-us precision: the derivative is precise in that the components are as small as
-possible (this is what $\pointwiseOrder$ corresponds to). When we are working with sets or relations, this is important since it
-will correspond to the actual size of components of the derivative.
+This shows us in what sense minimality with respect to the kernel ordering gives
+us precision: the precise derivative has components which are as small as
+possible (since it is also minimal with respect to $\pointwiseOrder$).
+When we are working with sets or relations, this is important since it
+corresponds to the actual size of components of the derivative.
 
 \section{Derivatives for non-recursive Datalog}
 \label{sec:nonRecursiveDatalog}
@@ -787,9 +788,9 @@ real and pressing, as we saw in \cref{sec:intro}.
 
 Datalog is usually given a logical semantics where formulae are interpreted as first-order
 logic predicates and the semantics of a program is the set of models of its constituent
-predicates. We will instead give a simpler denotational semantics (as is
+predicates. We will instead give a simple denotational semantics (as is
 typical when working with fixpoints \autocite[See e.g.][]{compton1994stratified}) that treats a Datalog
-formula (and later, a Datalog program) as directly denoting a relation, i.e.
+formula as directly denoting a relation, i.e.
 a set of named tuples, with variables ranging over a finite schema.
 
 \begin{defn}
@@ -850,7 +851,7 @@ into a complete Boolean algebra.
   \vspace{-12pt}
 \end{figure}
 
-\begin{defn}[Formula semantics]
+\begin{defn}
   A Datalog formula $T$ whose free term variables are contained in $\Gamma$ denotes a function from 
   %its free relation variables $R_1, \ldots, R_n$ 
   \lochanged{$\Rel_\Gamma^n$ to $\Rel_\Gamma$}.
@@ -2307,8 +2308,10 @@ helpful comments on the manuscript.
   \end{gather*}
   
   First, note that $\bot \twist (p, q) = p = p \twist (p, q)$ and hence $\bot \kernel_{(p, q)} p$,
-  therefore $\bot \kernel_{(r, s)} p$. This implies
-    \[ r = \bot \twist (r, s) =  p \twist (r, s) = p \vee r \wedge \neg s \]
+  therefore $\bot \kernel_{(r, s)} p$ since $(p, q) \kernelOrder (r,s)$. This implies
+  \begin{displaymath}
+    r = \bot \twist (r, s) =  p \twist (r, s) = p \vee r \wedge \neg s
+  \end{displaymath}
   i.e. $r = p \vee r \wedge \neg s$ and hence $p \leq r \vee s$. Since $r$ and $s$ are disjoint,
   in order to prove $p \leq r$ it suffices to show that $p \wedge s = \bot$. 
 
@@ -2318,7 +2321,8 @@ helpful comments on the manuscript.
                &=b \twist (r, s)\\
                &\leq \neg s
   \end{align*}
-  Hence $p \wedge s \leq \neg s$, therefore $p \wedge s = \bot$, which concludes the proof.
+  Hence $p \wedge s \leq \neg s$, therefore $p \wedge s = \bot$, which concludes
+  the proof that $p \leq r$. The proof that $q \leq s$ is symmetric.
 \end{proof}
 
 \subsection {Derivatives of Datalog formulae}
