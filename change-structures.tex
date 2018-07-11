@@ -1,6 +1,6 @@
 % Toggle comments for preamble and topmatter to typeset in ACM style
 
-%\input{preamble-standard}
+%input{preamble-standard}
 \input{preamble-acm}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -295,7 +295,8 @@ Other recurring examples of change actions are:
     induces no changes at all.
   \item $\cstr{A}_\Rightarrow \defeq \cstruct{A}{A \rightarrow A}{\ev}$, where $A$ is an arbitrary
     set, $A \rightarrow A$ denotes the set of all functions from $A$ into itself, considered as
-    a monoid under composition and $\ev$ is the usual evaluation map.
+    a monoid under composition and $\ev$ is the usual evaluation map. We will call this the
+    ``full'' change action on $A$ since it contains every possible non-redundant change.
 \end{itemize}
 These are particularly interesting because they are, in a sense, the ``smallest'' and ``largest''
 change actions that can be imposed on an arbitrary set $A$.
@@ -536,11 +537,19 @@ another:
   $\cstr{A}_2$.
 \end{prop}
 
-\subsection{Kernels}
+\subsection{Change kernels and kernel orderings}
 
-\begin{defn}[Kernel]
-  Let $\cstr{A}$ be a change action and $\change{a} \in \changes{A}$. Then the
-  \emph{kernel} of $\change{a}$ is an equivalence relation $\kernel_{\change{a}}
+Consider the full change action $\cstr{\ZZ}_\Rightarrow$ on the integers.
+If one wishes to find a change that transports $0$ to $1$, there
+are a few options available: for example, one can pick the function $\lambda x . 1$, or
+the function $\lambda x . x + 1$. Clearly, the second one is more natural, since
+it does the minimum amount of ``effort''.
+
+This intuition that a change may do too much can be captured in an elegant way by the following
+definition:
+\begin{defn}[Kernel of a change]
+  Let $\cstr{A}$ be a change action and $\change{a} : \changes{A}$. Then the
+  \emph{kernel} of $\change{a}$ is the equivalence relation $\kernel_{\change{a}}
   : \mathcal{P}(A \times A)$ defined by
   \begin{displaymath}
     a \kernel_{\change{a}} b \Leftrightarrow a \cplus \change{a} = b \cplus \change{a}
@@ -550,12 +559,11 @@ another:
   \begin{displaymath}
     \change{a} \kernelOrder \change{b} \Leftrightarrow \kernel_{\change{a}} \subseteq \kernel_{\change{b}}
   \end{displaymath}
-
-  The \emph{kernel ordering} on derivatives is defined pointwise.
 \end{defn}
 
 As we will see later (\cref{sec:booleanAlgebras}), minimal derivatives under
-the kernel order correspond to ``precise'' derivatives
+the kernel order correspond to ``precise'' derivatives, in the sense of derivatives that do not perform
+excessive work.
 
 \section{Posets and Boolean algebras}
 \label{sec:moreStructures}
@@ -589,7 +597,7 @@ In fact, any change action whose base set is a poset induces a particularly conv
 on the corresponding change set:
 
 \begin{defn}[Change order]
-  $\change{a} \changeOrder \change{b}$ iff for all $a \in A$ it is the case that
+  $\change{a} \changeOrder \change{b}$ iff for all $a : A$ it is the case that
   $a \cplus \change{a} \leq a \cplus \change{b}$.
 \end{defn}
 
@@ -653,7 +661,7 @@ Datalog programs. Conveniently, these structures have a complete change action.
   \end{displaymath}
   where
   \begin{align*}
-    A \disjointTimes B &\defeq \{ (a, b) \in A \times B \mid a \wedge b = \bot \}\\
+    A \disjointTimes B &\defeq \{ (a, b) : A \times B \mid a \wedge b = \bot \}\\
     a \twist (p, q) &\defeq (a \vee p) \wedge \neg q
   \end{align*}
   and the monoid operator is
@@ -1087,7 +1095,7 @@ $A \rightarrow B$.
 \begin{prop}[Differentiability and functional change actions]
   \label{prop:differentiableFunctionalChanges}
   Let $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$ be a functional change action. Then every 
-  $f \in U$ is differentiable, with a derivative $\derive{f}$ given by:
+  $f : U$ is differentiable, with a derivative $\derive{f}$ given by:
   \begin{displaymath}
     \derive{f}(x, \change{x}) = \derive{\ev}((f, x), (0, \change{x}))
   \end{displaymath}
@@ -1100,7 +1108,7 @@ $A \rightarrow B$.
 Conversely, the derivative of the evaluation map can also be used to compute the effect of a given
 function change $\delta f$:
 \begin{prop}[Evaluating function changes]
-  Let $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$. Then for every $f \in U$ and $\delta f \in \changes U$
+  Let $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$. Then for every $f : U$ and $\delta f : \changes U$
   we have:
   \begin{displaymath}
     (f \cplus \delta f)(x) = f(x) \cplus \ev'((f, x), (\delta f, 0))
@@ -1123,7 +1131,7 @@ function change $\delta f$:
     \begin{gather*}
       V \subseteq U \times A \rightarrow \Delta B\\
       V \defeq \{~
-          \lambda f. \lambda x. \ev'((f, x), (\delta f, 0)) ~|~ \delta f \in \changes U
+          \lambda f. \lambda x. \ev'((f, x), (\delta f, 0)) ~|~ \delta f : \changes U
           ~\}\\
       (f \cplus_\Rightarrow \upsilon f)(x) \defeq f(x) \cplus \upsilon f(f, x)
     \end{gather*}
@@ -1183,8 +1191,8 @@ compute.
   Let $\cstr{A}$ and $\cstr{B}$ be change actions such that the pointwise functional change action
   $\cstr{A} \ptfunc \cstr{B}$ is well defined, and let
   $f: \cstr{A} \rightarrow \cstr{B}$,
-  $a \in A$, $\change{a} \in \changes{A}$,
-  $\change{f} \in A \rightarrow \changes{B}$.
+  $a : A$, $\change{a} : \changes{A}$,
+  $\change{f} : A \rightarrow \changes{B}$.
 
   Then, by taking a derivative of $f$ we obtain the following derivative for the evaluation map:
   \begin{displaymath}
@@ -1269,8 +1277,8 @@ is the following analogous result:
   Let $\cstr{A}$, $\cstr{B}$ be change actions, with $\cstr{B}$ continuous and let $\{f_i\}$ and $\{\derive{f_i}\}$ be
   $I$-indexed directed families of functions in $A \rightarrow B$ and $A \times \changes{A} \rightarrow \changes{B}$.
 
-  Then, if for every $i \in I$ it is the case that $\derive{f_i}$ is a derivative of $f_i$, then $\bigsqcup_{i \in I} \derive{f_i}$ is
-  a derivative of $\bigsqcup_{i \in I} f_i $.
+  Then, if for every $i : I$ it is the case that $\derive{f_i}$ is a derivative of $f_i$, then $\bigsqcup_{i : I} \derive{f_i}$ is
+  a derivative of $\bigsqcup_{i : I} f_i $.
 \end{corollary}
 \ifproofs
 \begin{proof}
@@ -1317,7 +1325,7 @@ Over directed-complete partial orders we can define a least fixpoint operator $\
 iteration function $\iter$:
 \begin{align*}
   &\lfp : (A \rightarrow A) \rightarrow A\\
-  &\lfp \defeq \bigsqcup_{n \in \NN} \iter_n \\
+  &\lfp \defeq \bigsqcup_{n : \NN} \iter_n \\
   &\iter : (A \rightarrow A) \times \NN \rightarrow A\\
   &\iter(f, n) \defeq f^n(\bot)
 \end{align*}
@@ -1384,7 +1392,7 @@ semi-naive evaluation works, with the delta relation and the accumulator relatio
   Let $\cstr{A}$ be a complete, continuous change action, $f: \cstr{A} \rightarrow
   \cstr{A}$ be continuous and differentiable.
 
-  Then $\lfp(f) = \bigsqcup_{n \in \NN}(\pi_1(\nextiter_f^n(\bot, \bot)))$.\footnote{
+  Then $\lfp(f) = \bigsqcup_{n : \NN}(\pi_1(\nextiter_f^n(\bot, \bot)))$.\footnote{
     Note that we have \emph{not} taken the fixpoint of $\nextiter_f$, since it is
     not continuous.}
 \end{thm}
@@ -1476,8 +1484,8 @@ a very natural setting for computing fixpoints.
 Since $\lfp$ is characterized as the limit of a chain of functions,
 \cref{cor:diffContinuous} suggests a way to compute its derivative. It suffices to find a derivative
 $\derive{\iter_n}$ of each iteration map 
-such that the resulting set $\{ \derive{\iter_n} \mid n \in \NN\}$ is directed, 
-which will entail that $\bigsqcup_{n \in \NN}\derive{\iter_n}$ is a derivative of $\lfp$.
+such that the resulting set $\{ \derive{\iter_n} \mid n : \NN\}$ is directed, 
+which will entail that $\bigsqcup_{n : \NN}\derive{\iter_n}$ is a derivative of $\lfp$.
 
 These correspond to the first partial derivative of $\iter$ \textemdash{} this time with respect to
 $f$. While we are differentiating with respect to $f$, we are still going to
@@ -1717,7 +1725,7 @@ There is a natural preorder on the base set of a change action, given by reachab
 under the action:
 
 \begin{defn}[Reachability preorder]
-  $a \reachOrder b$ iff there is a $\change{a} \in \changes{A}$ such that $a \cplus
+  $a \reachOrder b$ iff there is a $\change{a} : \changes{A}$ such that $a \cplus
   \change{a} = b$.
 \end{defn}
 
@@ -2184,7 +2192,7 @@ helpful comments on the manuscript.
   \end{align*}
 
   It is easy to show that $\twist$ is well-defined, by showing that $(p,q)
-  \twist (r, s) \in L \disjointTimes L$ if $(p, q), (r,s) \in L \disjointTimes L$.
+  \twist (r, s) : L \disjointTimes L$ if $(p, q), (r,s) : L \disjointTimes L$.
 
   Completeness is easy to show.
 \end{proof}
@@ -2275,7 +2283,7 @@ helpful comments on the manuscript.
   Before proving the existential, we state the following (trivial) properties of the selection map $\sigma_\Gamma$:
   \begin{prop}[Distributivity of $\sigma_\Gamma$]
     \label{prop:sigmaDist}
-    For any $A, B \in \Rel_{\Gamma, x}$ we have:
+    For any $A, B : \Rel_{\Gamma, x}$ we have:
     \begin{align*}
       \sigma_\Gamma(A \cup B) &= \sigma_\Gamma(A) \cup \sigma_\Gamma(B)\\
       \sigma_\Gamma (A \cap \neg B) &= \sigma_\Gamma(A) \cap \neg \sigma_\Gamma(B) \cup \sigma_\Gamma(A \cap \neg B)
@@ -2344,7 +2352,7 @@ helpful comments on the manuscript.
   \end{displaymath}
   Then $h(h^i(\bot)) \leq p(p^i(\bot))$ (by simple induction), and so by continuity
   \begin{displaymath}
-    \lfp(h) = \bigsqcup_{i \in \NN} h^i(\bot) \leq \bigsqcup_{i \in \NN} p^i(\bot) = \lfp(p)
+    \lfp(h) = \bigsqcup_{i : \NN} h^i(\bot) \leq \bigsqcup_{i : \NN} p^i(\bot) = \lfp(p)
   \end{displaymath}
 
   But $h(\lfp(p)) = \lfp(p)$, so $\lfp(h) \leq \lfp(p)$, since $\lfp(h)$ is least.
@@ -2369,8 +2377,8 @@ helpful comments on the manuscript.
   \label{prf:fixpointIter}
   \begin{align*}
     &\lfp(\iter_f)\\
-    &=\bigsqcup_{n \in \NN} \iter(f, n)\\
-    &=\bigsqcup_{n \in \NN} \pi_1 (\nextiter_f^n(\bot))
+    &=\bigsqcup_{n : \NN} \iter(f, n)\\
+    &=\bigsqcup_{n : \NN} \pi_1 (\nextiter_f^n(\bot))
   \end{align*}
 \end{proof}
 
@@ -2378,14 +2386,14 @@ helpful comments on the manuscript.
 \begin{proof}
   \label{prf:fixpointPseudoDerivatives}
   
-  We show that a change $\change{w} \in \Delta A$ satisfies
+  We show that a change $\change{w} : \Delta A$ satisfies
   the equation:
   \begin{equation}\label{eqn:fixcondition}
     \change{w} = \adjust(f, \change{f})(\change{w})
   \end{equation}
   if and only if $\fixpoint(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$.
 
-  Let $\change{w} \in \Delta A$ satisfy \cref{eqn:fixcondition}. Then
+  Let $\change{w} : \Delta A$ satisfy \cref{eqn:fixcondition}. Then
   \begin{align*}
     &(f \cplus \change{f})(\fixpoint_A(f) \cplus \change{w})\\
     &= f(\fixpoint(f))
@@ -2429,14 +2437,14 @@ helpful comments on the manuscript.
   $\partial_1{\iter}$ and $\nextiter_{f, \change{f}}$ are continuous since
   $\derive{\ev}$ and $f$ are.
 
-  Hence the set $\{ \partial_1{\iter}(\cdot, \cdot, n) \}$ is directed, and so $\bigsqcup_{i \in \NN}
+  Hence the set $\{ \partial_1{\iter}(\cdot, \cdot, n) \}$ is directed, and so $\bigsqcup_{i : \NN}
   \{ \partial_1{\iter}(\cdot, \cdot, n) \}$ is indeed a derivative for $\lfp$.
 
   We now show that it is equivalent to $\derive{\lfp}$:
   \begin{align*}
-    &\bigsqcup_{n \in \NN} \partial_1{\iter}(f, \change{f}, n)\\
-    &=\bigsqcup_{n \in \NN} \pi_2(\nextiter_{f, \change{f}}^n(\bot))\\
-    &=\pi_2(\bigsqcup_{n \in \NN} \nextiter_{f, \change{f}}^n(\bot)) \tag{$\pi_2$ is continuous}\\
+    &\bigsqcup_{n : \NN} \partial_1{\iter}(f, \change{f}, n)\\
+    &=\bigsqcup_{n : \NN} \pi_2(\nextiter_{f, \change{f}}^n(\bot))\\
+    &=\pi_2(\bigsqcup_{n : \NN} \nextiter_{f, \change{f}}^n(\bot)) \tag{$\pi_2$ is continuous}\\
     &= \pi_2 (\lfp(\nextiter_{f, \change{f}})) \tag{$\nextiter_{f, \change{f}}$ is continuous, Kleene's Theorem}\\
     &= \pi_2 ((\lfp(f), \lfp (\lambda\ \change{a}. \derive{\ev}((f, \lfp f), (\change{f}, \change{a})))))
     \tag{by \cref{prop:factoringFixpoints}, and the definition of $\nextiter$}\\
@@ -2467,8 +2475,8 @@ helpful comments on the manuscript.
   \begin{displaymath}
     \derive{id}_A(a, \change{a}) \defeq (a, a \cplus \change{a})
   \end{displaymath}
-  Conversely, let $(a, b) \in \reachOrder$. By definition of $\reachOrder$, there is some
-  $\change{}_{(a, b)} \in \changes{A}$ satisfying $a \cplus \change{}_{(a,b)} = b$.
+  Conversely, let $(a, b) : \reachOrder$. By definition of $\reachOrder$, there is some
+  $\change{}_{(a, b)} : \changes{A}$ satisfying $a \cplus \change{}_{(a,b)} = b$.
   This gives a definition for the derivative of the identity on pairs:
   \begin{displaymath}
     \derive{id}_{A_{\reachOrder}}(a, (a, b)) \defeq \change{}_{(a, b)}
