@@ -507,7 +507,7 @@ entirely by the coarseness of the actions.
   Let $\cstr{A}_1$ and $ \cstr{A}_2$ be 
   change actions. We say that $\cstr{A}_1$ is coarser than $\cstr{A}_2$ (or that $\cstr{A}_2$ is finer
   than $\cstr{A}_1$) whenever for every pair of points $x, y : A$ and change $\change{a}_1 : \changes{A}_1$
-  such that $x \oplus \change{a}_1 = y$, there is a change $\change{a}_2 : \changes{A}_2$ such that $x \oplus \change{a}_2 = y$.
+  such that $x \cplus \change{a}_1 = y$, there is a change $\change{a}_2 : \changes{A}_2$ such that $x \cplus \change{a}_2 = y$.
   
   We will write $\cstr{A}_1 \leq \cstr{A}_2$ whenever $\cstr{A}_1$ is coarser than $\cstr{A}_2$.
   If $\cstr{A}_1$ is both finer and coarser than $\cstr{A}_2$, we will say that $\cstr{A}_1$
@@ -1121,7 +1121,7 @@ function change $\delta f$:
   a monoid with addition $+_\Rightarrow$ and neutral element $0_\Rightarrow$ defined by:
   \begin{align*}
     (\upsilon f +_\Rightarrow \upsilon g)(h, x) 
-    &\defeq \upsilon f (h, x) \oplus \upsilon g((\lambda x . \upsilon f (h, x)) , x)
+    &\defeq \upsilon f (h, x) \cplus \upsilon g((\lambda x . \upsilon f (h, x)) , x)
   \end{align*}
 
   Every functional change action $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$ is equivalent to
@@ -1433,7 +1433,7 @@ $\fixpoint$ with respect to the function whose fixpoint is being taken.
 
 \begin{defn}[Derivatives of fixpoints]
 \label{def:fixpointDerivatives}
-  Let $\cstr{A}$ be a change action, let $\cstr{U} \subseteq \cstr{A} \rightarrow \cstr{A}$ be a functional
+  Let $\cstr{A}$ be a change action, let $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{A}$ be a functional
   change action (not necessarily pointwise) and suppose $\fixpoint_U$ and $\fixpoint_{\changes{A}}$ are fixpoint
   operators for functions in $U$ and $\changes{A}$ respectively.
   
@@ -1458,7 +1458,7 @@ map.\footnote{Perhaps surprisingly, the authors first discovered an expanded
 
 \begin{thm}[name=Pseudo-derivatives of fixpoints, restate=fixpointPseudoDerivatives]
 \label{thm:fixpointPseudoDerivatives}
-  Let $\cstr{A}$, $\cstr{U} \subseteq \cstr{A} \rightarrow \cstr{A}$, $\fixpoint_{U}$,
+  Let $\cstr{A}$, $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{A}$, $\fixpoint_{U}$,
   $\fixpoint_{\changes A}$ be as in \cref{def:fixpointDerivatives}. Then, for any
   differentiable function $f : U$ and any change $\change{f} : \changes{U}$,
   $\fixpoint_U(f) \cplus \derive{\fixpoint_U}(f, \change{f})$ is a fixpoint
@@ -1531,7 +1531,7 @@ that $\derive{\lfp}$ is a true derivative.
   \begin{itemize}
     \item $\cstr{A}$ be a continuous change action
     \item $U$ be the set of continuous functions $f : A \rightarrow A$, 
-      with a functional change action $\cstr{U} \subseteq \cstr{A} \rightarrow \cstr{A}$
+      with a functional change action $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{A}$
     \item $f : U$ be a continuous, differentiable function
     \item $\change{f} : \changes{U}$ be a function change
     \item $\derive{\ev}$ be a derivative of the evaluation map which is continuous with
