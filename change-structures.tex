@@ -1873,7 +1873,7 @@ will not matter.
 
 We tested this empirically using Semmle's commercial Datalog engine. We used
 Semmle's profiling infrastructure, which runs over 800 queries on a wide range
-of real-world databases. The queries are compiled from Semml's QL language
+of real-world databases. The queries are compiled from Semmle's QL language
 \autocite{avgustinov2016ql}, which produces large Datalog programs \textemdash{}
 a typical size is over 30,000 lines of Datalog. The databases represent
 real-world programs that are subject to analysis, for example the Linux kernel,
@@ -2047,6 +2047,10 @@ higher-order functions. Since we have directly defined a change action and
 derivative operator for Datalog, our work could be used as a ``plugin'' in the sense
 of \citeauthor{cai2014changes}, allowing Datafun to compute its internal fixpoints
 incrementally, but also allowing Datafun expressions to be fully incrementally maintained.
+
+\lochanged{In a different direction, \textcite{cathcartburn2018hochc} have proposed \emph{higher-order constrained Horn clauses} (HoCHC), a new class of constraints for the automatic verification of higher-order programs.
+HoCHC may be viewed as a higher-order extension of Datalog. 
+Change actions can be readily applied to organise an efficient semi-naive method for solving HoCHC systems.}
 
 \subsection{Differential $\lambda$-calculus}
 
