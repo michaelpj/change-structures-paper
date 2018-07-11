@@ -216,8 +216,6 @@ differentiable functions.
 
 \subsection{Contributions}
 
-\todompj{redo for flow}
-
 We start by generalizing change structures to
 \emph{change actions} (\cref{sec:changeActions}). Change actions are simpler and weaker than change
 structures, while still providing enough information to handle incremental
@@ -239,7 +237,8 @@ evaluation and maintenance mechanism for Datalog that can handle negation,
 disjunction, and existential quantification. 
 
 Finally, we provide a few remarks about the categorical structure of change
-actions (\cref{sec:category}).
+actions (\cref{sec:category}), and give some empirical evaluation of the effects
+of our changes (\cref{sec:empirical}).
 
 We have omitted the proofs from this paper. Most of the results have routine
 proofs, but the proofs of the more substantial results
@@ -1881,6 +1880,54 @@ incremental computation.
   Hence $\cat{Conv}$, the full subcategory of $\cat{CAct}$ whose objects are all the convenient change
   actions, is a Cartesian closed category.
 \end{prop}
+
+\section{Empirical evaluation}
+\label{sec:empirical}
+
+The necessity of semi-naive evaluation for practical Datalog engines is
+well-established. One might ask whether we actually gain anything by expanding of the set of predicates
+which we can evaluate incrementally \textemdash{} what if we just evaluate the
+ones that we can evaluate with semi-naive with semi-naive, and the others
+naively? If the non-semi-naive predicates are rare enough, then perhaps this
+will not matter.
+
+We tested this empirically using Semmle's commercial Datalog engine. We used
+Semmle's profiling infrastructure, which runs over 800 queries on a wide range
+of real-world databases. The queries are compiled from Semml's QL language
+\autocite{avgustinov2016ql}, which produces large Datalog programs \textemdash{}
+a typical size is over 30,000 lines of Datalog. The databases represent
+real-world programs that are subject to analysis, for example the Linux kernel,
+which is 1.8 MLOC and produces a database of size 783Mb.
+
+Comparing the ``full'' and ``semi-naive only'' deltafication strategies gives
+the following high-level picture:
+
+\begin{center}
+  \begin{tabular} {l l}
+    Statistic & Value \\
+    \toprule
+    Total runs & 2308\\
+    New timeouts & 629 (27\%)\\
+    Non-timeout regressions & 1049 (45\%)\\
+    Improvements & 630 (27\%)\\
+    \bottomrule
+  \end{tabular}
+\end{center}
+\medskip
+
+This presents a rather scattershot picture, with some queries improving and some
+regressing. However, the most interesting category is the category of new
+timeouts. These are queries that exceeded the (generous) profiling timeout.
+Further investigation reveals that these regress very badly indeed. For many of
+these query/database pairs, the authors have been unable to allocate enough memory and time for
+the query to actually complete. Ad hoc investigation reveals that many of those
+have a similar evaluation pattern to the $tc$ example in \cref{sec:intro}
+\textemdash{} a long tail of iterations where few tuples are added, leading to
+quadratic runtimes.
+
+This shows us more-or-less what we expected: for many queries the results are
+moderate and broadly positive, but for some queries incremental evaluation is
+essential for evaluation to be feasible at all.
 
 \section{Related work}
 
