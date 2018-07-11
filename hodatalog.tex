@@ -83,6 +83,15 @@ In the last alternative, $X \in \dom(\Delta)$ and $\overline{x} = x_1 \cdots x_n
 \caption{Continuous semantics of terms.}\label{fig:cts-term-semantics}
 \end{figure*}
 
+Let $L$ be a poset. 
+Recall that a subset $X \subseteq L$ is \emph{open} (written $X \in \tau_S$, the Scott topology) if (i) $X$ is up-closed, and (ii) for every $\omega$-increasing chain $(x_i)_{i \in \omega}$, if $\lub_{i \in \omega} x_i$ exists and is in $X$ then $x_i \in X$ for some $i$. 
+We write $\overline{\tau_S} := \makeset{\overline X \mid X \in \tau_S}$ for the collection of closed sets.
+
+
+Let $D$ and $E$ be cpos. 
+A function $f:D \to E$ is \emph{continuous} just if it is monotone, and preserves lubs of $\omega$-increasing chains.
+Recall that a function $f : D \to E$ is continuous iff it is continuous w.r.t.~the Scott topology.
+
 \paragraph{Continuous type frame.}
 We define the \emph{continuous type frame} by induction:
 \[
@@ -90,7 +99,7 @@ We define the \emph{continuous type frame} by induction:
    \qquad\quad \cmng{\boolsort} \coloneqq (\mathbbm{2}, \leq)
    \qquad\quad \cmng{\sigma_1 \to \sigma_2} \coloneqq (\cmng{\sigma_1} \cTo \cmng{\sigma_2}, \leq)
 \]
-where $X \cTo Y$ is the continuous function space between CPOs $X$ and $Y$, which is itself a CPO with respect to the pointwise ordering $\leq$.
+where $X \cTo Y$ is the continuous function space between cpos $X$ and $Y$, which is itself a CPO with respect to the pointwise ordering $\leq$.
 Of course, in case $X$ is discrete poset $A_\iota$, this coincides with the full function space.
 %We extend the lattice structure of $\mathbbm{2}$ to all relations $\cmng{\rho}$, analogously to the case of the full function space (and we reuse the same notation since there will be no confusion);
 Define $\cmng{\Delta} \coloneqq \Pi x \in \dom(\Delta).\,\cmng{\Delta(x)}$.
@@ -129,8 +138,8 @@ $
 $.
 As for standard semantics, we write $\cmng{G}$ for $\cmng{\Delta \vdash  G : \rho}$, whenever the judgement $\Delta \vdash  G : \rho$ is clear from the context.
 
-Since the implication function $\impliesfn$ is not monotone (in its first argument), definite formulas are not interpretable in a monotone frame.
-However, it is possible to interpret logic programs.
+%Since the implication function $\impliesfn$ is not monotone (in its first argument), definite formulas are not interpretable in a monotone frame.
+%However, it is possible to interpret logic programs.
 % To that end, we define the functional $\mfunc_{P:\Delta}$ on semantic environments by: $\mfunc_{P:\Delta}(\alpha)(x) = \cmng{\Delta \vdash  P(x) : \Delta(x)}(\alpha)$.
 % In analogy with the Horn clause problem, we call a prefixed point of $\mfunc_{P:\Delta}$ a \emph{model} of the program $P$.
 % This construction preserves the logical order.
@@ -151,15 +160,6 @@ However, it is possible to interpret logic programs.
 % $\cmng{\boolsort} := (\makeset{\bot, \top}, \leq)$; $\cmng{\intsort} := (\mathbbm{Z}, =)$; and $\cmng{\sigma_1 \to \sigma_2} := (\cmng{\sigma_1} \to_{\rm m} \cmng{\sigma_2}, \leq)$, the monotone function space, with the extensional ordering.
 
 % The \emph{continuous semantics} $\cmng{\sigma}$ is defined similarly: $\cmng{\boolsort} := (\makeset{\bot, \top}, \leq)$; $\cmng{\intsort} := (\mathbbm{Z}, =)$; and $\cmng{\sigma_1 \to \sigma_2} := (\cmng{\sigma_1} \to_{\rm c} \cmng{\sigma_2}, \leq)$, the continuous function space.
-
-Let $L$ be a poset. 
-Recall that a subset $X \subset L$ is \emph{open} (written $X \in \tau_S$, the Scott topology) if (i) $X$ is up-closed, and (ii) for every $\omega$-increasing chain $(x_i)_{i \in \omega}$, if $\lub_{i \in \omega} x_i$ exists and is in $X$ then $x_i \in X$ for some $i$. 
-We write $\overline{\tau_S} := \makeset{\overline X \mid X \in \tau_S}$ for the collection of closed sets.
-
-
-Let $D$ and $E$ be cpos. 
-A function $f:D \to E$ is \emph{continuous} just if it is monotone, and preserves lubs of $\omega$-increasing chains.
-Recall that a function $f : D \to E$ is continuous iff it is continuous w.r.t.~the Scott topology.
 
 \begin{prop}[name=Scott change actions, restate=hodatalog]
 \lo{TODO: Find better notations.}
