@@ -1436,7 +1436,9 @@ value of the fixpoint, i.e.
 
 If $F : B \times A \rightarrow A$ and $\cstr{A}$ is a change action such that 
 $\cstr{A} \ptfunc \cstr{A}$ is well-defined, then 
-$\lambda X . F(E \cplus \change{E}, X) = (\lambda X . F(E, X)) \cplus_{pt} (\lambda X . \change{E})$,
+\[
+\lambda X . F(E \cplus \change{E}, X) = (\lambda X . F(E, X)) \cplus_{pt} (\lambda X . \change{E})
+\]
 i.e. we are applying a change to the \emph{function} whose fixpoint we are taking.
 
 In Datalog this would allow us to update a recursively defined relation given an
@@ -1452,7 +1454,7 @@ $\fixpoint$ with respect to the function whose fixpoint is being taken.
 \label{def:fixpointDerivatives}
   Let $\cstr{A}$ be a change action, let $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{A}$ be a functional
   change action (not necessarily pointwise) and suppose $\fixpoint_U$ and $\fixpoint_{\changes{A}}$ are fixpoint
-  operators for functions in $U$ and $\changes{A}$ respectively.
+  operators for endofunctions on $U$ and $\changes{A}$ respectively.
   
   Then we define
   \begin{align*}
@@ -1475,7 +1477,7 @@ map.\footnote{Perhaps surprisingly, the authors first discovered an expanded
 
 \begin{thm}[name=Pseudo-derivatives of fixpoints, restate=fixpointPseudoDerivatives]
 \label{thm:fixpointPseudoDerivatives}
-  Let $\cstr{A}$, $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{A}$, $\fixpoint_{U}$,
+  Let $\cstr{A}$, $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{A}$, $\fixpoint_{U}$, and let
   $\fixpoint_{\changes A}$ be as in \cref{def:fixpointDerivatives}. Then, for any
   differentiable function $f \in U$ and any change $\change{f} \in \changes{U}$,
   $\fixpoint_U(f) \cplus \derive{\fixpoint_U}(f, \change{f})$ is a fixpoint
@@ -1536,7 +1538,7 @@ mutual recursion.\footnote{
 \end{align*}
 Which has the property that
 \begin{align*}
-  &\nextiter_{f, \change{f}}^n (\bot, \bot) = (\iter(f, n), \partial_1{\iter}(f, \change{f}, n))
+  &\nextiter_{f, \change{f}}^n (\bot, \bot) = (\iter(f, n), \partial_1{\iter}(f, \change{f}, n)).
 \end{align*}
 
 This indeed provides us with a function whose limit we can take, showing
