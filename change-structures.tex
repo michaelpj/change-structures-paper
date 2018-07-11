@@ -576,7 +576,7 @@ excessive work.
 \label{sec:moreStructures}
 
 The semantic domain of Datalog is a complete Boolean algebra, and so our next
-step is construct a good change action for Boolean algebras. Along the way, we
+step is to construct a good change action for Boolean algebras. Along the way, we
 will consider change actions over posets, which give us the ability to
 \emph{approximate} derivatives, which will turn out to be very important in practice.
 
@@ -609,7 +609,7 @@ on the corresponding change set:
 \begin{prop}
   Let $\cstr{A}$ be a change action on a set $A$ equipped with a partial order $\leq$ such that
   $\cplus$ is monotone in its first argument. Then $\cstr{A}$ is an ordered change action when
-  $\changes{A}$ is equipped with the partial order $\changeOrder$.
+  $\changes{A}$ is equipped with induced the partial order $\changeOrder$.
 \end{prop}
 
 In what follows, we will extend the partial order $\changeOrder$ on some change
@@ -618,8 +618,8 @@ order interacts nicely with derivatives, in that it gives us the following lemma
 
 \begin{thm}[Sandwich lemma]
   \label{thm:sandwich}
-  Let $\cstr{A}$ be an change action, $\cstr{B}$ be an ordered change action,
-  $f: \cstr{A} \rightarrow \cstr{B}$, and $g: A \times \changes{A} \rightarrow
+  Let $\cstr{A}$ be an change action, and $\cstr{B}$ be an ordered change action, and \lochanged{given functions
+  $f: {A} \rightarrow {B}$} and $g: A \times \changes{A} \rightarrow
   \changes{B}$. If $\supderive{f}$ and $\subderive{f}$ are
   derivatives for $f$ such that
   \begin{displaymath}
@@ -633,8 +633,8 @@ characterisation of all the derivatives for a function.
 
 \begin{thm}[Characterization of derivatives]
 \label{thm:derivativeCharacterization}
-  Let $\cstr{A}$ and $\cstr{B}$ be change actions, with $\cstr{B}$ ordered, and let
-  $f: \cstr{A} \rightarrow \cstr{B}$ be a function. If there exist $\subderiveM{f}$ and
+  Let $\cstr{A}$ and $\cstr{B}$ be change actions, with $\cstr{B}$ ordered, and \lochanged{given a function
+  $f: {A} \rightarrow {B}$}. If there exist $\subderiveM{f}$ and
   $\supderiveM{f}$ which are unique minimal and maximal derivatives of $f$,
   respectively, then the derivatives of $f$ are precisely
   the functions $\derive{f}$ such that
