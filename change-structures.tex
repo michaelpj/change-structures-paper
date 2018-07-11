@@ -790,7 +790,7 @@ a set of named tuples, with variables ranging over a finite schema.
   the selection function $\sigma_\Gamma$ defined as
   \begin{displaymath}
     \sigma_\Gamma(\{x_1 \mapsto v_1, \ldots, x_n \mapsto v_n, y_1 \mapsto w_1, \ldots, y_m \mapsto w_m \})
-    &\defeq \{ x_1 \mapsto v_1, \ldots, x_n \mapsto v_n \}
+    \defeq \{ x_1 \mapsto v_1, \ldots, x_n \mapsto v_n \}
   \end{displaymath}
   I.e. $\sigma_\Gamma$ restricts a named tuple over $\Gamma \sqcup \Sigma$ into a tuple over $\Gamma$
   with the same values for the names in $\Gamma$.
@@ -1583,10 +1583,12 @@ First of all, we define the usual ``immediate consequence operator'' which
 computes ``one step'' of our program semantics.
 
 \begin{defn}[Immediate consequence operator]
-  Given a program $\mathcal{P} = (P_1, \dots, P_m)$, where $P_i$ is a predicate,
-  the immediate consequence operator $\consq: \Rel^n \rightarrow \Rel^n$ is defined as follows:
+  Given a program $\mathbb{P} = (P_1, \dots, P_m)$, where $P_i$ is a predicate,
+  the immediate consequence operator $\consq: \Rel_\Gamma^n \rightarrow \Rel_\Gamma^n$ is defined 
+  as follows:
   \begin{displaymath}
-    \consq(R_1, \dots, R_n) = (\denote{P_1}(R_1, \dots, R_n), \dots, \denote{P_m}(R_1, \dots, R_n))
+    \consq(\semR_1, \dots, \semR_n) 
+    = (\denote{P_1}_\Gamma(\semR_1, \dots, \semR_n), \dots, \denote{P_m}_\Gamma(\semR_1, \dots, \semR_n))
   \end{displaymath}
 \end{defn}
 
@@ -1594,9 +1596,9 @@ That is, given a value for the program, we pass in all the relations
 to the denotation of each predicate, to get a new tuple of relations.
 
 \begin{defn}[Program semantics]
-  The semantics of a program $\mathcal{P}$ is defined to be
+  The semantics of a program $\mathbb{P}$ is defined to be
   \begin{displaymath}
-    \denote{\mathcal{P}} \defeq \lfp_{\Rel^n}(\consq)
+    \denote{\mathbb{P}} \defeq \lfp_{\Rel^n}(\consq)
   \end{displaymath}
   and may be calculated by iterative application of $\consq$ to $\bot$ until
   fixpoint is reached.
@@ -1769,15 +1771,15 @@ a (full and faithful) functor $\reach : \cat{CAct} \rightarrow \cat{PreOrd}$ tha
 identity on morphisms.
 
 Conversely, any preorder $\leq$ on some set $A$ induces a change action
-$\cstr{A}_\leq \defeq \cstruct{A}{\leq^\star}{\cplus_\star}$.
-The action $\cplus_\star$ is defined as the extension of $\cplus_\leq$ to the free
-monoid $\leq^\star$, where $\cplus_\leq$ is defined as:
+$\cstr{A}_\leq \defeq \cstruct{A}{A^\ast}{\cplus^\ast_\leq}$.
+The action $\cplus^\ast_\leq$ is defined as the extension of $\cplus_\leq$ to the free
+monoid $A^\ast$, where $\cplus_\leq$ is defined as:
 \[
 \begin{aligned}
-   \cplus_\leq &: (A \times \leq) \rightarrow A&\\
-   a \cplus_\leq (b, c) &\defeq
+   \cplus_\leq &: (A \times A) \rightarrow A&\\
+   a \cplus_\leq b &\defeq
      \begin{cases}
-     c&\text{ if $a = b$}\\
+     b&\text{ if $a \leq b$}\\
      a&\text{ otherwise}
      \end{cases}
 \end{aligned}
