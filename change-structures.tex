@@ -67,17 +67,17 @@
 \input{topmatter-acm}
 
 \begin{abstract}
-  Incremental computation has been studied using the concepts of \emph{change
+  Incremental computation has recently been studied using the concepts of \emph{change
   structures} and \emph{derivatives} of programs, where the derivative of a function allows updating the output
   of the function based on a change to its input.
 
   We generalise change structures to a Cartesian closed category of \emph{change actions},
-  and study their algebraic properties. We develop change actions for several common structures
+  and study their algebraic properties. We develop change actions for common structures
   in computer science, including directed-complete partial orders and Boolean algebras.
 
   We then show how to compute derivatives of fixpoints. This allows us to
   perform incremental evaluation and maintenance of recursively defined
-  functions such as generalised Datalog programs.
+  functions with particular application generalised Datalog programs.
 
   Moreover, unlike previous results, our techniques are \emph{modular} in that
   they are easy to apply both to variants of Datalog and to other programming languages.
@@ -2054,9 +2054,11 @@ derivative operator for Datalog, our work could be used as a ``plugin'' in the s
 of \citeauthor{cai2014changes}, allowing Datafun to compute its internal fixpoints
 incrementally, but also allowing Datafun expressions to be fully incrementally maintained.
 
-\lochanged{In a different direction, \textcite{cathcartburn2018hochc} have proposed \emph{higher-order constrained Horn clauses} (HoCHC), a new class of constraints for the automatic verification of higher-order programs.
+In a different direction, \textcite{cathcartburn2018hochc} have proposed
+\emph{higher-order constrained Horn clauses}
+(HoCHC), a new class of constraints for the automatic verification of higher-order programs.
 HoCHC may be viewed as a higher-order extension of Datalog. 
-Change actions can be readily applied to organise an efficient semi-naive method for solving HoCHC systems.}
+Change actions can be readily applied to organise an efficient semi-naive method for solving HoCHC systems.
 
 \subsection{Differential $\lambda$-calculus}
 
@@ -2097,19 +2099,19 @@ as its corresponding spectrum, for example).
 
 \section{Conclusions and future work}
 
-We have presented change actions and their properties, and used them to provide novel
-strategies for incrementally evaluating and maintaining recursive functions, in
+We have presented change actions and their properties, and used them to provide
+novel, compositional, strategies for incrementally evaluating and maintaining recursive functions, in
 particular the semantics of Datalog.
 
-Our work opens several avenues for future investigation.
+Our work opens a number of avenues for future investigation.
 
 Firstly, the concrete definition of change actions can be generalized in a number of
 ways. A 2-categorical presentation (by analogy with the 2-categorical interpretation
 of $\cat{PreOrd}$) would smooth over many of the technical difficulties which
 the current presentation faces due to the fact that the changes produced
-$\derive{f}(a, \change{a})$ can be applied at points other than $f(a)$.
+$\derive{f}(a, \change{a})$ must make sense when applied at points other than $f(a)$.
 A description of change actions which is generic in
-the base category could also be provided, which might lead to models of
+the base category could also be provided, which could lead to models of
 the incremental $\lambda$-calculus on different base categories. 
 
 Of those, the theory of change actions on the category of domains is of particular interest. Since
