@@ -571,8 +571,9 @@ This intuition that a change may do too much can be captured by the following de
   \end{displaymath}
 \end{defn}
 
+We can use the kernel order, extended pointwise, to compare the different derivatives of a function.
 As we will see later (\cref{sec:booleanAlgebras}), minimal derivatives under
-the kernel order correspond to ``precise'' derivatives, in the sense of derivatives that do not perform
+this order correspond to ``precise'' derivatives, in the sense of derivatives that do not perform
 excessive work.
 
 \section{Posets and Boolean algebras}
@@ -735,17 +736,24 @@ minus operator with a corresponding \emph{precise} derivative.
 
 \begin{prop}[name=Boolean algebra kernels, restate=booleanAlgebraKernels]
   \label{prop:booleanAlgebraKernels}
-  Let $L$ be a (complete) Boolean algebra with the $\cstr{L}_\superpose$ change action, and
-  $f: A \rightarrow L$ a function.
+  Let $L$ be a (complete) Boolean algebra with the $\cstr{L}_\superpose$ change action,
+  $f: \cstr{A} \rightarrow \cstr{L}$ a (differentiable) function, and suppose 
+  $\derive{f}_1$ and $\derive{f}_2$ are derivatives for $f$.
 
-  Then $(p, q) \kernelOrder (r, s)$ iff $p \leq r$ and $q \leq s$.
+  Then $\derive{f}_1 \kernelOrder \derive{f}_2$ (extending the kernel order pointwise to derivatives)
+  iff for all $a \in A$ and $\change{a} \in \changes{A}$
+  the values of the derivatives
+  \begin{align*}
+    (p, q) = \derive{f}_1(a, \change{a})\\
+    (r, s) = \derive{f}_2(a, \change{a})
+  \end{align*}
+  verify $p \leq r$ and $q \leq s$
 
-  Additionally, the following is a minus operator:
+  Additionally, the following is a minus operator, and $\derive{f}_{\cminus_\kernel}$ is a minimal
+  derivative with respect to $\kernelOrder$:
   \begin{displaymath}
     a \cminus_\kernel b = (a \wedge \neg b, b \wedge \neg a)
   \end{displaymath}
-
-  Moreover $\derive{f}_{\cminus_\kernel}$ is a minimal derivative of $f$ with respect to $\kernelOrder$.
 \end{prop}
 \ifproofs
 \begin{proof}
