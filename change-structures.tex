@@ -789,7 +789,21 @@ Datalog is usually given a logical semantics where formulae are interpreted as f
 logic predicates and the semantics of a program is the set of models of its constituent
 predicates. We will instead give a simpler denotational semantics that treats a Datalog
 formula (and later, a Datalog program) as directly denoting a relation, i.e.
-a set of named tuples over a certain schema.
+a set of named tuples, with variables ranging over a finite schema.
+
+\begin{defn}[Schema]
+  A schema $\Gamma$ is a finite set of names. A named tuple over $\Gamma$ is an assignemt
+  of a value $v_i$ for each name $x_i$ in $\Gamma$. Given disjoint schemata 
+  $\Gamma = \{ x_1, \ldots, x_n \}, \Sigma = \{ y_1, \ldots, y_n \}$,
+  the selection function $\sigma_\Gamma$ defined as
+  \begin{displaymath}
+    \sigma_\Gamma(\{x_1 \mapsto v_1, \ldots, x_n \mapsto v_n, y_1 \mapsto w_1, \ldots, y_m \mapsto w_m \})
+    &\defeq \{ x_1 \mapsto v_1, \ldots, x_n \mapsto v_n \}
+  \end{displaymath}
+  I.e. $\sigma_\Gamma$ restricts a named tuple over $\Gamma \sqcup \Sigma$ into a tuple over $\Gamma$
+  with the same values for the names in $\Gamma$.
+  We will often apply $\sigma_\Gamma$ elementwise to sets of tuples.
+\end{defn}
 
 We will adopt the usual closed-world assumption to give a denotation to negation.
 
@@ -797,7 +811,7 @@ We will adopt the usual closed-world assumption to give a denotation to negation
   For any schema $\Gamma$ (i.e. a finite set of names),
   there exists a universal relation $\universalRel_\Gamma$.
 
-  Negation on relations is defined as
+  Negation on relations can then be defined as
   \begin{displaymath}
     \neg R \defeq \universalRel_\Gamma \setminus R
   \end{displaymath}
@@ -845,7 +859,7 @@ which is parmeterized by the assignments to the free relation variables.
   its free relation variables $R_1, \ldots, R_n$ 
   to $\Rel_\Gamma$.
   \begin{displaymath}
-    \denote{\_}_\Gamma : \Formula_\Gamma \rightarrow \Rel_\Gamma^n \rightarrow \Rel_\Gamma
+    \denote{\_}_\Gamma : \Formula \rightarrow \Rel_\Gamma^n \rightarrow \Rel_\Gamma
   \end{displaymath}
   If $\semR = (\semR_1, \ldots, \semR_n)$ is a choice of a relation for each of the variables $R_i$,
   $\denote{T}(\semR)$ is inductively defined according to the rules in \cref{fig:datalogSemantics}.
