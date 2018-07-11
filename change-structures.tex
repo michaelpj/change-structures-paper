@@ -920,7 +920,7 @@ specifics of the evaluation engine. Here is one possibility.\footnote{This is
 %\newcommand{\bothdiff}{\diamond}
 \newcommand{\bothdiff}{{\mathsf X}} 
 
-\begin{figure}[h]
+\begin{figure}[t]
   \fbox{
     \begin{minipage}[t]{0.9\textwidth}
     \vspace{-5pt}
@@ -1089,25 +1089,24 @@ has not changed.
 
 So far we have found change actions for spaces that are a good representation of
 simple data, but we would also like to have change actions on
-\emph{function} spaces. This would enable us have derivatives for higher-order languages, and in particular derivatives for
-fixpoint operators, which are higher-order functions $\fixpoint : (A \rightarrow A) \rightarrow A$. 
+\emph{function} spaces. This would enable us to have derivatives for higher-order languages, and in particular derivatives for
+fixpoint operators $\fixpoint : (A \rightarrow A) \rightarrow A$, which are higher-order functions. 
 
-Function spaces, however, differ from products and disjoint unions in that there is no obvious choice
-of a ``best'' change action structure on $A \rightarrow B$, given change actions $\cstr{A}$ and $\cstr{B}$.
+Function spaces, however, differ from products and disjoint unions in that, given change actions $\cstr{A}$ and $\cstr{B}$, there is no obvious choice
+of a ``best'' change action structure on $A \rightarrow B$.
 Instead of settling on a concrete choice of a change action, we will instead
 pick out subsets of ``well-behaved'' change actions on function spaces.
 
-\begin{defn}
+\begin{defn}[Functional Change Action]
   \label{def:functionalChanges}
   Given change actions $\cstr{A}$ and $\cstr{B}$ and a set $U \subseteq A \rightarrow B$, a change action
-  $(U, \changes U, \cplus_U)$ is \emph{functional} whenever the evaluation map $\ev : U \times A \rightarrow B$
+  $\cstr{U} = (U, \changes U, \cplus_U)$ is \emph{functional} whenever the evaluation map $\ev : U \times A \rightarrow B$
   is differentiable, that is to say, whenever there exists a function 
   $\derive{\ev} : (U \times A) \times (\changes U \times \changes A) \rightarrow \changes{B}$ such that:
   \begin{displaymath}
     (f \cplus_U \change{f})(a \cplus_A \change{a}) = 
     f(a) \cplus_B \derive{\ev}((f, a), (\change{f}, \change{a}))
   \end{displaymath}
-  
   We will write $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$ whenever 
   $U \subseteq A \rightarrow B$ and $\cstr{U}$ is functional.
 \end{defn}
@@ -1173,7 +1172,7 @@ of differentiable functions $\cstr{A} \rightarrow \cstr{B}$, but these can be un
 the purpose of actual computation. Fortunately, in many cases there is a simple
 way of representing spaces of differentiable functions.
 
-\begin{defn}
+\begin{defn}[Pointwise functional change action]
   Let $\cstr{A}$ and $\cstr{B}$ be change actions. The \emph{pointwise functional change action} 
   $\cstr{A} \ptfunc \cstr{B}$, when it is defined,
   is given by $(\cstr{A} \rightarrow \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$, with
@@ -1188,7 +1187,7 @@ way of representing spaces of differentiable functions.
 
 The above definition isn't always well-typed, since given $f : \cstr{A} \rightarrow \cstr{B}$ and
 $\delta f : A \rightarrow \changes{B}$ there is, in general, no guarantee that 
-$f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteria that enforce this:
+$f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteria that guarantee this.
 
 \begin{thm}
   Let $\cstr{A}$ and $\cstr{B}$ be change actions, and suppose that $\cstr{B}$ satisfies one of the
@@ -1197,11 +1196,11 @@ $f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteri
     \item $\cstr{B}$ is a complete change action.
     \item The change action $\widehat {\changes{B}} \defeq (\changes{B}, \changes{B}, \splus_B)$ is 
       complete and 
-      $\cplus_B$ is differentiable as a map from $B \times \changes{B}$ into $B$
+      $\cplus_B : B \times \changes{B} \to B$ is differentiable.
   \end{itemize}
   Then the pointwise functional change action 
   $(\cstr{A} \rightarrow \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$ is well defined. 
-  (Moreover, it is the exponentiation object (up to unique isomorphism) from $\cstr{A}$ to $\cstr{B}$ in the category of change actions and differentiable functions (Section~\ref{sec:exponentials}).)
+  (Moreover, it is the exponentiation object (up to unique isomorphism) from $\cstr{A}$ to $\cstr{B}$ in the category of change actions and differentiable functions (section~\ref{sec:exponentials}).)
   \footnote{
     Either of these conditions is enough to guarantee that the pointwise functional change action
     is well defined, but it can be the case that $\cstr{B}$ satisfies neither and yet pointwise
