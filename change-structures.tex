@@ -734,6 +734,11 @@ we have concrete definitions for our bounds (which we will make use of in \cref{
 Moreover, we have a nice definition of the kernel ordering, which gives us a
 minus operator with a corresponding \emph{precise} derivative.
 
+\begin{defn}[Pointwise order]
+  The \emph{pointwise} order $\pointwiseOrder$ is the product order on $L \times
+  L$.
+\end{defn}
+
 \begin{prop}[name=Boolean algebra kernels, restate=booleanAlgebraKernels]
   \label{prop:booleanAlgebraKernels}
   Let $L$ be a (complete) Boolean algebra with the $\cstr{L}_\superpose$ change action,
@@ -742,15 +747,12 @@ minus operator with a corresponding \emph{precise} derivative.
 
   Then $\derive{f}_1 \kernelOrder \derive{f}_2$ (extending the kernel order pointwise to derivatives)
   iff for all $a \in A$ and $\change{a} \in \changes{A}$
-  the values of the derivatives
   \begin{align*}
-    (p, q) = \derive{f}_1(a, \change{a})\\
-    (r, s) = \derive{f}_2(a, \change{a})
+    \derive{f}_1(a, \change{a}) \pointwiseOrder \derive{f}_2(a, \change{a})
   \end{align*}
-  verify $p \leq r$ and $q \leq s$
 
   Additionally, the following is a minus operator, and $\derive{f}_{\cminus_\kernel}$ is a minimal
-  derivative with respect to $\kernelOrder$:
+  derivative with respect to $\pointwiseOrder$ and $\kernelOrder$:
   \begin{displaymath}
     a \cminus_\kernel b = (a \wedge \neg b, b \wedge \neg a)
   \end{displaymath}
@@ -763,7 +765,7 @@ minus operator with a corresponding \emph{precise} derivative.
 
 This shows us in what sense minimality with respect to the kernel orering gives
 us precision: the derivative is precise in that the components are as small as
-possible. When we are working with sets or relations, this is important since it
+possible (this is what $\pointwiseOrder$ corresponds to). When we are working with sets or relations, this is important since it
 will correspond to the actual size of components of the derivative.
 
 \section{Derivatives for non-recursive Datalog}
