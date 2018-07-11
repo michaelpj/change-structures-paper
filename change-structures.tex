@@ -63,18 +63,18 @@
 
 \begin{abstract}
   Incremental computation has been studied using the concepts of \emph{change
-  structures} and \emph{derivatives} of programs, where the deirvative of a function allows updating the output
+  structures} and \emph{derivatives} of programs, where the derivative of a function allows updating the output
   of the function based on a change to its input.
 
   We generalise change structures to a Cartesian closed category of \emph{change actions},
   and study their algebraic properties. We develop change actions for several common structures
   in computer science, including directed-complete partial orders and Boolean algebras.
 
-  We then show how to compute derivativeWell, the ending of s of fixpoints. This allows us to
+  We then show how to compute derivatives of fixpoints. This allows us to
   perform incremental evaluation and maintenance of recursively defined
-  functions such as generalized Datalog programs.
+  functions such as generalised Datalog programs.
 
-  Moreover, unlike previous results our techniques are \emph{modular} in that
+  Moreover, unlike previous results, our techniques are \emph{modular} in that
   they are easy to apply both to variants of Datalog and to other programming languages.
 \end{abstract}
 
@@ -227,18 +227,18 @@ proofs, but the proofs of the more substantial results
 \section{Change actions and derivatives}
 \label{sec:changeActions}
 
-Incremental computation reqires understanding how values \emph{change}. For
+Incremental computation requires understanding how values \emph{change}. For
 example, we can change an integer by adding a natural to it.
 Abstractly, we have a set of values (the integers), and a set of changes
 (the naturals) which we can ``apply'' to a value (by addition) to get a new value.
 
-This kind of structure is well-known \textemdash{} it describes an set action. It is
+This kind of structure is well-known \textemdash{} it describes a set action. It is
 also very natural to want to combine changes sequentially, and if we do this
 then we find ourselves with a monoid action.\footnote{
 Using monoid actions for change sets gives us a reason to think that
 change actions are an adequate representation of changes: any subset of $A
 \rightarrow A$ which is closed under composition can be
-represented as a monoid action, so we are able to capture all of these as change
+represented as a monoid action on $A$, so we are able to capture all of these as change
 actions.}
 
 \subsection{Change actions}

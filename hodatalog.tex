@@ -40,6 +40,7 @@ We use a standard presentation of higher-order logic as a simply-typed $\lambda$
 \[
 \sigma \; ::= \; \boolsort \mid \intsort \mid \sigma_1 \to \sigma_2
 \]
+generated from the base types $\boolsort$ (booleans) and $\intsort$ (individuals).
 Types of the following shape are called \emph{relational}:
 \[
 \rho \; ::= \; \intsort \to \boolsort \mid \intsort \to \rho \mid \rho \to \rho'
@@ -50,7 +51,7 @@ Note that a relational type has $\boolsort$ as the result type.
 Standardly we write $\exists_\sigma(\abs{x\!\!:\!\!\sigma}{M})$ as $\exists x\!\!:\!\!\sigma .\, M$; similarly for $\forall_\sigma(\abs{x\!\!:\!\!\sigma}{M})$.
 \emph{Formulas} are just terms of type $\boolsort$.
 We will write variables generally using $x,y,z$, or $X,Y,Z$ when we want to emphasise that they are of higher-order types.
-Given a typing environment $\Delta$ of relational variables (i.e.~variables of relational types), \emph{valid typing judgement}, $\Delta \vdash s : \sigma$, is defined by induction over the standard typing rules.
+Given a typing environment $\Delta$ (i.e.~a function from $\dom(\Delta)$ to types), \emph{typing judgements} have the form $\Delta \vdash s : \sigma$, and validity is defined by induction over the standard typing rules.
 
 \paragraph{Horn clauses}
 Fix a typing environment $\Delta$ of relational variables (i.e.~variables of relational types). 
@@ -100,11 +101,11 @@ We define the \emph{continuous type frame} by induction:
    \qquad\quad \cmng{\sigma_1 \to \sigma_2} \coloneqq (\cmng{\sigma_1} \cTo \cmng{\sigma_2}, \leq)
 \]
 where $X \cTo Y$ is the continuous function space between cpos $X$ and $Y$, which is itself a CPO with respect to the pointwise ordering $\leq$.
-Of course, in case $X$ is discrete poset $A_\iota$, this coincides with the full function space.
+Of course, in case $X$ is the discrete poset $A_\iota$, this coincides with the full function space.
 %We extend the lattice structure of $\mathbbm{2}$ to all relations $\cmng{\rho}$, analogously to the case of the full function space (and we reuse the same notation since there will be no confusion);
 Define $\cmng{\Delta} \coloneqq \Pi x \in \dom(\Delta).\,\cmng{\Delta(x)}$.
 
-Note that an element $f$ of $X_1 \cTo \cdots{} \cTo X_n \cTo \mathbbm{2}$ is the \emph{characteristic function} of the relation $f^{-1}(1) \subseteq X_1 \times \cdots \times X_n$, which is always Scott open.
+Note that an element $f$ of $X_1 \cTo \cdots{} \cTo X_n \cTo \mathbbm{2} \cong X_1 \times \cdots \times X_n \cTo \mathbbm{2}$ is the \emph{characteristic function} of the (higher-order) relation $f^{-1}(1) \subseteq X_1 \times \cdots \times X_n$, which is always Scott open.
 
 
 \paragraph{Continuous interpretation.}
