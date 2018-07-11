@@ -323,7 +323,6 @@ change actions that can be imposed on an arbitrary set $A$.
 Many other notions in computer science can be understood naturally in terms of change actions,
 \emph{e.g.} databases and database updates, files and diffs, Git repositories and commits, even 
 video compression algorithms that encode a frame as a series of changes to the previous frame.
-\todomario{Maybe references on this}
 
 \subsection{Derivatives}
 
@@ -733,9 +732,6 @@ we have concrete definitions for our bounds (which we will make use of in \cref{
 
 Moreover, we have a nice definition of the kernel ordering, which gives us a
 minus operator with a corresponding \emph{precise} derivative.
-
-\todompj{Proof. The second part follows easily from the charaterization of
-  $\kernelOrder$. Pretty sure it's true!}
 
 \begin{prop}[name=Boolean algebra kernels, restate=booleanAlgebraKernels]
   \label{prop:booleanAlgebraKernels}
@@ -1362,9 +1358,6 @@ change action on the naturals defined in \cref{sec:examples}.
 Since we are trying to incrementalize the iterative step, we start by taking the partial
 derivative of $\iter$ with respect to $n$.
 
-\todompj{Don't we have least elements as standard? I think we want to assume
-  that. I assume the weird thing with $\cminus$ is to avoid requiring
-  completeness? It reads oddly.}
 \begin{prop}[name=Derivative of the iteration map with respect to $n$, restate=iterDerivativesN]
   \label{prop:iterDerivativesN}
   Let $\cstr{A}$ be a complete change action and let $f: A \rightarrow A$ be a differentiable function. 
