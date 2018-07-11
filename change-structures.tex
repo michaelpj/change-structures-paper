@@ -2276,23 +2276,45 @@ helpful comments on the manuscript.
 \booleanAlgebraKernels*
 \begin{proof}
   \label{prf:booleanAlgebraKernels}
-
-  First we show $p \leq r, q \leq s$ implies $(p, q) \kernelOrder (r, s)$. We
+  
+  First we show that for any $p, q, r, s \in L$,
+  $p \leq r$ and $q \leq s$ implies $(p, q) \kernelOrder (r, s)$. We
   note that the condition implies
   \begin{align*}
-    &(p, q) \twist (r,s)\\
+    &(p, q) \splus_\superpose (r,s)\\
     &= ((p \wedge \neg s) \vee r, (q \wedge \neg r) \vee s)\\
     &= (r,s)
   \end{align*}
   Let $a, b \in L$. Then
   \begin{align*}
     &a \twist (p, q) = b \twist (p, q)\\
-    &\Rightarrow a \twist (p, q) \twist (r, s) = b \twist (p, q) \twist (r, s)\\
+    &\Rightarrow a \twist (p, q) \twist (r, s) = b \twist (p, q) \splus_\superpose (r, s)\\
     &\Rightarrow a \twist (r, s) = b \twist (r, s)
   \end{align*}
-  Hence $\kernel_{(p,q)} \subseteq \kernel_{(r,s)}$, so $(p, q) \kernelOrder (r, s)$.
- 
-  The other results follow easily.
+  Hence $\kernel_{(p,q)} \subseteq \kernel_{(r,s)}$, so $(p, q) \kernelOrder (r, s)$. The ``only if''
+  part of the proposition follows trivially from this.
+
+  Conversely, suppose $\derive{f}_1, \derive{f}_2$ are derivatives for $f$, fix
+  $a \in A$ and $\change{a} \in \changes{A}$ and let
+  \begin{gather*}
+    b = f(a)\\
+    (p, q) = \derive{f}_1(a, \change{a})\\
+    (r, s) = \derive{f}_2(a, \change{a})
+  \end{gather*}
+  
+  First, note that $\bot \twist (p, q) = p = p \twist (p, q)$ and hence $\bot \kernel_{(p, q)} p$,
+  therefore $\bot \kernel_{(r, s)} p$. This implies
+    \[ r = \bot \twist (r, s) =  p \twist (r, s) = p \vee r \wedge \neg s \]
+  i.e. $r = p \vee r \wedge \neg s$ and hence $p \leq r \vee s$. Since $r$ and $s$ are disjoint,
+  in order to prove $p \leq r$ it suffices to show that $p \wedge s = \bot$. 
+
+  To see that this is the case, we note that 
+  \begin{align*}
+    p \wedge s &\leq b \twist (p, q)\\
+               &=b \twist (r, s)\\
+               &\leq \neg s
+  \end{align*}
+  Hence $p \wedge s \leq \neg s$, therefore $p \wedge s = \bot$, which concludes the proof.
 \end{proof}
 
 \subsection {Derivatives of Datalog formulae}
