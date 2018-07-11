@@ -796,14 +796,15 @@ a set of named tuples, with variables ranging over a finite schema.
   A \emph{schema} $\Gamma$ is a finite set of names. A \emph{named tuple} over $\Gamma$ is an assignment
   of a value $v_i$ for each name $x_i$ in $\Gamma$. Given disjoint schemata 
   $\Gamma = \{ x_1, \ldots, x_n \}$ and $\Sigma = \{ y_1, \ldots, y_n \}$,
-  the selection function $\sigma_\Gamma$ defined as
+  the \emph{selection function} $\sigma_\Gamma$ is defined as
   \begin{displaymath}
     \sigma_\Gamma(\{x_1 \mapsto v_1, \ldots, x_n \mapsto v_n, y_1 \mapsto w_1, \ldots, y_m \mapsto w_m \})
     \defeq \{ x_1 \mapsto v_1, \ldots, x_n \mapsto v_n \}
   \end{displaymath}
-  I.e. $\sigma_\Gamma$ restricts a named tuple over $\Gamma \sqcup \Sigma$ into a tuple over $\Gamma$
+  I.e. $\sigma_\Gamma$ restricts a named tuple over \lochanged{$\Gamma \cup \Sigma$} into a tuple over $\Gamma$
   with the same values for the names in $\Gamma$.
-  We will often apply $\sigma_\Gamma$ elementwise to sets of tuples.
+  %We will often apply $\sigma_\Gamma$ elementwise to sets of tuples.
+\lochanged{By abuse of notation, we denote the elementwise extension of $\sigma_\Gamma$ to sets of tuples also as $\sigma_\Gamma$.}
 \end{defn}
 
 We will adopt the usual closed-world assumption to give a denotation to negation.
@@ -811,7 +812,6 @@ We will adopt the usual closed-world assumption to give a denotation to negation
 \begin{defn}
   For any schema $\Gamma$,
   there exists a universal relation $\universalRel_\Gamma$.
-
   Negation on relations can then be defined as
   \begin{displaymath}
     \neg R \defeq \universalRel_\Gamma \setminus R
@@ -841,7 +841,7 @@ into a complete Boolean algebra.
     \end{minipage}
     \vspace{-12pt}
     \begin{align*}
-      \sem{\exists x . T}_\Gamma(\semR) &\defeq \sigma_\Gamma(\sem{T}_{\Gamma, x}(\semR))
+      \sem{\exists x . T}_\Gamma(\semR) &\defeq \sigma_\Gamma(\sem{T}_{\Gamma \cup \{ x \}}(\semR))
     \end{align*}
     \end{minipage}
   }
@@ -852,12 +852,12 @@ into a complete Boolean algebra.
 
 \begin{defn}[Formula semantics]
   A Datalog formula $T$ whose free term variables are contained in $\Gamma$ denotes a function from 
-  its free relation variables $R_1, \ldots, R_n$ 
-  to $\Rel_\Gamma$.
+  %its free relation variables $R_1, \ldots, R_n$ 
+  \lochanged{$\Rel_\Gamma^n$ to $\Rel_\Gamma$}.
   \begin{displaymath}
     \denote{\_}_\Gamma : \Formula \rightarrow \Rel_\Gamma^n \rightarrow \Rel_\Gamma
   \end{displaymath}
-  If $\semR = (\semR_1, \ldots, \semR_n)$ is a choice of a relation for each of the variables $R_i$,
+  If $\semR = (\semR_1, \ldots, \semR_n)$ is a choice of a relation $\semR_i$ for each of the variables $R_i$,
   $\denote{T}(\semR)$ is inductively defined according to the rules in \cref{fig:datalogSemantics}.
 \end{defn}
 
@@ -872,7 +872,7 @@ In order to actually perform our incremental computation, we first need to provi
 of Datalog formulae. Of course, since $\denote{T}_\Gamma$ is a function between the complete Boolean algebras 
 $\Rel_\Gamma^n$ and
 $\Rel_\Gamma$, and we know that the corresponding change actions 
-$\widehat{\Rel_\Gamma^n}_\superpose, \widehat{\Rel_\Gamma}_\superpose$
+$\widehat{\Rel_\Gamma^n}_\superpose$ and $\widehat{\Rel_\Gamma}_\superpose$
 are complete, this guarantees the existence of a derivative for $\denote{T}$.
 
 Unfortunately, this does not necessarily provide us with an \emph{efficient} 
@@ -892,8 +892,9 @@ expression and hopefully make it easier to compute. But we also know from
 $\derive{f}_{\cminus_\bot}$ and $\derive{f}_{\cminus_\top}$ is a valid
 derivative ($\derive{f}_{\cminus_\kernel}$ lies roughly in the middle of them),
 and we can therefore optimize anywhere within that range to make a 
-trade-off between ease of computation and precision.\footnote{The idea of using an approximation
-to the precise derivative, and a soundness condition, appears in \textcite{bancilhon1986amateur}.}
+trade-off between ease of computation and precision.
+The idea of using an approximation
+to the precise derivative, and a soundness condition, appears in \textcite{bancilhon1986amateur}.
 
 There is also the question of how to compute the derivative. Since the change
 set for $\widehat{\Rel}_\superpose$ is a subset of $\Rel \times \Rel$, it
@@ -915,50 +916,10 @@ specifics of the evaluation engine. Here is one possibility.\footnote{This is
   soundness bounds.}
 
 \subsubsection{A concrete Datalog formula derivative}
-
-We define a ``symbolic'' derivative operator as a pair of mutually recursive functions,
-$\updiff$ and $\downdiff$, which turn a formula $T$ into new formulae that compute
-the upwards and downwards parts of the derivative, respectively. As we expect
-from a derviative, the new formulae will have additional free relation variables
-for the upwards and downwards derivatives of the free relation variables of $T$.
-\footnote{While the definitions usually exhibit the dualities we would expect
-  between corresponding operators, there are a few asymmetries to explain.
-
-  The asymmetry between the cases for $\updiff(T \vee U)$ and
-  $\downdiff(T \wedge U)$ is for operational reasons. The symmetrical version of
-  $\updiff(T \vee U)$ is $(\updiff(T) \wedge \neg U) \vee (\updiff(U) \wedge \neg
-  T)$ (which is also precise). The reason we omit the negated conjuncts is simply
-  that they are costly to commpute and not especially helpful to our evaluation engine.
-
-  The asymmetry between the cases for $\exists$ is because our
-  dialect of Datalog does not have a primitive universal quantifier.
-  If we did have one, the cases for $\exists$ would be dual to the corresponding
-  cases for $\forall$.}
-
 %\newcommand{\bothdiff}{\diamond}
 \newcommand{\bothdiff}{{\mathsf X}} 
 
-We will make use of an auxilliary function, $\bothdiff$, which computes the
-``neXt'' value of a term by applying the upwards and downwards derivatives.
-
-\newcommand{\bothchanges}{\rho}
-\begin{thm}[name=Concrete Datalog formula derivatives, restate=concreteDatalog]
-\label{thm:concreteDatalog}
-  Let $\updiff, \downdiff, \bothdiff : \Formula \rightarrow \Formula$ be mutually recursive functions
-  defined by structural induction as in \cref{fig:datalogDerivatives}.
-
-  Then for any schema $\Gamma$ and any Datalog formula $T$ whose free term variables are contained
-  in $\Gamma$,
-  $\derive{\denote{T}_\Gamma} \defeq (\denote{\updiff(T)}_\Gamma, \denote{\downdiff(T)}_\Gamma)$
-  is a derivative for $\denote{T}_\Gamma$.
-\end{thm}
-\ifproofs
-\begin{proof}
-  See \cref{prf:concreteDatalog}
-\end{proof}
-\fi
-
-\begin{figure}
+\begin{figure}[h]
   \fbox{
     \begin{minipage}[t]{0.9\textwidth}
     \vspace{-5pt}
@@ -996,6 +957,47 @@ We will make use of an auxilliary function, $\bothdiff$, which computes the
   \label{fig:datalogDerivatives}
   \vspace{-12pt}
 \end{figure}
+
+In~\cref{fig:datalogDerivatives}, we define a ``symbolic'' derivative operator as a pair of mutually recursive functions,
+$\updiff$ and $\downdiff$, which turn a formula $T$ into new formulae that compute
+the upwards and downwards parts of the derivative, respectively. 
+Our definition uses an auxilliary function, $\bothdiff$, which computes the ``neXt'' value of a term by applying the upwards and downwards derivatives.
+As we expect
+from a derviative, the new formulae will have additional free relation variables
+for the upwards and downwards derivatives of the free relation variables of $T$.
+
+\begin{rem}
+While the definitions usually exhibit the dualities we would expect
+  between corresponding operators, there are a few asymmetries to explain.
+
+  The asymmetry between the cases for $\updiff(T \vee U)$ and
+  $\downdiff(T \wedge U)$ is for operational reasons. The symmetrical version of
+  $\updiff(T \vee U)$ is $(\updiff(T) \wedge \neg U) \vee (\updiff(U) \wedge \neg
+  T)$ (which is also precise). The reason we omit the negated conjuncts is simply
+  that they are costly to commpute and not especially helpful to our evaluation engine.
+
+  The asymmetry between the cases for $\exists$ is because our
+  dialect of Datalog does not have a primitive universal quantifier.
+  If we did have one, the cases for $\exists$ would be dual to the corresponding
+  cases for $\forall$.
+\end{rem}
+
+\newcommand{\bothchanges}{\rho}
+\begin{thm}[name=Concrete Datalog formula derivatives, restate=concreteDatalog]
+\label{thm:concreteDatalog}
+  Let $\updiff, \downdiff, \bothdiff : \Formula \rightarrow \Formula$ be mutually recursive functions
+  defined by structural induction as in \cref{fig:datalogDerivatives}.
+
+  Then for any schema $\Gamma$ and any Datalog formula $T$ whose free term variables are contained
+  in $\Gamma$,
+  $\derive{\denote{T}_\Gamma} \defeq (\denote{\updiff(T)}_\Gamma, \denote{\downdiff(T)}_\Gamma)$
+  is a derivative for $\denote{T}_\Gamma$.
+\end{thm}
+\ifproofs
+\begin{proof}
+  See \cref{prf:concreteDatalog}
+\end{proof}
+\fi
 
 \subsubsection{Examples}
 
