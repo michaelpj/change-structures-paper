@@ -67,7 +67,7 @@
 \input{topmatter-acm}
 
 \begin{abstract}
-  Incremental computation has recently been studied using the concepts of \emph{change
+ Incremental computation has recently been studied using the concepts of \emph{change
   structures} and \emph{derivatives} of programs, where the derivative of a function allows updating the output
   of the function based on a change to its input.
 
@@ -98,9 +98,9 @@ which computes the transitive closure of an edge relation $e$:
   tc(x, y) &\leftarrow e(x, z) \wedge tc(z, y)
 \end{align*}
 
-The semantics of Datalog, tells us that the denotation of this program is the
-least fixpoint of the rule $tc$. Kleene's Theorem tells us that we can in fact
-compute this by repeatedly applying the rule to fixpoint, starting from the empty relation. For example, supposing
+The semantics of Datalog tells us that the denotation of this program is the
+least fixpoint of the rule $tc$. Kleene's Theorem tells us that we can 
+compute this fixpoint by repeatedly applying the rule until it stops changing, starting from the empty relation. For example, supposing
 that $e = \{ (1, 2), (2, 3), (3, 4) \}$, we get the following evaluation trace:
 \begin{center}
   \begin{tabular} {p{3.5em} p{10em} p{10em}}
@@ -2148,7 +2148,8 @@ power of this approach.
 \begin{acks}
 
 We would like to thank Semmle Ltd. for supporting this research, as well as Pavel
-Avgustinov, Aditya Sharad, Max Sch\"afer, Katriel Cohn-Gordon, Luke Ong, and Simon Peyton Jones for their
+Avgustinov, Aditya Sharad, Max Sch\"afer, Katriel Cohn-Gordon, Anders
+Schack-Mulligen, and Simon Peyton Jones for their
 helpful comments on the manuscript.
 
 \end{acks}
