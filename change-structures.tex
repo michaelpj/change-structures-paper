@@ -527,7 +527,7 @@ entirely by the coarseness of the actions.
 The relation $\leq$  defines a preorder (but not a partial order) on the set of all change actions 
 over a fixed set A. Least and greatest elements do exist up to equivalence, and correspond
 respectively to the empty change action $\cstr{A}_1$ and any complete change
-action, such as the change action $\cstr{A}_\Rightarrow$,
+action, such as the full change action $\cstr{A}_\Rightarrow$,
 defined in \cref{sec:changeAction}.
 
 \begin{prop}
@@ -536,7 +536,7 @@ defined in \cref{sec:changeAction}.
   $\cstr{B}_1$. Then $f$ is differentiable as a function from $\cstr{A}_2$ into $\cstr{B}_2$.
 \end{prop}
 
-A straightforward consequence of this fact is that, whenever two change actions are equivalent,
+A consequence of this fact is that whenever two change actions are equivalent
 they can be used interchangeably without affecting which functions are differentiable. One last parallel with topology
 is the following result, which establishes a simple criterion for when a change action is coarser than
 another:
@@ -552,7 +552,7 @@ another:
 Consider the full change action $\cstr{\ZZ}_\Rightarrow$ on the integers.
 If we want to find a change that turns $99$ into $100$, there
 are a few options available: for example, we can pick the function $\lambda x . 100$, or
-the function $\lambda x . x + 1$. In a sense, the second one does ``too much''
+the function $\lambda x . x + 1$. In a sense, the first one does ``too much''
 work, in that it captures all the information about the target value instead of
 just the difference between them.
 
@@ -606,7 +606,7 @@ In fact, any change action whose base set is a poset induces a particularly conv
 on the corresponding change set:
 
 \begin{defn}
-  $\change{a} \changeOrder \change{b}$ just if for all $a \in A$ it is the case that
+  $\change{a} \changeOrder \change{b}$ iff for all $a \in A$ it is the case that
   $a \cplus \change{a} \leq a \cplus \change{b}$.
 \end{defn}
 
@@ -763,10 +763,11 @@ minus operator with a corresponding \emph{precise} derivative.
 \end{proof}
 \fi
 
-This shows us in what sense minimality with respect to the kernel orering gives
-us precision: the derivative is precise in that the components are as small as
-possible (this is what $\pointwiseOrder$ corresponds to). When we are working with sets or relations, this is important since it
-will correspond to the actual size of components of the derivative.
+This shows us in what sense minimality with respect to the kernel ordering gives
+us precision: the precise derivative has components which are as small as
+possible (since it is also minimal with respect to $\pointwiseOrder$).
+When we are working with sets or relations, this is important since it
+corresponds to the actual size of components of the derivative.
 
 \section{Derivatives for non-recursive Datalog}
 \label{sec:nonRecursiveDatalog}
@@ -787,23 +788,23 @@ real and pressing, as we saw in \cref{sec:intro}.
 
 Datalog is usually given a logical semantics where formulae are interpreted as first-order
 logic predicates and the semantics of a program is the set of models of its constituent
-predicates. We will instead give a simpler denotational semantics (as is
+predicates. We will instead give a simple denotational semantics (as is
 typical when working with fixpoints \autocite[See e.g.][]{compton1994stratified}) that treats a Datalog
-formula (and later, a Datalog program) as directly denoting a relation, i.e.
+formula as directly denoting a relation, i.e.
 a set of named tuples, with variables ranging over a finite schema.
 
 \begin{defn}
   A \emph{schema} $\Gamma$ is a finite set of names. A \emph{named tuple} over $\Gamma$ is an assignment
   of a value $v_i$ for each name $x_i$ in $\Gamma$. Given disjoint schemata 
   $\Gamma = \{ x_1, \ldots, x_n \}$ and $\Sigma = \{ y_1, \ldots, y_n \}$,
-  the selection function $\sigma_\Gamma$ defined as
+  the \emph{selection function} $\sigma_\Gamma$ is defined as
   \begin{displaymath}
     \sigma_\Gamma(\{x_1 \mapsto v_1, \ldots, x_n \mapsto v_n, y_1 \mapsto w_1, \ldots, y_m \mapsto w_m \})
     \defeq \{ x_1 \mapsto v_1, \ldots, x_n \mapsto v_n \}
   \end{displaymath}
-  I.e. $\sigma_\Gamma$ restricts a named tuple over $\Gamma \sqcup \Sigma$ into a tuple over $\Gamma$
+  I.e. $\sigma_\Gamma$ restricts a named tuple over $\Gamma \cup \Sigma$ into a tuple over $\Gamma$
   with the same values for the names in $\Gamma$.
-  We will often apply $\sigma_\Gamma$ elementwise to sets of tuples.
+  We denote the elementwise extension of $\sigma_\Gamma$ to sets of tuples also as $\sigma_\Gamma$.
 \end{defn}
 
 We will adopt the usual closed-world assumption to give a denotation to negation.
@@ -811,7 +812,6 @@ We will adopt the usual closed-world assumption to give a denotation to negation
 \begin{defn}
   For any schema $\Gamma$,
   there exists a universal relation $\universalRel_\Gamma$.
-
   Negation on relations can then be defined as
   \begin{displaymath}
     \neg R \defeq \universalRel_\Gamma \setminus R
@@ -841,7 +841,7 @@ into a complete Boolean algebra.
     \end{minipage}
     \vspace{-12pt}
     \begin{align*}
-      \sem{\exists x . T}_\Gamma(\semR) &\defeq \sigma_\Gamma(\sem{T}_{\Gamma, x}(\semR))
+      \sem{\exists x . T}_\Gamma(\semR) &\defeq \sigma_\Gamma(\sem{T}_{\Gamma \cup \{ x \}}(\semR))
     \end{align*}
     \end{minipage}
   }
@@ -850,14 +850,13 @@ into a complete Boolean algebra.
   \vspace{-12pt}
 \end{figure}
 
-\begin{defn}[Formula semantics]
+\begin{defn}
   A Datalog formula $T$ whose free term variables are contained in $\Gamma$ denotes a function from 
-  its free relation variables $R_1, \ldots, R_n$ 
-  to $\Rel_\Gamma$.
+  $\Rel_\Gamma^n$ to $\Rel_\Gamma$.
   \begin{displaymath}
     \denote{\_}_\Gamma : \Formula \rightarrow \Rel_\Gamma^n \rightarrow \Rel_\Gamma
   \end{displaymath}
-  If $\semR = (\semR_1, \ldots, \semR_n)$ is a choice of a relation for each of the variables $R_i$,
+  If $\semR = (\semR_1, \ldots, \semR_n)$ is a choice of a relation $\semR_i$ for each of the variables $R_i$,
   $\denote{T}(\semR)$ is inductively defined according to the rules in \cref{fig:datalogSemantics}.
 \end{defn}
 
@@ -872,7 +871,7 @@ In order to actually perform our incremental computation, we first need to provi
 of Datalog formulae. Of course, since $\denote{T}_\Gamma$ is a function between the complete Boolean algebras 
 $\Rel_\Gamma^n$ and
 $\Rel_\Gamma$, and we know that the corresponding change actions 
-$\widehat{\Rel_\Gamma^n}_\superpose, \widehat{\Rel_\Gamma}_\superpose$
+$\widehat{\Rel_\Gamma^n}_\superpose$ and $\widehat{\Rel_\Gamma}_\superpose$
 are complete, this guarantees the existence of a derivative for $\denote{T}$.
 
 Unfortunately, this does not necessarily provide us with an \emph{efficient} 
@@ -892,8 +891,9 @@ expression and hopefully make it easier to compute. But we also know from
 $\derive{f}_{\cminus_\bot}$ and $\derive{f}_{\cminus_\top}$ is a valid
 derivative ($\derive{f}_{\cminus_\kernel}$ lies roughly in the middle of them),
 and we can therefore optimize anywhere within that range to make a 
-trade-off between ease of computation and precision.\footnote{The idea of using an approximation
-to the precise derivative, and a soundness condition, appears in \textcite{bancilhon1986amateur}.}
+trade-off between ease of computation and precision.
+The idea of using an approximation
+to the precise derivative, and a soundness condition, appears in \textcite{bancilhon1986amateur}.
 
 There is also the question of how to compute the derivative. Since the change
 set for $\widehat{\Rel}_\superpose$ is a subset of $\Rel \times \Rel$, it
@@ -915,50 +915,10 @@ specifics of the evaluation engine. Here is one possibility.\footnote{This is
   soundness bounds.}
 
 \subsubsection{A concrete Datalog formula derivative}
-
-We define a ``symbolic'' derivative operator as a pair of mutually recursive functions,
-$\updiff$ and $\downdiff$, which turn a formula $T$ into new formulae that compute
-the upwards and downwards parts of the derivative, respectively. As we expect
-from a derviative, the new formulae will have additional free relation variables
-for the upwards and downwards derivatives of the free relation variables of $T$.
-\footnote{While the definitions usually exhibit the dualities we would expect
-  between corresponding operators, there are a few asymmetries to explain.
-
-  The asymmetry between the cases for $\updiff(T \vee U)$ and
-  $\downdiff(T \wedge U)$ is for operational reasons. The symmetrical version of
-  $\updiff(T \vee U)$ is $(\updiff(T) \wedge \neg U) \vee (\updiff(U) \wedge \neg
-  T)$ (which is also precise). The reason we omit the negated conjuncts is simply
-  that they are costly to commpute and not especially helpful to our evaluation engine.
-
-  The asymmetry between the cases for $\exists$ is because our
-  dialect of Datalog does not have a primitive universal quantifier.
-  If we did have one, the cases for $\exists$ would be dual to the corresponding
-  cases for $\forall$.}
-
 %\newcommand{\bothdiff}{\diamond}
 \newcommand{\bothdiff}{{\mathsf X}} 
 
-We will make use of an auxilliary function, $\bothdiff$, which computes the
-``neXt'' value of a term by applying the upwards and downwards derivatives.
-
-\newcommand{\bothchanges}{\rho}
-\begin{thm}[name=Concrete Datalog formula derivatives, restate=concreteDatalog]
-\label{thm:concreteDatalog}
-  Let $\updiff, \downdiff, \bothdiff : \Formula \rightarrow \Formula$ be mutually recursive functions
-  defined by structural induction as in \cref{fig:datalogDerivatives}.
-
-  Then for any schema $\Gamma$ and any Datalog formula $T$ whose free term variables are contained
-  in $\Gamma$,
-  $\derive{\denote{T}_\Gamma} \defeq (\denote{\updiff(T)}_\Gamma, \denote{\downdiff(T)}_\Gamma)$
-  is a derivative for $\denote{T}_\Gamma$.
-\end{thm}
-\ifproofs
-\begin{proof}
-  See \cref{prf:concreteDatalog}
-\end{proof}
-\fi
-
-\begin{figure}
+\begin{figure}[t]
   \fbox{
     \begin{minipage}[t]{0.9\textwidth}
     \vspace{-5pt}
@@ -996,6 +956,44 @@ We will make use of an auxilliary function, $\bothdiff$, which computes the
   \label{fig:datalogDerivatives}
   \vspace{-12pt}
 \end{figure}
+
+In~\cref{fig:datalogDerivatives}, we define a ``symbolic'' derivative operator as a pair of mutually recursive functions,
+$\updiff$ and $\downdiff$, which turn a formula $T$ into new formulae that compute
+the upwards and downwards parts of the derivative, respectively. 
+Our definition uses an auxiliary function, $\bothdiff$, which computes the ``neXt'' value of a term by applying the upwards and downwards derivatives.
+As we expect
+from a derivative, the new formulae will have additional free relation variables
+for the upwards and downwards derivatives of the free relation variables of $T$.\footnote{
+While the definitions usually exhibit the dualities we would expect
+  between corresponding operators, there are a few asymmetries to explain.
+
+  The asymmetry between the cases for $\updiff(T \vee U)$ and
+  $\downdiff(T \wedge U)$ is for operational reasons. The symmetrical version of
+  $\updiff(T \vee U)$ is $(\updiff(T) \wedge \neg U) \vee (\updiff(U) \wedge \neg
+  T)$ (which is also precise). The reason we omit the negated conjuncts is simply
+  that they are costly to compute and not especially helpful to our evaluation engine.
+
+  The asymmetry between the cases for $\exists$ is because our
+  dialect of Datalog does not have a primitive universal quantifier.
+  If we did have one, the cases for $\exists$ would be dual to the corresponding
+  cases for $\forall$.}
+
+\newcommand{\bothchanges}{\rho}
+\begin{thm}[name=Concrete Datalog formula derivatives, restate=concreteDatalog]
+\label{thm:concreteDatalog}
+  Let $\updiff, \downdiff, \bothdiff : \Formula \rightarrow \Formula$ be mutually recursive functions
+  defined by structural induction as in \cref{fig:datalogDerivatives}.
+
+  Then for any schema $\Gamma$ and any Datalog formula $T$ whose free term variables are contained
+  in $\Gamma$,
+  $\derive{\denote{T}_\Gamma} \defeq (\denote{\updiff(T)}_\Gamma, \denote{\downdiff(T)}_\Gamma)$
+  is a derivative for $\denote{T}_\Gamma$.
+\end{thm}
+\ifproofs
+\begin{proof}
+  See \cref{prf:concreteDatalog}
+\end{proof}
+\fi
 
 \subsubsection{Examples}
 
@@ -1076,7 +1074,7 @@ Here is an upwards derivative for an aggregate formula:
 \end{align*}
 
 While this isn't a precise derivative, it is still substantially cheaper than
-re-evaluating the whole subfomula, as the guard allows us to skip the second conjunct when $U$
+re-evaluating the whole subformula, as the guard allows us to skip the second conjunct when $U$
 has not changed.
 
 % We're not planning to include this currently
@@ -1086,25 +1084,24 @@ has not changed.
 
 So far we have found change actions for spaces that are a good representation of
 simple data, but we would also like to have change actions on
-\emph{function} spaces. This would enable us have derivatives for higher-order languages, and in particular derivatives for
-fixpoint operators, which are higher-order functions $\fixpoint : (A \rightarrow A) \rightarrow A$. 
+\emph{function} spaces. This would enable us to have derivatives for higher-order languages, and in particular derivatives for
+fixpoint operators $\fixpoint : (A \rightarrow A) \rightarrow A$, which are higher-order functions. 
 
-Function spaces, however, differ from products and disjoint unions in that there is no obvious choice
-of a ``best'' change action structure on $A \rightarrow B$, given change actions $\cstr{A}$ and $\cstr{B}$.
+Function spaces, however, differ from products and disjoint unions in that, given change actions $\cstr{A}$ and $\cstr{B}$, there is no obvious choice
+of a ``best'' change action structure on $A \rightarrow B$.
 Instead of settling on a concrete choice of a change action, we will instead
 pick out subsets of ``well-behaved'' change actions on function spaces.
 
-\begin{defn}
+\begin{defn}[Functional Change Action]
   \label{def:functionalChanges}
   Given change actions $\cstr{A}$ and $\cstr{B}$ and a set $U \subseteq A \rightarrow B$, a change action
-  $(U, \changes U, \cplus_U)$ is \emph{functional} whenever the evaluation map $\ev : U \times A \rightarrow B$
+  $\cstr{U} = (U, \changes U, \cplus_U)$ is \emph{functional} whenever the evaluation map $\ev : U \times A \rightarrow B$
   is differentiable, that is to say, whenever there exists a function 
   $\derive{\ev} : (U \times A) \times (\changes U \times \changes A) \rightarrow \changes{B}$ such that:
   \begin{displaymath}
     (f \cplus_U \change{f})(a \cplus_A \change{a}) = 
     f(a) \cplus_B \derive{\ev}((f, a), (\change{f}, \change{a}))
   \end{displaymath}
-  
   We will write $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$ whenever 
   $U \subseteq A \rightarrow B$ and $\cstr{U}$ is functional.
 \end{defn}
@@ -1170,7 +1167,7 @@ of differentiable functions $\cstr{A} \rightarrow \cstr{B}$, but these can be un
 the purpose of actual computation. Fortunately, in many cases there is a simple
 way of representing spaces of differentiable functions.
 
-\begin{defn}
+\begin{defn}[Pointwise functional change action]
   Let $\cstr{A}$ and $\cstr{B}$ be change actions. The \emph{pointwise functional change action} 
   $\cstr{A} \ptfunc \cstr{B}$, when it is defined,
   is given by $(\cstr{A} \rightarrow \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$, with
@@ -1185,7 +1182,7 @@ way of representing spaces of differentiable functions.
 
 The above definition isn't always well-typed, since given $f : \cstr{A} \rightarrow \cstr{B}$ and
 $\delta f : A \rightarrow \changes{B}$ there is, in general, no guarantee that 
-$f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteria that enforce this:
+$f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteria that guarantee this.
 
 \begin{thm}
   Let $\cstr{A}$ and $\cstr{B}$ be change actions, and suppose that $\cstr{B}$ satisfies one of the
@@ -1194,11 +1191,11 @@ $f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteri
     \item $\cstr{B}$ is a complete change action.
     \item The change action $\widehat {\changes{B}} \defeq (\changes{B}, \changes{B}, \splus_B)$ is 
       complete and 
-      $\cplus_B$ is differentiable as a map from $B \times \changes{B}$ into $B$
+      $\cplus_B : B \times \changes{B} \to B$ is differentiable.
   \end{itemize}
   Then the pointwise functional change action 
   $(\cstr{A} \rightarrow \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$ is well defined. 
-  (Moreover, it is the exponentiation object (up to unique isomorphism) from $\cstr{A}$ to $\cstr{B}$ in the category of change actions and differentiable functions (Section~\ref{sec:exponentials}).)
+  (Moreover, it is the exponentiation object (up to unique isomorphism) from $\cstr{A}$ to $\cstr{B}$ in the category of change actions and differentiable functions (section~\ref{sec:exponentials}).)
   \footnote{
     Either of these conditions is enough to guarantee that the pointwise functional change action
     is well defined, but it can be the case that $\cstr{B}$ satisfies neither and yet pointwise
@@ -1243,15 +1240,14 @@ a derivative of the evaluation map.
 
 Directed-complete partial orders (dcpos) equipped with a least element, are an
 important class of posets. They provide us with the ability to take
-\emph{fixpoints} of (Scott-)continuous maps, which is especially important for
-encoding recursion in program semantics.
+\emph{fixpoints} of (Scott-)continuous maps, which is especially important for interpreting recursion in program semantics.
 
 \subsection{Dcpos}
 \label{sec:dcpos}
 
 As before, we can define change actions on dcpos, rather than sets, as change
-actions whose sets $A$, $\changes{A}$ are endowed with a dcpo structure, and where
-the maps $\cplus$, $\splus$ are continuous.
+actions whose base and change sets are endowed with a dcpo structure, and where
+the monoid operation and action are continuous.
 
 \begin{defn}
   A change action $\cstr{A}$ is \emph{continuous} if
@@ -1265,7 +1261,7 @@ the maps $\cplus$, $\splus$ are continuous.
 Unlike the case for posets, the change order $\changeOrder$ does \emph{not}, in general,
 induce a dcpo on $\changes{A}$. As a counterexample, consider 
 the change action $(\overline{\NN}, \NN, +)$, where $\overline{\NN}$ denotes the dcpo of natural numbers
-extended with a positive infinity.
+extended with positive infinity.
 
 A key example of a continuous change action is the $\cstr{L}_\superpose$ change
 action on Boolean algebras.
@@ -1299,8 +1295,8 @@ is the following analogous result:
 
 \begin{corollary}
   \label{cor:diffContinuous}
-  Let $\cstr{A}$, $\cstr{B}$ be change actions, with $\cstr{B}$ continuous and let $\{f_i\}$ and $\{\derive{f_i}\}$ be
-  $I$-indexed directed families of functions in $A \rightarrow B$ and $A \times \changes{A} \rightarrow \changes{B}$.
+  Let $\cstr{A}$ and $\cstr{B}$ be change actions, with $\cstr{B}$ continuous and let $\{f_i\}$ and $\{\derive{f_i}\}$ be
+  $I$-indexed directed families of functions in $A \rightarrow B$ and $A \times \changes{A} \rightarrow \changes{B}$ respectively.
 
   Then, if for every $i \in I$ it is the case that $\derive{f_i}$ is a derivative of $f_i$, then $\bigsqcup_{i \in I} \derive{f_i}$ is
   a derivative of $\bigsqcup_{i \in I} f_i $.
@@ -1339,7 +1335,7 @@ Fixpoints appear frequently in the semantics of languages with recursion. If we
 can give a generic account of how to compute fixpoints using change actions,
 then this gives us a compositional way of extending a derivative for the
 non-recursive semantics of a language to a derivative that can also handle recursion.
-We will do this later to handle full recursive Datalog (\cref{sec:datalogIncr}).
+We will later apply this to full recursive Datalog (\cref{sec:datalogIncr}).
 
 \subsubsection{Iteration functions}
 \label{sec:iteration}
@@ -1363,7 +1359,7 @@ with respect to $f$, and this will give us a way to get from iterating $f$ to it
 
 The following theorems provide a
 generalization of semi-naive evaluation to any differentiable function over a
-continuous change action. Throughout this section we will assume that we have a contiuous change action
+continuous change action. Throughout this section we will assume that we have a continuous change action
 $\cstr{A}$, and any reference to the change action $\cstr{\NN}$ will refer to the obvious monoidal
 change action on the naturals defined in \cref{sec:examples}.
 
@@ -1435,7 +1431,9 @@ value of the fixpoint, i.e.
 
 If $F : B \times A \rightarrow A$ and $\cstr{A}$ is a change action such that 
 $\cstr{A} \ptfunc \cstr{A}$ is well-defined, then 
-$\lambda X . F(E \cplus \change{E}, X) = (\lambda X . F(E, X)) \cplus_{pt} (\lambda X . \change{E})$,
+\begin{displaymath}
+  \lambda X . F(E \cplus \change{E}, X) = (\lambda X . F(E, X)) \cplus_{pt} (\lambda X . \change{E})
+\end{displaymath}
 i.e. we are applying a change to the \emph{function} whose fixpoint we are taking.
 
 In Datalog this would allow us to update a recursively defined relation given an
@@ -1451,7 +1449,7 @@ $\fixpoint$ with respect to the function whose fixpoint is being taken.
 \label{def:fixpointDerivatives}
   Let $\cstr{A}$ be a change action, let $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{A}$ be a functional
   change action (not necessarily pointwise) and suppose $\fixpoint_U$ and $\fixpoint_{\changes{A}}$ are fixpoint
-  operators for functions in $U$ and $\changes{A}$ respectively.
+  operators for endofunctions on $U$ and $\changes{A}$ respectively.
   
   Then we define
   \begin{align*}
@@ -1467,14 +1465,14 @@ derivative \textemdash{} for \emph{least} fixpoints. The appearance of
 $\derive{\ev}$, a derivative of the evaluation map, in the definition of
 $\adjust$ is also no coincidence: as evaluating a fixpoint consists of many
 steps of applying the evaluation map, so computing the derivative of a fixpoint
-consists of many stages of applying the derivative of the evaluatoin
+consists of many stages of applying the derivative of the evaluation
 map.\footnote{Perhaps surprisingly, the authors first discovered an expanded
   version of this formula, and it was only later that we realised the remarkable
   connection to $\derive{\ev}$.}
 
 \begin{thm}[name=Pseudo-derivatives of fixpoints, restate=fixpointPseudoDerivatives]
 \label{thm:fixpointPseudoDerivatives}
-  Let $\cstr{A}$, $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{A}$, $\fixpoint_{U}$,
+  Let $\cstr{A}$, $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{A}$, $\fixpoint_{U}$, and let
   $\fixpoint_{\changes A}$ be as in \cref{def:fixpointDerivatives}. Then, for any
   differentiable function $f \in U$ and any change $\change{f} \in \changes{U}$,
   $\fixpoint_U(f) \cplus \derive{\fixpoint_U}(f, \change{f})$ is a fixpoint
@@ -1535,7 +1533,7 @@ mutual recursion.\footnote{
 \end{align*}
 Which has the property that
 \begin{align*}
-  &\nextiter_{f, \change{f}}^n (\bot, \bot) = (\iter(f, n), \partial_1{\iter}(f, \change{f}, n))
+  &\nextiter_{f, \change{f}}^n (\bot, \bot) = (\iter(f, n), \partial_1{\iter}(f, \change{f}, n)).
 \end{align*}
 
 This indeed provides us with a function whose limit we can take, showing
@@ -1583,7 +1581,7 @@ computes ``one step'' of our program semantics.
 
 \begin{defn}
   Given a program $\mathbb{P} = (P_1, \dots, P_n)$, where $P_i$ is a predicate,
-  with schema $\Gamma_i$ the \emph{immediate consequence operator} $\consq: \Rel^n \rightarrow \Rel^n$ is defined 
+  with schema $\Gamma_i$, the \emph{immediate consequence operator} $\consq: \Rel^n \rightarrow \Rel^n$ is defined 
   as follows:
   \begin{displaymath}
     \consq(\semR_1, \dots, \semR_n) 
@@ -1676,7 +1674,7 @@ A reminder of the expanded definition of $\adjust$:
   \adjust(f, \change{f}) &= \lambda\ \change{a}. \change{f}(\lfp(f)) \splus \derive{(f \cplus \change{f})}(\lfp(f), \change{a})
 \end{align*}
 
-We've chosen the second defintion of $\ev$ from \cref{prop:evDerivatives}, since
+We've chosen the second definition of $\ev$ from \cref{prop:evDerivatives}, since
 we already know what $f \cplus \change{f}$ looks like \textemdash{} it is simply
 $\denote{tc_{e_2}}$ \textemdash{} and $\change{tc}(\lfp(tc_{e_1}))$ can be
 computed once up front and reused throughout the computation.
@@ -1742,8 +1740,9 @@ account of change actions, although a full treatment is beyond the scope of this
 There is a natural preorder on the base set of a change action, given by reachability
 under the action:
 
-\begin{defn}
-  $a \reachOrder b$ iff there is a $\change{a} \in \changes{A}$ such that $a \cplus
+\begin{defn}[Reachability preorder]
+Let $\cstr{A}$ a change action. 
+We define ${\reachOrder} \subseteq A \times A$ by: $a \reachOrder b$ just if there is a $\change{a} \in \changes{A}$ such that $a \cplus_A
   \change{a} = b$.
 \end{defn}
 
@@ -1769,7 +1768,7 @@ Indeed, the correspondence between a change action and its reachability preorder
 a (full and faithful) functor $\reach : \cat{CAct} \rightarrow \cat{PreOrd}$ that acts as the
 identity on morphisms.
 
-Conversely, any preorder $\leq$ on some set $A$ induces a change action
+Conversely, any preorder $(A, \leq)$ induces a change action
 $\cstr{A}_\leq \defeq \cstruct{A}{A^\ast}{\cplus^\ast_\leq}$.
 The action $\cplus^\ast_\leq$ is defined as the extension of $\cplus_\leq$ to the free
 monoid $A^\ast$, where $\cplus_\leq$ is defined as:
@@ -1784,7 +1783,7 @@ monoid $A^\ast$, where $\cplus_\leq$ is defined as:
 \end{aligned}
 \]
 
-The mapping to $\cstr{A}_\leq$ gives rise to a (full and faithful) functor
+The mapping $(A, \leq) \mapsto \cstr{A}_\leq$ gives rise to a (full and faithful) functor
 $\direct : \cat{PreOrd} \rightarrow \cat{CAct}$, again acting as the identity on morphisms.
 
 These two functors are in fact enough to give us an equivalence between the categories
@@ -1821,7 +1820,7 @@ to the pointwise functional change actions we saw earlier (in \cref{sec:pointwis
 
 \begin{defn}
   \label{def:convenientChangeActions}
-  A change action $\cstr{B}$ is convenient if every exponential object
+  A change action $\cstr{B}$ is \emph{convenient} if every exponential object
   $\exponential{\cstr{A}}{\cstr{B}}$ is isomorphic to a pointwise functional change action.
 \end{defn}
 
@@ -1830,7 +1829,7 @@ $\cat{PreOrd}$ should work, since exponentials $A \Rightarrow B$ in $\cat{PreOrd
 structure of $B$, lifted pointwise.
 
 As we mentioned in \cref{sec:pointwiseFunctional}, 
-the pointwise functional change action is not well defined for all change actions.
+the pointwise functional change action is not well-defined for all change actions.
 This is because we require every pointwise change $\change{f}$ to map a differentiable
 function $f$ into a differentiable function $f \cplus \change{f}$, but there is no way
 to guarantee that this is the case for arbitrary pointwise changes.
@@ -1842,7 +1841,7 @@ Fortunately, convenient change actions form a relatively large subcategory of $\
   $\cstruct{\changes{B}}{\changes{B}}{\splus}$ is complete and $\cplus$ is differentiable with
   respect to its first argument is convenient.
 
-  In particular, every change action where $\cplus$ is a group action is convenient.
+  In particular, every change action $\cstruct{B}{\changes{B}}{\cplus}$ where $\cplus$ is a group action is convenient.
 \end{prop}
 \ifproofs
   See \cref{prf:convenientChangeActionProps}.
@@ -1856,7 +1855,7 @@ Fortunately, convenient change actions form a relatively large subcategory of $\
   See \cref{prf:pointwiseComplete}.
 \fi
 
-Since the product and exponential of complete change actions is also complete,  the complete change
+Since the product and exponential of complete change actions are also complete,  the complete change
 actions are a Cartesian closed full subcategory of $\cat{CAct}$ which is, in fact equivalent
 to $\cat{Set}$ (as every set-theoretic function between complete change actions is differentiable).
 
@@ -1969,7 +1968,7 @@ S-acts (i.e the category of monoid actions on sets) and their categorical struct
 over the years (\textcite{kilp2000monoids} is a good
 overview). However, there is a key difference between our $\cat{CAct}$ and the category of
 S-acts $\cat{SAct}$: the objects of $\cat{SAct}$ all maintain the same monoid
-structure, whereas we are interested in changing both the base set \emph{and} the structure of the act.
+structure, whereas we are interested in changing both the base set \emph{and} the structure of the action.
 
 There are similarities: if we compare the definition of an ``act-preserving''
 homeomorphism in $\cat{SAct}$ \autocite[see][]{kilp2000monoids} we can see that the structure is
@@ -1993,7 +1992,7 @@ whose derivative is $\lambda a. \lambda d. d$.
 \textcite{arntz2017fixpoints} gives a derivative operator for fixpoints based on
 the framework in \textcite{cai2014changes}. However, since we have different
 notions of function changes, the result is inapplicable as
-stated. In addition, we require a somewhat different set of conditions, in particular we
+stated. In addition, we require a somewhat different set of conditions; in particular, we
 don't require our changes to always be increasing.
 
 \subsection{Datalog}
@@ -2003,7 +2002,7 @@ don't require our changes to always be increasing.
 The earliest interpretation of semi-naive evaluation as a derivative 
 appears in \textcite{bancilhon1986naive}. The idea of using an approximate derivative
 and the requisite soundness condition appears as a throwaway comment in
-\textcite[][section 3.2.2]{bancilhon1986amateur}, and as far as we know nobody has since
+\textcite[][section 3.2.2]{bancilhon1986amateur}, and it would appear that nobody has since
 developed that approach.
 
 As far as we know, traditional semi-naive is the state of
@@ -2014,8 +2013,8 @@ accommodate additional language features such as parity-stratified negation and 
 
 There is existing literature on incremental maintenance of relational algebra
 expressions. In particular \textcite{griffin1997improved} following
-\textcite{qian1991incremental} shows the essential insight that it is necessary to
-track both an ``upwards'' and a ``downwards'' difference, and produces a set of
+\textcite{qian1991incremental} reveal the essential insight that it is necessary to
+track both an ``upwards'' and a ``downwards'' difference, and produce a set of
 rules that look quite similar to those we derive in \cref{thm:concreteDatalog}.
 
 Where our presentation improves over \citeauthor{griffin1997improved} is mainly in
@@ -2076,8 +2075,7 @@ Change actions can be readily applied to organise an efficient semi-naive method
 
 Another setting where derivatives of arbitrary higher-order programs have been studied
 is the \emph{differential $\lambda$-calculus} \autocites{ehrhard2003differential}{ehrhard2017introduction}.
-This is a higher-order, simply-typed
-calculus which allows for computing the derivative of a function, in a similar
+This is a higher-order, simply-typed $\lambda$-calculus which allows for computing the derivative of a function, in a similar
 way to the notion of derivative in Cai's work and the present paper.
 
 While there are clear similarities between the two systems, 
