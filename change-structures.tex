@@ -154,7 +154,7 @@ can deduce them from transitive edges we deduced at iteration $n$.
 \end{center}
 \medskip
 
-This is much better textemdash{} we have turned a quadratic computation into a
+This is much better \textemdash{} we have turned a quadratic computation into a
 linear one. The delta transformation is a kind of \emph{incremental
   computation}: at each stage we compute the changes in the rule given the previous
 changes to its inputs.
@@ -1876,7 +1876,7 @@ incremental computation.
 \label{sec:empirical}
 
 The necessity of semi-naive evaluation for practical Datalog engines is
-well-established. One might ask whether we actually gain anything by expanding of the set of predicates
+well-established. One might ask whether we actually gain anything by expanding the set of predicates
 which we can evaluate incrementally \textemdash{} what if we just evaluate the
 ones that we can evaluate with semi-naive with semi-naive, and the others
 naively? If the non-semi-naive predicates are rare enough, then perhaps this
@@ -1912,10 +1912,9 @@ the following high-level picture:
 \end{center}
 \medskip
 
-This presents a rather scattershot picture, with some queries improving and some
+This presents a somewhat inconsistent outcome, with some queries improving and some
 regressing. However, the most interesting category is the category of new
-timeouts. These are queries that exceeded the (generous) profiling timeout.
-Further investigation reveals that these regress very badly indeed. For many of
+timeouts. Further investigation reveals that these regress very badly indeed. For many of
 these query/database pairs, the authors have been unable to allocate enough memory and time for
 the query to actually complete. Ad hoc investigation reveals that many of those
 have a similar evaluation pattern to the $tc$ example in \cref{sec:intro}
