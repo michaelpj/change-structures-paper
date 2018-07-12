@@ -1860,7 +1860,7 @@ Fortunately, convenient change actions form a relatively large subcategory of $\
   See \cref{prf:pointwiseComplete}.
 \fi
 
-Since the product and exponential of complete change actions is also complete,  the complete change
+Since the product and exponential of complete change actions are also complete,  the complete change
 actions are a Cartesian closed full subcategory of $\cat{CAct}$ which is, in fact equivalent
 to $\cat{Set}$ (as every set-theoretic function between complete change actions is differentiable).
 
@@ -1973,7 +1973,7 @@ S-acts (i.e the category of monoid actions on sets) and their categorical struct
 over the years (\textcite{kilp2000monoids} is a good
 overview). However, there is a key difference between our $\cat{CAct}$ and the category of
 S-acts $\cat{SAct}$: the objects of $\cat{SAct}$ all maintain the same monoid
-structure, whereas we are interested in changing both the base set \emph{and} the structure of the act.
+structure, whereas we are interested in changing both the base set \emph{and} the structure of the action.
 
 There are similarities: if we compare the definition of an ``act-preserving''
 homeomorphism in $\cat{SAct}$ \autocite[see][]{kilp2000monoids} we can see that the structure is
@@ -1997,7 +1997,7 @@ whose derivative is $\lambda a. \lambda d. d$.
 \textcite{arntz2017fixpoints} gives a derivative operator for fixpoints based on
 the framework in \textcite{cai2014changes}. However, since we have different
 notions of function changes, the result is inapplicable as
-stated. In addition, we require a somewhat different set of conditions, in particular we
+stated. In addition, we require a somewhat different set of conditions; in particular, we
 don't require our changes to always be increasing.
 
 \subsection{Datalog}
@@ -2007,7 +2007,7 @@ don't require our changes to always be increasing.
 The earliest interpretation of semi-naive evaluation as a derivative 
 appears in \textcite{bancilhon1986naive}. The idea of using an approximate derivative
 and the requisite soundness condition appears as a throwaway comment in
-\textcite[][section 3.2.2]{bancilhon1986amateur}, and as far as we know nobody has since
+\textcite[][section 3.2.2]{bancilhon1986amateur}, and it would appear that nobody has since
 developed that approach.
 
 As far as we know, traditional semi-naive is the state of
@@ -2018,8 +2018,8 @@ accommodate additional language features such as parity-stratified negation and 
 
 There is existing literature on incremental maintenance of relational algebra
 expressions. In particular \textcite{griffin1997improved} following
-\textcite{qian1991incremental} shows the essential insight that it is necessary to
-track both an ``upwards'' and a ``downwards'' difference, and produces a set of
+\textcite{qian1991incremental} reveal the essential insight that it is necessary to
+track both an ``upwards'' and a ``downwards'' difference, and produce a set of
 rules that look quite similar to those we derive in \cref{thm:concreteDatalog}.
 
 Where our presentation improves over \citeauthor{griffin1997improved} is mainly in
@@ -2080,8 +2080,7 @@ Change actions can be readily applied to organise an efficient semi-naive method
 
 Another setting where derivatives of arbitrary higher-order programs have been studied
 is the \emph{differential $\lambda$-calculus} \autocites{ehrhard2003differential}{ehrhard2017introduction}.
-This is a higher-order, simply-typed
-calculus which allows for computing the derivative of a function, in a similar
+This is a higher-order, simply-typed $\lambda$-calculus which allows for computing the derivative of a function, in a similar
 way to the notion of derivative in Cai's work and the present paper.
 
 While there are clear similarities between the two systems, 
