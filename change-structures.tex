@@ -71,7 +71,7 @@
   structures} and \emph{derivatives} of programs, where the derivative of a function allows updating the output
   of the function based on a change to its input.
 
-  We generalise change structures to a Cartesian closed category of \emph{change actions},
+  We generalise change structures to \emph{change actions},
   and study their algebraic properties. We develop change actions for common structures
   in computer science, including directed-complete partial orders and Boolean algebras.
 
@@ -246,8 +246,7 @@ of our knowledge, the world's first incremental
 evaluation and maintenance mechanism for Datalog that can handle negation,
 disjunction, and existential quantification. 
 
-Finally, we provide a few remarks about the categorical structure of change
-actions (\cref{sec:category}), and give some empirical evaluation of the effects
+Finally, we provide some empirical evaluation of the effects
 of our changes (\cref{sec:empirical}).
 
 We have omitted the proofs from this paper. Most of the results have routine
@@ -1209,7 +1208,6 @@ $f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteri
   \end{itemize}
   Then the pointwise functional change action 
   $(\cstr{A} \rightarrow \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$ is well defined. 
-  (Moreover, it is the exponentiation object (up to unique isomorphism) from $\cstr{A}$ to $\cstr{B}$ in the category of change actions and differentiable functions (section~\ref{sec:exponentials}).)
   \footnote{
     Either of these conditions is enough to guarantee that the pointwise functional change action
     is well defined, but it can be the case that $\cstr{B}$ satisfies neither and yet pointwise
@@ -1738,159 +1736,6 @@ Applying the change and shows that we have indeed computed the new fixpoint.
   &= tc_{e_2}
 \end{align*}
 
-\section{The category of change actions}
-\label{sec:category}
-
-The sharp-eyed reader will have noticed that we have defined change actions as a
-set of objects with special functions between them (differentiable functions),
-and where we have change actions for product, sum, and function types. This begs
-the question \textemdash{} is there a category here? And is it Cartesian closed?
-
-The answer to this is yes, and we will gesture in the direction of a categorical
-account of change actions, although a full treatment is beyond the scope of this paper.
-
-\begin{defn}
-  The category $\cat{CAct}$ of change actions has change actions as its objects and
-  differentiable functions as its morphisms. 
-\end{defn}
-
-\subsection{Equivalence with PreOrd}
-
-There is a natural preorder on the base set of a change action, given by reachability
-under the action:
-
-\begin{defn}[Reachability preorder]
-Let $\cstr{A}$ a change action. 
-We define ${\reachOrder} \subseteq A \times A$ by: $a \reachOrder b$ just if there is a $\change{a} \in \changes{A}$ such that $a \cplus_A
-  \change{a} = b$.
-\end{defn}
-
-We can characterize many of the properties of change actions in terms of the reachability preorder,
-which suggests a connection between $\cat{CAct}$ and the category of preorders, $\cat{PreOrd}$.
-
-\begin{prop}
-  A function is differentiable iff it is monotone with respect to the
-  reachability preorder. 
-\end{prop}
-
-\begin{corollary}
-  Two change actions are isomorphic iff their posets under the reachability
-  preorder are isomorphic.
-\end{corollary}
-
-\begin{corollary}
-  Any function from an empty change action or into a complete change
-  action is differentiable.
-\end{corollary}
-
-Indeed, the correspondence between a change action and its reachability preorder gives rise to
-a (full and faithful) functor $\reach : \cat{CAct} \rightarrow \cat{PreOrd}$ that acts as the
-identity on morphisms.
-
-Conversely, any preorder $(A, \leq)$ induces a change action
-$\cstr{A}_\leq \defeq \cstruct{A}{A^\ast}{\cplus^\ast_\leq}$.
-The action $\cplus^\ast_\leq$ is defined as the extension of $\cplus_\leq$ to the free
-monoid $A^\ast$, where $\cplus_\leq$ is defined as:
-\[
-\begin{aligned}
-   \cplus_\leq &: (A \times A) \rightarrow A&\\
-   a \cplus_\leq b &\defeq
-     \begin{cases}
-     b&\text{ if $a \leq b$}\\
-     a&\text{ otherwise}
-     \end{cases}
-\end{aligned}
-\]
-
-The mapping $(A, \leq) \mapsto \cstr{A}_\leq$ gives rise to a (full and faithful) functor
-$\direct : \cat{PreOrd} \rightarrow \cat{CAct}$, again acting as the identity on morphisms.
-
-These two functors are in fact enough to give us an equivalence between the categories
-$\cat{CAct}$ and $\cat{PreOrd}$.
-
-\begin{thm}[name=Equivalence of $\cat{CAct}$ and $\cat{PreOrd}$, restate=preordEquivalence]
-  \label{thm:preordEquivalence}
-  The functor $\reach$ from $\cat{CAct}$ to $\cat{PreOrd}$ together with the
-  functor $\direct$ in the opposite direction form an equivalence of categories.
-\end{thm}
-\ifproofs
-\begin{proof}
-  See \cref{prf:preordEquivalence}.
-\end{proof}
-\fi
-
-Since $\cat{PreOrd}$ is a Cartesian closed category and has all limits and
-colimits, this gives us a proof of the existence of limits, colimits, and exponentials in $\cat{CAct}$.
-
-\begin{corollary}
-  The category $\cat{CAct}$ has all limits, colimits and exponential objects.
-\end{corollary}
-
-In the case of complete change actions, this equivalence degenerates into an
-equivalence with $\cat{Set}$, since all functions are differentiable.
-
-\subsection{Exponentials}
-\label{sec:exponentials}
-
-The exponential objects in the category $\cat{CAct}$ are difficult to work with,
-because we need to ensure that $f \cplus \change{f}$ continues to be a
-differentiable function. Fortunately, under some circumstances these correspond
-to the pointwise functional change actions we saw earlier (in \cref{sec:pointwiseFunctional}).
-
-\begin{defn}
-  \label{def:convenientChangeActions}
-  A change action $\cstr{B}$ is \emph{convenient} if every exponential object
-  $\exponential{\cstr{A}}{\cstr{B}}$ is isomorphic to a pointwise functional change action.
-\end{defn}
-
-This corresponds to the intuition about how the correspondence with
-$\cat{PreOrd}$ should work, since exponentials $A \Rightarrow B$ in $\cat{PreOrd}$ inherit the
-structure of $B$, lifted pointwise.
-
-As we mentioned in \cref{sec:pointwiseFunctional}, 
-the pointwise functional change action is not well-defined for all change actions.
-This is because we require every pointwise change $\change{f}$ to map a differentiable
-function $f$ into a differentiable function $f \cplus \change{f}$, but there is no way
-to guarantee that this is the case for arbitrary pointwise changes.
-Fortunately, convenient change actions form a relatively large subcategory of $\cat{CAct}$.
-
-\begin{prop}[name=Convenient change actions, restate=convenientChangeActionProps]
-  \label{prop:convenientChangeActionProps}
-  Every change action $\cstruct{B}{\changes{B}}{\cplus}$ such that the change action
-  $\cstruct{\changes{B}}{\changes{B}}{\splus}$ is complete and $\cplus$ is differentiable with
-  respect to its first argument is convenient.
-
-  In particular, every change action $\cstruct{B}{\changes{B}}{\cplus}$ where $\cplus$ is a group action is convenient.
-\end{prop}
-\ifproofs
-  See \cref{prf:convenientChangeActionProps}.
-\fi
-
-\begin{prop}[name=Complete change actions are convenient, restate=pointwiseComplete]
-  \label{prop:pointwiseComplete}
-   Every complete change action $\cstr{B}$ is convenient.
-\end{prop}
-\ifproofs
-  See \cref{prf:pointwiseComplete}.
-\fi
-
-Since the product and exponential of complete change actions are also complete,  the complete change
-actions are a Cartesian closed full subcategory of $\cat{CAct}$ which is, in fact equivalent
-to $\cat{Set}$ (as every set-theoretic function between complete change actions is differentiable).
-
-Furthermore, it can be shown that convenient change actions are themselves a Cartesian closed
-subcategory of $\cat{CAct}$, and therefore constitute a viable setting for general, higher-order
-incremental computation.
-
-\begin{prop}
-  Let $\cstr{A}$ and $\cstr{B}$ be convenient change actions. Then the product 
-  $\cstr{A} \times \cstr{B}$ and the exponential $\cstr{A} \Rightarrow \cstr{B}$ are also convenient
-  change actions.
-  
-  Hence $\cat{Conv}$, the full subcategory of $\cat{CAct}$ whose objects are all the convenient change
-  actions, is a Cartesian closed category.
-\end{prop}
-
 \section{Empirical evaluation}
 \label{sec:empirical}
 
@@ -1999,7 +1844,8 @@ less a ``change semantics'' for Datalog \autocite[see][section
 
 S-acts (i.e the category of monoid actions on sets) and their categorical structure have received a fair amount of attention
 over the years (\textcite{kilp2000monoids} is a good
-overview). However, there is a key difference between our $\cat{CAct}$ and the category of
+overview). However, there is a key difference between change actions considered
+as a category ($\cat{CAct}$) and the category of
 S-acts $\cat{SAct}$: the objects of $\cat{SAct}$ all maintain the same monoid
 structure, whereas we are interested in changing both the base set \emph{and} the structure of the action.
 
@@ -2636,111 +2482,5 @@ helpful comments on the manuscript.
     &= \derive{\lfp}(f, \change{f})
   \end{align*}
 \end{proof}
-
-\subsection{The category of change actions}
-
-\preordEquivalence*
-\begin{proof}
-  \label{prf:preordEquivalence}
-  On one direction, if $U$ is a preorder, it's trivial to check that $\reach (\direct (U)) = U$.
-
-  On the other direction, we need to find a natural isomorphism between $\direct \circ \reach$
-  and the identity functor. First, we note that the base set for the change action
-  $\direct(\reach(A))$ is the same as the base set for $\cstr{A}$.
-
-  We claim that the desired natural isomorphism is given by the
-  the identity on the base sets. It remains to prove that the identities
-  $id_A : \cstr{A} \rightarrow \direct(\reach(A))$ and
-  $id_{A_{\reachOrder}} : \direct(\reach(A)) \rightarrow \cstr{A}$
-  are indeed differentiable in both directions.
-
-  In one direction, a derivative is given by
-  \begin{displaymath}
-    \derive{id}_A(a, \change{a}) \defeq (a, a \cplus \change{a})
-  \end{displaymath}
-  Conversely, let $(a, b) \in \reachOrder$. By definition of $\reachOrder$, there is some
-  $\change{}_{(a, b)} \in \changes{A}$ satisfying $a \cplus \change{}_{(a,b)} = b$.
-  This gives a definition for the derivative of the identity on pairs:
-  \begin{displaymath}
-    \derive{id}_{A_{\reachOrder}}(a, (a, b)) \defeq \change{}_{(a, b)}
-  \end{displaymath}
-  which can be extended freely to the whole change set
-  $\reachOrder^\star$.\footnote{Note that since we picked arbitrary change
-    representatives, the resulting derivative may not preserve the monoid action.}
-\end{proof}
-
-\convenientChangeActionProps*
-\begin{proof}
-\label{prf:convenientChangeActionProps}
-  Let $\cstr{B}$ be a change action, with $\cplus$ differentiable with respect
-  to its first argument, and suppose the change action on $\changes{B}$
-  is complete.
-
-  First, we prove that the pointwise change action is well defined: let
-  $f : \cstr{A} \rightarrow \cstr{B}$ be some differentiable function, and
-  $\change{f} : A \rightarrow \changes{B}$ a pointwise change (which is
-  differentiable, since $\cstr{\changes{B}}$ is complete). Then:
-  \begin{align*}
-    &(f \cplus_\rightarrow \change{f})(a \cplus \change{a})\\
-    &= f(a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})\\
-    &= (f(a) \cplus \derive{f}(a, \change{a})) \cplus (\change{f}(a) \splus \derive{\change{f}}(a, \change{a}) )\\
-    &= f(a) \cplus (\change{f}(a) \splus \derive{\change{f}}(a, \change{a}))
-       \cplus \derive{\cplus}((f(a), \derive{f}(a, \change{a})), \change{f}(a \cplus \change{a}))\\
-    &= (f \cplus_\rightarrow \change{f})(a) \cplus (\derive{\change{f}}(a, \change{a})
-       \splus \derive{\cplus}((f(a), \derive{f}(a, \change{a}), \change{f}(a, \cplus \change{a}))))
-  \end{align*}
-  Hence $(f \cplus_\rightarrow \change{f})$ is differentiable.
-  
-  The evaluation map, defined as $\ev(f, a) \defeq f(a)$ is differentiable as well:
-  \begin{align*}
-    &\ev((f, \change{f}), (a, \change{a}))\\
-    &= (f \cplus_\rightarrow \change{f})(a \cplus \change{a}) \\
-    &= f(a \cplus \change{a}) \cplus \change{f}(a \cplus \change{a})\\
-    &= f(a) \cplus (f'(a, \change{a}) \splus \change{f}(a \cplus \change{a}))\\
-    &= \ev(f, a) \cplus (f'(a, \change{a}) \splus \change{f}(a \cplus \change{a}))
-  \end{align*}
-
-  Now, on the one hand, suppose that $f : C \times A \rightarrow B$ is a differentiable function,
-  and $\curry{f} : C \rightarrow (\exponential{\cstr{A}}{\cstr{B}})$ its corresponding curried version:
-  \begin{align*}
-    &\curry{f}(c \cplus \change{c})\\
-    &= \lambda a . f(c \cplus \change{c}, a)\\
-    &= \lambda a . f(c, a) \cplus \derive{f}((c, \change{c}), (a, 0))\\
-    &= (\lambda a . f(c, a)) \cplus_\rightarrow (\lambda a . \derive{f}((c, \change{c}), (a, 0)))
-  \end{align*}
-  Then the function $\lambda a . \derive{f}((c, \change{c}), (a, 0))$ is a derivative for $\curry{f}$,
-  thus $\curry{f}$ is differentiable. Conversely, suppose that $\curry{f}$ is differentiable.
-  Then we note that, by hypothesis, $\curry{f}(a)$ is differentiable for all $f$, with derivative
-  $\derive{f_a}$, and hence:
-  \begin{align*}
-    &f(a \cplus \change{a}, c \cplus \change{c})\\
-    &= \curry{f}(a \cplus \change{a})(c \cplus \change{c})\\
-    &= (\curry{f}(a) \cplus_\rightarrow \derive{\curry{f}}(a, \change{a}))(c \cplus \change{c})\\
-    &= \curry{f}(a)(c \cplus \change{c}) \cplus \derive{\curry{f}}(a, \change{a})(c\cplus\change{c})\\
-    &= \curry{f}(a)(c) \cplus (\derive{f_a}(c, \change{c}) \splus \derive{\curry{f}}(a, \change{a})(c\cplus\change{c}))\\
-    &= f(a, c) \cplus (\derive{f_a}(c, \change{c}) \splus \derive{\curry{f}}(a, \change{a})(c\cplus\change{c}))
-  \end{align*}
-  Thus $f$ is differentiable as a function from $\cstr{C} \times \cstr{A}$ into $\cstr{B}$.
-\end{proof}
-
-\pointwiseComplete*
-\begin{proof}
-\label{prf:pointwiseComplete}
-  Let $\cstr{B}$ be a complete change action.
-  We prove that the pointwise change action is the exponential object $\exponential{\cstr{A}}{\cstr{B}}$.
-
-  First, we note that the pointwise change action is trivially well defined, since
-  every function into $\cstr{B}$ is differentiable. Similarly, the evaluation map
-  is differentiable.
-
-  Now consider two elements $\curry{f}$, $\curry{g}$ of $\exponential{\cstr{A}}{\cstr{B}}$. Since
-  $\cstr{B}$ is complete, it is endowed with a minus operator $\cminus$, so we define
-  $\cminus_\rightarrow : (\exponential{\cstr{A}}{\cstr{B}}) \times (\exponential{\cstr{A}}{\cstr{B}}) \rightarrow A \rightarrow \changes{B}$ by:
-  $$ (g \cminus_\rightarrow f)(a) \defeq g(a) \cminus f(a) $$
-  It's easy to check that this is indeed a minus operator and, therefore, $\exponential{\cstr{A}}{\cstr{B}}$
-  is complete. Thus, trivially, any function $f : C \times A \rightarrow B$ is differentiable
-  if and only if its curried version $\curry{f} : C \rightarrow (\exponential{A}{B})$ is.
-\end{proof}
-
 
 \end{document}
