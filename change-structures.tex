@@ -2071,11 +2071,11 @@ focussed on Datalog rather than relational algebra, since Datalog is designed to
 make heavy use of recursion.
 
 Several approaches
-\autocites{gupta1993maintaining}{harrison1992maintenance}
+\autocites{gupta1993maintaining}{harrison1992maintenance}, most notably DReD
 make use of a common tactic: one can get to the new fixed
 point by starting from \emph{any} point below it, and then iterating the
 semantics again to fixpoint. The approach, then, is to find a way to delete as
-few tuples as possible to get below the new fixpoint, and then iterate again
+few facts as possible to get below the new fixpoint, and then iterate again
 (possibly using an incremental version of the semantics).
 
 This is a perfectly reasonable approach, and given a good, domain-specific,
@@ -2150,26 +2150,31 @@ particular the semantics of Datalog.
 
 Our work opens a number of avenues for future investigation.
 
-First, it is possible to define a category $\cat{CAct}$ of change actions and differentiable
-functions between them, as the identity function is trivially differentiable and the chain
-rule guarantees that composition preserves differentiability. The product and sum of change
-actions as described in section \cref{sec:prodsum} correspond precisely to products and
-coproducts in this category. Furthermore, the result in \cref{thm:functionalCAct} can be
+First, there is a category $\cat{CAct}$ of change actions and differentiable
+functions between them, since the identity function is differentiable and the chain
+rule guarantees that composition preserves differentiability. The product and sum change
+actions described in section \cref{sec:prodsum} correspond to products and
+coproducts in this category. Furthermore, \cref{thm:functionalCAct} can be
 read as showing that complete change actions form an exponential ideal in $\cat{CAct}$.
 
-It can be shown that the category $\cat{CAct}$ is equivalent to the category $\cat{PreOrd}$ of
-preorders and monotone functions, which has the important consequence that $\cat{CAct}$ is
-Cartesian closed and has all finite limits. This equivalence, however, isn't very helpful
-as the resulting exponentials in $\cat{CAct}$ are not computable. A more thorough study
-of the category $\cat{CAct}$ could lead to a presentation of exponentials that is more
-suitable to actual computation.
+Moreover, it can be shown that the category $\cat{CAct}$ is equivalent to the category $\cat{PreOrd}$ of
+preorders and monotone functions by identifying change actions with their
+\emph{reachability preorder}, where $a \leq b$ iff there is $\change{a}$ such
+that $a \cplus \change{a} = b$. This has the important consequence that $\cat{CAct}$ is
+Cartesian closed and has all finite limits. This equivalence, however, is not very helpful
+as the resulting exponentials in $\cat{CAct}$ are very non-constructive and hard
+to use for computation (as opposed to the pointwise functional change actions in
+this paper). A more thorough study of $\cat{CAct}$, as well as improving the
+generality of the results in this paper, might lead to a
+presentation of exponentials that is more suitable to actual computation.
 
-There is also an interesting connection between the category $\cat{CAct}$ and the 2-category 
+There is also a connection between the category $\cat{CAct}$ and the 2-category 
 $\cat{Cat}$ of categories and functors: given a change action $\cstr{A}$ one can consider
-the category that has elements of $A$ as objects and an arrow $f_{\change a} : a \ra b$ for
+the category that has elements of $A$ as objects and a morphism $f_{\change a} : a \ra b$ for
 every change $\change a \in \changes A$ such that $a \oplus \change a = b$. If one requires
-that derivatives verify the additional conditions in \cref{def:derivative}, then functions that
-admit derivatives correspond exactly to functors. This naturally leads to consider dependently-typed
+that derivatives verify the additional conditions in the footnote to
+\cref{def:derivative},
+then functions that admit derivatives correspond to functors. This leads us to consider dependently-typed
 generalizations of change actions where different elements $a, b \in A$ have different change
 sets $\changes_aA, \changes_aB$, much like in \citeauthor{cai2014changes}'s original presentation.
 
