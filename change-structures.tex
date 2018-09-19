@@ -182,7 +182,17 @@ correctness proof) to handle such cases.\footnote{A simple approach is to just
   delta, and take the union of each of those''. But this is in fact incorrect
   and does not produce correct incremental programs in general.}
 
-This is of more than theoretical interest \textemdash{} the research
+In fact, with a bit of thought we \emph{can} give a delta program for $treeP$.
+It looks like this:
+\begin{displaymath}
+  \Delta_{i+1}treeP(x) = p(x) \wedge \exists y. (child(x, y) \wedge
+  \Delta_itreeP(y)) \wedge \neg \exists y. (child(x,y) \wedge \neg treeP_i(y))
+\end{displaymath}
+
+We will later show how to construct such programs generally using a program
+transformation.
+
+Handling extended Datalog is of more than theoretical interest \textemdash{} the research
 in this paper was carried out at Semmle, which
 makes heavy use of a commercial Datalog implementation
 \autocites{semmleWebsite}{avgustinov2016ql}{sereni2008adding}{schafer2010type}.
