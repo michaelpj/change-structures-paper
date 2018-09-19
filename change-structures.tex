@@ -448,6 +448,7 @@ of functions.
 \end{prop}
 
 \subsubsection{Products and sums}
+\label{sec:prodsum}
 
 Given change actions on sets $A$ and $B$, the question immediately arises of whether there are
 change actions on their Cartesian product $A \times B$ or disjoint union $A + B$. While there are
@@ -1174,10 +1175,10 @@ function change $\delta f$:
 \subsection{Pointwise functional change actions}
 \label{sec:pointwiseFunctional}
 
-As we shall see later in \cref{sec:category}, one can always find functional change actions on the set
-of differentiable functions $\cstr{A} \rightarrow \cstr{B}$, but these can be unwieldy for 
-the purpose of actual computation. Fortunately, in many cases there is a simple
-way of representing spaces of differentiable functions.
+It is, in general, hard to find functional change actions on the set
+of differentiable functions $\cstr{A} \rightarrow \cstr{B}$. Fortunately, 
+in many important cases there is a simple change action structure on the space of differentiable 
+functions.
 
 \begin{defn}[Pointwise functional change action]
   Let $\cstr{A}$ and $\cstr{B}$ be change actions. The \emph{pointwise functional change action} 
@@ -1197,6 +1198,7 @@ $\delta f : A \rightarrow \changes{B}$ there is, in general, no guarantee that
 $f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteria that guarantee this.
 
 \begin{thm}
+  \label{thm:functionalCAct}
   Let $\cstr{A}$ and $\cstr{B}$ be change actions, and suppose that $\cstr{B}$ satisfies one of the
   following conditions:
   \begin{itemize}
@@ -2148,14 +2150,33 @@ particular the semantics of Datalog.
 
 Our work opens a number of avenues for future investigation.
 
-Firstly, the concrete definition of change actions can be generalized in a number of
-ways. A 2-categorical presentation (by analogy with the 2-categorical interpretation
-of $\cat{PreOrd}$) would smooth over many of the technical difficulties which
-the current presentation faces due to the fact that the changes produced
-$\derive{f}(a, \change{a})$ must make sense when applied at points other than $f(a)$.
-A description of change actions which is generic in
-the base category could also be provided, which could lead to models of
-the incremental $\lambda$-calculus on different base categories. 
+First, it is possible to define a category $\cat{CAct}$ of change actions and differentiable
+functions between them, as the identity function is trivially differentiable and the chain
+rule guarantees that composition preserves differentiability. The product and sum of change
+actions as described in section \cref{sec:prodsum} correspond precisely to products and
+coproducts in this category. Furthermore, the result in \cref{thm:functionalCAct} can be
+read as showing that complete change actions form an exponential ideal in $\cat{CAct}$.
+
+It can be shown that the category $\cat{CAct}$ is equivalent to the category $\cat{PreOrd}$ of
+preorders and monotone functions, which has the important consequence that $\cat{CAct}$ is
+Cartesian closed and has all finite limits. This equivalence, however, isn't very helpful
+as the resulting exponentials in $\cat{CAct}$ are not computable. A more thorough study
+of the category $\cat{CAct}$ could lead to a presentation of exponentials that is more
+suitable to actual computation.
+
+There is also an interesting connection between the category $\cat{CAct}$ and the 2-category 
+$\cat{Cat}$ of categories and functors: given a change action $\cstr{A}$ one can consider
+the category that has elements of $A$ as objects and an arrow $f_{\change a} : a \ra b$ for
+every change $\change a \in \changes A$ such that $a \oplus \change a = b$. If one requires
+that derivatives verify the additional conditions in \cref{def:derivative}, then functions that
+admit derivatives correspond exactly to functors. This naturally leads to consider dependently-typed
+generalizations of change actions where different elements $a, b \in A$ have different change
+sets $\changes_aA, \changes_aB$, much like in \citeauthor{cai2014changes}'s original presentation.
+
+A more abstract approach is also possible: throughout this work we have restricted ourselves
+to change actions defined over the category of sets, but most of the definitions and results
+presented here could be easily generalized to any category with products. The resulting theory
+is the subject of ongoing work by the authors.
 
 Of those, the theory of change actions on the category of domains is of particular interest. Since
 domains are used to model programming language semantics, this could
