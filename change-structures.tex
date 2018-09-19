@@ -266,7 +266,7 @@ Abstractly, we have a set of values (the integers), and a set of changes
 This kind of structure is well-known \textemdash{} it is a set action. It is
 also very natural to want to combine changes sequentially, and if we do this
 then we find ourselves with a monoid action.\footnote{
-Using monoid actions for change sets gives us a reason to think that
+Using monoid actions for changes gives us a reason to think that
 change actions are an adequate representation of changes: any subset of $A
 \rightarrow A$ which is closed under composition can be
 represented as a monoid action on $A$, so we are able to capture all of these as change
@@ -299,7 +299,7 @@ The changes themselves can be combined using $\doubleplus$ as the monoid operati
 and this is a monoid action: $(a \doubleplus b) \doubleplus c = a \doubleplus \left( b \doubleplus c \right)$.
 
 This is a very common case: any monoid $(A, \splus, 0)$ can be seen as a change action
-$\cstruct{A}{A}{\splus}$. Many practical change actions
+$\cstruct{A}{(A, \splus, 0)}{\splus}$. Many practical change actions
 can be constructed in this way. In particular, for any change action $\cstruct{A}{\changes{A}}{\cplus}$,
 $\cstruct{\changes{A}}{\changes{A}}{\splus}$ is also a change action. This means
 that we don't have to do any extra work to talk about changes to changes \textemdash{} we can 
@@ -360,17 +360,18 @@ $f(a)$ to $f(a \cplus \change{a})$. We call this a \emph{derivative} of a functi
   the set of differentiable functions.\footnote{Note that we do not require that $\derive{f}(a,
     \change{a} \splus \change{b}) = \derive{f}(a, \change{a}) \splus \derive{f}(a
     \cplus \change{a}, \change{b})$ nor that $\derive{f}(a, \mzero) = \mzero$.
-    These are natural conditions, and almost all
-    derivatives satisfy them, but we have not found them to be necessary so far.}
+    These are natural conditions, and all the 
+    derivatives we have studied also satisfy them, but we have not actually
+    \emph{needed} them so far.}
 \end{defn}
 
 Derivatives need not be unique in general, so we will speak of ``a''
 derivative.\footnote{In several places we will need to pick an arbitrary
   derivative for some construction. In general this needs the Axiom of Choice,
   but in most practical cases we will want to have a computable derivative
-  operator for our domain, which alleviates the problem.} A ``thin'' change
-action \textemdash{} where $a \cplus \change{a} = a \cplus \change{b}$ implies $\change{a} =
-\change{b}$ \textemdash{} has unique derivatives, but many change actions are not thin.
+  operator for our domain, which alleviates the problem.} Functions into ``thin'' change
+actions \textemdash{} where $a \cplus \change{a} = a \cplus \change{b}$ implies $\change{a} =
+\change{b}$ \textemdash{} have unique derivatives, but many change actions are not thin.
 For example, because $\{0\} \cap \{1\} = \{0\}
 \cap \{2\}$, $\cstruct{\powerset{\NN}}{\powerset{\NN}}{\cap}$ is not thin.
 
@@ -401,7 +402,7 @@ The derivative of a function can be computed compositionally, because derivative
 
 \begin{thm}[The Chain Rule]
   Let $f: \cstr{A} \rightarrow \cstr{B}$, $g: \cstr{B} \rightarrow \cstr{C}$ be differentiable functions. Then $g \circ f$ is also
-  differentiable, with derivative given by
+  differentiable, with a derivative given by
   \begin{displaymath}
     \derive{(g \circ f)}(x, \change{x}) = \derive{g}\left(f(x), \derive{f}(x, \change{x})\right)
   \end{displaymath}
@@ -434,7 +435,7 @@ compute the difference between two values.
   \begin{itemize}
     \item $\cstr{A}$ is complete.
     \item There is a minus operator on $\cstr{A}$.
-    \item Any function $f: {B} \rightarrow {A}$ is differentiable, where $\cstr{B}$ is an arbitrary change action.
+    \item For any change action $\cstr{B}$ all functions $f: {B} \rightarrow {A}$ are differentiable.
   \end{itemize}
 \end{prop}
 
@@ -479,7 +480,7 @@ many candidates, there is a clear ``natural'' choice for both.
 \end{prop}
 
 Whenever $f : A \times B \rightarrow C$ is differentiable, we will sometimes use $\partial_1 f$ and
-$\partial_2 f$ to refer to the derivatives of the partially applied versions, i.e. if
+$\partial_2 f$ to refer to derivatives of the partially applied versions, i.e. if
 $f'_a : B \times \changes{B} \rightarrow \changes{C}$ and
 $f'_b : A \times \changes{A} \rightarrow \changes{C}$ refer to derivatives for 
 $f(a, \cdot), f(\cdot, b)$ respectively, then
@@ -586,7 +587,7 @@ This intuition that a change may do too much can be captured by the following de
 
 We can use the kernel order, extended pointwise, to compare the different derivatives of a function.
 As we will see later (\cref{sec:booleanAlgebras}), minimal derivatives under
-this order correspond to ``precise'' derivatives, in the sense of derivatives that do not perform
+this order sometimes correspond to ``precise'' derivatives, in the sense of derivatives that do not perform
 excessive work.
 
 \section{Posets and Boolean algebras}
@@ -717,7 +718,7 @@ the natural order on $L \times L^{\textrm{op}}$.}
 
 \begin{prop}
   \label{prop:minimalMaximalDerivatives}
-  Let $L$ be a (complete) Boolean algebra with the $\cstr{L}_\superpose$ change action, and
+  Let $L$ be a complete Boolean algebra with the $\cstr{L}_\superpose$ change action, and
   $f: A \rightarrow L$ be a function.
   Then, the following are minus operators:
   \begin{align*}
@@ -725,7 +726,7 @@ the natural order on $L \times L^{\textrm{op}}$.}
     a \cminus_\top b &= (a, b \wedge \neg a)
   \end{align*}
   Additionally, $\derive{f}_{\cminus_{\bot}}$ and $\derive{f}_{\cminus_{\top}}$ 
-  define least and greatest derivatives for $f$.
+  define unique least and greatest derivatives for $f$.
 \end{prop}
 
 \Cref{thm:derivativeCharacterization} then gives us bounds for
@@ -733,7 +734,7 @@ all the derivatives on Boolean algebras:
 
 \begin{corollary}
 \label{cor:booleanCharacterization}
-  Let $L$ be a (complete) Boolean algebra with the corresponding change action
+  Let $L$ be a complete Boolean algebra with the corresponding change action
   $\cstr{L}_\superpose$, $\cstr{A}$ be an arbitrary change action, and $f: A \rightarrow
   L$ be a function. Then the derivatives of $f$ are precisely those functions
   $\derive{f}: A \times \changes{A} \rightarrow \changes{A}$ such that
@@ -927,10 +928,7 @@ for our evaluation engine to compute, even if they compute a less precise deriva
 
 The upshot of these considerations is that the optimal choice of derivatives is likely
 to be quite dependent on the precise variant of Datalog being evaluated, and the
-specifics of the evaluation engine. Here is one possibility.\footnote{This is
-  the derivative actually in use at Semmle. We arrived at it by starting with the
-  precise derivative and then simplifying and weakening it while preserving the
-  soundness bounds.}
+specifics of the evaluation engine. Here is one possibility, which is the one used at Semmle.
 
 \subsubsection{A concrete Datalog formula derivative}
 %\newcommand{\bothdiff}{\diamond}
@@ -976,7 +974,7 @@ specifics of the evaluation engine. Here is one possibility.\footnote{This is
 \end{figure}
 
 In~\cref{fig:datalogDerivatives}, we define a ``symbolic'' derivative operator as a pair of mutually recursive functions,
-$\updiff$ and $\downdiff$, which turn a formula $T$ into new formulae that compute
+$\updiff$ and $\downdiff$, which turn a Datalog formula $T$ into new formulae that compute
 the upwards and downwards parts of the derivative, respectively. 
 Our definition uses an auxiliary function, $\bothdiff$, which computes the ``neXt'' value of a term by applying the upwards and downwards derivatives.
 As we expect
@@ -1002,8 +1000,8 @@ While the definitions usually exhibit the dualities we would expect
   Let $\updiff, \downdiff, \bothdiff : \Formula \rightarrow \Formula$ be mutually recursive functions
   defined by structural induction as in \cref{fig:datalogDerivatives}.
 
-  Then for any schema $\Gamma$ and any Datalog formula $T$ whose free term variables are contained
-  in $\Gamma$,
+  Then $\updift(T)$ and $\downdiff(T)$ are disjoint, and for any schema $\Gamma$
+  and any Datalog formula $T$ whose free term variables are contained in $\Gamma$,
   $\derive{\denote{T}_\Gamma} \defeq (\denote{\updiff(T)}_\Gamma, \denote{\downdiff(T)}_\Gamma)$
   is a derivative for $\denote{T}_\Gamma$.
 \end{thm}
@@ -1015,8 +1013,8 @@ While the definitions usually exhibit the dualities we would expect
 
 \subsubsection{Examples}
 
-We can now give a derivative for our $treeP$ predicate (assuming only changes to
-$treeP$ itself):
+We can now give a derivative for our $treeP$ predicate by mechanically applying
+the recursive functions defined in \cref{fig:datalogDerivatives}.
 \begin{align*}
   &\updiff(treeP(x))\\
   &= \updiff(p(x) \wedge \neg \exists y. (child(x, y) \wedge \neg treeP(y)))\\
@@ -1069,9 +1067,9 @@ minimal derivative. This justifies our claim that we can support
 derivatives are likely to be impractical, having them
 available as options means that we will never be completely stymied.
 
-This is important in practice for Semmle's variant of Datalog. This includes a
-kind of aggregates which have well-defined recursive semantics. Aggregates have
-the form
+This is important in practice: here is a real example from Semmle's variant of
+Datalog. This includes a kind of aggregates which have well-defined recursive
+semantics. Aggregates have the form
 \begin{displaymath}
   r = \mathrm{agg}(p)(vs \mid T \mid U)
 \end{displaymath}
@@ -1901,7 +1899,8 @@ predicates that we can evaluate with semi-naive with semi-naive, and evaluated
 the other predicates naively? If the non-semi-naive predicates are rare enough, then perhaps this
 will not matter.
 
-We tested this empirically using Semmle's commercial Datalog engine. We used
+We tested this empirically using Semmle's commercial Datalog engine, which uses
+exactly the derivatives described in \cref{fig:datalogDerivatives}. We used
 Semmle's profiling infrastructure, which runs over 800 queries (compiled to
 Datalog programs) on a wide range
 of real-world databases. The queries are compiled from Semmle's QL language
@@ -1950,6 +1949,11 @@ accumulator predicate in every iteration, leading to quadratic runtime.
 This shows us more-or-less what we expected: for many queries the results are
 moderate and broadly positive, but for some queries incremental evaluation is
 essential for evaluation to be feasible at all.
+
+We have not performed evaluation of different variants of
+\cref{fig:datalogDerivatives} against each other. Changes to the precise form of
+the derivative are important, but mostly a matter of adapting them to the
+particular database engine, and so of less general interest.
 
 \section{Related work}
 
