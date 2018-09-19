@@ -365,10 +365,7 @@ $f(a)$ to $f(a \cplus \change{a})$. We call this a \emph{derivative} of a functi
 \end{defn}
 
 Derivatives need not be unique in general, so we will speak of ``a''
-derivative.\footnote{In several places we will need to pick an arbitrary
-  derivative for some construction. In general this needs the Axiom of Choice,
-  but in most practical cases we will want to have a computable derivative
-  operator for our domain, which alleviates the problem.} Functions into ``thin'' change
+derivative. Functions into ``thin'' change
 actions \textemdash{} where $a \cplus \change{a} = a \cplus \change{b}$ implies $\change{a} =
 \change{b}$ \textemdash{} have unique derivatives, but many change actions are not thin.
 For example, because $\{0\} \cap \{1\} = \{0\}
@@ -586,8 +583,8 @@ This intuition that a change may do too much can be captured by the following de
 
 We can use the kernel order, extended pointwise, to compare the different derivatives of a function.
 As we will see later (\cref{sec:booleanAlgebras}), minimal derivatives under
-this order sometimes correspond to ``precise'' derivatives, in the sense of derivatives that do not perform
-excessive work.
+this order sometimes correspond to ``precise'' derivatives, in the sense of derivatives that do not produce
+excessively large changes.
 
 \section{Posets and Boolean algebras}
 \label{sec:moreStructures}
@@ -1247,7 +1244,8 @@ Moreover, the derivative of the evaluation map is quite easy to compute.
 
 Having pointwise function changes allows us to actually compute a derivative of the
 evaluation map as shown. In practice, this means
-that we will only be able to use the results in \cref{sec:fixpoints} when
+that we will only be able to use the results in \cref{sec:fixpoints}
+(incremental computation and derivatives of fixpoints) when
 we have pointwise change actions, or where we have some other way of computing
 a derivative of the evaluation map. 
 
@@ -1509,7 +1507,7 @@ the same one computed by $\fixpoint_U{(f \cplus \change{f})}$.
 
 However, if we restrict ourselves to directed-complete partial orders, least
 fixpoints, and continuous change actions, then $\derive{\lfp}$ (using the
-derivative definition from \cref{def:fixpointDerivatives}) \emph{is} a
+derivative defined for fixpoint operators in \cref{def:fixpointDerivatives}) \emph{is} a
 derivative of $\lfp$. This is not too onerous a restriction, since this is
 a very natural setting for computing fixpoints.
 
