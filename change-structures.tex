@@ -233,7 +233,9 @@ We start by generalizing change structures to
 \emph{change actions} (\cref{sec:changeActions}). Change actions are simpler and weaker than change
 structures, while still providing enough information to handle incremental
 computation, and have fruitful
-interactions with a variety of structures (\cref{sec:moreStructures}, \cref{sec:dcpos}).
+interactions with a variety of structures (\cref{sec:moreStructures},
+\cref{sec:dcpos}). In addition, change actions are not dependently typed (for
+more discussion of the differences, see \cref{sec:relatedChangeStructures}).
 
 We then show how change actions can be used to perform incremental evaluation and maintenance
 of non-recursive program semantics, using the formula semantics of generalized Datalog as our primary
@@ -1833,9 +1835,7 @@ Our function changes (when well behaved) correspond to what \citeauthor{cai2014c
 \emph{pointwise differences} \autocite[see][section 2.2]{cai2014changes}. As
 they point out, you can reconstruct their
 function changes from pointwise changes and derivatives, so the two formulations
-are equivalent. However, our function changes correspond to the
-exponentials that we get from the categorical equivalence with $\cat{PreOrd}$,
-and (when we can use them) pointwise differences are easier to work with.
+are equivalent. 
 
 The equivalence of our presentations means that our work should be compatible
 with ILC \autocite[see][section 3]{cai2014changes}. The derivatives we give in \cref{sec:datalogDifferentiability} are more or
