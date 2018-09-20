@@ -2011,7 +2011,7 @@ A simple result shows that the category $\cat{CAct}$ is remarkably well-behaved:
   preorders and monotone functions.
 \end{theorem}
 
-This has the immediate consequence that $\cat{CAct}$ is Cartesian closed.
+This has the consequence that $\cat{CAct}$ is Cartesian closed.
 This result, however, isn't very helpful in practice
 as the resulting exponentials in $\cat{CAct}$ are not computable. A more thorough study
 of the category $\cat{CAct}$ could lead to a presentation of exponentials that is more
@@ -2028,14 +2028,6 @@ to the pointwise functional change actions we defined earlier (in \cref{sec:poin
 
 Fortunately, convenient change actions form a relatively large subcategory of
 $\cat{CAct}$. In particular, complete change actions are convenient.
-
-\begin{prop}[name=Complete change actions are convenient, restate=pointwiseComplete]
-  \label{prop:pointwiseComplete}
-   Every complete change action $\cstr{B}$ is convenient.
-\end{prop}
-\ifproofs
-  See \cref{prf:pointwiseComplete}.
-\fi
 
 Since the product and exponential of complete change actions are also complete,  the complete change
 actions are a Cartesian closed full subcategory of $\cat{CAct}$ which is, in fact equivalent
@@ -2058,7 +2050,7 @@ There is an interesting connection between the category $\cat{CAct}$ and the 2-c
 $\cat{Cat}$ of categories and functors: given a change action $\cstr{A}$ one can consider
 the category that has elements of $A$ as objects and a morphism $f_{\change a} : a \ra b$ for
 every change $\change a \in \changes A$ such that $a \oplus \change a = b$. If one requires
-that derivatives verify the additional conditions in \cref{def:derivative}, then functions that
+that derivatives verify the additional conditions in the footnote to \cref{def:derivative}, then functions that
 admit derivatives correspond exactly to functors. This naturally leads to consider dependently-typed
 generalizations of change actions where different elements $a, b \in A$ have different change
 sets $\changes_aA, \changes_aB$, much like in \citeauthor{cai2014changes}'s original presentation.
@@ -2068,29 +2060,7 @@ to change actions defined over the category of sets, but most of the definitions
 presented here could be easily generalized to any category with products. The resulting theory
 is the subject of ongoing work by the authors.
 
-Of those, the theory of change actions on the category of domains is of particular interest. Since
-domains are used to model programming language semantics, this could
-open up opportunities for incremental evaluation of many programming languages,
-even those that do not fit into the model of \citeauthor{cai2014changes}'s ILC.
-Our fixpoint theorems are proven over dcpos in general, which is crucial since
-fixpoints are often used in domain theory to give a semantics to recursion.
-that derivatives verify the additional conditions in \cref{def:derivative}, then functions that
-admit derivatives correspond exactly to functors.
-
-This connection naturally leads to consider dependently-typed generalizations of
-change actions where different elements $a, b \in A$ have different change sets
-$\changes_aA, \changes_aB$, much like in \citeauthor{cai2014changes}'s original
-presentation. The resulting theory, while perhaps less suitable for
-implementation in non-dependently typed languages, is nonetheless valuable and
-remains to be developed.
-
 \subsection{Change actions on arbitrary categories}
-
-A more abstract approach is also possible: throughout this work we have
-restricted ourselves to change actions defined over the category of sets, but
-most of the definitions and results presented here could be easily generalized
-to any category with products. The resulting theory is the subject of ongoing
-work by the authors.
 
 Of those, the theory of change actions on the category of domains is of
 particular interest to us. Since domains are used to model programming language
