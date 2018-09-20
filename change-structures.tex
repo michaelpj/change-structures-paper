@@ -2108,60 +2108,120 @@ to this purpose than the incremental $\lambda$-calculus, since one can easily gi
 synthetic differential geometric reading (by interpreting $\cstr{A}$ as an Euclidean module and $\changes{A}$
 as its corresponding spectrum, for example).
 
-\section{Conclusions and future work}
-
-We have presented change actions and their properties, and used them to provide
-novel, compositional, strategies for incrementally evaluating and maintaining recursive functions, in
-particular the semantics of Datalog.
+\section{Future work}
 
 Our work opens a number of avenues for future investigation.
 
-First, it is possible to define a category $\cat{CAct}$ of change actions and differentiable
+\subsection{The category of change actions}
+
+It is possible to define a category $\cat{CAct}$ of change actions and differentiable
 functions between them, as the identity function is trivially differentiable and the chain
 rule guarantees that composition preserves differentiability. The product and sum of change
 actions as described in section \cref{sec:prodsum} correspond precisely to products and
 coproducts in this category. Furthermore, the result in \cref{thm:functionalCAct} can be
 read as showing that complete change actions form an exponential ideal in $\cat{CAct}$.
 
-It can be shown that the category $\cat{CAct}$ is equivalent to the category $\cat{PreOrd}$ of
-preorders and monotone functions, which has the important consequence that $\cat{CAct}$ is
-Cartesian closed and has all finite limits. This equivalence, however, isn't very helpful
+A simple result shows that the category $\cat{CAct}$ is remarkably well-behaved:
+
+\begin{theorem}
+  The category $\cat{CAct}$ is equivalent to the category $\cat{PreOrd}$ of
+  preorders and monotone functions.
+\end{theorem}
+
+This has the immediate consequence that $\cat{CAct}$ is Cartesian closed.
+This result, however, isn't very helpful in practice
 as the resulting exponentials in $\cat{CAct}$ are not computable. A more thorough study
 of the category $\cat{CAct}$ could lead to a presentation of exponentials that is more
 suitable to actual computation.
 
-There is also an interesting connection between the category $\cat{CAct}$ and the 2-category 
+Fortunately, under some circumstances exponential objects in $\cat{CAct}$ correspond
+to the pointwise functional change actions we defined earlier (in \cref{sec:pointwiseFunctional}).
+
+\begin{defn}
+  \label{def:convenientChangeActions}
+  A change action $\cstr{B}$ is \emph{convenient} if every exponential object
+  $\exponential{\cstr{A}}{\cstr{B}}$ is isomorphic to a pointwise functional change action.
+\end{defn}
+
+Fortunately, convenient change actions form a relatively large subcategory of
+$\cat{CAct}$. In particular, complete change actions are convenient.
+
+\begin{prop}[name=Complete change actions are convenient, restate=pointwiseComplete]
+  \label{prop:pointwiseComplete}
+   Every complete change action $\cstr{B}$ is convenient.
+\end{prop}
+\ifproofs
+  See \cref{prf:pointwiseComplete}.
+\fi
+
+Since the product and exponential of complete change actions are also complete,  the complete change
+actions are a Cartesian closed full subcategory of $\cat{CAct}$ which is, in fact equivalent
+to $\cat{Set}$ (as every set-theoretic function between complete change actions is differentiable).
+
+Furthermore, it can be shown that the product and exponential of two convenient
+change actions are in turn convenient change actions, and hence convenient
+change actions are themselves a Cartesian closed subcategory of $\cat{CAct}$. We
+believe these can therefore provide a suitable model for general higher-order
+incremental computation in the future.
+
+These preliminary results all suggest that the category $\cat{CAct}$ is an
+interesting subject of study in itself. Many important questions, especially
+with respect to the structure of exponentials and the existence of limits and
+colimits remain unsettled.
+
+\subsection{Change actions as 2-categories}
+
+There is an interesting connection between the category $\cat{CAct}$ and the 2-category 
 $\cat{Cat}$ of categories and functors: given a change action $\cstr{A}$ one can consider
 the category that has elements of $A$ as objects and an arrow $f_{\change a} : a \ra b$ for
 every change $\change a \in \changes A$ such that $a \oplus \change a = b$. If one requires
 that derivatives verify the additional conditions in \cref{def:derivative}, then functions that
-admit derivatives correspond exactly to functors. This naturally leads to consider dependently-typed
-generalizations of change actions where different elements $a, b \in A$ have different change
-sets $\changes_aA, \changes_aB$, much like in \citeauthor{cai2014changes}'s original presentation.
+admit derivatives correspond exactly to functors.
 
-A more abstract approach is also possible: throughout this work we have restricted ourselves
-to change actions defined over the category of sets, but most of the definitions and results
-presented here could be easily generalized to any category with products. The resulting theory
-is the subject of ongoing work by the authors.
+This connection naturally leads to consider dependently-typed generalizations of
+change actions where different elements $a, b \in A$ have different change sets
+$\changes_aA, \changes_aB$, much like in \citeauthor{cai2014changes}'s original
+presentation. The resulting theory, while perhaps less suitable for
+implementation in non-dependently typed languages, is nonetheless valuable and
+remains to be developed.
 
-Of those, the theory of change actions on the category of domains is of particular interest. Since
-domains are used to model programming language semantics, this could
-open up opportunities for incremental evaluation of many programming languages,
-even those that do not fit into the model of \citeauthor{cai2014changes}'s ILC.
-Our fixpoint theorems are proven over dcpos in general, which is crucial since
-fixpoints are often used in domain theory to give a semantics to recursion.
+\subsection{Change actions on arbitrary categories}
+
+A more abstract approach is also possible: throughout this work we have
+restricted ourselves to change actions defined over the category of sets, but
+most of the definitions and results presented here could be easily generalized
+to any category with products. The resulting theory is the subject of ongoing
+work by the authors.
+
+Of those, the theory of change actions on the category of domains is of
+particular interest to us. Since domains are used to model programming language
+semantics in the presence of general recursion, a theory of change actions on
+the category of domains could open up opportunities for incremental evaluation
+of many programming languages, even those that do not fit into the model of
+\citeauthor{cai2014changes}'s ILC. Our fixpoint theorems are proven over dcpos
+in general, and we believe these to be a crucial first step into a more general
+theory of a hypothetical incremental extension to PCF.
 
 Additionally, we have only begun to explore the tantalizing connection between
-change actions, the ILC and synthetic
-differential geometry, and a denotational semantics for the
-ILC based on smooth spaces is the subject of ongoing research. We believe many concepts
-from standard differential geometry, like gradients, vector fields, curves and flows can
-be defined for general change actions, which could then have implications for higher-order
-computation.
+change actions, the ILC and synthetic differential geometry, and a denotational
+semantics for the ILC based on smooth spaces is the subject of ongoing research.
+We believe many concepts from standard differential geometry, like gradients,
+vector fields, curves and flows can be defined in general on change actions, which
+could lead to developments in differentiable programming languages.
 
 Finally, combining our concrete Datalog derivatives with a system similar to ILC
 in a language such as Datafun would be an exciting demonstration of the compositional
 power of this approach.
+
+\section{Conclusions}
+
+We have presented change actions and their properties, and used them to provide
+novel, compositional, strategies for incrementally evaluating and maintaining recursive functions, in
+particular the semantics of Datalog.
+
+\todomario{
+  This section is a bit anemic now.
+}
 
 \begin{acks}
 
