@@ -180,9 +180,10 @@ correctness proof) to handle such cases.\footnote{A simple approach is to just
   keep applying the algorithm of ``replace each recursive call in turn with its
   delta, and take the union of each of those''. But this is in fact incorrect
   and does not produce correct incremental programs in general.}
+\todomario{I find this footnote a bit confusing - maybe remove?}
 
-Having said that, with a bit of thought we \emph{can} manually create delta program for $treeP$.
-The inductive case looks like this:
+It is possible, however, to write a delta program for $treeP$ by hand; indeed,
+the following definition provides one:
 \begin{displaymath}
   \Delta_{i+1}treeP(x) = p(x) \wedge \exists y. (child(x, y) \wedge
   \Delta_itreeP(y)) \wedge \neg \exists y. (child(x,y) \wedge \neg treeP_i(y))
@@ -190,9 +191,9 @@ The inductive case looks like this:
 
 This is a \emph{correct} delta program (in that using it to iteratively compute
 $treeP$ gives the right answer), but it is not \emph{precise} because it
-derives some facts repeatedly. We will show how to construct such programs generally using a program
-transformation, and show how we have some freedom to optimize within a range of
-possible alternatives to improve precision or ease evaluation.
+derives some facts repeatedly. We will show how to construct correct delta
+programs generally using a program transformation, and show how we have some
+freedom to optimize within a range of possible alternatives to improve precision or ease evaluation.
 
 Handling extended Datalog is of more than theoretical interest \textemdash{} the research
 in this paper was carried out at Semmle, which
@@ -231,11 +232,13 @@ differentiable functions.
 
 We start by generalizing change structures to
 \emph{change actions} (\cref{sec:changeActions}). Change actions are simpler and weaker than change
-structures, while still providing enough information to handle incremental
+structures, while still providing enough structure to handle incremental
 computation, and have fruitful
 interactions with a variety of structures (\cref{sec:moreStructures},
 \cref{sec:dcpos}). In addition, change actions are not dependently typed (for
-more discussion of the differences, see \cref{sec:relatedChangeStructures}).
+more discussion of the differences, see \cref{sec:relatedChangeStructures}),
+which makes them easier to implement directly in a simply-typed language without
+type erasure.
 
 We then show how change actions can be used to perform incremental evaluation and maintenance
 of non-recursive program semantics, using the formula semantics of generalized Datalog as our primary
@@ -243,7 +246,7 @@ example (\cref{sec:nonRecursiveDatalog}). Moreover, the structure of the
 approach is modular, and can accommodate arbitrary additional
 formula constructs (\cref{sec:extensions}).
 
-We then show how to incrementally compute and maintain fixpoints
+We also provide a method of incrementally computing and maintaining fixpoints
 (\cref{sec:fixpoints}). We use this to perform incremental evaluation and
 maintenance of \emph{recursive} program semantics, including generalized
 recursive Datalog (\cref{sec:recursiveDatalog}). This provides, to the best
@@ -279,7 +282,7 @@ actions.}
 \label{sec:changeAction}
 
 \begin{defn}
-  A \emph{change action} is defined as:
+  A \emph{change action} is a tuple:
   \begin{displaymath}
     \cstr{A} \defeq \cstruct{A}{\changes{A}}{\cplus_A}
   \end{displaymath}
@@ -296,7 +299,7 @@ actions.}
 
 \subsubsection{Examples}
 \label{sec:examples}
-A typical change action is $\cstruct{A^\ast}{A^\ast}{\doubleplus}$ where $A^\ast$ is the set of finite words (or lists) of $A$. 
+A typical example of a change action is $\cstruct{A^\ast}{A^\ast}{\doubleplus}$ where $A^\ast$ is the set of finite words (or lists) of $A$. 
 Here we represent changes to a word made by concatenating another word onto it. 
 The changes themselves can be combined using $\doubleplus$ as the monoid operation with the empty word as the identity, 
 and this is a monoid action: $(a \doubleplus b) \doubleplus c = a \doubleplus \left( b \doubleplus c \right)$.
@@ -364,8 +367,8 @@ $f(a)$ to $f(a \cplus \change{a})$. We call this a \emph{derivative} of a functi
     \change{a} \splus \change{b}) = \derive{f}(a, \change{a}) \splus \derive{f}(a
     \cplus \change{a}, \change{b})$ nor that $\derive{f}(a, \mzero) = \mzero$.
     These are natural conditions, and all the 
-    derivatives we have studied also satisfy them, but we have not actually
-    \emph{needed} them so far.}
+    derivatives we have studied also satisfy them, but none of the results on
+    this paper require them to hold.}
 \end{defn}
 
 Derivatives need not be unique in general, so we will speak of ``a''
@@ -1758,7 +1761,7 @@ versions of the engine:
 \begin{itemize}
   \item A ``full'' version using the incremental evaluation strategy described in this paper
   \item A ``semi-naive'' version which evaluates predicates using traditional
-    semi-naive, falling back to naive evaluation when it cannot be applied.
+    semi-naive evaluation, falling back to naive evaluation when it cannot be applied.
 \end{itemize}
 
 We used Semmle's profiling infrastructure, which runs over 800 queries (compiled to
@@ -2055,12 +2058,14 @@ admit derivatives correspond exactly to functors. This naturally leads to consid
 generalizations of change actions where different elements $a, b \in A$ have different change
 sets $\changes_aA, \changes_aB$, much like in \citeauthor{cai2014changes}'s original presentation.
 
+\subsection{Change actions on arbitrary categories}
+
+\todomario{If this paragraph goes before the subsection title, it makes it look
+  like it's part of the 2-category section}
 A more abstract approach is also possible: throughout this work we have restricted ourselves
 to change actions defined over the category of sets, but most of the definitions and results
 presented here could be easily generalized to any category with products. The resulting theory
 is the subject of ongoing work by the authors.
-
-\subsection{Change actions on arbitrary categories}
 
 Of those, the theory of change actions on the category of domains is of
 particular interest to us. Since domains are used to model programming language
