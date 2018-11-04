@@ -1,12 +1,12 @@
 % Toggle comments for preamble and topmatter to typeset in ACM style
 
 %\input{preamble-standard}
-\input{preamble-acm}
+%\input{preamble-acm}
+\documentclass[runningheads]{llncs}
 
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{amssymb}
-\usepackage{amsthm}
 \usepackage{mathtools}
 \usepackage{stmaryrd}
 \usepackage{thmtools}
@@ -64,7 +64,12 @@
 \begin{document}
 
 %\input{topmatter-standard}
-\input{topmatter-acm}
+%\input{topmatter-acm}
+\input{topmatter-llncs}
+
+\title{Fixing incremental computation}
+\subtitle{Derivatives of fixpoints, and the recursive semantics of Datalog}
+\maketitle
 
 \begin{abstract}
  Incremental computation has recently been studied using the concepts of \emph{change
@@ -81,12 +86,10 @@
 
   Moreover, unlike previous results, our techniques are \emph{modular} in that
   they are easy to apply both to variants of Datalog and to other programming languages.
+
+  \keywords{Incremental computation, Datalog, Semantics, Fixpoints}
 \end{abstract}
 
-\title{Fixing incremental computation}
-\subtitle{Derivatives of fixpoints, and the recursive semantics of Datalog}
-
-\maketitle
 
 \section{Introduction}
 \label{sec:intro}
@@ -103,15 +106,15 @@ least fixpoint of the rule $tc$. Kleene's Theorem tells us that we can
 compute this fixpoint by repeatedly applying the rule until it stops changing, starting from the empty relation. For example, supposing
 that $e = \{ (1, 2), (2, 3), (3, 4) \}$, we get the following evaluation trace:
 \begin{center}
-  \begin{tabular} {p{3.5em} p{10em} p{10em}}
+  \begin{tabular} {p{5em} p{12em} p{12em}}
     Iteration & Newly deduced facts & Accumulated data in $tc$ \\
-    \toprule
+    %%\toprule
     0 & $\{ \}$ & $\{ \}$\\
     1 & $\{ (1, 2), (2, 3), (3, 4) \}$ & $\{ (1, 2), (2, 3), (3, 4) \}$\\
     2 & $\{ (1, 2), (2, 3), (3, 4),$ $(1, 3), (2, 4) \}$ & $\{ (1, 2), (2, 3), (3, 4),$ $(1, 3), (2, 4) \}$\\
     3 & $\{ (1, 2), (2, 3), (3, 4),$ $(1, 3), (2, 4), (1, 4),(1, 4) \}$ & $\{ (1, 2), (2, 3), (3, 4),$ $(1, 3), (2, 4), (1, 4) \}$\\
     4 & (as above) & (as above) \\
-    \bottomrule
+    %%\bottomrule
   \end{tabular}
 \end{center}
 \medskip
@@ -141,14 +144,14 @@ can deduce them from transitive edges we deduced at iteration $n$.
 \end{align*}
 
 \begin{center}
-  \begin{tabular} {p{3.5em} p{8em} p{10em}}
+  \begin{tabular} {p{5em} p{10em} p{12em}}
     Iteration & $\Delta tc_i$ & $tc_i$ \\
-    \toprule
+    %\toprule
     0 & $\{ (1, 2), (2, 3), (3, 4) \}$ & $\{ (1, 2), (2, 3), (3, 4) \}$\\
     1 & $\{ (1, 3), (2, 4) \}$ & $\{ (1, 2), (2, 3), (3, 4),$ $(1, 3), (2, 4) \}$\\
     2 & $\{ (1, 4) \}$ & $\{ (1, 2), (2, 3), (3, 4),$ $(1, 3), (2, 4), (1, 4) \}$\\
     3 & $\{ \}$ & (as above) \\
-    \bottomrule
+    %\bottomrule
   \end{tabular}
 \end{center}
 \medskip
@@ -281,7 +284,7 @@ actions.}
 \subsection{Change actions}
 \label{sec:changeAction}
 
-\begin{defn}
+\begin{definition}
   A \emph{change action} is a tuple:
   \begin{displaymath}
     \cstr{A} \defeq \cstruct{A}{\changes{A}}{\cplus_A}
@@ -295,7 +298,7 @@ actions.}
   action. We will use $\splus$ for the monoid operation of $\changes{A}$, and
   $\mzero$ for its identity element. 
   When there is no risk of confusion, we will simply write $\cplus$ for $\cplus_A$.
-\end{defn}
+\end{definition}
 
 \subsubsection{Examples}
 \label{sec:examples}
@@ -353,7 +356,7 @@ A solution to this problem is a function $\derive{f}: A \times \changes{A}
 \rightarrow \changes B$, which given $a$ and $\change{a}$ tells us how to change
 $f(a)$ to $f(a \cplus \change{a})$. We call this a \emph{derivative} of a function.
 
-\begin{defn}
+\begin{definition}
   \label{def:derivative}
   Let $\cstr{A}$ and $\cstr{B}$ be change actions.
   A \emph{derivative} of a function $f: A \rightarrow B$ is a function $\derive{f}: A \times \changes{A} \rightarrow
@@ -369,7 +372,7 @@ $f(a)$ to $f(a \cplus \change{a})$. We call this a \emph{derivative} of a functi
     These are natural conditions, and all the 
     derivatives we have studied also satisfy them, but none of the results on
     this paper require them to hold.}
-\end{defn}
+\end{definition}
 
 Derivatives need not be unique in general, so we will speak of ``a''
 derivative. Functions into ``thin'' change
@@ -403,7 +406,7 @@ formula semantics (\cref{sec:nonRecursiveDatalog}); and later the full, recursiv
 
 The derivative of a function can be computed compositionally, because derivatives satisfy the standard chain rule.
 
-\begin{thm}[The Chain Rule]
+\begin{theorem}[The Chain Rule]
   Let $f: \cstr{A} \rightarrow \cstr{B}$, $g: \cstr{B} \rightarrow \cstr{C}$ be differentiable functions. Then $g \circ f$ is also
   differentiable, with a derivative given by
   \begin{displaymath}
@@ -413,46 +416,46 @@ The derivative of a function can be computed compositionally, because derivative
   \begin{displaymath}
     \derive{(g \circ f)}(x) = \derive{g}(f(x)) \circ \derive{f}(x)
   \end{displaymath}
-\end{thm}
+\end{theorem}
 
 \subsubsection{Complete change actions and minus operators}
 
 Complete change actions are an important class of change actions, because they
 have changes between \emph{any} two values in the base set.
 
-\begin{defn}
+\begin{definition}
   A change action is \emph{complete} if for any $a, b \in A$, there is
   a change $\change{a} \in \changes{A}$ such that $a \cplus \change{a} = b$.
-\end{defn}
+\end{definition}
 
 Complete change actions have convenient ``minus operators'' that allow us to
 compute the difference between two values.
 
-\begin{defn}
+\begin{definition}
   A \emph{minus operator} is a function $\cminus: A \times A \rightarrow
   \changes{A}$ such that $a \cplus (b \cminus a) = b$ for all $a, b \in A$.
-\end{defn}
+\end{definition}
 
-\begin{prop}
+\begin{proposition}
   Let $\cstr{A}$ be a change action. Then the following are equivalent:
   \begin{itemize}
     \item $\cstr{A}$ is complete.
     \item There is a minus operator on $\cstr{A}$.
     \item For any change action $\cstr{B}$ all functions $f: {B} \rightarrow {A}$ are differentiable.
   \end{itemize}
-\end{prop}
+\end{proposition}
 
 This last property is of the utmost importance, since we are often concerned with the differentiability
 of functions.
 
-\begin{prop}
+\begin{proposition}
   \label{prop:minusDerivatives}
   Given a minus operator $\cminus$, and a function $f$, let
   \begin{displaymath}
     \derive{f}_\cminus(a, \change{a}) \defeq f(a \cplus \change{a}) \cminus f(a)
   \end{displaymath}
   Then $\derive{f}_\cminus$ is a derivative for $f$.
-\end{prop}
+\end{proposition}
 
 \subsubsection{Products and sums}
 \label{sec:prodsum}
@@ -461,7 +464,7 @@ Given change actions on sets $A$ and $B$, the question immediately arises of whe
 change actions on their Cartesian product $A \times B$ or disjoint union $A + B$. While there are
 many candidates, there is a clear ``natural'' choice for both.
 
-\begin{prop}[name=Products, restate=products]
+\begin{proposition}[name=Products, restate=products]
   \label{prop:products}
   Let $\cstr{A} = \cstruct{A}{\changes{A}}{\cplus_A}$ and $\cstr{B} =
   \cstruct{B}{\changes{B}}{\cplus_B}$ be change actions.
@@ -481,7 +484,7 @@ many candidates, there is a clear ``natural'' choice for both.
     f(\cdot, b) : A \into C
   \end{align*}
   are differentiable.
-\end{prop}
+\end{proposition}
 
 Whenever $f : A \times B \rightarrow C$ is differentiable, we will sometimes use $\partial_1 f$ and
 $\partial_2 f$ to refer to derivatives of the partially applied versions, i.e. if
@@ -501,7 +504,7 @@ $f(a, \cdot), f(\cdot, b)$ respectively, then
 \end{proof}
 \fi
 
-\begin{prop}[name=Disjoint unions, restate=disjointUnions]
+\begin{proposition}[name=Disjoint unions, restate=disjointUnions]
   \label{prop:disjointUnions}
   Let $\cstr{A} = \cstruct{A}{\changes{A}}{\cplus_A}$ and $\cstr{B} =
   \cstruct{B}{\changes{B}}{\cplus_B}$ be change actions.
@@ -516,7 +519,7 @@ $f(a, \cdot), f(\cdot, b)$ respectively, then
   The injection maps $\iota_1, \iota_2$ are differentiable with respect to $\cstr{A} + \cstr{B}$. Furthermore,
   whenever $\cstr{C}$ is a change action and $f : A \rightarrow C, g: B \rightarrow C$ are differentiable,
   then so is $\left[ f, g \right]$.
-\end{prop}
+\end{proposition}
 \ifproofs
 \begin{proof}
   See \cref{prf:disjointUnions}.
@@ -530,7 +533,7 @@ base set according to coarseness. This
 is useful since differentiability of functions between change actions is characterized
 entirely by the coarseness of the actions.
 
-\begin{defn}
+\begin{definition}
   Let $\cstr{A}_1$ and $ \cstr{A}_2$ be 
   change actions on $A$. We say that $\cstr{A}_1$ is coarser than $\cstr{A}_2$ (or that $\cstr{A}_2$ is finer
   than $\cstr{A}_1$) whenever for every $x \in A$ and change $\change{a}_1 \in
@@ -540,7 +543,7 @@ entirely by the coarseness of the actions.
   We will write $\cstr{A}_1 \leq \cstr{A}_2$ whenever $\cstr{A}_1$ is coarser than $\cstr{A}_2$.
   If $\cstr{A}_1$ is both finer and coarser than $\cstr{A}_2$, we will say that $\cstr{A}_1$
   and $\cstr{A}_2$ are equivalent.
-\end{defn}
+\end{definition}
 
 The relation $\leq$  defines a preorder (but not a partial order) on the set of all change actions 
 over a fixed set A. Least and greatest elements do exist up to equivalence, and correspond
@@ -548,22 +551,22 @@ respectively to the empty change action $\cstr{A}_\bot$ and any complete change
 action, such as the full change action $\cstr{A}_\top$,
 defined in \cref{sec:changeAction}.
 
-\begin{prop}
+\begin{proposition}
   Let $\cstr{A}_2 \leq \cstr{A}_1$, $\cstr{B}_1 \leq \cstr{B}_2$ be change actions, and suppose
   the function $f : A \rightarrow B$ is differentiable as a function from $\cstr{A}_1$ into
   $\cstr{B}_1$. Then $f$ is differentiable as a function from $\cstr{A}_2$ into $\cstr{B}_2$.
-\end{prop}
+\end{proposition}
 
 A consequence of this fact is that whenever two change actions are equivalent
 they can be used interchangeably without affecting which functions are differentiable. One last parallel with topology
 is the following result, which establishes a simple criterion for when a change action is coarser than
 another:
 
-\begin{prop}
+\begin{proposition}
   Let $\cstr{A}_1, \cstr{A}_2$ be change actions on $A$. Then $\cstr{A}_1$ is coarser than $\cstr{A}_2$
   if and only if the identity function $\id : A \rightarrow A$ is differentiable from $\cstr{A}_1$ to
   $\cstr{A}_2$.
-\end{prop}
+\end{proposition}
 
 \subsection{Change kernels and kernel orderings}
 
@@ -575,7 +578,7 @@ work, in that it captures all the information about the target value instead of
 just the difference between them.
 
 This intuition that a change may do too much can be captured by the following definition:
-\begin{defn}
+\begin{definition}
   Let $\cstr{A}$ be a change action and $\change{a} \in \changes{A}$. Then the
   \emph{kernel} of $\change{a}$ is the equivalence relation $\kernel_{\change{a}}$ on $A$
   defined by
@@ -587,7 +590,7 @@ This intuition that a change may do too much can be captured by the following de
   \begin{displaymath}
     {\change{a} \kernelOrder \change{b}} \iff {{\kernel_{\change{a}}} \subseteq {\kernel_{\change{b}}}}
   \end{displaymath}
-\end{defn}
+\end{definition}
 
 We can use the kernel order, extended pointwise, to compare the different derivatives of a function.
 As we will see later (\cref{sec:booleanAlgebras}), minimal derivatives under
@@ -611,35 +614,35 @@ are well-behaved with respect to the order on the underlying set.
 generic in the base category, then this would simply be the definition of being
 a change action in the category of posets and monotone maps.}
 
-\begin{defn}
+\begin{definition}
   A change action $\cstr{A}$ is \emph{ordered} if
   \begin{itemize}
     \item $A$ and $\changes{A}$ are posets.
     \item $\cplus$ is monotone as a map from $A \times \changes{A} \rightarrow A$
     \item $\splus$ is monotone as a map from $\changes{A} \times \changes{A} \rightarrow \changes{A}$
   \end{itemize}
-\end{defn}
+\end{definition}
 
 In fact, any change action whose base set is a poset induces a particularly convenient partial order
 on the corresponding change set:
 
-\begin{defn}
+\begin{definition}
   $\change{a} \changeOrder \change{b}$ iff for all $a \in A$ it is the case that
   $a \cplus \change{a} \leq a \cplus \change{b}$.
-\end{defn}
+\end{definition}
 
-\begin{prop}
+\begin{proposition}
   Let $\cstr{A}$ be a change action on a set $A$ equipped with a partial order $\leq$ such that
   $\cplus$ is monotone in its first argument. Then $\cstr{A}$ is an ordered change action when
   $\changes{A}$ is equipped with the partial order $\changeOrder$.
-\end{prop}
+\end{proposition}
 
 In what follows, we will extend the partial order $\changeOrder$ on some change
 set $\changes{B}$ pointwise to functions from some $A$ into $\changes{B}$. This pointwise
 order interacts nicely with derivatives, in that it gives us the following lemma:
 
-\begin{thm}[Sandwich lemma]
-  \label{thm:sandwich}
+\begin{theorem}[Sandwich lemma]
+  \label{theorem:sandwich}
   Let $\cstr{A}$ be an change action, and $\cstr{B}$ be an ordered change action, and given functions
   $f: {A} \rightarrow {B}$ and $g: A \times \changes{A} \rightarrow
   \changes{B}$. If $\supderive{f}$ and $\subderive{f}$ are
@@ -648,13 +651,13 @@ order interacts nicely with derivatives, in that it gives us the following lemma
     \supderive{f} \changeOrder g \changeOrder \subderive{f}
   \end{displaymath}
   then $g$ is a derivative for $f$.
-\end{thm}
+\end{theorem}
 
 If unique minimal and maximal derivatives exist, then this gives us a 
 characterisation of all the derivatives for a function.
 
-\begin{thm}
-\label{thm:derivativeCharacterization}
+\begin{theorem}
+\label{theorem:derivativeCharacterization}
   Let $\cstr{A}$ and $\cstr{B}$ be change actions, with $\cstr{B}$ ordered, and given a function
   $f: {A} \rightarrow {B}$. If there exist $\subderiveM{f}$ and
   $\supderiveM{f}$ which are unique minimal and maximal derivatives of $f$,
@@ -663,10 +666,10 @@ characterisation of all the derivatives for a function.
   \begin{displaymath}
     \subderiveM{f} \changeOrder \derive{f} \changeOrder \supderiveM{f}
   \end{displaymath}
-\end{thm}
+\end{theorem}
 \ifproofs
 \begin{proof}
-  Follows easily from \cref{thm:sandwich} and minimality/maximality.
+  Follows easily from \cref{theorem:sandwich} and minimality/maximality.
 \end{proof}
 \fi
 
@@ -680,7 +683,7 @@ Complete Boolean algebras are a particularly nice domain for change actions
 because they have a negation operator. This is very helpful for computing
 differences, and indeed Boolean algebras have a complete change action.
 
-\begin{prop}[name=Boolean algebra change actions, restate=lsuperpose]
+\begin{proposition}[name=Boolean algebra change actions, restate=lsuperpose]
  Let $L$ be a complete Boolean algebra. Define
   \begin{displaymath}
     \cstr{L}_\superpose \defeq \cstruct{L}{L \disjointTimes L}{\twist}
@@ -696,7 +699,7 @@ differences, and indeed Boolean algebras have a complete change action.
   with identity element $(\bot, \bot)$.
 
   Then $\cstr{L}_\superpose$ is a complete change action on $L$.
-\end{prop}
+\end{proposition}
 \ifproofs
 \begin{proof}
   See \cref{prf:lsuperpose}.
@@ -720,7 +723,7 @@ derivatives, under the usual partial order based on implication.\footnote{The ch
 set is, as usual, given the change partial order, which in this case corresponds to
 the natural order on $L \times L^{\textrm{op}}$.}
 
-\begin{prop}
+\begin{proposition}
   \label{prop:minimalMaximalDerivatives}
   Let $L$ be a complete Boolean algebra with the $\cstr{L}_\superpose$ change action, and
   $f: A \rightarrow L$ be a function.
@@ -731,9 +734,9 @@ the natural order on $L \times L^{\textrm{op}}$.}
   \end{align*}
   Additionally, $\derive{f}_{\cminus_{\bot}}$ and $\derive{f}_{\cminus_{\top}}$ 
   define unique least and greatest derivatives for $f$.
-\end{prop}
+\end{proposition}
 
-\Cref{thm:derivativeCharacterization} then gives us bounds for
+\Cref{theorem:derivativeCharacterization} then gives us bounds for
 all the derivatives on Boolean algebras:
 
 \begin{corollary}
@@ -751,18 +754,18 @@ all the derivatives on Boolean algebras:
   \end{displaymath}
 \end{corollary}
 
-This makes \cref{thm:derivativeCharacterization} actually usable in practice, since
+This makes \cref{theorem:derivativeCharacterization} actually usable in practice, since
 we have concrete definitions for our bounds (which we will make use of in \cref{sec:datalogDifferentiability}).
 
 Moreover, we have a nice definition of the kernel ordering, which gives us a
 minus operator with a corresponding \emph{precise} derivative.
 
-\begin{defn}
+\begin{definition}
   The \emph{pointwise} order $\pointwiseOrder$ is the product order on $L \times
   L$.
-\end{defn}
+\end{definition}
 
-\begin{prop}[name=Boolean algebra kernels, restate=booleanAlgebraKernels]
+\begin{proposition}[name=Boolean algebra kernels, restate=booleanAlgebraKernels]
   \label{prop:booleanAlgebraKernels}
   Let $L$ be a (complete) Boolean algebra with the $\cstr{L}_\superpose$ change action,
   $f: \cstr{A} \rightarrow \cstr{L}$ a (differentiable) function, and suppose 
@@ -779,7 +782,7 @@ minus operator with a corresponding \emph{precise} derivative.
   \begin{displaymath}
     a \cminus_\kernel b = (a \wedge \neg b, b \wedge \neg a)
   \end{displaymath}
-\end{prop}
+\end{proposition}
 \ifproofs
 \begin{proof}
   See \cref{prf:booleanAlgebraKernels}.
@@ -816,7 +819,7 @@ typical when working with fixpoints \autocite[See e.g.][]{compton1994stratified}
 formula as directly denoting a relation, i.e.
 a set of named tuples, with variables ranging over a finite schema.
 
-\begin{defn}
+\begin{definition}
   A \emph{schema} $\Gamma$ is a finite set of names. A \emph{named tuple} over $\Gamma$ is an assignment
   of a value $v_i$ for each name $x_i$ in $\Gamma$. Given disjoint schemata 
   $\Gamma = \{ x_1, \ldots, x_n \}$ and $\Sigma = \{ y_1, \ldots, y_m \}$,
@@ -828,18 +831,18 @@ a set of named tuples, with variables ranging over a finite schema.
   I.e. $\sigma_\Gamma$ restricts a named tuple over $\Gamma \cup \Sigma$ into a tuple over $\Gamma$
   with the same values for the names in $\Gamma$.
   We denote the elementwise extension of $\sigma_\Gamma$ to sets of tuples also as $\sigma_\Gamma$.
-\end{defn}
+\end{definition}
 
 We will adopt the usual closed-world assumption to give a denotation to negation.
 
-\begin{defn}
+\begin{definition}
   For any schema $\Gamma$,
   there exists a universal relation $\universalRel_\Gamma$.
   Negation on relations can then be defined as
   \begin{displaymath}
     \neg R \defeq \universalRel_\Gamma \setminus R
   \end{displaymath}
-\end{defn}
+\end{definition}
 
 This makes $\Rel_\Gamma$, the set of all subsets of $\universalRel_\Gamma$,
 into a complete Boolean algebra.
@@ -873,7 +876,7 @@ into a complete Boolean algebra.
   \vspace{-12pt}
 \end{figure}
 
-\begin{defn}
+\begin{definition}
   A Datalog formula $T$ whose free term variables are contained in $\Gamma$ denotes a function from 
   $\Rel_\Gamma^n$ to $\Rel_\Gamma$.
   \begin{displaymath}
@@ -881,7 +884,7 @@ into a complete Boolean algebra.
   \end{displaymath}
   If $\semR = (\semR_1, \ldots, \semR_n)$ is a choice of a relation $\semR_i$ for each of the variables $R_i$,
   $\denote{T}(\semR)$ is inductively defined according to the rules in \cref{fig:datalogSemantics}.
-\end{defn}
+\end{definition}
 
 Since $\Rel_\Gamma$ is a complete Boolean algebra, and so is $\Rel_\Gamma^n$, $\denote{T}_\Gamma$ is
 a function between complete Boolean algebras. For brevity, we will often leave the schema implicit,
@@ -999,8 +1002,8 @@ While the definitions usually exhibit the dualities we would expect
   cases for $\forall$.}
 
 \newcommand{\bothchanges}{\rho}
-\begin{thm}[name=Concrete Datalog formula derivatives, restate=concreteDatalog]
-\label{thm:concreteDatalog}
+\begin{theorem}[name=Concrete Datalog formula derivatives, restate=concreteDatalog]
+\label{theorem:concreteDatalog}
   Let $\updiff, \downdiff, \bothdiff : \Formula \rightarrow \Formula$ be mutually recursive functions
   defined by structural induction as in \cref{fig:datalogDerivatives}.
 
@@ -1008,7 +1011,7 @@ While the definitions usually exhibit the dualities we would expect
   and any Datalog formula $T$ whose free term variables are contained in $\Gamma$,
   $\derive{\denote{T}_\Gamma} \defeq (\denote{\updiff(T)}_\Gamma, \denote{\downdiff(T)}_\Gamma)$
   is a derivative for $\denote{T}_\Gamma$.
-\end{thm}
+\end{theorem}
 \ifproofs
 \begin{proof}
   See \cref{prf:concreteDatalog}
@@ -1053,7 +1056,7 @@ the re-evaluation in many cases, and the inefficiency is local to this subformul
 
 \subsubsection{Precision}
 
-In practice, while the derivative given in \cref{thm:concreteDatalog} is not
+In practice, while the derivative given in \cref{theorem:concreteDatalog} is not
 precise, most of the cases are \emph{preciseness-preserving}, in that if the
 subsidiary recursive cases are precise, then so is that case. The only cases
 which lose precision are labelled with $\dagger$.
@@ -1112,7 +1115,7 @@ of a ``best'' change action structure on $A \rightarrow B$.
 Instead of settling on a concrete choice of a change action, we will instead
 pick out subsets of ``well-behaved'' change actions on function spaces.
 
-\begin{defn}[Functional Change Action]
+\begin{definition}[Functional Change Action]
   \label{def:functionalChanges}
   Given change actions $\cstr{A}$ and $\cstr{B}$ and a set $U \subseteq A \rightarrow B$, a change action
   $\cstr{U} = (U, \changes U, \cplus_U)$ is \emph{functional} whenever the evaluation map $\ev : U \times A \rightarrow B$
@@ -1124,7 +1127,7 @@ pick out subsets of ``well-behaved'' change actions on function spaces.
   \end{displaymath}
   We will write $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$ whenever 
   $U \subseteq A \rightarrow B$ and $\cstr{U}$ is functional.
-\end{defn}
+\end{definition}
 
 We have defined functional change actions on arbitrary subsets $U \subseteq A \rightarrow B$ for two
 reasons. First, it will later allow us to restrict ourselves to spaces of monotone or continuous
@@ -1132,14 +1135,14 @@ functions. But more importantly, functional change actions are necessarily made 
 functions, and thus a functional change action may not exist for the entire function space
 $A \rightarrow B$.
 
-\begin{prop}
+\begin{proposition}
   \label{prop:differentiableFunctionalChanges}
   Let $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$ be a functional change action. Then every 
   $f \in U$ is differentiable, with a derivative $\derive{f}$ given by:
   \begin{displaymath}
     \derive{f}(x, \change{x}) = \derive{\ev}((f, x), (0, \change{x}))
   \end{displaymath}
-\end{prop}
+\end{proposition}
 
 \iffalse
 \todomario{
@@ -1147,15 +1150,15 @@ $A \rightarrow B$.
 }
 Conversely, the derivative of the evaluation map can also be used to compute the effect of a given
 function change $\delta f$:
-\begin{prop}
+\begin{proposition}
   Let $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$. Then for every $f \in U$ and $\delta f \in \changes U$
   we have:
   \begin{displaymath}
     (f \cplus \delta f)(x) = f(x) \cplus \ev'((f, x), (\delta f, 0))
   \end{displaymath}
-\end{prop}
+\end{proposition}
 
-\begin{prop}
+\begin{proposition}
   Let $\cstr{A}$ and $\cstr{B}$ be change actions and $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$
   a functional change action. First, we note that the set $U \times A \rightarrow \changes{B}$ is
   a monoid with addition $+_\Rightarrow$ and neutral element $0_\Rightarrow$ defined by:
@@ -1176,7 +1179,7 @@ function change $\delta f$:
       (f \cplus_\Rightarrow \upsilon f)(x) \defeq f(x) \cplus \upsilon f(f, x)
     \end{gather*}
   \end{itemize}
-\end{prop}
+\end{proposition}
 \fi
 
 \subsection{Pointwise functional change actions}
@@ -1187,7 +1190,7 @@ of differentiable functions $\cstr{A} \rightarrow \cstr{B}$. Fortunately,
 in many important cases there is a simple change action structure on the space of differentiable 
 functions.
 
-\begin{defn}[Pointwise functional change action]
+\begin{definition}[Pointwise functional change action]
   Let $\cstr{A}$ and $\cstr{B}$ be change actions. The \emph{pointwise functional change action} 
   $\cstr{A} \ptfunc \cstr{B}$, when it is defined,
   is given by $(\cstr{A} \rightarrow \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$, with
@@ -1198,14 +1201,14 @@ functions.
     (\delta f \splus_\rightarrow \delta g)(x) &\defeq \delta f(x) \splus_B \delta g(x)\\
     0_\rightarrow (x) &\defeq 0_B
   \end{align*}
-\end{defn}
+\end{definition}
 
 The above definition isn't always well-typed, since given $f : \cstr{A} \rightarrow \cstr{B}$ and
 $\delta f : A \rightarrow \changes{B}$ there is, in general, no guarantee that 
 $f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteria that guarantee this.
 
-\begin{thm}
-  \label{thm:functionalCAct}
+\begin{theorem}
+  \label{theorem:functionalCAct}
   Let $\cstr{A}$ and $\cstr{B}$ be change actions, and suppose that $\cstr{B}$ satisfies one of the
   following conditions:
   \begin{itemize}
@@ -1222,13 +1225,13 @@ $f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteri
     change actions into $\cstr{B}$ do exist. A precise account of when pointwise functional change
     actions exist is outside the scope of this paper.
   }
-\end{thm}
+\end{theorem}
 As a direct consequence of this, it follows that whenever $L$ is a Boolean algebra, the
 pointwise functional change action $\cstr{A} \ptfunc \cstr{L}_\superpose$ is well-defined.
 
 Pointwise functional change actions are functional in the sense of \cref{def:functionalChanges}. 
 Moreover, the derivative of the evaluation map is quite easy to compute. 
-\begin{prop}[Derivatives of the evaluation map]
+\begin{proposition}[Derivatives of the evaluation map]
 \label{prop:evDerivatives}
   Let $\cstr{A}$ and $\cstr{B}$ be change actions such that the pointwise functional change action
   $\cstr{A} \ptfunc \cstr{B}$ is well defined, and let
@@ -1248,7 +1251,7 @@ Moreover, the derivative of the evaluation map is quite easy to compute.
     \derive{\ev}_2((f, a), (\change{f}, \change{a})) 
     \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})
   \end{displaymath}
-\end{prop}
+\end{proposition}
 
 Having pointwise function changes allows us to actually compute a derivative of the
 evaluation map as shown. In practice, this means
@@ -1270,14 +1273,14 @@ As before, we can define change actions on dcpos, rather than sets, as change
 actions whose base and change sets are endowed with a dcpo structure, and where
 the monoid operation and action are continuous.
 
-\begin{defn}
+\begin{definition}
   A change action $\cstr{A}$ is \emph{continuous} if
   \begin{itemize}
     \item $A$ and $\changes{A}$ are dcpos.
     \item $\cplus$ is Scott-continuous as a map from $A \times \changes{A} \rightarrow A$.
     \item $\splus$ is Scott-continuous as a map from $\changes{A} \times \changes{A} \rightarrow \changes{A}$.
   \end{itemize}
-\end{defn}
+\end{definition}
 
 Unlike the case for posets, the change order $\changeOrder$ does \emph{not}, in general,
 induce a dcpo on $\changes{A}$. As a counterexample, consider 
@@ -1287,11 +1290,11 @@ extended with positive infinity.
 A key example of a continuous change action is the $\cstr{L}_\superpose$ change
 action on Boolean algebras.
 
-\begin{prop}[name=Boolean algebra continuity, restate=booleanAlgebraContinuous]
+\begin{proposition}[name=Boolean algebra continuity, restate=booleanAlgebraContinuous]
   \label{prop:booleanAlgebraContinuous}
   Let $L$ be a Boolean algebra. Then $\cstr{L}_\superpose$ is a continuous
   change action.
-\end{prop}
+\end{proposition}
 \ifproofs
 \begin{proof}
   See \cref{prf:booleanAlgebraContinuous}.
@@ -1303,11 +1306,11 @@ introductory work such as \cite{abramsky1994domain}, but we state here some spec
 we shall be using, such as the following, whose proof can be found in 
 \cite[Lemma~3.2.6]{abramsky1994domain}:
 
-\begin{prop}
+\begin{proposition}
   \label{prop:distributivityLimit}
   A function $f : A \times B \rightarrow C$ is continuous iff it is continuous in each variable
   separately.
-\end{prop}
+\end{proposition}
 
 It is a well-known result in standard calculus that the limit of an absolutely convergent sequence of
 differentiable functions $\{f_i\}$ is itself differentiable, and its derivative is equal to the limit
@@ -1332,7 +1335,7 @@ is the following analogous result:
 We also state the following additional fixpoint lemma. This is a specialization of
 Beki\'c's Theorem \autocite[][section 10.1]{winskel1993formal}, but it has a straightforward direct proof.
 
-\begin{prop}[name=Factoring of fixpoints, restate=factoringFixpoints]
+\begin{proposition}[name=Factoring of fixpoints, restate=factoringFixpoints]
   \label{prop:factoringFixpoints}
   Let $A$ and $B$ be dcpos, $f : A \rightarrow A$ and $g: A \times B \rightarrow B$ be continuous, and let
   \begin{displaymath}
@@ -1342,7 +1345,7 @@ Beki\'c's Theorem \autocite[][section 10.1]{winskel1993formal}, but it has a str
   \begin{displaymath}
     \lfp(h) = (\lfp(f), \lfp(\lambda b . g(\lfp(f), b)))
   \end{displaymath}
-\end{prop}
+\end{proposition}
 \ifproofs
 \begin{proof}
   See \cref{prf:factoringFixpoints}.
@@ -1388,7 +1391,7 @@ change action on the naturals defined in \cref{sec:examples}.
 Since we are trying to incrementalize the iterative step, we start by taking the partial
 derivative of $\iter$ with respect to $n$.
 
-\begin{prop}[name=Derivative of the iteration map with respect to $n$, restate=iterDerivativesN]
+\begin{proposition}[name=Derivative of the iteration map with respect to $n$, restate=iterDerivativesN]
   \label{prop:iterDerivativesN}
   Let $\cstr{A}$ be a complete change action and let $f: A \rightarrow A$ be a differentiable function. 
   Then $\iter$ is differentiable with respect to its second
@@ -1398,7 +1401,7 @@ derivative of $\iter$ with respect to $n$.
     &\partial_2{\iter}(f, 0, m) \defeq \iter(f, m) \cminus \bot\\
     &\partial_2{\iter}(f, n+1, m) \defeq \derive{f}(\iter(f, n), \partial_2{\iter}(f, n, m))
   \end{align*}
-\end{prop}
+\end{proposition}
 \ifproofs
 \begin{proof}
   See \cref{prf:iterDerivativesN}.
@@ -1421,15 +1424,15 @@ This gives us a way to compute a fixpoint incrementally, by adding successive
 changes to an accumulator until we reach it. This is exactly how
 semi-naive evaluation works, with the delta relation and the accumulator relation.
 
-\begin{thm}[name=Incremental computation of least fixpoints, restate=fixpointIter]
-\label{thm:fixpointIter}
+\begin{theorem}[name=Incremental computation of least fixpoints, restate=fixpointIter]
+\label{theorem:fixpointIter}
   Let $\cstr{A}$ be a complete, continuous change action, $f: \cstr{A} \rightarrow
   \cstr{A}$ be continuous and differentiable.
 
   Then $\lfp(f) = \bigsqcup_{n \in \NN}(\pi_1(\nextiter_f^n(\bot, \bot)))$.\footnote{
     Note that we have \emph{not} taken the fixpoint of $\nextiter_f$, since it is
     not continuous.}
-\end{thm}
+\end{theorem}
 \ifproofs
 \begin{proof}
   See \cref{prf:fixpointIter}.
@@ -1468,7 +1471,7 @@ and update it by changing the edge relation $e$.\footnote{See
 However, this requires us to provide a derivative for the fixpoint operator
 $\fixpoint$ with respect to the function whose fixpoint is being taken.
 
-\begin{defn}[Derivatives of fixpoints]
+\begin{definition}[Derivatives of fixpoints]
 \label{def:fixpointDerivatives}
   Let $\cstr{A}$ be a change action, let $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{A}$ be a functional
   change action (not necessarily pointwise) and suppose $\fixpoint_U$ and $\fixpoint_{\changes{A}}$ are fixpoint
@@ -1481,7 +1484,7 @@ $\fixpoint$ with respect to the function whose fixpoint is being taken.
     &\derive{\fixpoint_U} : U \times \changes{U} \rightarrow \changes{A}\\
     &\derive{\fixpoint_U}(f, \change{f}) \defeq \fixpoint_{\changes{A}}(\adjust(f, \change{f}))
   \end{align*}
-\end{defn}
+\end{definition}
 
 The suggestively named $\derive{\fixpoint_U}$ will in fact turn out to be a
 derivative \textemdash{} for \emph{least} fixpoints. The appearance of
@@ -1493,15 +1496,15 @@ map.\footnote{Perhaps surprisingly, the authors first discovered an expanded
   version of this formula, and it was only later that we realised the remarkable
   connection to $\derive{\ev}$.}
 
-\begin{thm}[name=Pseudo-derivatives of fixpoints, restate=fixpointPseudoDerivatives]
-\label{thm:fixpointPseudoDerivatives}
+\begin{theorem}[name=Pseudo-derivatives of fixpoints, restate=fixpointPseudoDerivatives]
+\label{theorem:fixpointPseudoDerivatives}
   Let $\cstr{A}$ be a change action, $\cstr{U} \subseteq \cstr{A} \Rightarrow
   \cstr{A}$ be a functional change action, $\fixpoint_{U}$, and 
   $\fixpoint_{\changes A}$ be as in \cref{def:fixpointDerivatives}. Then, for any
   differentiable function $f \in U$ and any change $\change{f} \in \changes{U}$,
   $\fixpoint_U(f) \cplus \derive{\fixpoint_U}(f, \change{f})$ is a fixpoint
   of $f \cplus \change{f}$.
-\end{thm}
+\end{theorem}
 \ifproofs
 \begin{proof}
   See \cref{prf:fixpointPseudoDerivatives}.
@@ -1529,7 +1532,7 @@ These correspond to the first partial derivative of $\iter$ \textemdash{} this t
 $f$. While we are differentiating with respect to $f$, we are still going to
 need to define our derivatives inductively in terms of $n$.
 
-\begin{prop}[name=Derivative of the iteration map with respect to $f$, restate=iterDerivativesF]
+\begin{proposition}[name=Derivative of the iteration map with respect to $f$, restate=iterDerivativesF]
   \label{prop:iterDerivativesF}
   $\iter$ is differentiable with respect to its first argument and a derivative is given by:
   \begin{align*}
@@ -1537,7 +1540,7 @@ need to define our derivatives inductively in terms of $n$.
     &\partial_1{\iter} (f, \change{f}, 0) \defeq \bot_{\changes{A}}\\
     &\partial_1{\iter} (f, \change{f}, n + 1) \defeq \derive{\ev}((f, \iter(f, n)), (\change{f}, \partial_1{\iter}(f, \change{f}, n)))
   \end{align*}
-\end{prop}
+\end{proposition}
 \ifproofs
 \begin{proof}
   See \cref{prf:iterDerivativesF}.
@@ -1563,8 +1566,8 @@ Which has the property that
 This indeed provides us with a function whose limit we can take, showing
 that $\derive{\lfp}$ is a true derivative.
 
-\begin{thm}[name=Derivatives of least fixpoint operators, restate=leastFixpointDerivatives]
-  \label{thm:leastFixpointDerivatives}
+\begin{theorem}[name=Derivatives of least fixpoint operators, restate=leastFixpointDerivatives]
+  \label{theorem:leastFixpointDerivatives}
   Let
   \begin{itemize}
     \item $\cstr{A}$ be a continuous change action
@@ -1576,7 +1579,7 @@ that $\derive{\lfp}$ is a true derivative.
       respect to $a$ and $\change{a}$.
   \end{itemize}
   Then $\derive{\lfp}$ is a derivative of $\lfp$.
-\end{thm}
+\end{theorem}
 \ifproofs
 \begin{proof}
   See \cref{prf:leastFixpointDerivatives}.
@@ -1603,7 +1606,7 @@ Again, we will demonstrate the technique with Datalog, although the approach is 
 First of all, we define the usual ``immediate consequence operator'' which
 computes ``one step'' of our program semantics.
 
-\begin{defn}
+\begin{definition}
   Given a program $\mathbb{P} = (P_1, \dots, P_n)$, where $P_i$ is a predicate,
   with schema $\Gamma_i$, the \emph{immediate consequence operator} $\consq: \Rel^n \rightarrow \Rel^n$ is defined 
   as follows:
@@ -1611,26 +1614,26 @@ computes ``one step'' of our program semantics.
     \consq(\semR_1, \dots, \semR_n) 
     = (\denote{P_1}_{\Gamma_1}(\semR_1, \dots, \semR_n), \dots, \denote{P_n}_{\Gamma_n}(\semR_1, \dots, \semR_n))
   \end{displaymath}
-\end{defn}
+\end{definition}
 
 That is, given a value for the program, we pass in all the relations
 to the denotation of each predicate, to get a new tuple of relations.
 
-\begin{defn}
+\begin{definition}
   The semantics of a program $\mathbb{P}$ is defined to be
   \begin{displaymath}
     \denote{\mathbb{P}} \defeq \lfp_{\Rel^n}(\consq)
   \end{displaymath}
   and may be calculated by iterative application of $\consq$ to $\bot$ until
   fixpoint is reached.
-\end{defn}
+\end{definition}
 
 Whether or not this program semantics exists will depend on whether the fixpoint
 exists. Typically this is ensured by constraining the program such that $\consq$
 is monotone (or, in the context of a dcpo, continuous). We do not require monotonicity
-to apply \cref{thm:fixpointIter} (and hence we can incrementally
+to apply \cref{theorem:fixpointIter} (and hence we can incrementally
 compute fixpoints that happen to exist even though the generating function is
-not monotonic), but it is required to apply \cref{thm:leastFixpointDerivatives}.
+not monotonic), but it is required to apply \cref{theorem:leastFixpointDerivatives}.
 
 \subsection{Incremental evaluation of Datalog}
 \label{sec:datalogIncr}
@@ -1640,12 +1643,12 @@ the immediate consequence operator $\consq$. Putting this together with the
 results from \cref{sec:fixpoints}, we get our two big results.
 
 \begin{corollary}
-\label{thm:diffEval}
+\label{theorem:diffEval}
   Datalog program semantics can be evaluated incrementally.
 \end{corollary}
 \ifproofs
 \begin{proof}
-  Corollary of \cref{thm:fixpointIter} and \cref{corollary:consqDiff}.
+  Corollary of \cref{theorem:fixpointIter} and \cref{corollary:consqDiff}.
 \end{proof}
 \fi
 
@@ -1653,13 +1656,13 @@ This is known (semi-naive evaluation), but our proof is more
 modular, so we will be able to extend this result more easily.
 
 \begin{corollary}
-\label{thm:diffUpdate}
+\label{theorem:diffUpdate}
   Datalog program semantics can be incrementally maintained with changes to
   extensional (EDB) relations.
 \end{corollary}
 \ifproofs
 \begin{proof}
-  Corollary of \cref{thm:leastFixpointDerivatives} and \cref{corollary:consqDiff}.
+  Corollary of \cref{theorem:leastFixpointDerivatives} and \cref{corollary:consqDiff}.
 \end{proof}
 \fi
 
@@ -1669,7 +1672,7 @@ but again, the proof is now modular so we can extend it.
 \subsubsection{Worked example of updating a recursive Datalog program}
 \label{sec:workedExample}
 
-The algorithm in \cref{thm:leastFixpointDerivatives} is very abstract, and it is
+The algorithm in \cref{theorem:leastFixpointDerivatives} is very abstract, and it is
 hard to see how it will work out in practice. It is therefore worth doing a
 simple worked example.
 
@@ -1691,7 +1694,7 @@ $e_2$ by applying a change $\change{e}$, which both adds and removes some values
 
 We want to update the fixpoint of $tc$ using $e_1$, which we will call
 $tc_{e_1}$,  to the fixpoint of $tc$ using $e_2$, which we will call $tc_{e_2}$.
-As we have seen in \cref{thm:leastFixpointDerivatives},
+As we have seen in \cref{theorem:leastFixpointDerivatives},
 we can do this by computing the fixpoint $\change{w} = \lfp(\adjust(tc_{e_1}, \change{tc}))$. 
 
 A reminder of the expanded definition of $\adjust$:
@@ -1727,11 +1730,11 @@ Here is how the changes evolve:
 \begin{center}
   \begin{tabular} {p{3.5em} p{10em} p{10em}}
     Iteration & Additions to $\updiff$ & Additions to $\downdiff$ \\
-    \toprule
+    %\toprule
     1 & $\{ (4,5), (4,6) \}$ & $\{ (2,3), (2,4) \}$\\
     2 & $\{ (3,5), (3,6) \}$ & $\{ (1,3), (1,4) \}$\\
     3 & (as above) & (as above) \\
-    \bottomrule
+    %\bottomrule
   \end{tabular}
 \end{center}
 \medskip
@@ -1782,12 +1785,12 @@ the following high-level picture:
 \begin{center}
   \begin{tabular} {l l}
     Statistic & Value \\
-    \toprule
+    %\toprule
     Total runs & 2308\\
     Runs which time out in ``semi-naive'' but not in ``full'' & 629 (27\% of all runs)\\
     Runs which take more time to evaluate in ``semi-naive'' than ``full'' & 1049 (45\% of all runs)\\
     Runs which take less time to evaluate in ``semi-naive'' than ``full'' & 630 (27\% of all runs)\\
-    \bottomrule
+    %\bottomrule
   \end{tabular}
 \end{center}
 \medskip
@@ -1900,7 +1903,7 @@ There is existing literature on incremental maintenance of relational algebra
 expressions. In particular \textcite{griffin1997improved} following
 \textcite{qian1991incremental} reveal the essential insight that it is necessary to
 track both an ``upwards'' and a ``downwards'' difference, and produce a set of
-rules that look quite similar to those we derive in \cref{thm:concreteDatalog}.
+rules that look quite similar to those we derive in \cref{theorem:concreteDatalog}.
 
 Where our presentation improves over \citeauthor{griffin1997improved} is mainly in
 the genericity of the presentation. Our machinery works for a wider variety of
@@ -1914,7 +1917,7 @@ semantics. This is largely a matter of convenience: Datalog is an easier
 language to work with, and set semantics allows a much wider range of valid
 simplifications. However, all the same machinery applies to relational algebra
 with bag semantics, it is simply necessary to produce a valid version of
-\cref{thm:concreteDatalog}. Since bag semantics also has a complete change
+\cref{theorem:concreteDatalog}. Since bag semantics also has a complete change
 action (using multisets), we can always do this.
 
 We also solve the problem of updating \emph{recursive} expressions. As far as we
@@ -2004,7 +2007,7 @@ First, there is a category $\cat{CAct}$ of change actions and differentiable
 functions between them, since the identity function is differentiable and the chain
 rule guarantees that composition preserves differentiability. The product and sum change
 actions described in section \cref{sec:prodsum} correspond to products and
-coproducts in this category. Furthermore, \cref{thm:functionalCAct} can be
+coproducts in this category. Furthermore, \cref{theorem:functionalCAct} can be
 read as showing that complete change actions form an exponential ideal in $\cat{CAct}$.
 
 A simple result shows that the category $\cat{CAct}$ is remarkably well-behaved:
@@ -2023,11 +2026,11 @@ suitable to actual computation.
 Fortunately, under some circumstances exponential objects in $\cat{CAct}$ correspond
 to the pointwise functional change actions we defined earlier (in \cref{sec:pointwiseFunctional}).
 
-\begin{defn}
+\begin{definition}
   \label{def:convenientChangeActions}
   A change action $\cstr{B}$ is \emph{convenient} if every exponential object
   $\exponential{\cstr{A}}{\cstr{B}}$ is isomorphic to a pointwise functional change action.
-\end{defn}
+\end{definition}
 
 Fortunately, convenient change actions form a relatively large subcategory of
 $\cat{CAct}$. In particular, complete change actions are convenient.
@@ -2097,15 +2100,6 @@ particular the semantics of Datalog.
   This section is a bit anemic now.
 }
 
-\begin{acks}
-
-We would like to thank Semmle Ltd. for supporting this research, as well as Pavel
-Avgustinov, Aditya Sharad, Max Sch\"afer, Katriel Cohn-Gordon, Anders
-Schack-Mulligen, and Simon Peyton Jones for their
-helpful comments on the manuscript.
-
-\end{acks}
-
 \printbibliography
 
 \clearpage
@@ -2115,7 +2109,6 @@ helpful comments on the manuscript.
 
 \subsection{Change actions and derivatives}
 
-\products*
 \begin{proof}
   \label{prf:products}
   Let $\cstr{Y}$ be a change action, and $f_1: \cstr{Y} \rightarrow \cstr{A}$, $f_2: \cstr{Y}
@@ -2130,7 +2123,6 @@ helpful comments on the manuscript.
   product in the $\cat{Set}$.
 \end{proof}
 
-\disjointUnions*
 \begin{proof}
   \label{prf:disjointUnions}
   Let $\cstr{Y}$ be a change action, and $f_1 : \cstr{A} \rightarrow \cstr{Y}$, $f_2 : \cstr{B}
@@ -2147,7 +2139,6 @@ helpful comments on the manuscript.
 
 \subsection{Posets and Boolean algebras}
 
-\lsuperpose*
 \begin{proof}
   \label{prf:lsuperpose}
   We show that the monoid action property holds:
@@ -2228,7 +2219,6 @@ helpful comments on the manuscript.
   Completeness is easy to show.
 \end{proof}
 
-\booleanAlgebraKernels*
 \begin{proof}
   \label{prf:booleanAlgebraKernels}
   
@@ -2276,7 +2266,6 @@ helpful comments on the manuscript.
 \end{proof}
 
 \subsection {Derivatives of Datalog formulae}
-\concreteDatalog*
 \begin{proof}
   \label{prf:concreteDatalog}
   Let $T$ be a Datalog formula with free relation variables $R_1, \ldots, R_n$,
@@ -2359,14 +2348,14 @@ helpful comments on the manuscript.
 
   Existential:
   Before proving the existential, we state the following (trivial) properties of the selection map $\sigma_\Gamma$:
-  \begin{prop}[Distributivity of $\sigma_\Gamma$]
+  \begin{proposition}[Distributivity of $\sigma_\Gamma$]
     \label{prop:sigmaDist}
     For any $A, B \in \Rel_{\Gamma, x}$ we have:
     \begin{align*}
       \sigma_\Gamma(A \cup B) &= \sigma_\Gamma(A) \cup \sigma_\Gamma(B)\\
       \sigma_\Gamma (A \cap \neg B) &= \sigma_\Gamma(A) \cap \neg \sigma_\Gamma(B) \cup \sigma_\Gamma(A \cap \neg B)
     \end{align*}
-  \end{prop}
+  \end{proposition}
   
   With these in mind, we can proceed with the proof proper:
   \begin{align*}
@@ -2400,7 +2389,6 @@ helpful comments on the manuscript.
 
 \subsection{Directed-complete partial orders and fixpoints}
 
-\booleanAlgebraContinuous*
 \begin{proof}
   \label{prf:booleanAlgebraContinuous}
   $L$ is a complete lattice, so certainly a dcpo. $\cstr{L}_\superpose$ is a
@@ -2421,7 +2409,6 @@ helpful comments on the manuscript.
   of $\vee$ and $\wedge$.
 \end{proof}
 
-\factoringFixpoints*
 \begin{proof}
   \label{prf:factoringFixpoints}
   Let
@@ -2438,7 +2425,6 @@ helpful comments on the manuscript.
   Hence $\lfp(h) = \lfp(p) = (\lfp(f), \lfp(\lambda b . g(\lfp(f), b)))$.
 \end{proof}
 
-\iterDerivativesN*
 \begin{proof}
   \label{prf:iterDerivativesN}
   By induction on $n$. We show the inductive step.
@@ -2450,7 +2436,6 @@ helpful comments on the manuscript.
   \end{align*}
 \end{proof}
 
-\fixpointIter*
 \begin{proof}
   \label{prf:fixpointIter}
   \begin{align*}
@@ -2460,7 +2445,6 @@ helpful comments on the manuscript.
   \end{align*}
 \end{proof}
 
-\fixpointPseudoDerivatives*
 \begin{proof}
   \label{prf:fixpointPseudoDerivatives}
   
@@ -2488,7 +2472,6 @@ helpful comments on the manuscript.
   follows from reversing the direction of the proof.
 \end{proof}
 
-\iterDerivativesF*
 \begin{proof}
   \label{prf:iterDerivativesF}
   The base case is easy to prove.
@@ -2509,7 +2492,6 @@ helpful comments on the manuscript.
   \end{align*}
 \end{proof}
 
-\leastFixpointDerivatives*
 \begin{proof}
   \label{prf:leastFixpointDerivatives}
   $\partial_1{\iter}$ and $\nextiter_{f, \change{f}}$ are continuous since
