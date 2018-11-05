@@ -13,14 +13,23 @@
 \usepackage{todonotes}
 \usepackage{etoolbox}
 \usepackage{appendix}
+\usepackage{environ}
+
+% Switches between biblatex and natbib
+%\newif\ifbiblatex\biblatextrue
+\newif\ifbiblatex\biblatexfalse
 
 % Packages where the order matters
+\ifbiblatex
 \usepackage[
   safeinputenc,
   natbib=true
 ]{biblatex}
-\usepackage{cleveref}
+\usepackage{bbm}
+\else
+\fi
 \usepackage{hyperref}
+\usepackage{cleveref}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% BEGIN {Macros / packages by Luke}
@@ -49,9 +58,10 @@
 \newcommand{\todompj}[1]{}
 \newcommand{\todomario}[1]{}
 \fi
-\usepackage{bbm}
 %% END {Macros / packages by Luke}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{theorem-restate}
 
 \input{notation}
 
@@ -59,7 +69,9 @@
 % Comment out to disable proofs
 %\proofstrue
 
+\ifbiblatex
 \addbibresource{paper.bib}
+\fi
 
 \begin{document}
 
@@ -94,7 +106,7 @@
 \section{Introduction}
 \label{sec:intro}
 
-Consider the following classic Datalog program\footnote{See \autocite[][part D]{abiteboul1995foundations} for an introduction to Datalog.},
+Consider the following classic Datalog program\footnote{See \cite[part D]{abiteboul1995foundations} for an introduction to Datalog.},
 which computes the transitive closure of an edge relation $e$:
 \begin{align*}
   tc(x, y) &\leftarrow e(x, y)\\
@@ -126,7 +138,7 @@ even though we had already deduced it in the first iteration. Indeed, for a
 chain of $n$ such edges we will deduce $O(n^2)$ facts along the way.
 
 The standard improvement to this evaluation strategy is known as ``semi-naive'' 
-evaluation\autocite[See][section 13.1]{abiteboul1995foundations}, where we transform 
+evaluation (see \cite[section 13.1]{abiteboul1995foundations}), where we transform 
 the program into a \emph{delta} program with two parts:
 \begin{itemize}
   \item A \emph{delta} rule that computes the \emph{new} facts at each
@@ -164,10 +176,10 @@ changes to its inputs.
 But the delta rule translation works only for traditional Datalog. It is common to
 liberalise the formula syntax with additional features, such as disjunction,
 existential quantification, negation, and aggregation.\footnote{See, for
-  example, \autocites(LogiQL)(){logicbloxWebsite}{halpin2014logiql},
-  \autocites(Datomic)(){datomicWebsite},
-  \autocites(Souffle)(){souffleWebsite}{scholz2016fast}, and
-  \autocites(DES)(){saenz2011deductive}, which between them have all of these
+  example, LogiQL \cite{logicbloxWebsite,halpin2014logiql},
+  Datomic \cite{datomicWebsite},
+  Souffle \cite{souffleWebsite,scholz2016fast}, and
+  DES \cite{saenz2011deductive}, which between them have all of these
   features and more. } 
 This allows us to write programs like the following, where we compute whether all the
 nodes in a subtree given by $child$ have some property $p$:
@@ -201,11 +213,11 @@ freedom to optimize within a range of possible alternatives to improve precision
 Handling extended Datalog is of more than theoretical interest \textemdash{} the research
 in this paper was carried out at Semmle, which
 makes heavy use of a commercial Datalog implementation
-\autocites{semmleWebsite}{avgustinov2016ql}{sereni2008adding}{schafer2010type}.
+\cite{semmleWebsite,avgustinov2016ql,sereni2008adding,schafer2010type}.
 Semmle's implementation includes parity-stratified negation\footnote{Parity-stratified negation means that recursive calls must
   appear under an even number of negations. This ensures that the rule remains
   monotone, so the least fixpoint still exists.},
-recursive aggregates \autocite{demoor2013aggregates}, and other non-standard
+recursive aggregates \cite{demoor2013aggregates}, and other non-standard
 features, so we are faced with a dilemma: either abandon the new language
 features, or abandon incremental computation.
 
@@ -213,16 +225,16 @@ We can tell a similar story about \emph{maintenance} of Datalog programs.
 Maintenance means updating the results of the program when its inputs change,
 for example, updating the value of $tc$ given a change to $e$. Again, this is a
 kind of incremental computation, and there are known solutions for traditional Datalog
-\autocite{gupta1993maintaining}, but these break down when the language is extended.
+\cite{gupta1993maintaining}, but these break down when the language is extended.
 
 There is a piece of folkloric knowledge in the Datalog community that hints at a
 solution: the semi-naive translation of a rule corresponds to the
-\emph{derivative} of that rule \autocites{bancilhon1986naive}[section
-3.2.2]{bancilhon1986amateur}. The idea of performing incremental computation using derivatives has been
-studied recently by \textcite{cai2014changes}, who give an account using
+\emph{derivative} of that rule\cite[section 3.2.2]{bancilhon1986amateur,bancilhon1986naive}. 
+The idea of performing incremental computation using derivatives has been
+studied recently by Cai et al. \cite{cai2014changes}, who give an account using
 \emph{change structures}. They use this to provide a framework for incrementally evaluating lambda calculus programs.
 
-However, \citeauthor{cai2014changes}'s work isn't directly applicable to Datalog: the tricky part
+However, Cai et al.'s work isn't directly applicable to Datalog: the tricky part
 of Datalog's semantics are recursive definitions and the need for the
 \emph{fixpoints}, so we need some additional theory to tell us how to
 handle incremental evaluation and maintenance of fixpoint computations.
@@ -464,7 +476,7 @@ Given change actions on sets $A$ and $B$, the question immediately arises of whe
 change actions on their Cartesian product $A \times B$ or disjoint union $A + B$. While there are
 many candidates, there is a clear ``natural'' choice for both.
 
-\begin{proposition}[name=Products, restate=products]
+\begin{rep-proposition}{products}[Products]
   \label{prop:products}
   Let $\cstr{A} = \cstruct{A}{\changes{A}}{\cplus_A}$ and $\cstr{B} =
   \cstruct{B}{\changes{B}}{\cplus_B}$ be change actions.
@@ -484,7 +496,7 @@ many candidates, there is a clear ``natural'' choice for both.
     f(\cdot, b) : A \into C
   \end{align*}
   are differentiable.
-\end{proposition}
+\end{rep-proposition}
 
 Whenever $f : A \times B \rightarrow C$ is differentiable, we will sometimes use $\partial_1 f$ and
 $\partial_2 f$ to refer to derivatives of the partially applied versions, i.e. if
@@ -504,7 +516,7 @@ $f(a, \cdot), f(\cdot, b)$ respectively, then
 \end{proof}
 \fi
 
-\begin{proposition}[name=Disjoint unions, restate=disjointUnions]
+\begin{rep-proposition}{disjointUnions}[Disjoint unions]
   \label{prop:disjointUnions}
   Let $\cstr{A} = \cstruct{A}{\changes{A}}{\cplus_A}$ and $\cstr{B} =
   \cstruct{B}{\changes{B}}{\cplus_B}$ be change actions.
@@ -519,7 +531,7 @@ $f(a, \cdot), f(\cdot, b)$ respectively, then
   The injection maps $\iota_1, \iota_2$ are differentiable with respect to $\cstr{A} + \cstr{B}$. Furthermore,
   whenever $\cstr{C}$ is a change action and $f : A \rightarrow C, g: B \rightarrow C$ are differentiable,
   then so is $\left[ f, g \right]$.
-\end{proposition}
+\end{rep-proposition}
 \ifproofs
 \begin{proof}
   See \cref{prf:disjointUnions}.
@@ -683,7 +695,7 @@ Complete Boolean algebras are a particularly nice domain for change actions
 because they have a negation operator. This is very helpful for computing
 differences, and indeed Boolean algebras have a complete change action.
 
-\begin{proposition}[name=Boolean algebra change actions, restate=lsuperpose]
+\begin{rep-proposition}{lsuperpose}[Boolean algebra change actions]
  Let $L$ be a complete Boolean algebra. Define
   \begin{displaymath}
     \cstr{L}_\superpose \defeq \cstruct{L}{L \disjointTimes L}{\twist}
@@ -699,7 +711,7 @@ differences, and indeed Boolean algebras have a complete change action.
   with identity element $(\bot, \bot)$.
 
   Then $\cstr{L}_\superpose$ is a complete change action on $L$.
-\end{proposition}
+\end{rep-proposition}
 \ifproofs
 \begin{proof}
   See \cref{prf:lsuperpose}.
@@ -765,7 +777,7 @@ minus operator with a corresponding \emph{precise} derivative.
   L$.
 \end{definition}
 
-\begin{proposition}[name=Boolean algebra kernels, restate=booleanAlgebraKernels]
+\begin{rep-proposition}{booleanAlgebraKernels}[Boolean algebra kernels]
   \label{prop:booleanAlgebraKernels}
   Let $L$ be a (complete) Boolean algebra with the $\cstr{L}_\superpose$ change action,
   $f: \cstr{A} \rightarrow \cstr{L}$ a (differentiable) function, and suppose 
@@ -782,7 +794,7 @@ minus operator with a corresponding \emph{precise} derivative.
   \begin{displaymath}
     a \cminus_\kernel b = (a \wedge \neg b, b \wedge \neg a)
   \end{displaymath}
-\end{proposition}
+\end{rep-proposition}
 \ifproofs
 \begin{proof}
   See \cref{prf:booleanAlgebraKernels}.
@@ -815,7 +827,7 @@ real and pressing, as we saw in \cref{sec:intro}.
 Datalog is usually given a logical semantics where formulae are interpreted as first-order
 logic predicates and the semantics of a program is the set of models of its constituent
 predicates. We will instead give a simple denotational semantics (as is
-typical when working with fixpoints \autocite[See e.g.][]{compton1994stratified}) that treats a Datalog
+typical when working with fixpoints (See e.g. \cite{compton1994stratified}) that treats a Datalog
 formula as directly denoting a relation, i.e.
 a set of named tuples, with variables ranging over a finite schema.
 
@@ -919,7 +931,7 @@ derivative ($\derive{f}_{\cminus_\kernel}$ lies roughly in the middle of them),
 and we can therefore optimize anywhere within that range to make a 
 trade-off between ease of computation and precision.
 The idea of using an approximation
-to the precise derivative, and a soundness condition, appears in \textcite{bancilhon1986amateur}.
+to the precise derivative, and a soundness condition, appears in Bancilhon \cite{bancilhon1986amateur}.
 
 There is also the question of how to compute the derivative. Since the change
 set for $\widehat{\Rel}_\superpose$ is a subset of $\Rel \times \Rel$, it
@@ -1002,7 +1014,7 @@ While the definitions usually exhibit the dualities we would expect
   cases for $\forall$.}
 
 \newcommand{\bothchanges}{\rho}
-\begin{theorem}[name=Concrete Datalog formula derivatives, restate=concreteDatalog]
+\begin{rep-theorem}{concreteDatalog}[Concrete Datalog formula derivatives]
 \label{theorem:concreteDatalog}
   Let $\updiff, \downdiff, \bothdiff : \Formula \rightarrow \Formula$ be mutually recursive functions
   defined by structural induction as in \cref{fig:datalogDerivatives}.
@@ -1011,7 +1023,7 @@ While the definitions usually exhibit the dualities we would expect
   and any Datalog formula $T$ whose free term variables are contained in $\Gamma$,
   $\derive{\denote{T}_\Gamma} \defeq (\denote{\updiff(T)}_\Gamma, \denote{\downdiff(T)}_\Gamma)$
   is a derivative for $\denote{T}_\Gamma$.
-\end{theorem}
+\end{rep-theorem}
 \ifproofs
 \begin{proof}
   See \cref{prf:concreteDatalog}
@@ -1050,7 +1062,7 @@ This shows that our derivatives aren't a panacea: it is simply \emph{hard} to co
 downwards differences for $\exists$ (and, equivalently, upwards differences for
 $\forall$) because we must check that there is no other way of deriving the same
 facts.\footnote{The ``support'' data structures introduced by
-  \autocite{gupta1993maintaining} are an attempt to avoid this issue by
+  \cite{gupta1993maintaining} are an attempt to avoid this issue by
   tracking the number of derivations of each tuple.} However, we can still avoid
 the re-evaluation in many cases, and the inefficiency is local to this subformula.
 
@@ -1084,7 +1096,7 @@ where $\mathrm{agg}$ refers to an aggregation function (such as ``sum'' or
 ``min''), $vs$ is a sequence of variables, $p$ and $r$ are variables,
 $T$ is a formula possibly mentioning $vs$, and $U$ is a formula
 possibly mentioning $vs$ and $p$. The full details can been found in
-\textcite{demoor2013aggregates}, but for example this allows us to write
+Moor and Baars \cite{demoor2013aggregates}, but for example this allows us to write
 \begin{align*}
   height(n, h) \leftarrow& \neg \exists c. (child(n, c)) \wedge h = 0\\
   &\vee \exists h'. (h' = \mathrm{max}(p)(c \mid child(n, c) \mid height(c, p)) \wedge h = h' + 1)
@@ -1290,11 +1302,11 @@ extended with positive infinity.
 A key example of a continuous change action is the $\cstr{L}_\superpose$ change
 action on Boolean algebras.
 
-\begin{proposition}[name=Boolean algebra continuity, restate=booleanAlgebraContinuous]
+\begin{rep-proposition}{booleanAlgebraContinuous}[Boolean algebra continuity]
   \label{prop:booleanAlgebraContinuous}
   Let $L$ be a Boolean algebra. Then $\cstr{L}_\superpose$ is a continuous
   change action.
-\end{proposition}
+\end{rep-proposition}
 \ifproofs
 \begin{proof}
   See \cref{prf:booleanAlgebraContinuous}.
@@ -1333,9 +1345,9 @@ is the following analogous result:
 \fi
 
 We also state the following additional fixpoint lemma. This is a specialization of
-Beki\'c's Theorem \autocite[][section 10.1]{winskel1993formal}, but it has a straightforward direct proof.
+Beki\'c's Theorem \cite[section 10.1]{winskel1993formal}, but it has a straightforward direct proof.
 
-\begin{proposition}[name=Factoring of fixpoints, restate=factoringFixpoints]
+\begin{rep-proposition}{factoringFixpoints}[Factoring of fixpoints]
   \label{prop:factoringFixpoints}
   Let $A$ and $B$ be dcpos, $f : A \rightarrow A$ and $g: A \times B \rightarrow B$ be continuous, and let
   \begin{displaymath}
@@ -1345,7 +1357,7 @@ Beki\'c's Theorem \autocite[][section 10.1]{winskel1993formal}, but it has a str
   \begin{displaymath}
     \lfp(h) = (\lfp(f), \lfp(\lambda b . g(\lfp(f), b)))
   \end{displaymath}
-\end{proposition}
+\end{rep-proposition}
 \ifproofs
 \begin{proof}
   See \cref{prf:factoringFixpoints}.
@@ -1391,7 +1403,7 @@ change action on the naturals defined in \cref{sec:examples}.
 Since we are trying to incrementalize the iterative step, we start by taking the partial
 derivative of $\iter$ with respect to $n$.
 
-\begin{proposition}[name=Derivative of the iteration map with respect to $n$, restate=iterDerivativesN]
+\begin{rep-proposition}{iterDerivativesN}[Derivative of the iteration map with respect to $n$]
   \label{prop:iterDerivativesN}
   Let $\cstr{A}$ be a complete change action and let $f: A \rightarrow A$ be a differentiable function. 
   Then $\iter$ is differentiable with respect to its second
@@ -1401,7 +1413,7 @@ derivative of $\iter$ with respect to $n$.
     &\partial_2{\iter}(f, 0, m) \defeq \iter(f, m) \cminus \bot\\
     &\partial_2{\iter}(f, n+1, m) \defeq \derive{f}(\iter(f, n), \partial_2{\iter}(f, n, m))
   \end{align*}
-\end{proposition}
+\end{rep-proposition}
 \ifproofs
 \begin{proof}
   See \cref{prf:iterDerivativesN}.
@@ -1424,7 +1436,7 @@ This gives us a way to compute a fixpoint incrementally, by adding successive
 changes to an accumulator until we reach it. This is exactly how
 semi-naive evaluation works, with the delta relation and the accumulator relation.
 
-\begin{theorem}[name=Incremental computation of least fixpoints, restate=fixpointIter]
+\begin{rep-theorem}{fixpointIter}[Incremental computation of least fixpoints]
 \label{theorem:fixpointIter}
   Let $\cstr{A}$ be a complete, continuous change action, $f: \cstr{A} \rightarrow
   \cstr{A}$ be continuous and differentiable.
@@ -1432,7 +1444,7 @@ semi-naive evaluation works, with the delta relation and the accumulator relatio
   Then $\lfp(f) = \bigsqcup_{n \in \NN}(\pi_1(\nextiter_f^n(\bot, \bot)))$.\footnote{
     Note that we have \emph{not} taken the fixpoint of $\nextiter_f$, since it is
     not continuous.}
-\end{theorem}
+\end{rep-theorem}
 \ifproofs
 \begin{proof}
   See \cref{prf:fixpointIter}.
@@ -1496,7 +1508,7 @@ map.\footnote{Perhaps surprisingly, the authors first discovered an expanded
   version of this formula, and it was only later that we realised the remarkable
   connection to $\derive{\ev}$.}
 
-\begin{theorem}[name=Pseudo-derivatives of fixpoints, restate=fixpointPseudoDerivatives]
+\begin{rep-theorem}{fixpointPseudoDerivatives}[Pseudo-derivatives of fixpoints]
 \label{theorem:fixpointPseudoDerivatives}
   Let $\cstr{A}$ be a change action, $\cstr{U} \subseteq \cstr{A} \Rightarrow
   \cstr{A}$ be a functional change action, $\fixpoint_{U}$, and 
@@ -1504,7 +1516,7 @@ map.\footnote{Perhaps surprisingly, the authors first discovered an expanded
   differentiable function $f \in U$ and any change $\change{f} \in \changes{U}$,
   $\fixpoint_U(f) \cplus \derive{\fixpoint_U}(f, \change{f})$ is a fixpoint
   of $f \cplus \change{f}$.
-\end{theorem}
+\end{rep-theorem}
 \ifproofs
 \begin{proof}
   See \cref{prf:fixpointPseudoDerivatives}.
@@ -1532,7 +1544,7 @@ These correspond to the first partial derivative of $\iter$ \textemdash{} this t
 $f$. While we are differentiating with respect to $f$, we are still going to
 need to define our derivatives inductively in terms of $n$.
 
-\begin{proposition}[name=Derivative of the iteration map with respect to $f$, restate=iterDerivativesF]
+\begin{rep-proposition}{iterDerivativesF}[Derivative of the iteration map with respect to $f$]
   \label{prop:iterDerivativesF}
   $\iter$ is differentiable with respect to its first argument and a derivative is given by:
   \begin{align*}
@@ -1540,7 +1552,7 @@ need to define our derivatives inductively in terms of $n$.
     &\partial_1{\iter} (f, \change{f}, 0) \defeq \bot_{\changes{A}}\\
     &\partial_1{\iter} (f, \change{f}, n + 1) \defeq \derive{\ev}((f, \iter(f, n)), (\change{f}, \partial_1{\iter}(f, \change{f}, n)))
   \end{align*}
-\end{proposition}
+\end{rep-proposition}
 \ifproofs
 \begin{proof}
   See \cref{prf:iterDerivativesF}.
@@ -1566,7 +1578,7 @@ Which has the property that
 This indeed provides us with a function whose limit we can take, showing
 that $\derive{\lfp}$ is a true derivative.
 
-\begin{theorem}[name=Derivatives of least fixpoint operators, restate=leastFixpointDerivatives]
+\begin{rep-theorem}{leastFixpointDerivatives}[Derivatives of least fixpoint operators]
   \label{theorem:leastFixpointDerivatives}
   Let
   \begin{itemize}
@@ -1579,7 +1591,7 @@ that $\derive{\lfp}$ is a true derivative.
       respect to $a$ and $\change{a}$.
   \end{itemize}
   Then $\derive{\lfp}$ is a derivative of $\lfp$.
-\end{theorem}
+\end{rep-theorem}
 \ifproofs
 \begin{proof}
   See \cref{prf:leastFixpointDerivatives}.
@@ -1666,7 +1678,7 @@ modular, so we will be able to extend this result more easily.
 \end{proof}
 \fi
 
-This is known \autocite[see][and successors]{gupta1993maintaining},
+This is known (see \cite{gupta1993maintaining} and successors),
 but again, the proof is now modular so we can extend it.
 
 \subsubsection{Worked example of updating a recursive Datalog program}
@@ -1770,7 +1782,7 @@ versions of the engine:
 We used Semmle's profiling infrastructure, which runs over 800 queries (compiled to
 Datalog programs) on a wide range
 of real-world databases. The queries are compiled from Semmle's QL language
-\autocite{avgustinov2016ql}, which produces large Datalog programs \textemdash{}
+\cite{avgustinov2016ql}, which produces large Datalog programs \textemdash{}
 a typical size is over 30,000 lines of Datalog. The databases represent
 real-world programs that are subject to analysis, for example the Linux kernel,
 which is 1.8 MLOC and produces a database of size 783Mb.
@@ -1822,7 +1834,7 @@ particular database engine, and so of less general interest.
 \subsubsection{Change structures}
 \label{sec:relatedChangeStructures}
 
-The seminal paper in this area is \textcite{cai2014changes}. We deviate from
+The seminal paper in this area is Cai et al. \cite{cai2014changes}. We deviate from
 that excellent paper in three regards: the
 inclusion of minus operators, the nature of function changes, and the use of
 dependent types.
@@ -1831,35 +1843,35 @@ We have omitted minus operators from our definition because
 there are many interesting change actions that are not complete and so cannot
 have a minus operator. Where we can find a change structure with a minus operator, often we are
 forced to use unwieldy representations for change sets, and
-\citeauthor{cai2014changes} cite this as their reason for using a dependent
+Cai et al. cite this as their reason for using a dependent
 type of changes. For example, the monoidal change actions on sets and lists are clearly
 useful for incremental computation on streams, yet they do not admit minus
 operators \textemdash{} instead, one would
-be forced to work with e.g. multisets admitting negative arities, as \citeauthor{cai2014changes} do.
+be forced to work with e.g. multisets admitting negative arities, as Cai et al. do.
 
-Our function changes (when well behaved) correspond to what \citeauthor{cai2014changes} call
-\emph{pointwise differences} \autocite[see][section 2.2]{cai2014changes}. As
+Our function changes (when well behaved) correspond to what Cai et al. call
+\emph{pointwise differences} (see \cite[section 2.2]{cai2014changes}). As
 they point out, you can reconstruct their
 function changes from pointwise changes and derivatives, so the two formulations
 are equivalent. 
 
 The equivalence of our presentations means that our work should be compatible
-with ILC \autocite[see][section 3]{cai2014changes}. The derivatives we give in \cref{sec:datalogDifferentiability} are more or
-less a ``change semantics'' for Datalog \autocite[see][section
-3.5]{cai2014changes}. 
+with ILC (see \cite[section 3]{cai2014changes}). The derivatives we give in \cref{sec:datalogDifferentiability} are more or
+less a ``change semantics'' for Datalog (see \cite[section
+3.5]{cai2014changes}). 
 
 \subsubsection{S-acts}
 \label{sec:sacts}
 
 S-acts (i.e the category of monoid actions on sets) and their categorical structure have received a fair amount of attention
-over the years (\textcite{kilp2000monoids} is a good
+over the years (Kilp, Knauer, and Mikhalev \cite{kilp2000monoids} is a good
 overview). However, there is a key difference between change actions considered
 as a category ($\cat{CAct}$) and the category of
 S-acts $\cat{SAct}$: the objects of $\cat{SAct}$ all maintain the same monoid
 structure, whereas we are interested in changing both the base set \emph{and} the structure of the action.
 
 There are similarities: if we compare the definition of an ``act-preserving''
-homeomorphism in $\cat{SAct}$ \autocite[see][]{kilp2000monoids} we can see that the structure is
+homeomorphism in $\cat{SAct}$ (see \cite{kilp2000monoids}) we can see that the structure is
 quite similar to the definition of differentiability:
 \begin{displaymath}
   f(a \splus s) = f(a) \splus s
@@ -1877,8 +1889,8 @@ whose derivative is $\lambda a. \lambda d. d$.
 
 \subsubsection{Derivatives of fixpoints}
 
-\textcite{arntz2017fixpoints} gives a derivative operator for fixpoints based on
-the framework in \textcite{cai2014changes}. However, since we have different
+Arntzenius \cite{arntz2017fixpoints} gives a derivative operator for fixpoints based on
+the framework in Cai et al.\cite{cai2014changes}. However, since we have different
 notions of function changes, the result is inapplicable as
 stated. In addition, we require a somewhat different set of conditions; in particular, we
 don't require our changes to always be increasing.
@@ -1888,9 +1900,9 @@ don't require our changes to always be increasing.
 \subsubsection{Incremental evaluation}
 
 The earliest interpretation of semi-naive evaluation as a derivative 
-appears in \textcite{bancilhon1986naive}. The idea of using an approximate derivative
+appears in Bancilhon \cite{bancilhon1986naive}. The idea of using an approximate derivative
 and the requisite soundness condition appears as a throwaway comment in
-\textcite[][section 3.2.2]{bancilhon1986amateur}, and it would appear that nobody has since
+Bancilhon and Ramakrishnan \cite[section 3.2.2]{bancilhon1986amateur}, and it would appear that nobody has since
 developed that approach.
 
 As far as we know, traditional semi-naive is the state of
@@ -1900,12 +1912,12 @@ accommodate additional language features such as parity-stratified negation and 
 \subsubsection{Incremental maintenance}
 
 There is existing literature on incremental maintenance of relational algebra
-expressions. In particular \textcite{griffin1997improved} following
-\textcite{qian1991incremental} reveal the essential insight that it is necessary to
+expressions. In particular Griffin, Libkin, and Trickey \cite{griffin1997improved} following
+Qian and Wiederhold \cite{qian1991incremental} reveal the essential insight that it is necessary to
 track both an ``upwards'' and a ``downwards'' difference, and produce a set of
 rules that look quite similar to those we derive in \cref{theorem:concreteDatalog}.
 
-Where our presentation improves over \citeauthor{griffin1997improved} is mainly in
+Where our presentation improves over Griffin, Libkin, and Trickey is mainly in
 the genericity of the presentation. Our machinery works for a wider variety of
 algebraic structures, and it is clear how the parts of the proof work together
 to produce the result. In addition, it is easy to see how to extend the proofs
@@ -1926,7 +1938,7 @@ focussed on Datalog rather than relational algebra, since Datalog is designed to
 make heavy use of recursion.
 
 Several approaches
-\autocites{gupta1993maintaining}{harrison1992maintenance}, most notably DReD
+\cite{gupta1993maintaining,harrison1992maintenance}, most notably DReD
 make use of a common tactic: one can get to the new fixed
 point by starting from \emph{any} point below it, and then iterating the
 semantics again to fixpoint. The approach, then, is to find a way to delete as
@@ -1941,21 +1953,21 @@ whereas our approach is quite generic. Although we know of no theoretical reason
 why either approach should give superior performance when both are applicable,
 an empirical investigation of this could prove interesting.
 
-Other approaches \autocites{dong2000incremental}{urpi1992method} consider only
+Other approaches \cite{dong2000incremental,urpi1992method} consider only
 restricted subsets of Datalog, or incur other substantial constraints, and our results
 are thus significantly more general.
 
 \subsubsection{Embedding Datalog}
 \label{sec:embeddingDatalog}
 
-Datafun (\textcite{arntz2016datafun}) is a functional programming language that embeds
+Datafun (Arntzenius and Krishnaswami \cite{arntz2016datafun}) is a functional programming language that embeds
 Datalog, allowing significant improvements in genericity, such as the use of
 higher-order functions. Since we have directly defined a change action and
 derivative operator for Datalog, our work could be used as a ``plugin'' in the sense
-of \citeauthor{cai2014changes}, allowing Datafun to compute its internal fixpoints
+of Cai et al., allowing Datafun to compute its internal fixpoints
 incrementally, but also allowing Datafun expressions to be fully incrementally maintained.
 
-In a different direction, \textcite{cathcartburn2018hochc} have proposed
+In a different direction, Cathcart Burn, Ong, and Ramsay \cite{cathcartburn2018hochc} have proposed
 \emph{higher-order constrained Horn clauses}
 (HoCHC), a new class of constraints for the automatic verification of higher-order programs.
 HoCHC may be viewed as a higher-order extension of Datalog. 
@@ -1964,7 +1976,7 @@ Change actions can be readily applied to organise an efficient semi-naive method
 \subsection{Differential $\lambda$-calculus}
 
 Another setting where derivatives of arbitrary higher-order programs have been studied
-is the \emph{differential $\lambda$-calculus} \autocites{ehrhard2003differential}{ehrhard2017introduction}.
+is the \emph{differential $\lambda$-calculus} \cite{ehrhard2003differential,ehrhard2017introduction}.
 This is a higher-order, simply-typed $\lambda$-calculus which allows for computing the derivative of a function, in a similar
 way to the notion of derivative in Cai's work and the present paper.
 
@@ -1977,22 +1989,22 @@ that is being differentiated (see \cref{def:derivative}).
 
 Families of denotational models for the differential $\lambda$-calculus have been
 studied in depth
-\autocites{bucciarelli2010categorical}{blute2010convenient}{cockett2016categorical}{kerjean2016mackey},
+\cite{bucciarelli2010categorical,blute2010convenient,cockett2016categorical,kerjean2016mackey},
 and the relationship between these and change actions is the subject of ongoing work.
 
 \subsection{Higher-order automatic differentiation}
 
-Automatic differentiation \autocite{griewank2008evaluating} is a technique that allows
+Automatic differentiation \cite{griewank2008evaluating} is a technique that allows
 for efficiently computing the derivative of arbitrary programs, with
-applications in probabilistic modeling \autocite{kucukelbir2017automatic}
-and machine learning \autocite{baydin2014automatic} among other areas. In recent times, this technique has been successfully
-applied to higher-order languages \autocites{siskind2008nesting}{baydin2016diffsharp}.
-While some approaches have been suggested \autocites{manzyuk2012simply}{kelly2016evolving}, a general
+applications in probabilistic modeling \cite{kucukelbir2017automatic}
+and machine learning \cite{baydin2014automatic} among other areas. In recent times, this technique has been successfully
+applied to higher-order languages \cite{siskind2008nesting,baydin2016diffsharp}.
+While some approaches have been suggested \cite{manzyuk2012simply,kelly2016evolving}, a general
 theoretical framework for this technique is still a matter of open research. 
 
 To this purpose, some authors have proposed the incremental $\lambda$-calculus
 as a foundational framework on which models of automatic differentiation can
-be based \autocite{kelly2016evolving}. We believe our change actions are better suited
+be based \cite{kelly2016evolving}. We believe our change actions are better suited
 to this purpose than the incremental $\lambda$-calculus, since one can easily give them a
 synthetic differential geometric reading (by interpreting $\cstr{A}$ as an Euclidean module and $\changes{A}$
 as its corresponding spectrum, for example).
@@ -2059,7 +2071,7 @@ every change $\change a \in \changes A$ such that $a \oplus \change a = b$. If o
 that derivatives verify the additional conditions in the footnote to \cref{def:derivative}, then functions that
 admit derivatives correspond exactly to functors. This naturally leads to consider dependently-typed
 generalizations of change actions where different elements $a, b \in A$ have different change
-sets $\changes_aA, \changes_aB$, much like in \citeauthor{cai2014changes}'s original presentation.
+sets $\changes_aA, \changes_aB$, much like in Cai et al.'s original presentation.
 
 \subsection{Change actions on arbitrary categories}
 
@@ -2075,7 +2087,7 @@ particular interest to us. Since domains are used to model programming language
 semantics in the presence of general recursion, a theory of change actions on
 the category of domains could open up opportunities for incremental evaluation
 of many programming languages, even those that do not fit into the model of
-\citeauthor{cai2014changes}'s ILC. Our fixpoint theorems are proven over dcpos
+Cai et al.'s ILC. Our fixpoint theorems are proven over dcpos
 in general, and we believe these to be a crucial first step into a more general
 theory of a hypothetical incremental extension to PCF.
 
@@ -2100,7 +2112,12 @@ particular the semantics of Datalog.
   This section is a bit anemic now.
 }
 
-\printbibliography
+\ifbiblatex
+\printbibliography{}
+\else
+\bibliographystyle{splncs04}
+\bibliography{paper}
+\fi
 
 \clearpage
 \appendix
@@ -2109,6 +2126,7 @@ particular the semantics of Datalog.
 
 \subsection{Change actions and derivatives}
 
+\repeatproposition{products}
 \begin{proof}
   \label{prf:products}
   Let $\cstr{Y}$ be a change action, and $f_1: \cstr{Y} \rightarrow \cstr{A}$, $f_2: \cstr{Y}
@@ -2123,6 +2141,7 @@ particular the semantics of Datalog.
   product in the $\cat{Set}$.
 \end{proof}
 
+\repeatproposition{disjointUnions}
 \begin{proof}
   \label{prf:disjointUnions}
   Let $\cstr{Y}$ be a change action, and $f_1 : \cstr{A} \rightarrow \cstr{Y}$, $f_2 : \cstr{B}
@@ -2139,6 +2158,7 @@ particular the semantics of Datalog.
 
 \subsection{Posets and Boolean algebras}
 
+\repeatproposition{lsuperpose}
 \begin{proof}
   \label{prf:lsuperpose}
   We show that the monoid action property holds:
@@ -2219,6 +2239,7 @@ particular the semantics of Datalog.
   Completeness is easy to show.
 \end{proof}
 
+\repeatproposition{booleanAlgebraKernels}
 \begin{proof}
   \label{prf:booleanAlgebraKernels}
   
@@ -2266,6 +2287,7 @@ particular the semantics of Datalog.
 \end{proof}
 
 \subsection {Derivatives of Datalog formulae}
+\repeattheorem{concreteDatalog}
 \begin{proof}
   \label{prf:concreteDatalog}
   Let $T$ be a Datalog formula with free relation variables $R_1, \ldots, R_n$,
@@ -2389,6 +2411,7 @@ particular the semantics of Datalog.
 
 \subsection{Directed-complete partial orders and fixpoints}
 
+\repeatproposition{booleanAlgebraContinuous}
 \begin{proof}
   \label{prf:booleanAlgebraContinuous}
   $L$ is a complete lattice, so certainly a dcpo. $\cstr{L}_\superpose$ is a
@@ -2409,6 +2432,7 @@ particular the semantics of Datalog.
   of $\vee$ and $\wedge$.
 \end{proof}
 
+\repeatproposition{factoringFixpoints}
 \begin{proof}
   \label{prf:factoringFixpoints}
   Let
@@ -2425,6 +2449,7 @@ particular the semantics of Datalog.
   Hence $\lfp(h) = \lfp(p) = (\lfp(f), \lfp(\lambda b . g(\lfp(f), b)))$.
 \end{proof}
 
+\repeatproposition{iterDerivativesN}
 \begin{proof}
   \label{prf:iterDerivativesN}
   By induction on $n$. We show the inductive step.
@@ -2436,6 +2461,7 @@ particular the semantics of Datalog.
   \end{align*}
 \end{proof}
 
+\repeattheorem{fixpointIter}
 \begin{proof}
   \label{prf:fixpointIter}
   \begin{align*}
@@ -2445,6 +2471,7 @@ particular the semantics of Datalog.
   \end{align*}
 \end{proof}
 
+\repeattheorem{fixpointPseudoDerivatives}
 \begin{proof}
   \label{prf:fixpointPseudoDerivatives}
   
@@ -2472,6 +2499,7 @@ particular the semantics of Datalog.
   follows from reversing the direction of the proof.
 \end{proof}
 
+\repeatproposition{iterDerivativesF}
 \begin{proof}
   \label{prf:iterDerivativesF}
   The base case is easy to prove.
@@ -2492,6 +2520,7 @@ particular the semantics of Datalog.
   \end{align*}
 \end{proof}
 
+\repeattheorem{leastFixpointDerivatives}
 \begin{proof}
   \label{prf:leastFixpointDerivatives}
   $\partial_1{\iter}$ and $\nextiter_{f, \change{f}}$ are continuous since
