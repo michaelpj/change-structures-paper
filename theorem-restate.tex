@@ -1,0 +1,31 @@
+\newcommand{\repeattheorem}[1]{%
+  \begingroup
+  \renewcommand{\thetheorem}{\ref{#1}}%
+  \expandafter\expandafter\expandafter\theorem
+  \csname reptheorem@#1\endcsname
+  \endtheorem
+  \endgroup
+}
+
+\NewEnviron{rep-theorem}[1]{%
+  \global\expandafter\xdef\csname reptheorem@#1\endcsname{%
+    \unexpanded\expandafter{\BODY}%
+  }%
+  \expandafter\theorem\BODY\unskip\label{#1}\endtheorem
+}
+
+\newcommand{\repeatproposition}[1]{%
+  \begingroup
+  \renewcommand{\theproposition}{\ref{#1}}%
+  \expandafter\expandafter\expandafter\proposition
+  \csname repproposition@#1\endcsname
+  \endproposition
+  \endgroup
+}
+
+\NewEnviron{rep-proposition}[1]{%
+  \global\expandafter\xdef\csname repproposition@#1\endcsname{%
+    \unexpanded\expandafter{\BODY}%
+  }%
+  \expandafter\proposition\BODY\unskip\label{#1}\endproposition
+}
