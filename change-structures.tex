@@ -1508,32 +1508,6 @@ map.\footnote{Perhaps surprisingly, the authors first discovered an expanded
   version of this formula, and it was only later that we realised the remarkable
   connection to $\derive{\ev}$.}
 
-\begin{rep-theorem}{fixpointPseudoDerivatives}[Pseudo-derivatives of fixpoints]
-\label{theorem:fixpointPseudoDerivatives}
-  Let $\cstr{A}$ be a change action, $\cstr{U} \subseteq \cstr{A} \Rightarrow
-  \cstr{A}$ be a functional change action, $\fixpoint_{U}$, and 
-  $\fixpoint_{\changes A}$ be as in \cref{def:fixpointDerivatives}. Then, for any
-  differentiable function $f \in U$ and any change $\change{f} \in \changes{U}$,
-  $\fixpoint_U(f) \cplus \derive{\fixpoint_U}(f, \change{f})$ is a fixpoint
-  of $f \cplus \change{f}$.
-\end{rep-theorem}
-\ifproofs
-\begin{proof}
-  See \cref{prf:fixpointPseudoDerivatives}.
-\end{proof}
-\fi
-
-This is not enough to give us a true derivative, because we have only shown
-that $\fixpoint_U(f) \cplus \derive{\fixpoint_U}(f, \change{f})$ computes \emph{a} 
-fixpoint for $f \cplus \change{f}$, but not necessarily
-the same one computed by $\fixpoint_U{(f \cplus \change{f})}$.
-
-However, if we restrict ourselves to directed-complete partial orders, least
-fixpoints, and continuous change actions, then $\derive{\lfp}$ (using the
-derivative defined for fixpoint operators in \cref{def:fixpointDerivatives}) \emph{is} a
-derivative of $\lfp$. This is not too onerous a restriction, since this is
-a very natural setting for computing fixpoints.
-
 Since $\lfp$ is characterized as the limit of a chain of functions,
 \cref{cor:diffContinuous} suggests a way to compute its derivative. It suffices to find a derivative
 $\derive{\iter_n}$ of each iteration map 
@@ -2363,34 +2337,6 @@ particular the semantics of Datalog.
     &=\bigsqcup_{n \in \NN} \iter(f, n)\\
     &=\bigsqcup_{n \in \NN} \pi_1 (\nextiter_f^n(\bot))
   \end{align*}
-\end{proof}
-
-\repeattheorem{fixpointPseudoDerivatives}
-\begin{proof}
-  \label{prf:fixpointPseudoDerivatives}
-  
-  We show that a change $\change{w} \in \changes{A}$ satisfies
-  the equation:
-  \begin{equation}\label{eqn:fixcondition}
-    \change{w} = \adjust(f, \change{f})(\change{w})
-  \end{equation}
-  if and only if $\fixpoint(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$.
-
-  Let $\change{w} \in \changes{A}$ satisfy \cref{eqn:fixcondition}. Then
-  \begin{align*}
-    &(f \cplus \change{f})(\fixpoint_A(f) \cplus \change{w})\\
-    &= f(\fixpoint(f))
-    \cplus
-    \adjust(f, \change{f})(\change{w})
-    \tag{by \cref{def:functionalChanges}}\\
-    &= \fixpoint(f)
-    \cplus
-    \change{w}
-    \tag{rolling the fixpoint and \cref{eqn:fixcondition}}
-  \end{align*}
-
-  Hence $\fixpoint(f) \cplus \change{w}$ is a fixpoint of $f \cplus \change{f}$. The converse
-  follows from reversing the direction of the proof.
 \end{proof}
 
 \repeatproposition{iterDerivativesF}
