@@ -1870,23 +1870,6 @@ as a category ($\cat{CAct}$) and the category of
 S-acts $\cat{SAct}$: the objects of $\cat{SAct}$ all maintain the same monoid
 structure, whereas we are interested in changing both the base set \emph{and} the structure of the action.
 
-There are similarities: if we compare the definition of an ``act-preserving''
-homeomorphism in $\cat{SAct}$ (see \cite{kilp2000monoids}) we can see that the structure is
-quite similar to the definition of differentiability:
-\begin{displaymath}
-  f(a \splus s) = f(a) \splus s
-\end{displaymath}
-as opposed to
-\begin{displaymath}
-  f(a \cplus s) = f(a) \cplus \derive{f}(a, s)
-\end{displaymath}
-That is, we use $\derive{f}$ to transform the action element into the new
-monoid, whereas in $\cat{SAct}$ it simply remains the same.
-
-In fact, $\cat{SAct}$ is a subcategory of $\cat{CAct}$, where we only
-consider change actions with change set $S$, and the only functions are those
-whose derivative is $\lambda a. \lambda d. d$.
-
 \subsubsection{Derivatives of fixpoints}
 
 Arntzenius \cite{arntz2017fixpoints} gives a derivative operator for fixpoints based on
@@ -1912,50 +1895,29 @@ accommodate additional language features such as parity-stratified negation and 
 \subsubsection{Incremental maintenance}
 
 There is existing literature on incremental maintenance of relational algebra
-expressions. In particular Griffin, Libkin, and Trickey \cite{griffin1997improved} following
-Qian and Wiederhold \cite{qian1991incremental} reveal the essential insight that it is necessary to
-track both an ``upwards'' and a ``downwards'' difference, and produce a set of
-rules that look quite similar to those we derive in \cref{theorem:concreteDatalog}.
+expressions.
 
-Where our presentation improves over Griffin, Libkin, and Trickey is mainly in
-the genericity of the presentation. Our machinery works for a wider variety of
-algebraic structures, and it is clear how the parts of the proof work together
-to produce the result. In addition, it is easy to see how to extend the proofs
-to cover additional language constructs.
-
-There are some inessential points of difference as well: we work on Datalog,
-rather than relational algebra; and we use set semantics rather than bag
-semantics. This is largely a matter of convenience: Datalog is an easier
-language to work with, and set semantics allows a much wider range of valid
-simplifications. However, all the same machinery applies to relational algebra
-with bag semantics, it is simply necessary to produce a valid version of
-\cref{theorem:concreteDatalog}. Since bag semantics also has a complete change
-action (using multisets), we can always do this.
-
-We also solve the problem of updating \emph{recursive} expressions. As far as we
-know, this is unsolved in general. Most of the attempts to solve it have
-focussed on Datalog rather than relational algebra, since Datalog is designed to
-make heavy use of recursion.
+Griffin, Libkin, and Trickey \cite{griffin1997improved} following
+Qian and Wiederhold \cite{qian1991incremental} compute differences with both an ``upwards'' and a
+``downwards'' component, and produce a set of
+rules that look quite similar to those we derive in
+\cref{theorem:concreteDatalog}. However, our presentation is significantly more
+generic, handles recursive expressions, and works on set semantics
+rather than bag semantics (although the same approach would work with bag semantics).
 
 Several approaches
-\cite{gupta1993maintaining,harrison1992maintenance}, most notably DReD
-make use of a common tactic: one can get to the new fixed
-point by starting from \emph{any} point below it, and then iterating the
-semantics again to fixpoint. The approach, then, is to find a way to delete as
-few facts as possible to get below the new fixpoint, and then iterate again
-(possibly using an incremental version of the semantics).
-
-This is a perfectly reasonable approach, and given a good, domain-specific,
-means of getting below the fixpoint, they can be quite efficient.
-The main defect of these approaches is that they \emph{are} domain specific,
-and hence inflexible with respect to changes in the language or structure,
-whereas our approach is quite generic. Although we know of no theoretical reason
+\cite{gupta1993maintaining,harrison1992maintenance} \textemdash{} most notably
+DReD \textemdash{}
+remove fact until one can start applying the
+rules again to reach the new fixpoint. Given a good way of deciding what
+facts to remove this can be quite efficient.
+However, such techniques tend to be tightly coupled to the domain.
+Although we know of no theoretical reason
 why either approach should give superior performance when both are applicable,
 an empirical investigation of this could prove interesting.
 
 Other approaches \cite{dong2000incremental,urpi1992method} consider only
-restricted subsets of Datalog, or incur other substantial constraints, and our results
-are thus significantly more general.
+restricted subsets of Datalog, or incur other substantial constraints.
 
 \subsubsection{Embedding Datalog}
 \label{sec:embeddingDatalog}
