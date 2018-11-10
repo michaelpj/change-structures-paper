@@ -1030,42 +1030,6 @@ While the definitions usually exhibit the dualities we would expect
 \end{proof}
 \fi
 
-\subsubsection{Examples}
-
-We can now give a derivative for our $treeP$ predicate by mechanically applying
-the recursive functions defined in \cref{fig:datalogDerivatives}.
-\begin{align*}
-  &\updiff(treeP(x))\\
-  &= \updiff(p(x) \wedge \neg \exists y. (child(x, y) \wedge \neg treeP(y)))\\
-  &= p(x) \wedge \updiff(\neg \exists y. (child(x, y) \wedge \neg treeP(y)))\\
-  &= p(x) \wedge \downdiff(\exists y. (child(x, y) \wedge \neg treeP(y)))\\
-  &= p(x) \wedge \exists y. \downdiff(child(x, y) \wedge \neg treeP(y)) \wedge \neg \exists y. \bothdiff(child(x,y) \wedge \neg treeP(y))\\
-  &= p(x) \wedge \exists y. (child(x, y) \wedge \downdiff(\neg treeP(y))) \wedge \neg \exists y. (child(x,y) \wedge \neg \bothdiff(treeP(y)))\\
-  &= p(x) \wedge \exists y. (child(x, y) \wedge \updiff(treeP(y))) \wedge \neg \exists y. (child(x,y) \wedge \neg \bothdiff(treeP(y)))\\
-  \\
-  &\downdiff(treeP(x))\\
-  &= \downdiff(p(x) \wedge \neg \exists y. (child(x, y) \wedge \neg treeP(y)))\\
-  &= p(x) \wedge \downdiff(\neg \exists y. (child(x, y) \wedge \neg treeP(y)))\\
-  &= p(x) \wedge \updiff(\exists y. (child(x, y) \wedge \neg treeP(y)))\\
-  &= p(x) \wedge \exists y. \updiff(child(x, y) \wedge \neg treeP(y))\\
-  &= p(x) \wedge \exists y. (child(x, y) \wedge \updiff(\neg treeP(y)))\\
-  &= p(x) \wedge \exists y. (child(x, y) \wedge \downdiff(treeP(y)))
-\end{align*}
-
-The upwards difference in particular is not especially easy to compute. If we naively compute it, the
-third conjunct requires us to recompute the whole of the recursive part. However,
-the second conjunct gives us a
-guard: we only need to evaluate the third conjunct if the second conjunct is
-non-empty, i.e there is \emph{some} change in the body of the existential.
-
-This shows that our derivatives aren't a panacea: it is simply \emph{hard} to compute
-downwards differences for $\exists$ (and, equivalently, upwards differences for
-$\forall$) because we must check that there is no other way of deriving the same
-facts.\footnote{The ``support'' data structures introduced by
-  \cite{gupta1993maintaining} are an attempt to avoid this issue by
-  tracking the number of derivations of each tuple.} However, we can still avoid
-the re-evaluation in many cases, and the inefficiency is local to this subformula.
-
 \subsubsection{Precision}
 
 In practice, while the derivative given in \cref{theorem:concreteDatalog} is not
