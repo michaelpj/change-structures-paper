@@ -1,7 +1,28 @@
-% Toggle comments for preamble and topmatter to typeset in ACM style
+\documentclass[manuscript,acmsmall,natbib=true]{acmart}
+\pdfoutput=1
 
-%\input{preamble-standard}
-\input{preamble-acm}
+\makeatletter
+\renewcommand{\@formatdoi}[1]{\ignorespaces}
+\makeatother
+
+\settopmatter{printacmref=false}
+\renewcommand\footnotetextcopyrightpermission[1]{}
+\fancyfoot{}
+
+\acmJournal{PACMPL}
+\acmVolume{1}
+\acmNumber{CONF} % CONF = POPL or ICFP or OOPSLA
+\acmArticle{1}
+\acmYear{2018}
+\acmMonth{1}
+\acmDOI{} % \acmDOI{10.1145/nnnnnnn.nnnnnnn}
+\startPage{1}
+
+\setcopyright{none}
+\usepackage{booktabs}   %% For formal tables:
+                        %% http://ctan.org/pkg/booktabs
+\usepackage{subcaption} %% For complex figures with subfigures/subcaptions
+                        %% http://ctan.org/pkg/subcaption
 
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
@@ -15,12 +36,9 @@
 \usepackage{appendix}
 
 % Packages where the order matters
-\usepackage[
-  safeinputenc,
-  natbib=true
-]{biblatex}
-\usepackage{cleveref}
+\usepackage{natbib}
 \usepackage{hyperref}
+\usepackage{cleveref}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% BEGIN {Macros / packages by Luke}
@@ -53,18 +71,189 @@
 %% END {Macros / packages by Luke}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\input{notation}
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}
+
+\theoremstyle{definition}
+\newtheorem{prop}[thm]{Proposition}
+
+\theoremstyle{remark}
+\newtheorem{claim}[thm]{Claim}
+
+\theoremstyle{remark}
+\newtheorem{corollary}[thm]{Corollary}
+
+\theoremstyle{remark}
+\newtheorem{rem}[thm]{Remark}
+
+\theoremstyle{definition}
+\newtheorem{defn}[thm]{Definition}
+
+% Notation
+
+% General
+\newcommand{\defeq}{\coloneqq}
+\newcommand{\cat}[1]{\mathbf{#1}}
+\newcommand{\equalizer}[2]{Eq(#1, #2)}
+\newcommand{\powerset}[1]{\mathcal{P}(#1)}
+\newcommand{\denote}[1]{\llbracket #1 \rrbracket}
+\newcommand{\sem}[1]{\denote{#1}} % Small abbreviation
+\newcommand{\ev}{\operatorname{ev}}
+\newcommand{\id}{\operatorname{id}}
+\newcommand{\doubleplus}{\ensuremath{\mathbin{+\mkern-10mu+}}}
+\newcommand{\pair}[2]{\left\langle {#1}, {#2} \right\rangle}
+\newcommand{\into}[0]{\rightarrow}
+
+% Change structures
+% Generic "thing in a circle" operator
+\makeatletter
+\newcommand\cplussym
+{
+  \mathpalette\@incircbin
+}
+\newcommand\@incircbin[2]
+{
+  \mathbin
+  {
+    \ooalign{\hidewidth$#1#2$\hidewidth\crcr$#1\bigcirc$}%
+  }
+}
+\makeatother
+
+\newcommand{\cplus}{\oplus}
+\newcommand{\cpluss}{\boxplus}
+\newcommand{\cplusss}{\odot}
+\newcommand{\cplusvee}{\cplussym{\vee}}
+\newcommand{\cminus}{\ominus}
+
+\newcommand{\splus}{\cdot}
+\newcommand{\mzero}{\mathbf{0}}
+
+\newcommand{\cstruct}[3]{(#1,#2,#3)}
+\newcommand{\cstr}[1]{\hat{#1}}
+\newcommand{\changes}[1]{\Delta #1}
+\newcommand{\change}[1]{\delta #1}
+
+\newcommand{\discrete}{\emptyset}
+
+\newcommand{\derive}[1]{#1'}
+\newcommand{\supderive}[1]{#1_\uparrow}
+\newcommand{\supderiveM}[1]{#1_{\uparrow\uparrow}}
+\newcommand{\subderive}[1]{#1_\downarrow}
+\newcommand{\subderiveM}[1]{#1_{\downarrow\downarrow}}
+
+\newcommand{\monotoneDerive}[1]{#1'^{M}}
+
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\ZZ}{\mathbb{Z}}
+  
+\newcommand{\upsem}[1]{\sem{\updiff{#1}}}
+\newcommand{\downsem}[1]{\sem{\downdiff{#1}}}
+\newcommand{\bothsem}[1]{\sem{\bothdiff{#1}}}
+
+\newcommand{\semR}[0]{\mathcal{R}}
+\newcommand{\diffR}[0]{\change{\semR}}
+
+\newcommand{\kernel}{\sim}
+\newcommand{\kernelOrder}{\leq_\kernel}
+\newcommand{\pointwiseOrder}{\leq_{pt}}
+
+% Some kinds of function spaces
+\newcommand{\ra}{\rightarrow}
+\newcommand{\Ra}{\Rightarrow}
+\newcommand{\ptfunc}{\Rightarrow_{pt}}
+
+% Algebra
+\newcommand{\reach}{\operatorname{Reach}}
+\newcommand{\direct}{\operatorname{Direct}}
+\newcommand{\superpose}{{\bowtie}}
+\newcommand{\curry}[1]{\Lambda{#1}}
+\newcommand{\exponential}[2]{{#1} \Rightarrow {#2}}
+
+% Orders
+\newcommand{\reachOrder}{\leq_R}
+\newcommand{\changeOrder}{\leq_\Delta}
+\newcommand{\fineOrder}{\leq_D}
+\newcommand{\minusOrder}{\leq_\cminus}
+
+% Lattices
+\newcommand{\twist}{\cplus_{\bowtie}}
+\newcommand{\disjointTimes}{\bowtie}
+\newcommand{\updiff}{\Delta}
+\newcommand{\downdiff}{\nabla}
+
+% Fixpoints
+\newcommand{\fixpoint}{\mathbf{fix}}
+\newcommand{\lfp}{\mathbf{lfp}}
+\newcommand{\adjust}{\mathbf{adjust}}
+\newcommand{\iter}{\mathbf{iter}}
+\newcommand{\nextiter}{\mathbf{recur}}
+
+% Datalog
+\newcommand{\Formula}{\mathrm{Formula}}
+\newcommand{\Rel}{\cat{Rel}}
+\newcommand{\universalRel}{\mathcal{U}}
+\newcommand{\consq}{\mathcal{I}}
 
 \newif\ifproofs
 % Comment out to disable proofs
 %\proofstrue
 
-\addbibresource{paper.bib}
-
 \begin{document}
 
-%\input{topmatter-standard}
-\input{topmatter-acm}
+\author{Mario Alvarez Picallo}
+\affiliation{
+  \position{PhD Student}
+  \department{Computer Science}
+  \institution{University of Oxford}            %% \institution is required
+  \country{United Kingdom}                    %% \country is recommended
+}
+\email{mario.alvarez-picallo@cs.ox.ac.uk}          %% \email is recommended
+
+\author{Alex Eyers-Taylor}
+\affiliation{
+  \position{Research Engineer}
+  \institution{Semmle Ltd}            %% \institution is required
+  \country{United Kingdom}                    %% \country is recommended
+}
+\email{alexet@semmle.com}          %% \email is recommended
+
+\author{Michael Peyton Jones}
+\affiliation{
+  \position{Research Engineer}
+  \institution{Semmle Ltd}            %% \institution is required
+  \country{United Kingdom}                    %% \country is recommended
+}
+\email{michael@semmle.com}          %% \email is recommended
+
+\author{Luke Ong}
+\affiliation{
+  \position{Professor of Computer Science}
+  \department{Computer Science}
+  \institution{University of Oxford}            %% \institution is required
+  \country{United Kingdom}                    %% \country is recommended
+}
+\email{luke.ong@cs.ox.ac.uk}          %% \email is recommended
+
+\begin{CCSXML}
+<ccs2012>
+<concept>
+<concept_id>10003752.10010124.10010131.10010133</concept_id>
+<concept_desc>Theory of computation~Denotational semantics</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10011007.10011006.10011008.10011009.10011015</concept_id>
+<concept_desc>Software and its engineering~Constraint and logic languages</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Theory of computation~Denotational semantics}
+\ccsdesc[500]{Software and its engineering~Constraint and logic languages}
+
+\keywords{incremental computation, semantics, dcpos, Datalog}  %% \keywords are mandatory in final camera-ready submission
 
 \begin{abstract}
  Incremental computation has recently been studied using the concepts of \emph{change
@@ -92,7 +281,7 @@
 \section{Introduction}
 \label{sec:intro}
 
-Consider the following classic Datalog program\footnote{See \autocite[][part D]{abiteboul1995foundations} for an introduction to Datalog.},
+Consider the following classic Datalog program\footnote{See \citep[][part D]{abiteboul1995foundations} for an introduction to Datalog.},
 which computes the transitive closure of an edge relation $e$:
 \begin{align*}
   tc(x, y) &\leftarrow e(x, y)\\
@@ -124,7 +313,7 @@ even though we had already deduced it in the first iteration. Indeed, for a
 chain of $n$ such edges we will deduce $O(n^2)$ facts along the way.
 
 The standard improvement to this evaluation strategy is known as ``semi-naive'' 
-evaluation\autocite[See][section 13.1]{abiteboul1995foundations}, where we transform 
+evaluation\citep[See][section 13.1]{abiteboul1995foundations}, where we transform 
 the program into a \emph{delta} program with two parts:
 \begin{itemize}
   \item A \emph{delta} rule that computes the \emph{new} facts at each
@@ -162,10 +351,10 @@ changes to its inputs.
 But the delta rule translation works only for traditional Datalog. It is common to
 liberalise the formula syntax with additional features, such as disjunction,
 existential quantification, negation, and aggregation.\footnote{See, for
-  example, \autocites(LogiQL)(){logicbloxWebsite}{halpin2014logiql},
-  \autocites(Datomic)(){datomicWebsite},
-  \autocites(Souffle)(){souffleWebsite}{scholz2016fast}, and
-  \autocites(DES)(){saenz2011deductive}, which between them have all of these
+  example, \citep[LogiQL]{logicbloxWebsite,halpin2014logiql},
+  \citep[Datomic]{datomicWebsite},
+  \citep[Souffle]{souffleWebsite,scholz2016fast}, and
+  \citep[DES]{saenz2011deductive}, which between them have all of these
   features and more. } 
 This allows us to write programs like the following, where we compute whether all the
 nodes in a subtree given by $child$ have some property $p$:
@@ -199,11 +388,11 @@ freedom to optimize within a range of possible alternatives to improve precision
 Handling extended Datalog is of more than theoretical interest \textemdash{} the research
 in this paper was carried out at Semmle, which
 makes heavy use of a commercial Datalog implementation
-\autocites{semmleWebsite}{avgustinov2016ql}{sereni2008adding}{schafer2010type}.
+\citep{semmleWebsite,avgustinov2016ql,sereni2008adding,schafer2010type}.
 Semmle's implementation includes parity-stratified negation\footnote{Parity-stratified negation means that recursive calls must
   appear under an even number of negations. This ensures that the rule remains
   monotone, so the least fixpoint still exists.},
-recursive aggregates \autocite{demoor2013aggregates}, and other non-standard
+recursive aggregates \citep{demoor2013aggregates}, and other non-standard
 features, so we are faced with a dilemma: either abandon the new language
 features, or abandon incremental computation.
 
@@ -211,13 +400,13 @@ We can tell a similar story about \emph{maintenance} of Datalog programs.
 Maintenance means updating the results of the program when its inputs change,
 for example, updating the value of $tc$ given a change to $e$. Again, this is a
 kind of incremental computation, and there are known solutions for traditional Datalog
-\autocite{gupta1993maintaining}, but these break down when the language is extended.
+\citep{gupta1993maintaining}, but these break down when the language is extended.
 
 There is a piece of folkloric knowledge in the Datalog community that hints at a
 solution: the semi-naive translation of a rule corresponds to the
-\emph{derivative} of that rule \autocites{bancilhon1986naive}[section
-3.2.2]{bancilhon1986amateur}. The idea of performing incremental computation using derivatives has been
-studied recently by \textcite{cai2014changes}, who give an account using
+\emph{derivative} of that rule \citep{bancilhon1986amateur,bancilhon1986naive}[section
+3.2.2]. The idea of performing incremental computation using derivatives has been
+studied recently by \citet{cai2014changes}, who give an account using
 \emph{change structures}. They use this to provide a framework for incrementally evaluating lambda calculus programs.
 
 However, \citeauthor{cai2014changes}'s work isn't directly applicable to Datalog: the tricky part
@@ -813,7 +1002,7 @@ real and pressing, as we saw in \cref{sec:intro}.
 Datalog is usually given a logical semantics where formulae are interpreted as first-order
 logic predicates and the semantics of a program is the set of models of its constituent
 predicates. We will instead give a simple denotational semantics (as is
-typical when working with fixpoints \autocite[See e.g.][]{compton1994stratified}) that treats a Datalog
+typical when working with fixpoints \citep[See e.g.][]{compton1994stratified}) that treats a Datalog
 formula as directly denoting a relation, i.e.
 a set of named tuples, with variables ranging over a finite schema.
 
@@ -917,7 +1106,7 @@ derivative ($\derive{f}_{\cminus_\kernel}$ lies roughly in the middle of them),
 and we can therefore optimize anywhere within that range to make a 
 trade-off between ease of computation and precision.
 The idea of using an approximation
-to the precise derivative, and a soundness condition, appears in \textcite{bancilhon1986amateur}.
+to the precise derivative, and a soundness condition, appears in \citet{bancilhon1986amateur}.
 
 There is also the question of how to compute the derivative. Since the change
 set for $\widehat{\Rel}_\superpose$ is a subset of $\Rel \times \Rel$, it
@@ -1048,7 +1237,7 @@ This shows that our derivatives aren't a panacea: it is simply \emph{hard} to co
 downwards differences for $\exists$ (and, equivalently, upwards differences for
 $\forall$) because we must check that there is no other way of deriving the same
 facts.\footnote{The ``support'' data structures introduced by
-  \autocite{gupta1993maintaining} are an attempt to avoid this issue by
+  \citep{gupta1993maintaining} are an attempt to avoid this issue by
   tracking the number of derivations of each tuple.} However, we can still avoid
 the re-evaluation in many cases, and the inefficiency is local to this subformula.
 
@@ -1082,7 +1271,7 @@ where $\mathrm{agg}$ refers to an aggregation function (such as ``sum'' or
 ``min''), $vs$ is a sequence of variables, $p$ and $r$ are variables,
 $T$ is a formula possibly mentioning $vs$, and $U$ is a formula
 possibly mentioning $vs$ and $p$. The full details can been found in
-\textcite{demoor2013aggregates}, but for example this allows us to write
+\citet{demoor2013aggregates}, but for example this allows us to write
 \begin{align*}
   height(n, h) \leftarrow& \neg \exists c. (child(n, c)) \wedge h = 0\\
   &\vee \exists h'. (h' = \mathrm{max}(p)(c \mid child(n, c) \mid height(c, p)) \wedge h = h' + 1)
@@ -1331,7 +1520,7 @@ is the following analogous result:
 \fi
 
 We also state the following additional fixpoint lemma. This is a specialization of
-Beki\'c's Theorem \autocite[][section 10.1]{winskel1993formal}, but it has a straightforward direct proof.
+Beki\'c's Theorem \citep[][section 10.1]{winskel1993formal}, but it has a straightforward direct proof.
 
 \begin{prop}[name=Factoring of fixpoints, restate=factoringFixpoints]
   \label{prop:factoringFixpoints}
@@ -1664,7 +1853,7 @@ modular, so we will be able to extend this result more easily.
 \end{proof}
 \fi
 
-This is known \autocite[see][and successors]{gupta1993maintaining},
+This is known \citep[see][and successors]{gupta1993maintaining},
 but again, the proof is now modular so we can extend it.
 
 \subsubsection{Worked example of updating a recursive Datalog program}
@@ -1768,7 +1957,7 @@ versions of the engine:
 We used Semmle's profiling infrastructure, which runs over 800 queries (compiled to
 Datalog programs) on a wide range
 of real-world databases. The queries are compiled from Semmle's QL language
-\autocite{avgustinov2016ql}, which produces large Datalog programs \textemdash{}
+\citep{avgustinov2016ql}, which produces large Datalog programs \textemdash{}
 a typical size is over 30,000 lines of Datalog. The databases represent
 real-world programs that are subject to analysis, for example the Linux kernel,
 which is 1.8 MLOC and produces a database of size 783Mb.
@@ -1820,7 +2009,7 @@ particular database engine, and so of less general interest.
 \subsubsection{Change structures}
 \label{sec:relatedChangeStructures}
 
-The seminal paper in this area is \textcite{cai2014changes}. We deviate from
+The seminal paper in this area is \citet{cai2014changes}. We deviate from
 that excellent paper in three regards: the
 inclusion of minus operators, the nature of function changes, and the use of
 dependent types.
@@ -1836,28 +2025,28 @@ operators \textemdash{} instead, one would
 be forced to work with e.g. multisets admitting negative arities, as \citeauthor{cai2014changes} do.
 
 Our function changes (when well behaved) correspond to what \citeauthor{cai2014changes} call
-\emph{pointwise differences} \autocite[see][section 2.2]{cai2014changes}. As
+\emph{pointwise differences} \citep[see][section 2.2]{cai2014changes}. As
 they point out, you can reconstruct their
 function changes from pointwise changes and derivatives, so the two formulations
 are equivalent. 
 
 The equivalence of our presentations means that our work should be compatible
-with ILC \autocite[see][section 3]{cai2014changes}. The derivatives we give in \cref{sec:datalogDifferentiability} are more or
-less a ``change semantics'' for Datalog \autocite[see][section
+with ILC \citep[see][section 3]{cai2014changes}. The derivatives we give in \cref{sec:datalogDifferentiability} are more or
+less a ``change semantics'' for Datalog \citep[see][section
 3.5]{cai2014changes}. 
 
 \subsubsection{S-acts}
 \label{sec:sacts}
 
 S-acts (i.e the category of monoid actions on sets) and their categorical structure have received a fair amount of attention
-over the years (\textcite{kilp2000monoids} is a good
+over the years (\citet{kilp2000monoids} is a good
 overview). However, there is a key difference between change actions considered
 as a category ($\cat{CAct}$) and the category of
 S-acts $\cat{SAct}$: the objects of $\cat{SAct}$ all maintain the same monoid
 structure, whereas we are interested in changing both the base set \emph{and} the structure of the action.
 
 There are similarities: if we compare the definition of an ``act-preserving''
-homeomorphism in $\cat{SAct}$ \autocite[see][]{kilp2000monoids} we can see that the structure is
+homeomorphism in $\cat{SAct}$ \citep[see][]{kilp2000monoids} we can see that the structure is
 quite similar to the definition of differentiability:
 \begin{displaymath}
   f(a \splus s) = f(a) \splus s
@@ -1875,8 +2064,8 @@ whose derivative is $\lambda a. \lambda d. d$.
 
 \subsubsection{Derivatives of fixpoints}
 
-\textcite{arntz2017fixpoints} gives a derivative operator for fixpoints based on
-the framework in \textcite{cai2014changes}. However, since we have different
+\citet{arntz2017fixpoints} gives a derivative operator for fixpoints based on
+the framework in \citet{cai2014changes}. However, since we have different
 notions of function changes, the result is inapplicable as
 stated. In addition, we require a somewhat different set of conditions; in particular, we
 don't require our changes to always be increasing.
@@ -1886,9 +2075,9 @@ don't require our changes to always be increasing.
 \subsubsection{Incremental evaluation}
 
 The earliest interpretation of semi-naive evaluation as a derivative 
-appears in \textcite{bancilhon1986naive}. The idea of using an approximate derivative
+appears in \citet{bancilhon1986naive}. The idea of using an approximate derivative
 and the requisite soundness condition appears as a throwaway comment in
-\textcite[][section 3.2.2]{bancilhon1986amateur}, and it would appear that nobody has since
+\citet[][section 3.2.2]{bancilhon1986amateur}, and it would appear that nobody has since
 developed that approach.
 
 As far as we know, traditional semi-naive is the state of
@@ -1898,8 +2087,8 @@ accommodate additional language features such as parity-stratified negation and 
 \subsubsection{Incremental maintenance}
 
 There is existing literature on incremental maintenance of relational algebra
-expressions. In particular \textcite{griffin1997improved} following
-\textcite{qian1991incremental} reveal the essential insight that it is necessary to
+expressions. In particular \citet{griffin1997improved} following
+\citet{qian1991incremental} reveal the essential insight that it is necessary to
 track both an ``upwards'' and a ``downwards'' difference, and produce a set of
 rules that look quite similar to those we derive in \cref{thm:concreteDatalog}.
 
@@ -1924,7 +2113,7 @@ focussed on Datalog rather than relational algebra, since Datalog is designed to
 make heavy use of recursion.
 
 Several approaches
-\autocites{gupta1993maintaining}{harrison1992maintenance}, most notably DReD
+\citep{gupta1993maintaining,harrison1992maintenance}, most notably DReD
 make use of a common tactic: one can get to the new fixed
 point by starting from \emph{any} point below it, and then iterating the
 semantics again to fixpoint. The approach, then, is to find a way to delete as
@@ -1939,21 +2128,21 @@ whereas our approach is quite generic. Although we know of no theoretical reason
 why either approach should give superior performance when both are applicable,
 an empirical investigation of this could prove interesting.
 
-Other approaches \autocites{dong2000incremental}{urpi1992method} consider only
+Other approaches \citep{dong2000incremental,urpi1992method} consider only
 restricted subsets of Datalog, or incur other substantial constraints, and our results
 are thus significantly more general.
 
 \subsubsection{Embedding Datalog}
 \label{sec:embeddingDatalog}
 
-Datafun (\textcite{arntz2016datafun}) is a functional programming language that embeds
+Datafun (\citet{arntz2016datafun}) is a functional programming language that embeds
 Datalog, allowing significant improvements in genericity, such as the use of
 higher-order functions. Since we have directly defined a change action and
 derivative operator for Datalog, our work could be used as a ``plugin'' in the sense
 of \citeauthor{cai2014changes}, allowing Datafun to compute its internal fixpoints
 incrementally, but also allowing Datafun expressions to be fully incrementally maintained.
 
-In a different direction, \textcite{cathcartburn2018hochc} have proposed
+In a different direction, \citet{cathcartburn2018hochc} have proposed
 \emph{higher-order constrained Horn clauses}
 (HoCHC), a new class of constraints for the automatic verification of higher-order programs.
 HoCHC may be viewed as a higher-order extension of Datalog. 
@@ -1962,7 +2151,7 @@ Change actions can be readily applied to organise an efficient semi-naive method
 \subsection{Differential $\lambda$-calculus}
 
 Another setting where derivatives of arbitrary higher-order programs have been studied
-is the \emph{differential $\lambda$-calculus} \autocites{ehrhard2003differential}{ehrhard2017introduction}.
+is the \emph{differential $\lambda$-calculus} \citep{ehrhard2003differential,ehrhard2017introduction}.
 This is a higher-order, simply-typed $\lambda$-calculus which allows for computing the derivative of a function, in a similar
 way to the notion of derivative in Cai's work and the present paper.
 
@@ -1975,22 +2164,22 @@ that is being differentiated (see \cref{def:derivative}).
 
 Families of denotational models for the differential $\lambda$-calculus have been
 studied in depth
-\autocites{bucciarelli2010categorical}{blute2010convenient}{cockett2016categorical}{kerjean2016mackey},
+\citep{bucciarelli2010categorical,blute2010convenient,cockett2016categorical,kerjean2016mackey},
 and the relationship between these and change actions is the subject of ongoing work.
 
 \subsection{Higher-order automatic differentiation}
 
-Automatic differentiation \autocite{griewank2008evaluating} is a technique that allows
+Automatic differentiation \citep{griewank2008evaluating} is a technique that allows
 for efficiently computing the derivative of arbitrary programs, with
-applications in probabilistic modeling \autocite{kucukelbir2017automatic}
-and machine learning \autocite{baydin2014automatic} among other areas. In recent times, this technique has been successfully
-applied to higher-order languages \autocites{siskind2008nesting}{baydin2016diffsharp}.
-While some approaches have been suggested \autocites{manzyuk2012simply}{kelly2016evolving}, a general
+applications in probabilistic modeling \citep{kucukelbir2017automatic}
+and machine learning \citep{baydin2014automatic} among other areas. In recent times, this technique has been successfully
+applied to higher-order languages \citep{siskind2008nesting,baydin2016diffsharp}.
+While some approaches have been suggested \citep{manzyuk2012simply,kelly2016evolving}, a general
 theoretical framework for this technique is still a matter of open research. 
 
 To this purpose, some authors have proposed the incremental $\lambda$-calculus
 as a foundational framework on which models of automatic differentiation can
-be based \autocite{kelly2016evolving}. We believe our change actions are better suited
+be based \citep{kelly2016evolving}. We believe our change actions are better suited
 to this purpose than the incremental $\lambda$-calculus, since one can easily give them a
 synthetic differential geometric reading (by interpreting $\cstr{A}$ as an Euclidean module and $\changes{A}$
 as its corresponding spectrum, for example).
@@ -2107,7 +2296,8 @@ helpful comments on the manuscript.
 
 \end{acks}
 
-\printbibliography
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{paper}
 
 \clearpage
 \appendix
