@@ -266,7 +266,7 @@
 
   We then show how to compute derivatives of fixpoints. This allows us to
   perform incremental evaluation and maintenance of recursively defined
-  functions with particular application generalised Datalog programs.
+  functions, with particular application to generalised Datalog programs.
 
   Moreover, unlike previous results, our techniques are \emph{modular} in that
   they are easy to apply both to variants of Datalog and to other programming languages.
@@ -1176,13 +1176,11 @@ from a derivative, the new formulae will have additional free relation variables
 for the upwards and downwards derivatives of the free relation variables of $T$.\footnote{
 While the definitions usually exhibit the dualities we would expect
   between corresponding operators, there are a few asymmetries to explain.
-
   The asymmetry between the cases for $\updiff(T \vee U)$ and
   $\downdiff(T \wedge U)$ is for operational reasons. The symmetrical version of
   $\updiff(T \vee U)$ is $(\updiff(T) \wedge \neg U) \vee (\updiff(U) \wedge \neg
   T)$ (which is also precise). The reason we omit the negated conjuncts is simply
   that they are costly to compute and not especially helpful to our evaluation engine.
-
   The asymmetry between the cases for $\exists$ is because our
   dialect of Datalog does not have a primitive universal quantifier.
   If we did have one, the cases for $\exists$ would be dual to the corresponding
@@ -1208,16 +1206,23 @@ While the definitions usually exhibit the dualities we would expect
 \subsubsection{Examples}
 
 We can now give a derivative for our $treeP$ predicate by mechanically applying
-the recursive functions defined in \cref{fig:datalogDerivatives}.
+the recursive functions defined in \cref{fig:datalogDerivatives}. This
+derivative is composed of an upward part $\updiff(treeP(x))$ and a downward part
+$\downdiff(treeP(x))$.
+
 \begin{align*}
   &\updiff(treeP(x))\\
   &= \updiff(p(x) \wedge \neg \exists y. (child(x, y) \wedge \neg treeP(y)))\\
   &= p(x) \wedge \updiff(\neg \exists y. (child(x, y) \wedge \neg treeP(y)))\\
   &= p(x) \wedge \downdiff(\exists y. (child(x, y) \wedge \neg treeP(y)))\\
-  &= p(x) \wedge \exists y. \downdiff(child(x, y) \wedge \neg treeP(y)) \wedge \neg \exists y. \bothdiff(child(x,y) \wedge \neg treeP(y))\\
-  &= p(x) \wedge \exists y. (child(x, y) \wedge \downdiff(\neg treeP(y))) \wedge \neg \exists y. (child(x,y) \wedge \neg \bothdiff(treeP(y)))\\
-  &= p(x) \wedge \exists y. (child(x, y) \wedge \updiff(treeP(y))) \wedge \neg \exists y. (child(x,y) \wedge \neg \bothdiff(treeP(y)))\\
-  \\
+  &= p(x) \wedge \exists y. \downdiff(child(x, y) \wedge \neg treeP(y))\\
+  & \quad\wedge \neg \exists y. \bothdiff(child(x,y) \wedge \neg treeP(y))\\
+  &= p(x) \wedge \exists y. (child(x, y)\\
+  & \quad\wedge \downdiff(\neg treeP(y))) \wedge \neg \exists y. (child(x,y) \wedge \neg \bothdiff(treeP(y)))\\
+  &= p(x) \wedge \exists y. (child(x, y)\\
+  & \quad\wedge \updiff(treeP(y))) \wedge \neg \exists y. (child(x,y) \wedge \neg \bothdiff(treeP(y)))\\
+\end{align*}
+\begin{align*} 
   &\downdiff(treeP(x))\\
   &= \downdiff(p(x) \wedge \neg \exists y. (child(x, y) \wedge \neg treeP(y)))\\
   &= p(x) \wedge \downdiff(\neg \exists y. (child(x, y) \wedge \neg treeP(y)))\\
