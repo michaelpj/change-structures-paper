@@ -1,5 +1,5 @@
 %% For double-blind review submission, w/o CCS and ACM Reference (max submission space)
-\documentclass[acmsmall,review,anonymous,natbib=false]{acmart}\settopmatter{printfolios=true,printccs=false,printacmref=false}
+%\documentclass[acmsmall,review,anonymous,natbib=false]{acmart}\settopmatter{printfolios=true,printccs=false,printacmref=false}
 %% For double-blind review submission, w/ CCS and ACM Reference
 %\documentclass[acmsmall,review,anonymous,natbib=false]{acmart}\settopmatter{printfolios=true}
 %% For single-blind review submission, w/o CCS and ACM Reference (max submission space)
@@ -7,7 +7,14 @@
 %% For single-blind review submission, w/ CCS and ACM Reference
 %\documentclass[acmsmall,review,natbib=false]{acmart}\settopmatter{printfolios=true}
 %% For final camera-ready submission, w/ required CCS and ACM Reference
-%\documentclass[acmsmall,natbib=false]{acmart}\settopmatter{}
+\documentclass[manuscript,acmsmall,natbib=false]{acmart}
+\makeatletter
+\renewcommand{\@formatdoi}[1]{\ignorespaces}
+\makeatother
+
+\settopmatter{printacmref=false}
+\renewcommand\footnotetextcopyrightpermission[1]{}
+\fancyfoot{}
 
 %% Journal information
 %% Supplied to authors by publisher for camera-ready submission;
