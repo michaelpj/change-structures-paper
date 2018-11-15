@@ -191,11 +191,7 @@ Here the combination of negation and explicit existential quantification amounts
 to recursion through a \emph{universal} quantifier. We would
 like to be able to use semi-naive evaluation for this rule too, but the simple delta
 transformation is not well defined for the extended program syntax, and it is unclear how to extend it (and the
-correctness proof) to handle such cases.\footnote{A simple approach is to just
-  keep applying the algorithm of ``replace each recursive call in turn with its
-  delta, and take the union of each of those''. But this is in fact incorrect
-  and does not produce correct incremental programs in general.}
-\todomario{I find this footnote a bit confusing - maybe remove?}
+correctness proof) to handle such cases.
 
 It is possible, however, to write a delta program for $treeP$ by hand; indeed,
 the following definition provides one:
@@ -1540,7 +1536,6 @@ modular, so we will be able to extend this result more easily.
 This is known (see \cite{gupta1993maintaining} and successors),
 but again, the proof is now modular so we can extend it.
 
-
 \section{Related work}
 
 \subsection{Change actions and incremental computation}
@@ -1685,22 +1680,16 @@ to this purpose than the incremental $\lambda$-calculus, since one can easily gi
 synthetic differential geometric reading (by interpreting $\cstr{A}$ as an Euclidean module and $\changes{A}$
 as its corresponding spectrum, for example).
 
-\section{Future work}
+\section{Conclusions and future work}
 
-Our work opens a number of avenues for future investigation.
+We have presented change actions and their properties, and used them to provide
+novel, compositional, strategies for incrementally evaluating and maintaining recursive functions, in
+particular the semantics of Datalog.
 
-\subsection{The category of change actions}
-
-First, there is a category $\cat{CAct}$ of change actions and differentiable
-functions between them, since the identity function is differentiable and the chain
-rule guarantees that composition preserves differentiability. The product and sum change
-actions described in section \cref{sec:prodsum} correspond to products and
-coproducts in this category. Furthermore, \cref{theorem:functionalCAct} can be
-read as showing that complete change actions form an exponential ideal in $\cat{CAct}$.
-
-There is a great deal of work to be done exploring a categorical approach to the
-material in this paper. $\cat{CAct}$ is equivalent to $\cat{PreOrd}$, and there
-are useful subcategories of $\cat{CAct}$ which are Cartesian closed.
+The main avenue for future theoretical work is the categorical structure of
+change actions. There is a simple category $\cat{CAct}$ of change actions and differentiable
+functions between them, which turns out to be equivalent to $\cat{PreOrd}$ and
+has interesting Cartesian closed subcategories.
 
 Furthermore, $\cat{CAct}$ could be generalized in two additional ways: as a
 2-category (corresponding to the 2-categorical interpretation of $\cat{PreOrd}$,
@@ -1709,16 +1698,6 @@ and as a category over arbitrary base categories (rather than just $\cat{Set}$).
 These generalizations would allow us to extend the theory of change actions in
 multiple different directions, such as synthetic differential geometry and
 domain theory. This is the subject of ongoing work by the authors.
-
-\section{Conclusions}
-
-We have presented change actions and their properties, and used them to provide
-novel, compositional, strategies for incrementally evaluating and maintaining recursive functions, in
-particular the semantics of Datalog.
-
-\todomario{
-  This section is a bit anemic now.
-}
 
 \ifbiblatex
 \printbibliography{}
