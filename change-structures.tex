@@ -269,12 +269,11 @@ of our knowledge, the world's first incremental
 evaluation and maintenance mechanism for Datalog that can handle negation,
 disjunction, and existential quantification. 
 
-Finally, we provide some empirical evaluation of the effects
-of our changes (\cref{sec:empirical}).
-
 We have omitted the proofs from this paper. Most of the results have routine
 proofs, but the proofs of the more substantial results
-(especially those in \cref{sec:fixpoints}) are included in an appendix.
+(especially those in \cref{sec:fixpoints}) are included in an appendix (\cref{sec:proofs}), along
+with some extended worked examples (\cref{sec:workedExamples}), and additional
+material on the precision of derivatives (\cref{sec:precision}).
 
 \section{Change actions and derivatives}
 \label{sec:changeActions}
@@ -580,34 +579,6 @@ another:
   $\cstr{A}_2$.
 \end{proposition}
 
-\subsection{Change kernels and kernel orderings}
-
-Consider the full change action $\cstr{\ZZ}_\top$ on the integers.
-If we want to find a change that turns $99$ into $100$, there
-are a few options available: for example, we can pick the function $\lambda x . 100$, or
-the function $\lambda x . x + 1$. In a sense, the first one does ``too much''
-work, in that it captures all the information about the target value instead of
-just the difference between them.
-
-This intuition that a change may do too much can be captured by the following definition:
-\begin{definition}
-  Let $\cstr{A}$ be a change action and $\change{a} \in \changes{A}$. Then the
-  \emph{kernel} of $\change{a}$ is the equivalence relation $\kernel_{\change{a}}$ on $A$
-  defined by
-  \begin{displaymath}
-    a \kernel_{\change{a}} b \iff 
-     a \cplus \change{a} = b \cplus \change{a}
-  \end{displaymath}
-  The \emph{kernel ordering} on $\changes{A}$ is defined by
-  \begin{displaymath}
-    {\change{a} \kernelOrder \change{b}} \iff {{\kernel_{\change{a}}} \subseteq {\kernel_{\change{b}}}}
-  \end{displaymath}
-\end{definition}
-
-We can use the kernel order, extended pointwise, to compare the different derivatives of a function.
-As we will see later (\cref{sec:booleanAlgebras}), minimal derivatives under
-this order sometimes correspond to ``precise'' derivatives, in the sense of derivatives that do not produce
-excessively large changes.
 
 \section{Posets and Boolean algebras}
 \label{sec:moreStructures}
@@ -769,44 +740,6 @@ all the derivatives on Boolean algebras:
 This makes \cref{theorem:derivativeCharacterization} actually usable in practice, since
 we have concrete definitions for our bounds (which we will make use of in \cref{sec:datalogDifferentiability}).
 
-Moreover, we have a nice definition of the kernel ordering, which gives us a
-minus operator with a corresponding \emph{precise} derivative.
-
-\begin{definition}
-  The \emph{pointwise} order $\pointwiseOrder$ is the product order on $L \times
-  L$.
-\end{definition}
-
-\begin{rep-proposition}{booleanAlgebraKernels}[Boolean algebra kernels]
-  \label{prop:booleanAlgebraKernels}
-  Let $L$ be a (complete) Boolean algebra with the $\cstr{L}_\superpose$ change action,
-  $f: \cstr{A} \rightarrow \cstr{L}$ a (differentiable) function, and suppose 
-  $\derive{f}_1$ and $\derive{f}_2$ are derivatives for $f$.
-
-  Then $\derive{f}_1 \kernelOrder \derive{f}_2$ (extending the kernel order pointwise to derivatives)
-  iff for all $a \in A$ and $\change{a} \in \changes{A}$
-  \begin{align*}
-    \derive{f}_1(a, \change{a}) \pointwiseOrder \derive{f}_2(a, \change{a})
-  \end{align*}
-
-  Additionally, the following is a minus operator, and $\derive{f}_{\cminus_\kernel}$ is a minimal
-  derivative with respect to $\pointwiseOrder$ and $\kernelOrder$:
-  \begin{displaymath}
-    a \cminus_\kernel b = (a \wedge \neg b, b \wedge \neg a)
-  \end{displaymath}
-\end{rep-proposition}
-\ifproofs
-\begin{proof}
-  See \cref{prf:booleanAlgebraKernels}.
-\end{proof}
-\fi
-
-This shows us in what sense minimality with respect to the kernel ordering gives
-us precision: the precise derivative has components which are as small as
-possible (since it is also minimal with respect to $\pointwiseOrder$).
-When we are working with sets or relations, this is important since it
-corresponds to the actual size of components of the derivative.
-
 \section{Derivatives for non-recursive Datalog}
 \label{sec:nonRecursiveDatalog}
 
@@ -913,25 +846,19 @@ $\widehat{\Rel_\Gamma^n}_\superpose$ and $\widehat{\Rel_\Gamma}_\superpose$
 are complete, this guarantees the existence of a derivative for $\denote{T}$.
 
 Unfortunately, this does not necessarily provide us with an \emph{efficient} 
-derivative for $\denote{T}$. The precise derivative that we know how to compute
-(\cref{prop:booleanAlgebraKernels}) relies on
-a minus operator:
-\begin{displaymath}
-  \derive{f}_{\cminus_\kernel}(a, \change{a}) = f(a \cplus \change{a}) \cminus_\kernel f(a)
-\end{displaymath}
-
-Naively computed, this expression requires computing $f(a \cplus \change{a})$
+derivative for $\denote{T}$. The derivatives that we know how to compute
+(\cref{cor:booleanCharacterization}) rely on computing $f(a \cplus \change{a})$
 itself, which is the very thing we were trying to avoid computing!
 
-Of course, given a concrete definition of $\cminus_\kernel$ we can simplify this
+Of course, given a concrete definition of a derivative we can simplify this
 expression and hopefully make it easier to compute. But we also know from
 \cref{cor:booleanCharacterization} that \emph{any} function bounded by
 $\derive{f}_{\cminus_\bot}$ and $\derive{f}_{\cminus_\top}$ is a valid
-derivative ($\derive{f}_{\cminus_\kernel}$ lies roughly in the middle of them),
+derivative,
 and we can therefore optimize anywhere within that range to make a 
 trade-off between ease of computation and precision.
-The idea of using an approximation
-to the precise derivative, and a soundness condition, appears in Bancilhon \cite{bancilhon1986amateur}.
+\footnote{The idea of using an approximation
+to the precise derivative, and a soundness condition, appears in Bancilhon \cite{bancilhon1986amateur}.}
 
 There is also the question of how to compute the derivative. Since the change
 set for $\widehat{\Rel}_\superpose$ is a subset of $\Rel \times \Rel$, it
@@ -1030,48 +957,6 @@ While the definitions usually exhibit the dualities we would expect
 \end{proof}
 \fi
 
-\subsubsection{Examples}
-
-We can now give a derivative for our $treeP$ predicate by mechanically applying
-the recursive functions defined in \cref{fig:datalogDerivatives}.
-\begin{align*}
-  &\updiff(treeP(x))\\
-  &= \updiff(p(x) \wedge \neg \exists y. (child(x, y) \wedge \neg treeP(y)))\\
-  &= p(x) \wedge \updiff(\neg \exists y. (child(x, y) \wedge \neg treeP(y)))\\
-  &= p(x) \wedge \downdiff(\exists y. (child(x, y) \wedge \neg treeP(y)))\\
-  &= p(x) \wedge \exists y. \downdiff(child(x, y) \wedge \neg treeP(y)) \wedge \neg \exists y. \bothdiff(child(x,y) \wedge \neg treeP(y))\\
-  &= p(x) \wedge \exists y. (child(x, y) \wedge \downdiff(\neg treeP(y))) \wedge \neg \exists y. (child(x,y) \wedge \neg \bothdiff(treeP(y)))\\
-  &= p(x) \wedge \exists y. (child(x, y) \wedge \updiff(treeP(y))) \wedge \neg \exists y. (child(x,y) \wedge \neg \bothdiff(treeP(y)))\\
-  \\
-  &\downdiff(treeP(x))\\
-  &= \downdiff(p(x) \wedge \neg \exists y. (child(x, y) \wedge \neg treeP(y)))\\
-  &= p(x) \wedge \downdiff(\neg \exists y. (child(x, y) \wedge \neg treeP(y)))\\
-  &= p(x) \wedge \updiff(\exists y. (child(x, y) \wedge \neg treeP(y)))\\
-  &= p(x) \wedge \exists y. \updiff(child(x, y) \wedge \neg treeP(y))\\
-  &= p(x) \wedge \exists y. (child(x, y) \wedge \updiff(\neg treeP(y)))\\
-  &= p(x) \wedge \exists y. (child(x, y) \wedge \downdiff(treeP(y)))
-\end{align*}
-
-The upwards difference in particular is not especially easy to compute. If we naively compute it, the
-third conjunct requires us to recompute the whole of the recursive part. However,
-the second conjunct gives us a
-guard: we only need to evaluate the third conjunct if the second conjunct is
-non-empty, i.e there is \emph{some} change in the body of the existential.
-
-This shows that our derivatives aren't a panacea: it is simply \emph{hard} to compute
-downwards differences for $\exists$ (and, equivalently, upwards differences for
-$\forall$) because we must check that there is no other way of deriving the same
-facts.\footnote{The ``support'' data structures introduced by
-  \cite{gupta1993maintaining} are an attempt to avoid this issue by
-  tracking the number of derivations of each tuple.} However, we can still avoid
-the re-evaluation in many cases, and the inefficiency is local to this subformula.
-
-\subsubsection{Precision}
-
-In practice, while the derivative given in \cref{theorem:concreteDatalog} is not
-precise, most of the cases are \emph{preciseness-preserving}, in that if the
-subsidiary recursive cases are precise, then so is that case. The only cases
-which lose precision are labelled with $\dagger$.
 
 \subsection{Extensions to Datalog}
 \label{sec:extensions}
@@ -1655,83 +1540,6 @@ modular, so we will be able to extend this result more easily.
 This is known (see \cite{gupta1993maintaining} and successors),
 but again, the proof is now modular so we can extend it.
 
-\subsubsection{Worked example of updating a recursive Datalog program}
-\label{sec:workedExample}
-
-The algorithm in \cref{theorem:leastFixpointDerivatives} is very abstract, and it is
-hard to see how it will work out in practice. It is therefore worth doing a
-simple worked example.
-
-% You can recompute the example using ql/Fixpoints.ql, if you want to change the data
-
-Consider the $tc$ program from \cref{sec:intro}:
-\begin{align*}
-  tc(x, y) &\leftarrow e(x, y) \vee \exists z.(e(x, z) \wedge tc(z, y))
-\end{align*}
-
-We will start with an edge relation $e_1$ and change it to a new edge relation
-$e_2$ by applying a change $\change{e}$, which both adds and removes some values.
-\begin{align*}
-  e_1 &= \{(1,2), (2,3), (3,4), (5,6) \}\\
-  \change{e} &= (\{(4,5)\}, \{(2,3)\})\\
-  e_2 &= e_1 \cplus \change{e}\\
-      &=\{ (1,2), (3,4), (4,5), (5,6) \}
-\end{align*}
-
-We want to update the fixpoint of $tc$ using $e_1$, which we will call
-$tc_{e_1}$,  to the fixpoint of $tc$ using $e_2$, which we will call $tc_{e_2}$.
-As we have seen in \cref{theorem:leastFixpointDerivatives},
-we can do this by computing the fixpoint $\change{w} = \lfp(\adjust(tc_{e_1}, \change{tc}))$. 
-
-A reminder of the expanded definition of $\adjust$:
-\begin{align*}
-  \adjust(f, \change{f}) &= \lambda\ \change{a}. \change{f}(\lfp(f)) \splus \derive{(f \cplus \change{f})}(\lfp(f), \change{a})
-\end{align*}
-
-We've chosen the second definition of $\ev$ from \cref{prop:evDerivatives}, since
-we already know what $f \cplus \change{f}$ looks like \textemdash{} it is simply
-$\denote{tc_{e_2}}$ \textemdash{} and $\change{tc}(\lfp(tc_{e_1}))$ can be
-computed once up front and reused throughout the computation.
-
-We need the derivative of $tc_{e_2}$:
-\begin{align*}
-  \updiff(tc_{e_2}(x, y)) \leftarrow & \exists z. (e_2(x,z) \wedge \updiff(tc_{e_2}(z, y)))\\
-  \downdiff(tc_{e_2}(x, y)) \leftarrow & \neg e_2(x, y)\\
-    &\wedge
-    \exists z . (e_2(x, z) \wedge \downdiff(tc_{e_2}(z, y)))\\
-    &\wedge
-    \neg \exists z . (e_2(x, z) \wedge \bothdiff(tc_{e_2}(z,y)))
-\end{align*}
-
-We also need $\change{tc}$:
-\begin{align*}
-  \change{tc}(f) = &\\
-  &(e_2(x,y) \vee \exists z . (e_2(x,z) \wedge f(z,y))) \\
-  &\cminus (e_1(x,y) \vee \exists z . (e_1(x,z) \wedge f(z,y)))
-\end{align*}
-
-We can now evaluate the fixpoint.\footnote{We would of course like to evaluate this fixpoint
-  incrementally, which we can do with exactly the same theoretical machinery.}
-Here is how the changes evolve:
-\begin{center}
-  \begin{tabular} {p{3.5em} p{10em} p{10em}}
-    Iteration & Additions to $\updiff$ & Additions to $\downdiff$ \\
-    %\toprule
-    1 & $\{ (4,5), (4,6) \}$ & $\{ (2,3), (2,4) \}$\\
-    2 & $\{ (3,5), (3,6) \}$ & $\{ (1,3), (1,4) \}$\\
-    3 & (as above) & (as above) \\
-    %\bottomrule
-  \end{tabular}
-\end{center}
-\medskip
-
-This results in $\change{w} = (\{ (3,5), (3,6), (4,5), (4,6)\}, \{(1,3), (1,4), (2,3), (2,4)\})$.
-Applying the change and shows that we have indeed computed the new fixpoint.
-\begin{align*}
-  tc_{e_1} \cplus \change{w} &= \{(1,2), (1,3), (1,4), (2,3), (2,4), (5,6)\} \cplus \change{w}\\
-  &= \{(1,2), (3,5), (3,6), (4,5), (4,6), (5,6)\}\\
-  &= tc_{e_2}
-\end{align*}
 
 \section{Related work}
 
@@ -1990,7 +1798,206 @@ particular the semantics of Datalog.
 \clearpage
 \appendix
 \appendixpage
+
+\section{Worked examples}
+\label{sec:workedExamples}
+
+\subsection{Worked example of computing the derivative of a Datalog predicate}
+
+We can give a derivative for our $treeP$ predicate by mechanically applying
+the recursive functions defined in \cref{fig:datalogDerivatives}.
+\begin{align*}
+  &\updiff(treeP(x))\\
+  &= \updiff(p(x) \wedge \neg \exists y. (child(x, y) \wedge \neg treeP(y)))\\
+  &= p(x) \wedge \updiff(\neg \exists y. (child(x, y) \wedge \neg treeP(y)))\\
+  &= p(x) \wedge \downdiff(\exists y. (child(x, y) \wedge \neg treeP(y)))\\
+  &= p(x) \wedge \exists y. \downdiff(child(x, y) \wedge \neg treeP(y)) \wedge \neg \exists y. \bothdiff(child(x,y) \wedge \neg treeP(y))\\
+  &= p(x) \wedge \exists y. (child(x, y) \wedge \downdiff(\neg treeP(y))) \wedge \neg \exists y. (child(x,y) \wedge \neg \bothdiff(treeP(y)))\\
+  &= p(x) \wedge \exists y. (child(x, y) \wedge \updiff(treeP(y))) \wedge \neg \exists y. (child(x,y) \wedge \neg \bothdiff(treeP(y)))\\
+  \\
+  &\downdiff(treeP(x))\\
+  &= \downdiff(p(x) \wedge \neg \exists y. (child(x, y) \wedge \neg treeP(y)))\\
+  &= p(x) \wedge \downdiff(\neg \exists y. (child(x, y) \wedge \neg treeP(y)))\\
+  &= p(x) \wedge \updiff(\exists y. (child(x, y) \wedge \neg treeP(y)))\\
+  &= p(x) \wedge \exists y. \updiff(child(x, y) \wedge \neg treeP(y))\\
+  &= p(x) \wedge \exists y. (child(x, y) \wedge \updiff(\neg treeP(y)))\\
+  &= p(x) \wedge \exists y. (child(x, y) \wedge \downdiff(treeP(y)))
+\end{align*}
+
+The upwards difference in particular is not especially easy to compute. If we naively compute it, the
+third conjunct requires us to recompute the whole of the recursive part. However,
+the second conjunct gives us a
+guard: we only need to evaluate the third conjunct if the second conjunct is
+non-empty, i.e there is \emph{some} change in the body of the existential.
+
+This shows that our derivatives aren't a panacea: it is simply \emph{hard} to compute
+downwards differences for $\exists$ (and, equivalently, upwards differences for
+$\forall$) because we must check that there is no other way of deriving the same
+facts.\footnote{The ``support'' data structures introduced by
+  \cite{gupta1993maintaining} are an attempt to avoid this issue by
+  tracking the number of derivations of each tuple.} However, we can still avoid
+the re-evaluation in many cases, and the inefficiency is local to this subformula.
+
+\subsection{Worked example of updating a recursive Datalog program}
+\label{sec:workedExample}
+
+The algorithm in \cref{theorem:leastFixpointDerivatives} is very abstract, and it is
+hard to see how it will work out in practice. It is therefore worth doing a
+simple worked example.
+
+% You can recompute the example using ql/Fixpoints.ql, if you want to change the data
+
+Consider the $tc$ program from \cref{sec:intro}:
+\begin{align*}
+  tc(x, y) &\leftarrow e(x, y) \vee \exists z.(e(x, z) \wedge tc(z, y))
+\end{align*}
+
+We will start with an edge relation $e_1$ and change it to a new edge relation
+$e_2$ by applying a change $\change{e}$, which both adds and removes some values.
+\begin{align*}
+  e_1 &= \{(1,2), (2,3), (3,4), (5,6) \}\\
+  \change{e} &= (\{(4,5)\}, \{(2,3)\})\\
+  e_2 &= e_1 \cplus \change{e}\\
+      &=\{ (1,2), (3,4), (4,5), (5,6) \}
+\end{align*}
+
+We want to update the fixpoint of $tc$ using $e_1$, which we will call
+$tc_{e_1}$,  to the fixpoint of $tc$ using $e_2$, which we will call $tc_{e_2}$.
+As we have seen in \cref{theorem:leastFixpointDerivatives},
+we can do this by computing the fixpoint $\change{w} = \lfp(\adjust(tc_{e_1}, \change{tc}))$. 
+
+A reminder of the expanded definition of $\adjust$:
+\begin{align*}
+  \adjust(f, \change{f}) &= \lambda\ \change{a}. \change{f}(\lfp(f)) \splus \derive{(f \cplus \change{f})}(\lfp(f), \change{a})
+\end{align*}
+
+We've chosen the second definition of $\ev$ from \cref{prop:evDerivatives}, since
+we already know what $f \cplus \change{f}$ looks like \textemdash{} it is simply
+$\denote{tc_{e_2}}$ \textemdash{} and $\change{tc}(\lfp(tc_{e_1}))$ can be
+computed once up front and reused throughout the computation.
+
+We need the derivative of $tc_{e_2}$:
+\begin{align*}
+  \updiff(tc_{e_2}(x, y)) \leftarrow & \exists z. (e_2(x,z) \wedge \updiff(tc_{e_2}(z, y)))\\
+  \downdiff(tc_{e_2}(x, y)) \leftarrow & \neg e_2(x, y)\\
+    &\wedge
+    \exists z . (e_2(x, z) \wedge \downdiff(tc_{e_2}(z, y)))\\
+    &\wedge
+    \neg \exists z . (e_2(x, z) \wedge \bothdiff(tc_{e_2}(z,y)))
+\end{align*}
+
+We also need $\change{tc}$:
+\begin{align*}
+  \change{tc}(f) = &\\
+  &(e_2(x,y) \vee \exists z . (e_2(x,z) \wedge f(z,y))) \\
+  &\cminus (e_1(x,y) \vee \exists z . (e_1(x,z) \wedge f(z,y)))
+\end{align*}
+
+We can now evaluate the fixpoint.\footnote{We would of course like to evaluate this fixpoint
+  incrementally, which we can do with exactly the same theoretical machinery.}
+Here is how the changes evolve:
+\begin{center}
+  \begin{tabular} {p{3.5em} p{10em} p{10em}}
+    Iteration & Additions to $\updiff$ & Additions to $\downdiff$ \\
+    %\toprule
+    1 & $\{ (4,5), (4,6) \}$ & $\{ (2,3), (2,4) \}$\\
+    2 & $\{ (3,5), (3,6) \}$ & $\{ (1,3), (1,4) \}$\\
+    3 & (as above) & (as above) \\
+    %\bottomrule
+  \end{tabular}
+\end{center}
+\medskip
+
+This results in $\change{w} = (\{ (3,5), (3,6), (4,5), (4,6)\}, \{(1,3), (1,4), (2,3), (2,4)\})$.
+Applying the change and shows that we have indeed computed the new fixpoint.
+\begin{align*}
+  tc_{e_1} \cplus \change{w} &= \{(1,2), (1,3), (1,4), (2,3), (2,4), (5,6)\} \cplus \change{w}\\
+  &= \{(1,2), (3,5), (3,6), (4,5), (4,6), (5,6)\}\\
+  &= tc_{e_2}
+\end{align*}
+
+\section{Change order kernels and precision}
+\label{sec:precision}
+
+\subsection{Change kernels and kernel orderings}
+
+Consider the full change action $\cstr{\ZZ}_\top$ on the integers.
+If we want to find a change that turns $99$ into $100$, there
+are a few options available: for example, we can pick the function $\lambda x . 100$, or
+the function $\lambda x . x + 1$. In a sense, the first one does ``too much''
+work, in that it captures all the information about the target value instead of
+just the difference between them.
+
+This intuition that a change may do too much can be captured by the following definition:
+\begin{definition}
+  Let $\cstr{A}$ be a change action and $\change{a} \in \changes{A}$. Then the
+  \emph{kernel} of $\change{a}$ is the equivalence relation $\kernel_{\change{a}}$ on $A$
+  defined by
+  \begin{displaymath}
+    a \kernel_{\change{a}} b \iff 
+     a \cplus \change{a} = b \cplus \change{a}
+  \end{displaymath}
+  The \emph{kernel ordering} on $\changes{A}$ is defined by
+  \begin{displaymath}
+    {\change{a} \kernelOrder \change{b}} \iff {{\kernel_{\change{a}}} \subseteq {\kernel_{\change{b}}}}
+  \end{displaymath}
+\end{definition}
+
+We can use the kernel order, extended pointwise, to compare the different derivatives of a function.
+As we will see in the next section (\cref{sec:booleanAlgebrasPrecision}), minimal derivatives under
+this order sometimes correspond to ``precise'' derivatives, in the sense of derivatives that do not produce
+excessively large changes.
+
+\subsection{Boolean algebras and precise derivatives}
+\label{sec:booleanAlgebrasPrecision}
+
+Boolean algebras have a nice definition of the kernel ordering, which gives us a
+minus operator with a corresponding \emph{precise} derivative.
+
+\begin{definition}
+  The \emph{pointwise} order $\pointwiseOrder$ is the product order on $L \times
+  L$.
+\end{definition}
+
+\begin{rep-proposition}{booleanAlgebraKernels}[Boolean algebra kernels]
+  \label{prop:booleanAlgebraKernels}
+  Let $L$ be a (complete) Boolean algebra with the $\cstr{L}_\superpose$ change action,
+  $f: \cstr{A} \rightarrow \cstr{L}$ a (differentiable) function, and suppose 
+  $\derive{f}_1$ and $\derive{f}_2$ are derivatives for $f$.
+
+  Then $\derive{f}_1 \kernelOrder \derive{f}_2$ (extending the kernel order pointwise to derivatives)
+  iff for all $a \in A$ and $\change{a} \in \changes{A}$
+  \begin{align*}
+    \derive{f}_1(a, \change{a}) \pointwiseOrder \derive{f}_2(a, \change{a})
+  \end{align*}
+
+  Additionally, the following is a minus operator, and $\derive{f}_{\cminus_\kernel}$ is a minimal
+  derivative with respect to $\pointwiseOrder$ and $\kernelOrder$:
+  \begin{displaymath}
+    a \cminus_\kernel b = (a \wedge \neg b, b \wedge \neg a)
+  \end{displaymath}
+\end{rep-proposition}
+\ifproofs
+\begin{proof}
+  See \cref{prf:booleanAlgebraKernels}.
+\end{proof}
+\fi
+
+This shows us in what sense minimality with respect to the kernel ordering gives
+us precision: the precise derivative has components which are as small as
+possible (since it is also minimal with respect to $\pointwiseOrder$).
+When we are working with sets or relations, this is important since it
+corresponds to the actual size of components of the derivative.
+
+\subsection{Precision of the concrete Datalog derivative}
+
+In practice, while the derivative given in \cref{theorem:concreteDatalog} is not
+precise, most of the cases are \emph{preciseness-preserving}, in that if the
+subsidiary recursive cases are precise, then so is that case. The only cases
+which lose precision are labelled with $\dagger$.
+
 \section{Proofs}
+\label{sec:proofs}
 
 \subsection{Change actions and derivatives}
 
