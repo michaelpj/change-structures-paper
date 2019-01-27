@@ -791,6 +791,16 @@ We will adopt the usual closed-world assumption to give a denotation to negation
 This makes $\Rel_\Gamma$, the set of all subsets of $\universalRel_\Gamma$,
 a complete Boolean algebra.
 
+\begin{definition}
+  A Datalog formula $T$ whose free term variables are contained in $\Gamma$ denotes a function from 
+  $\Rel_\Gamma^n$ to $\Rel_\Gamma$.
+  \begin{displaymath}
+    \denote{\_}_\Gamma : \Formula \rightarrow \Rel_\Gamma^n \rightarrow \Rel_\Gamma
+  \end{displaymath}
+  If $\semR = (\semR_1, \ldots, \semR_n)$ is a choice of a relation $\semR_i$ for each of the variables $R_i$,
+  $\denote{T}(\semR)$ is inductively defined according to the rules in \cref{fig:datalogSemantics}.
+\end{definition}
+
 \begin{figure}
   \fbox{
     \begin{minipage}[t]{0.9\textwidth}
@@ -819,16 +829,6 @@ a complete Boolean algebra.
   \label{fig:datalogSemantics}
   \vspace{-12pt}
 \end{figure}
-
-\begin{definition}
-  A Datalog formula $T$ whose free term variables are contained in $\Gamma$ denotes a function from 
-  $\Rel_\Gamma^n$ to $\Rel_\Gamma$.
-  \begin{displaymath}
-    \denote{\_}_\Gamma : \Formula \rightarrow \Rel_\Gamma^n \rightarrow \Rel_\Gamma
-  \end{displaymath}
-  If $\semR = (\semR_1, \ldots, \semR_n)$ is a choice of a relation $\semR_i$ for each of the variables $R_i$,
-  $\denote{T}(\semR)$ is inductively defined according to the rules in \cref{fig:datalogSemantics}.
-\end{definition}
 
 Since $\Rel_\Gamma$ is a complete Boolean algebra, and so is $\Rel_\Gamma^n$, $\denote{T}_\Gamma$ is
 a function between complete Boolean algebras. For brevity, we will often leave the schema implicit,
@@ -887,11 +887,11 @@ specifics of the evaluation engine. Here is one possibility, which is the one us
         \updiff(\bot) &\defeq \bot\\
         \updiff(\top) &\defeq \bot\\
         \updiff(R_j) &\defeq \updiff R_j \\
-        \updiff(T\vee U) &\defeq \updiff(T) \vee \updiff (U) &(\dagger)\\
+        \updiff(T\vee U) &\defeq \updiff(T) \vee \updiff (U)\\
         \updiff(T\wedge U) &\defeq (\updiff(T)\wedge \bothdiff(U))\\
                             & \vee (\updiff(U) \wedge \bothdiff(T))\\
         \updiff(\neg T) &\defeq \downdiff(T)\\
-        \updiff(\exists x.T) &\defeq \exists x.\updiff(T) &(\dagger)
+        \updiff(\exists x.T) &\defeq \exists x.\updiff(T)
       \end{align*}
     \end{minipage}\hfill\noindent
     \begin{minipage}[t]{.45\textwidth}
@@ -1564,7 +1564,7 @@ function changes from pointwise changes and derivatives, so the two formulations
 are equivalent. 
 
 The equivalence of our presentations means that our work should be compatible
-with ILC (see \cite[section 3]{cai2014changes}). The derivatives we give in \cref{sec:datalogDifferentiability} are more or
+with their Incremental Lambda Calculus (see \cite[section 3]{cai2014changes}). The derivatives we give in \cref{sec:datalogDifferentiability} are more or
 less a ``change semantics'' for Datalog (see \cite[section
 3.5]{cai2014changes}). 
 
@@ -1902,8 +1902,7 @@ corresponds to the actual size of components of the derivative.
 
 In practice, while the derivative given in \cref{theorem:concreteDatalog} is not
 precise, most of the cases are \emph{preciseness-preserving}, in that if the
-subsidiary recursive cases are precise, then so is that case. The only cases
-which lose precision are labelled with $\dagger$.
+subsidiary recursive cases are precise, then so is that case.
 
 \section{Proofs}
 \label{sec:proofs}
