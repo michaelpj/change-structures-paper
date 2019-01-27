@@ -321,7 +321,8 @@ $\cstruct{A}{(A, \splus, \mzero)}{\splus}$. Many practical change actions
 can be constructed in this way. In particular, for any change action $\cstruct{A}{\changes{A}}{\cplus}$,
 $\cstruct{\changes{A}}{\changes{A}}{\splus}$ is also a change action. This means
 that we do not have to do any extra work to talk about changes to changes \textemdash{} we can 
-always take $\changes{\changes{A}} = \changes{A}$.
+always take $\changes{\changes{A}} = \changes{A}$ (although there may be other
+change actions available).
 
 Three examples of change actions are of particular interest to us.
 First, whenever
@@ -1611,7 +1612,9 @@ Qian and Wiederhold \cite{qian1991incremental} compute differences with both an 
 rules that look quite similar to those we derive in
 \cref{theorem:concreteDatalog}. However, our presentation is significantly more
 generic, handles recursive expressions, and works on set semantics
-rather than bag semantics (although the same approach would work with bag semantics).
+rather than bag semantics (the same approach of finding derivatives
+would work with bag semantics, although unfortunately the Boolean algebra
+structure is missing).
 
 Several approaches
 \cite{gupta1993maintaining,harrison1992maintenance} \textemdash{} most notably
