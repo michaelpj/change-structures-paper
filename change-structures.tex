@@ -84,7 +84,7 @@
 \maketitle
 
 \begin{abstract}
- Incremental computation has recently been studied using the concepts of \emph{change
+  Incremental computation has recently been studied using the concepts of \emph{change
   structures} and \emph{derivatives} of programs, where the derivative of a function allows updating the output
   of the function based on a change to its input.
 
@@ -114,7 +114,7 @@ which computes the transitive closure of an edge relation $e$:
 \end{align*}
 
 The semantics of Datalog tells us that the denotation of this program is the
-least fixpoint of the rule $tc$. Kleene's Theorem tells us that we can 
+least fixpoint of the rule $tc$. Kleene's fixpoint Theorem tells us that we can 
 compute this fixpoint by repeatedly applying the rule until it stops changing, starting from the empty relation. For example, supposing
 that $e = \{ (1, 2), (2, 3), (3, 4) \}$, we get the following evaluation trace:
 \begin{center}
@@ -189,12 +189,16 @@ nodes in a subtree given by $child$ have some property $p$:
 
 Here the combination of negation and explicit existential quantification amounts
 to recursion through a \emph{universal} quantifier. We would
-like to be able to use semi-naive evaluation for this rule too, but the simple delta
-transformation is not well defined for the extended program syntax, and it is unclear how to extend it (and the
+like to be able to use semi-naive evaluation for this rule too, but the standard
+definition of semi-naive transformation is not well defined for the extended
+program syntax, and it is unclear how to extend it (and the
 correctness proof) to handle such cases.
 
 It is possible, however, to write a delta program for $treeP$ by hand; indeed,
-the following definition provides one:
+the following definition provides one:\footnote{This rule should be read as: we
+  can newly deduce that $x$ is in $treeP$ if $x$ satisfies the predicate, and
+  we have newly deduced that one of its children is in $treeP$, and we currently
+  believe that all of its children are in $treeP$.}
 \begin{align*}
   \Delta_{i+1}treeP(x) \leftarrow & p(x)\\
   &\wedge \exists y. (child(x, y) \wedge \Delta_itreeP(y))\\
@@ -240,7 +244,7 @@ This paper aims to bridge that gap by providing a solid semantic foundation for 
 computation of Datalog, and other recursive programs, in terms of changes and
 differentiable functions.
 
-\subsection{Contributions}
+\paragraph{Contributions}
 
 We start by generalizing change structures to
 \emph{change actions} (\cref{sec:changeActions}). Change actions are simpler and weaker than change
@@ -279,8 +283,8 @@ Abstractly, we have a set of values (the integers), and a set of changes
 
 This kind of structure is well-known \textemdash{} it is a set action. It is
 also very natural to want to combine changes sequentially, and if we do this
-then we find ourselves with a monoid action.\footnote{
-Using monoid actions for changes gives us a reason to think that
+then we find ourselves with a monoid action.\footnote{Using
+  monoid actions for changes gives us a reason to think that
 change actions are an adequate representation of changes: any subset of $A
 \rightarrow A$ which is closed under composition can be
 represented as a monoid action on $A$, so we are able to capture all of these as change
@@ -312,8 +316,8 @@ Here we represent changes to a word made by concatenating another word onto it.
 The changes themselves can be combined using $\doubleplus$ as the monoid operation with the empty word as the identity, 
 and this is a monoid action: $(a \doubleplus b) \doubleplus c = a \doubleplus \left( b \doubleplus c \right)$.
 
-This is a very common case: any monoid $(A, \splus, 0)$ can be seen as a change action
-$\cstruct{A}{(A, \splus, 0)}{\splus}$. Many practical change actions
+This is a very common case: any monoid $(A, \splus, \mzero)$ can be seen as a change action
+$\cstruct{A}{(A, \splus, \mzero)}{\splus}$. Many practical change actions
 can be constructed in this way. In particular, for any change action $\cstruct{A}{\changes{A}}{\cplus}$,
 $\cstruct{\changes{A}}{\changes{A}}{\splus}$ is also a change action. This means
 that we do not have to do any extra work to talk about changes to changes \textemdash{} we can 
@@ -383,12 +387,12 @@ Derivatives need not be unique in general, so we will speak of ``a''
 derivative. Functions into ``thin'' change
 actions \textemdash{} where $a \cplus \change{a} = a \cplus \change{b}$ implies $\change{a} =
 \change{b}$ \textemdash{} have unique derivatives, but many change actions are not thin.
-For example, because $\{0\} \cap \{1\} = \{0\}
-\cap \{2\}$, $\cstruct{\powerset{\NN}}{\powerset{\NN}}{\cap}$ is not thin.
+For example, $\cstruct{\powerset{\NN}}{\powerset{\NN}}{\cap}$ is not thin because $\{0\} \cap \{1\} = \{0\}
+\cap \{2\}$.
 
 Derivatives capture the structure of incremental computation, but there are
 important operational considerations that affect whether using them for
-computation actually save us
+computation actually saves us
 any work. As we will see in a moment (\cref{prop:minusDerivatives}), for many 
 change actions we will have the option
 of picking the ``worst'' derivative, which merely computes $f(a \cplus \change{a})$
@@ -400,8 +404,8 @@ giving ourselves a range of derivatives to choose from so that we can soundly
 optimize for operational value.
 
 For our Datalog case study, we aim to cash out the folkloric idea that
-incremental computation functions via a derivative by constructing a good derivative of
-the semantics of Datalog. We will do this in stages: first the non-recursive
+incremental computation functions via a derivative. We will construct a derivative of
+the semantics of Datalog in stages: first the non-recursive
 formula semantics (\cref{sec:nonRecursiveDatalog}); and later the full, recursive, semantics 
 (\cref{sec:recursiveDatalog}).
 
@@ -685,8 +689,9 @@ differences, and indeed Boolean algebras have a complete change action.
 
 We can think of $\cstr{L}_\superpose$ as tracking changes as pairs of ``upwards'' and
 ``downwards'' changes, where the monoid action simply applies one after the
-other, with an adjustment to make sure that the components remain disjoint.\footnote{
-  The intuition that $\cstr{L}_\superpose$ is made up of an ``upwards''
+other, with an adjustment to make sure that the components remain
+disjoint.\footnote{The
+  intuition that $\cstr{L}_\superpose$ is made up of an ``upwards''
   and a ``downwards'' change action glued together can in fact be made precise, but the specifics
   are outside the scope of this paper.} For example, in the powerset Boolean
 algebra $\mathcal{P}(\NN)$, a change to $\{ 1, 2 \}$
@@ -743,7 +748,7 @@ lead us to a strategy for performing incremental evaluation and maintenance of D
 To begin with, we will restrict ourselves to the non-recursive fragment of the
 language \textemdash{} the formulae that make up the right hand sides of Datalog
 rules. We will tackle the full program semantics in a later section, once we
-know how to handle fixpoints (\cref{sec:recursiveDatalog}).
+know how to handle fixpoints.
 
 Although the techniques we are using should work for any language, Datalog
 provides a non-trivial case study where the need for incremental computation is
@@ -754,7 +759,7 @@ real and pressing, as we saw in \cref{sec:intro}.
 Datalog is usually given a logical semantics where formulae are interpreted as first-order
 logic predicates and the semantics of a program is the set of models of its constituent
 predicates. We will instead give a simple denotational semantics (as is
-typical when working with fixpoints (See e.g. \cite{compton1994stratified}) that treats a Datalog
+typical when working with fixpoints, see e.g. \cite{compton1994stratified}) that treats a Datalog
 formula as directly denoting a relation, i.e.
 a set of named tuples, with variables ranging over a finite schema.
 
@@ -784,7 +789,7 @@ We will adopt the usual closed-world assumption to give a denotation to negation
 \end{definition}
 
 This makes $\Rel_\Gamma$, the set of all subsets of $\universalRel_\Gamma$,
-into a complete Boolean algebra.
+a complete Boolean algebra.
 
 \begin{figure}
   \fbox{
@@ -916,10 +921,10 @@ In~\cref{fig:datalogDerivatives}, we define a ``symbolic'' derivative operator a
 $\updiff$ and $\downdiff$, which turn a Datalog formula $T$ into new formulae that compute
 the upwards and downwards parts of the derivative, respectively. 
 Our definition uses an auxiliary function, $\bothdiff$, which computes the ``neXt'' value of a term by applying the upwards and downwards derivatives.
-As we expect
-from a derivative, the new formulae will have additional free relation variables
-for the upwards and downwards derivatives of the free relation variables of $T$.\footnote{
-While the definitions usually exhibit the dualities we would expect
+As is typical for a derivative, the new formulae will have additional free relation variables
+for the upwards and downwards derivatives of the free relation variables of $T$,
+denoted as $\updiff R$ and $\downdiff R$ respectively.\footnote{While
+  the definitions usually exhibit the dualities we would expect
   between corresponding operators, there are a few asymmetries to explain.
 
   The asymmetry between the cases for $\updiff(T \vee U)$ and
@@ -1030,7 +1035,7 @@ $A \rightarrow B$.
   Let $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$ be a functional change action. Then every 
   $f \in U$ is differentiable, with a derivative $\derive{f}$ given by:
   \begin{displaymath}
-    \derive{f}(x, \change{x}) = \derive{\ev}((f, x), (0, \change{x}))
+    \derive{f}(x, \change{x}) = \derive{\ev}((f, x), (\mzero, \change{x}))
   \end{displaymath}
 \end{proposition}
 
@@ -1044,14 +1049,14 @@ function change $\delta f$:
   Let $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$. Then for every $f \in U$ and $\delta f \in \changes U$
   we have:
   \begin{displaymath}
-    (f \cplus \delta f)(x) = f(x) \cplus \ev'((f, x), (\delta f, 0))
+    (f \cplus \delta f)(x) = f(x) \cplus \ev'((f, x), (\delta f, \mzero))
   \end{displaymath}
 \end{proposition}
 
 \begin{proposition}
   Let $\cstr{A}$ and $\cstr{B}$ be change actions and $\cstr{U} \subseteq \cstr{A} \Rightarrow \cstr{B}$
   a functional change action. First, we note that the set $U \times A \rightarrow \changes{B}$ is
-  a monoid with addition $+_\Rightarrow$ and neutral element $0_\Rightarrow$ defined by:
+  a monoid with addition $+_\Rightarrow$ and neutral element $\mzero_\Rightarrow$ defined by:
   \begin{align*}
     (\upsilon f +_\Rightarrow \upsilon g)(h, x) 
     &\defeq \upsilon f (h, x) \cplus \upsilon g((\lambda x . \upsilon f (h, x)) , x)
@@ -1064,7 +1069,7 @@ function change $\delta f$:
     \begin{gather*}
       V \subseteq U \times A \rightarrow \changes{B}\\
       V \defeq \{~
-          \lambda f. \lambda x. \ev'((f, x), (\delta f, 0)) ~|~ \delta f \in \changes U
+          \lambda f. \lambda x. \ev'((f, x), (\delta f, \mzero)) ~|~ \delta f \in \changes U
           ~\}\\
       (f \cplus_\Rightarrow \upsilon f)(x) \defeq f(x) \cplus \upsilon f(f, x)
     \end{gather*}
@@ -1084,12 +1089,12 @@ functions.
   Let $\cstr{A}$ and $\cstr{B}$ be change actions. The \emph{pointwise functional change action} 
   $\cstr{A} \ptfunc \cstr{B}$, when it is defined,
   is given by $(\cstr{A} \rightarrow \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$, with
-  the monoid structure $(A \rightarrow \changes{B}, \splus_\rightarrow, 0_\rightarrow)$ and the action 
+  the monoid structure $(A \rightarrow \changes{B}, \splus_\rightarrow, \mzero_\rightarrow)$ and the action 
   $\cplus_\rightarrow$ defined by:
   \begin{align*}
     (f \cplus_\to \delta f)(x) &\defeq f(x) \cplus_B \delta f (x)\\
     (\delta f \splus_\rightarrow \delta g)(x) &\defeq \delta f(x) \splus_B \delta g(x)\\
-    0_\rightarrow (x) &\defeq 0_B
+    \mzero_\rightarrow (x) &\defeq \mzero_B
   \end{align*}
 \end{definition}
 
@@ -1108,8 +1113,9 @@ $f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteri
       $\cplus_B : B \times \changes{B} \to B$ is differentiable.
   \end{itemize}
   Then the pointwise functional change action 
-  $(\cstr{A} \rightarrow \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$ is well defined.\footnote{
-    Either of these conditions is enough to guarantee that the pointwise functional change action
+  $(\cstr{A} \rightarrow \cstr{B}, A \rightarrow \changes{B},
+  \cplus_\rightarrow)$ is well defined.\footnote{Either
+    of these conditions is enough to guarantee that the pointwise functional change action
     is well defined, but it can be the case that $\cstr{B}$ satisfies neither and yet pointwise
     change actions into $\cstr{B}$ do exist. A precise account of when pointwise functional change
     actions exist is outside the scope of this paper.
@@ -1203,13 +1209,13 @@ we shall be using, such as the following, whose proof can be found in
 
 It is a well-known result in standard calculus that the limit of an absolutely convergent sequence of
 differentiable functions $\{f_i\}$ is itself differentiable, and its derivative is equal to the limit
-of the derivatives of the $f_i$. A remarkable consequence of the previous distributivity property
+of the derivatives of the $f_i$. A remarkable consequence of \cref{prop:distributivityLimit} 
 is the following analogous result:
 
 \begin{corollary}
   \label{cor:diffContinuous}
   Let $\cstr{A}$ and $\cstr{B}$ be change actions, with $\cstr{B}$ continuous and let $\{f_i\}$ and $\{\derive{f_i}\}$ be
-  $I$-indexed directed families of functions in $A \rightarrow B$ and $A \times \changes{A} \rightarrow \changes{B}$ respectively.
+  $I$-indexed directed sets of functions in $A \rightarrow B$ and $A \times \changes{A} \rightarrow \changes{B}$ respectively.
 
   Then, if for every $i \in I$ it is the case that $\derive{f_i}$ is a derivative of $f_i$, then $\bigsqcup_{i \in I} \derive{f_i}$ is
   a derivative of $\bigsqcup_{i \in I} f_i $.
@@ -1287,7 +1293,7 @@ derivative of $\iter$ with respect to $n$.
   argument, and a partial derivative is given by:
   \begin{align*}
     &\partial_2{\iter}: (A \rightarrow A) \times \NN \times \changes{\NN} \rightarrow \changes{A}\\
-    &\partial_2{\iter}(f, 0, m) \defeq \iter(f, m) \cminus \bot\\
+    &\partial_2{\iter}(f, \mzero, m) \defeq \iter(f, m) \cminus \bot\\
     &\partial_2{\iter}(f, n+1, m) \defeq \derive{f}(\iter(f, n), \partial_2{\iter}(f, n, m))
   \end{align*}
 \end{rep-proposition}
@@ -1318,8 +1324,9 @@ semi-naive evaluation works, with the delta relation and the accumulator relatio
   Let $\cstr{A}$ be a complete, continuous change action, $f: \cstr{A} \rightarrow
   \cstr{A}$ be continuous and differentiable.
 
-  Then $\lfp(f) = \bigsqcup_{n \in \NN}(\pi_1(\nextiter_f^n(\bot, \bot)))$.\footnote{
-    Note that we have \emph{not} taken the fixpoint of $\nextiter_f$, since it is
+  Then $\lfp(f) = \bigsqcup_{n \in \NN}(\pi_1(\nextiter_f^n(\bot,
+  \bot)))$.\footnote{Note
+    that we have \emph{not} taken the fixpoint of $\nextiter_f$, since it is
     not continuous.}
 \end{rep-theorem}
 \ifproofs
@@ -1400,7 +1407,7 @@ need to define our derivatives inductively in terms of $n$.
   $\iter$ is differentiable with respect to its first argument and a derivative is given by:
   \begin{align*}
     &\partial_1{\iter} : (A \rightarrow A) \times \changes{(A \rightarrow A)} \times \NN \rightarrow \changes{A}\\
-    &\partial_1{\iter} (f, \change{f}, 0) \defeq \bot_{\changes{A}}\\
+    &\partial_1{\iter} (f, \change{f}, \mzero) \defeq \bot_{\changes{A}}\\
     &\partial_1{\iter} (f, \change{f}, n + 1) \defeq \derive{\ev}((f, \iter(f, n)), (\change{f}, \partial_1{\iter}(f, \change{f}, n)))
   \end{align*}
 \end{rep-proposition}
@@ -1411,8 +1418,8 @@ need to define our derivatives inductively in terms of $n$.
 \fi
 
 As before, we can now compute $\partial_1{\iter}$ together with $\iter$ by
-mutual recursion.\footnote{
-  In fact, the recursion here is not \emph{mutual}: the first component does not
+mutual recursion.\footnote{In
+  fact, the recursion here is not \emph{mutual}: the first component does not
   depend on the second. However, writing it in this way makes it
   amenable to computation by fixpoint, and we will in fact be able to avoid the
   recomputation of $\iter_n$ when we show that it is equivalent to $\derive{\lfp}$.
@@ -1609,7 +1616,7 @@ rather than bag semantics (although the same approach would work with bag semant
 Several approaches
 \cite{gupta1993maintaining,harrison1992maintenance} \textemdash{} most notably
 DReD \textemdash{}
-remove fact until one can start applying the
+remove facts until one can start applying the
 rules again to reach the new fixpoint. Given a good way of deciding what
 facts to remove this can be quite efficient.
 However, such techniques tend to be tightly coupled to the domain.
@@ -2261,7 +2268,7 @@ which lose precision are labelled with $\dagger$.
         \iter(f, n)
         \cplus \partial_1{\iter}(f, \change{f}, n)
       )
-    \tag{ by induction}\\
+    \tag{by induction}\\
     &= f(\iter(f, n)) \cplus \derive{\ev}((f, \iter(f, n)), (\change{f},
       \partial_1{\iter}(f, \change{f}, n)))
     \tag{by \cref{def:functionalChanges}}\\
