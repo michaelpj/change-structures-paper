@@ -316,7 +316,7 @@ This is a very common case: any monoid $(A, \splus, 0)$ can be seen as a change 
 $\cstruct{A}{(A, \splus, 0)}{\splus}$. Many practical change actions
 can be constructed in this way. In particular, for any change action $\cstruct{A}{\changes{A}}{\cplus}$,
 $\cstruct{\changes{A}}{\changes{A}}{\splus}$ is also a change action. This means
-that we don't have to do any extra work to talk about changes to changes \textemdash{} we can 
+that we do not have to do any extra work to talk about changes to changes \textemdash{} we can 
 always take $\changes{\changes{A}} = \changes{A}$.
 
 Three examples of change actions are of particular interest to us.
@@ -442,6 +442,15 @@ compute the difference between two values.
 \end{definition}
 
 \begin{proposition}
+  \label{prop:minusDerivatives}
+  Given a minus operator $\cminus$, and a function $f$, let
+  \begin{displaymath}
+    \derive{f}_\cminus(a, \change{a}) \defeq f(a \cplus \change{a}) \cminus f(a)
+  \end{displaymath}
+  Then $\derive{f}_\cminus$ is a derivative for $f$.
+\end{proposition}
+
+\begin{proposition}
   Let $\cstr{A}$ be a change action. Then the following are equivalent:
   \begin{itemize}
     \item $\cstr{A}$ is complete.
@@ -452,15 +461,6 @@ compute the difference between two values.
 
 This last property is of the utmost importance, since we are often concerned with the differentiability
 of functions.
-
-\begin{proposition}
-  \label{prop:minusDerivatives}
-  Given a minus operator $\cminus$, and a function $f$, let
-  \begin{displaymath}
-    \derive{f}_\cminus(a, \change{a}) \defeq f(a \cplus \change{a}) \cminus f(a)
-  \end{displaymath}
-  Then $\derive{f}_\cminus$ is a derivative for $f$.
-\end{proposition}
 
 \subsubsection{Products and sums}
 \label{sec:prodsum}
@@ -586,8 +586,7 @@ will consider change actions over posets, which give us the ability to
 
 Ordered sets give us a constrained class of functions: monotone
 functions. We can define \emph{ordered} change actions, which are those that
-are well-behaved with respect to the order on the underlying set.
-\footnote{If we were giving a presentation that was
+are well-behaved with respect to the order on the underlying set.\footnote{If we were giving a presentation that was
 generic in the base category, then this would simply be the definition of being
 a change action in the category of posets and monotone maps.}
 
@@ -620,12 +619,13 @@ order interacts nicely with derivatives, in that it gives us the following lemma
 
 \begin{theorem}[Sandwich lemma]
   \label{theorem:sandwich}
-  Let $\cstr{A}$ be an change action, and $\cstr{B}$ be an ordered change action, and given functions
+  Let $\cstr{A}$ be a change action, and $\cstr{B}$ be an ordered change action,
+  and let
   $f: {A} \rightarrow {B}$ and $g: A \times \changes{A} \rightarrow
-  \changes{B}$. If $\supderive{f}$ and $\subderive{f}$ are
+  \changes{B}$ be function. If $\supderive{f}$ and $\subderive{f}$ are
   derivatives for $f$ such that
   \begin{displaymath}
-    \supderive{f} \changeOrder g \changeOrder \subderive{f}
+    \subderive{f} \changeOrder g \changeOrder \supderive{f}
   \end{displaymath}
   then $g$ is a derivative for $f$.
 \end{theorem}
@@ -635,8 +635,8 @@ characterisation of all the derivatives for a function.
 
 \begin{theorem}
 \label{theorem:derivativeCharacterization}
-  Let $\cstr{A}$ and $\cstr{B}$ be change actions, with $\cstr{B}$ ordered, and given a function
-  $f: {A} \rightarrow {B}$. If there exist $\subderiveM{f}$ and
+  Let $\cstr{A}$ and $\cstr{B}$ be change actions, with $\cstr{B}$ ordered, and let
+  $f: {A} \rightarrow {B}$ be a function. If there exist $\subderiveM{f}$ and
   $\supderiveM{f}$ which are unique minimal and maximal derivatives of $f$,
   respectively, then the derivatives of $f$ are precisely
   the functions $\derive{f}$ such that
@@ -767,7 +767,7 @@ a set of named tuples, with variables ranging over a finite schema.
     \sigma_\Gamma(\{x_1 \mapsto v_1, \ldots, x_n \mapsto v_n, y_1 \mapsto w_1, \ldots, y_m \mapsto w_m \})
     \defeq \{ x_1 \mapsto v_1, \ldots, x_n \mapsto v_n \}
   \end{displaymath}
-  I.e. $\sigma_\Gamma$ restricts a named tuple over $\Gamma \cup \Sigma$ into a tuple over $\Gamma$
+  i.e. $\sigma_\Gamma$ restricts a named tuple over $\Gamma \cup \Sigma$ into a tuple over $\Gamma$
   with the same values for the names in $\Gamma$.
   We denote the elementwise extension of $\sigma_\Gamma$ to sets of tuples also as $\sigma_\Gamma$.
 \end{definition}
@@ -850,8 +850,7 @@ expression and hopefully make it easier to compute. But we also know from
 $\derive{f}_{\cminus_\bot}$ and $\derive{f}_{\cminus_\top}$ is a valid
 derivative,
 and we can therefore optimize anywhere within that range to make a 
-trade-off between ease of computation and precision.
-\footnote{The idea of using an approximation
+trade-off between ease of computation and precision.\footnote{The idea of using an approximation
 to the precise derivative, and a soundness condition, appears in Bancilhon \cite{bancilhon1986amateur}.}
 
 There is also the question of how to compute the derivative. Since the change
@@ -904,7 +903,7 @@ specifics of the evaluation engine. Here is one possibility, which is the one us
     \end{minipage}
     \vspace{6pt}
     \begin{align*}
-      \bothdiff(X) \defeq X \twist (\updiff(X), \downdiff(X))
+      \bothdiff(R) \defeq R \twist (\updiff(R), \downdiff(R))
     \end{align*}
     \end{minipage}
   }
@@ -937,7 +936,7 @@ While the definitions usually exhibit the dualities we would expect
 \newcommand{\bothchanges}{\rho}
 \begin{rep-theorem}{concreteDatalog}[Concrete Datalog formula derivatives]
 \label{theorem:concreteDatalog}
-  Let $\updiff, \downdiff, \bothdiff : \Formula \rightarrow \Formula$ be mutually recursive functions
+  Let $\updiff$, $\downdiff$, $\bothdiff : \Formula \rightarrow \Formula$ be mutually recursive functions
   defined by structural induction as in \cref{fig:datalogDerivatives}.
 
   Then $\updiff(T)$ and $\downdiff(T)$ are disjoint, and for any schema $\Gamma$
@@ -1094,7 +1093,7 @@ functions.
   \end{align*}
 \end{definition}
 
-The above definition isn't always well-typed, since given $f : \cstr{A} \rightarrow \cstr{B}$ and
+The above definition is not always well-typed, since given $f : \cstr{A} \rightarrow \cstr{B}$ and
 $\delta f : A \rightarrow \changes{B}$ there is, in general, no guarantee that 
 $f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteria that guarantee this.
 
@@ -1109,8 +1108,7 @@ $f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteri
       $\cplus_B : B \times \changes{B} \to B$ is differentiable.
   \end{itemize}
   Then the pointwise functional change action 
-  $(\cstr{A} \rightarrow \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$ is well defined. 
-  \footnote{
+  $(\cstr{A} \rightarrow \cstr{B}, A \rightarrow \changes{B}, \cplus_\rightarrow)$ is well defined.\footnote{
     Either of these conditions is enough to guarantee that the pointwise functional change action
     is well defined, but it can be the case that $\cstr{B}$ satisfies neither and yet pointwise
     change actions into $\cstr{B}$ do exist. A precise account of when pointwise functional change
@@ -1579,7 +1577,7 @@ Arntzenius \cite{arntz2017fixpoints} gives a derivative operator for fixpoints b
 the framework in Cai et al.\cite{cai2014changes}. However, since we have different
 notions of function changes, the result is inapplicable as
 stated. In addition, we require a somewhat different set of conditions; in particular, we
-don't require our changes to always be increasing.
+do not require our changes to always be increasing.
 
 \subsection{Datalog}
 
@@ -1700,7 +1698,6 @@ domain theory. This is the subject of ongoing work by the authors.
 \bibliography{paper}
 \fi
 
-\clearpage
 \appendix
 \appendixpage
 
