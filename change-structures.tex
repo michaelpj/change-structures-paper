@@ -180,15 +180,16 @@ existential quantification, negation, and aggregation.\footnote{See, for
   Datomic \cite{datomicWebsite},
   Souffle \cite{souffleWebsite,scholz2016fast}, and
   DES \cite{saenz2011deductive}, which between them have all of these
-  features and more. } 
+  features and more. We do not here explore supporting extensions to the syntax
+  of rule \emph{heads}.} 
 This allows us to write programs like the following, where we compute whether all the
 nodes in a subtree given by $child$ have some property $p$:
 \begin{align*}
   treeP(x) &\leftarrow p(x) \wedge \neg \exists y . (child(x,y) \wedge \neg treeP(y))
 \end{align*}
 
-Here the combination of negation and explicit existential quantification amounts
-to recursion through a \emph{universal} quantifier. We would
+This natural formulation amounts to recursion through an \emph{universal}
+quantifier (encoded as $\neg \exists \neg$). We would
 like to be able to use semi-naive evaluation for this rule too, but the standard
 definition of semi-naive transformation is not well defined for the extended
 program syntax, and it is unclear how to extend it (and the
@@ -213,7 +214,8 @@ freedom to optimize within a range of possible alternatives to improve precision
 
 Handling extended Datalog is of more than theoretical interest \textemdash{} the research
 in this paper was carried out at Semmle, which
-makes heavy use of a commercial Datalog implementation
+makes heavy use of a commercial Datalog implementation to implement large-scale
+static program analysis 
 \cite{semmleWebsite,avgustinov2016ql,sereni2008adding,schafer2010type}.
 Semmle's implementation includes parity-stratified negation\footnote{Parity-stratified negation means that recursive calls must
   appear under an even number of negations. This ensures that the rule remains
@@ -909,7 +911,7 @@ specifics of the evaluation engine. Here is one possibility, which is the one us
     \end{minipage}
     \vspace{6pt}
     \begin{align*}
-      \bothdiff(R) \defeq R \twist (\updiff(R), \downdiff(R))
+      \bothdiff(R) \defeq (R \vee \updiff(R)) \wedge \neg \downdiff(R)
     \end{align*}
     \end{minipage}
   }
@@ -1157,7 +1159,8 @@ $f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteri
     actions exist is outside the scope of this paper.
   }
 \end{theorem}
-As a direct consequence of this, it follows that whenever $L$ is a Boolean algebra, the
+As a direct consequence of this, it follows that whenever $L$ is a Boolean
+algebra (and hence has a complete change action), the
 pointwise functional change action $\cstr{A} \ptfunc \cstr{L}_\superpose$ is well-defined.
 
 Pointwise functional change actions are functional in the sense of \cref{def:functionalChanges}. 
@@ -1260,26 +1263,6 @@ is the following analogous result:
 \begin{proof}
   It suffices to apply $\cplus$ and \cref{prop:distributivityLimit} to the directed families $\{ f_i(a) \}$ and
   $\{ \derive{f_i}(a, \change{a}) \}$.
-\end{proof}
-\fi
-
-We also state the following additional fixpoint lemma. This is a specialization of
-Beki\'c's Theorem \cite[section 10.1]{winskel1993formal}, but it has a straightforward direct proof.
-
-\begin{rep-proposition}{factoringFixpoints}[Factoring of fixpoints]
-  \label{prop:factoringFixpoints}
-  Let $A$ and $B$ be dcpos, $f : A \rightarrow A$ and $g: A \times B \rightarrow B$ be continuous, and let
-  \begin{displaymath}
-    h(a, b) \defeq (f(a), g(a, b))
-  \end{displaymath}
-  Then
-  \begin{displaymath}
-    \lfp(h) = (\lfp(f), \lfp(\lambda b . g(\lfp(f), b)))
-  \end{displaymath}
-\end{rep-proposition}
-\ifproofs
-\begin{proof}
-  See \cref{prf:factoringFixpoints}.
 \end{proof}
 \fi
 
@@ -1469,8 +1452,9 @@ Which has the property that
   &\nextiter_{f, \change{f}}^n (\bot, \bot) = (\iter(f, n), \partial_1{\iter}(f, \change{f}, n)).
 \end{align*}
 
-This indeed provides us with a function whose limit we can take, showing
-that $\derive{\lfp}$ is a true derivative.
+This indeed provides us with a function whose limit we can take. If we do so we
+will discover that it is exactly $\derive{\lfp}$ (defined as in
+\cref{def:fixpointDerivatives}), showing that $\derive{\lfp}$ is a true derivative.
 
 \begin{rep-theorem}{leastFixpointDerivatives}[Derivatives of least fixpoint operators]
   \label{theorem:leastFixpointDerivatives}
@@ -1563,13 +1547,20 @@ the underlying language.
 \begin{corollary}
 \label{theorem:diffUpdate}
   Datalog program semantics can be incrementally maintained with changes to
-  extensional (EDB) relations.
+  relations.
 \end{corollary}
 \ifproofs
 \begin{proof}
   Corollary of \cref{theorem:leastFixpointDerivatives} and \cref{corollary:consqDiff}.
 \end{proof}
 \fi
+
+Note that our approach makes no particular distinction between changes to the
+\emph{extensional} relations (adding or removing facts), and changes to the
+\emph{intensional} relations (changing the definition). The latter simply
+amounts to a change to the denotation of that relation, which can be
+incrementally propagated in exactly the same way as we would propagate a change
+to the extensional relations.
 
 \section{Related work}
 
@@ -1723,18 +1714,17 @@ We have presented change actions and their properties, and used them to provide
 novel, compositional, strategies for incrementally evaluating and maintaining recursive functions, in
 particular the semantics of Datalog.
 
+\todomario{Tweak these paragraphs}
 The main avenue for future theoretical work is the categorical structure of
-change actions. There is a simple category $\cat{CAct}$ of change actions and differentiable
-functions between them, which turns out to be equivalent to $\cat{PreOrd}$ and
-has interesting Cartesian closed subcategories.
-
-Furthermore, $\cat{CAct}$ could be generalized in two additional ways: as a
-2-category (corresponding to the 2-categorical interpretation of $\cat{PreOrd}$,
-and as a category over arbitrary base categories (rather than just $\cat{Set}$).
+change actions. This has begun to be explored by the authors in \cite{alvarez2019changeactions}.
 
 These generalizations would allow us to extend the theory of change actions in
 multiple different directions, such as synthetic differential geometry and
 domain theory. This is the subject of ongoing work by the authors.
+
+\todompj{More}
+In addition, there is plenty of scope for practical application of the
+techniques given here to languages other than Datalog.
 
 \ifbiblatex
 \printbibliography{}
@@ -2217,7 +2207,20 @@ subsidiary recursive cases are precise, then so is that case.
   of $\vee$ and $\wedge$.
 \end{proof}
 
-\repeatproposition{factoringFixpoints}
+We also state the following additional fixpoint lemma. This is a specialization of
+Beki\'c's Theorem \cite[section 10.1]{winskel1993formal}, but it has a straightforward direct proof.
+
+\begin{rep-proposition}{factoringFixpoints}[Factoring of fixpoints]
+  \label{prop:factoringFixpoints}
+  Let $A$ and $B$ be dcpos, $f : A \rightarrow A$ and $g: A \times B \rightarrow B$ be continuous, and let
+  \begin{displaymath}
+    h(a, b) \defeq (f(a), g(a, b))
+  \end{displaymath}
+  Then
+  \begin{displaymath}
+    \lfp(h) = (\lfp(f), \lfp(\lambda b . g(\lfp(f), b)))
+  \end{displaymath}
+\end{rep-proposition}
 \begin{proof}
   \label{prf:factoringFixpoints}
   Let
