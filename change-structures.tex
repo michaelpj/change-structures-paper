@@ -1272,6 +1272,7 @@ $\lfp$ in terms of the
 iteration function $\iter$:
 \begin{align*}
   &\iter : (A \rightarrow A) \times \NN \rightarrow A\\
+  &\iter(f, 0) \defeq \bot\\
   &\iter(f, n) \defeq f^n(\bot)\\
   &\lfp : (A \rightarrow A) \rightarrow A\\
   &\lfp(f) \defeq \bigsqcup_{n \in \NN} \iter(f, n) \tag{where $f$ is continuous}
@@ -1301,7 +1302,7 @@ derivative of $\iter$ with respect to $n$.
   argument, and a partial derivative is given by:
   \begin{align*}
     &\partial_2{\iter}: (A \rightarrow A) \times \NN \times \changes{\NN} \rightarrow \changes{A}\\
-    &\partial_2{\iter}(f, \mzero, m) \defeq \iter(f, m) \cminus \bot\\
+    &\partial_2{\iter}(f, \mzero, m) \defeq \iter(f, m) \cminus \iter(f, 0)\\
     &\partial_2{\iter}(f, n+1, m) \defeq \derive{f}(\iter(f, n), \partial_2{\iter}(f, n, m))
   \end{align*}
 \end{rep-proposition}
