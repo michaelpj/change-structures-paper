@@ -927,20 +927,23 @@ the upwards and downwards parts of the derivative, respectively.
 Our definition uses an auxiliary function, $\bothdiff$, which computes the ``neXt'' value of a term by applying the upwards and downwards derivatives.
 As is typical for a derivative, the new formulae will have additional free relation variables
 for the upwards and downwards derivatives of the free relation variables of $T$,
-denoted as $\updiff R$ and $\downdiff R$ respectively.\footnote{While
-  the definitions usually exhibit the dualities we would expect
-  between corresponding operators, there are a few asymmetries to explain.
+denoted as $\updiff R$ and $\downdiff R$ respectively. Evaluating the formula as
+a derivative means evaluating it as a normal Datalog formula with the new
+relation variables set to the input relation changes.
 
-  The asymmetry between the cases for $\updiff(T \vee U)$ and
-  $\downdiff(T \wedge U)$ is for operational reasons. The symmetrical version of
-  $\updiff(T \vee U)$ is $(\updiff(T) \wedge \neg U) \vee (\updiff(U) \wedge \neg
-  T)$ (which is also precise). The reason we omit the negated conjuncts is simply
-  that they are costly to compute and not especially helpful to our evaluation engine.
+While the definitions mostly exhibit the dualities we would expect
+between corresponding operators, there are a few asymmetries to explain.
 
-  The asymmetry between the cases for $\exists$ is because our
-  dialect of Datalog does not have a primitive universal quantifier.
-  If we did have one, the cases for $\exists$ would be dual to the corresponding
-  cases for $\forall$.}
+The asymmetry between the cases for $\updiff(T \vee U)$ and
+$\downdiff(T \wedge U)$ is for operational reasons. The symmetrical version of
+$\updiff(T \vee U)$ is $(\updiff(T) \wedge \neg U) \vee (\updiff(U) \wedge \neg
+T)$ (which is also precise). The reason we omit the negated conjuncts is simply
+that they are costly to compute and not especially helpful to our evaluation engine.
+
+The asymmetry between the cases for $\exists$ is because our
+dialect of Datalog does not have a primitive universal quantifier.
+If we did have one, the cases for $\exists$ would be dual to the corresponding
+cases for $\forall$.}
 
 \newcommand{\bothchanges}{\rho}
 \begin{rep-theorem}{concreteDatalog}[Concrete Datalog formula derivatives]
