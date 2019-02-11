@@ -286,12 +286,13 @@ Abstractly, we have a set of values (the integers), and a set of changes
 
 This kind of structure is well-known \textemdash{} it is a set action. It is
 also very natural to want to combine changes sequentially, and if we do this
-then we find ourselves with a monoid action.\footnote{Using
-  monoid actions for changes gives us a reason to think that
+then we find ourselves with a monoid action.
+
+Using monoid actions for changes gives us a reason to think that
 change actions are an adequate representation of changes: any subset of $A
 \rightarrow A$ which is closed under composition can be
 represented as a monoid action on $A$, so we are able to capture all of these as change
-actions.}
+actions.
 
 \subsection{Change actions}
 \label{sec:changeAction}
@@ -705,9 +706,9 @@ represented as $(\{ 1, 2 \}) \cplus
 (\{ 3 \}, \{ 1 \}) = \{ 2, 3 \}$.
 
 Boolean algebras also have unique maximal and minimal
-derivatives, under the usual partial order based on implication.\footnote{The change
+derivatives, under the usual partial order based on implication. The change
 set is, as usual, given the change partial order, which in this case corresponds to
-the natural order on $L \times L^{\textrm{op}}$.}
+the natural order on $L \times L^{\textrm{op}}$.
 
 \begin{proposition}
   \label{prop:minimalMaximalDerivatives}
