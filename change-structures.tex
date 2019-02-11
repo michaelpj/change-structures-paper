@@ -19,6 +19,9 @@
 %\newif\ifbiblatex\biblatextrue
 \newif\ifbiblatex\biblatexfalse
 
+% No appendix for conference version
+\newif\ifappendix\appendixfalse
+
 % Packages where the order matters
 \ifbiblatex
 \usepackage[
@@ -268,9 +271,9 @@ disjunction, and existential quantification.
 
 We have omitted the proofs from this paper. Most of the results have routine
 proofs, but the proofs of the more substantial results
-(especially those in \cref{sec:fixpoints}) are included in an appendix (\cref{sec:proofs}), along
-with some extended worked examples (\cref{sec:workedExamples}), and additional
-material on the precision of derivatives (\cref{sec:precision}).
+(especially those in \cref{sec:fixpoints}) are included in an extended report on
+the author's webpage, along with some extended worked examples, and additional
+material on the precision of derivatives.
 
 \section{Change actions and derivatives}
 \label{sec:changeActions}
@@ -1370,8 +1373,7 @@ i.e. we are applying a change to the \emph{function} whose fixpoint we are takin
 In Datalog this would allow us to update a recursively defined relation given an
 update to one of its non-recursive dependencies, or the extensional database.
 For example, we might want to take the transitive closure relation
-and update it by changing the edge relation $e$.\footnote{See
-  \cref{sec:workedExample} for a worked example of this process.}
+and update it by changing the edge relation $e$.
 
 However, this requires us to provide a derivative for the fixpoint operator
 $\fixpoint$ with respect to the function whose fixpoint is being taken.
@@ -1723,6 +1725,7 @@ techniques given here to languages other than Datalog.
 \bibliography{paper}
 \fi
 
+\ifappendix
 \appendix
 \appendixpage
 
@@ -2292,5 +2295,7 @@ Beki\'c's Theorem \cite[section 10.1]{winskel1993formal}, but it has a straightf
     &= \derive{\lfp}(f, \change{f})
   \end{align*}
 \end{proof}
+\else
+\fi
 
 \end{document}
