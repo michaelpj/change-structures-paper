@@ -1030,15 +1030,17 @@ allowing us to skip the second conjunct when $U$ has not changed.
 
 \section{Changes on functions}
 
-So far we have found change actions for spaces that are a good representation of
-simple data, but we would also like to have change actions on
-\emph{function} spaces. This would enable us to have derivatives for higher-order languages, and in particular derivatives for
-fixpoint operators $\fixpoint : (A \rightarrow A) \rightarrow A$, which are higher-order functions. 
+So far we have defined change actions for the kinds of things that typically
+make up \emph{data}, but we would also like to have change actions on
+\emph{functions}. This would allow us to define derivatives for higher-order
+languages (where functions are first-class); and for semantic operators
+like fixpoint operators $\fixpoint : (A \rightarrow A) \rightarrow A$, which
+also operate on functions.
 
-Function spaces, however, differ from products and disjoint unions in that, given change actions $\cstr{A}$ and $\cstr{B}$, there is no obvious choice
-of a ``best'' change action structure on $A \rightarrow B$.
-Instead of settling on a concrete choice of a change action, we will instead
-pick out subsets of ``well-behaved'' change actions on function spaces.
+Function spaces, however, differ from products and disjoint unions in that there
+is no obvious ``best'' change action on $A \rightarrow B$.
+Therefore instead of trying to define a single choice of change action, we will instead
+pick out subsets of function spaces which have ``well-behaved'' change actions.
 
 \begin{definition}[Functional Change Action]
   \label{def:functionalChanges}
@@ -1054,8 +1056,9 @@ pick out subsets of ``well-behaved'' change actions on function spaces.
   $U \subseteq A \rightarrow B$ and $\cstr{U}$ is functional.
 \end{definition}
 
-We have defined functional change actions on arbitrary subsets $U \subseteq A \rightarrow B$ for two
-reasons. First, it will later allow us to restrict ourselves to spaces of monotone or continuous
+There are two reasons why functional change actions are usually associated with
+a \emph{subset} of  $U \subseteq A \rightarrow B$.
+Firstly, it allows us to restrict ourselves to spaces of monotone or continuous
 functions. But more importantly, functional change actions are necessarily made up of differentiable
 functions, and thus a functional change action may not exist for the entire function space
 $A \rightarrow B$.
@@ -1110,10 +1113,10 @@ function change $\delta f$:
 \subsection{Pointwise functional change actions}
 \label{sec:pointwiseFunctional}
 
-It is, in general, hard to find functional change actions on the set
-of differentiable functions $\cstr{A} \rightarrow \cstr{B}$. Fortunately, 
-in many important cases there is a simple change action structure on the space of differentiable 
-functions.
+Even if we restrict ourselves to the differential functions between $\cstr{A}$
+and $\cstr{B]}$ it is hard to find a concrete functional change action for this set.
+Fortunately, in many important cases there is a simple change action
+on the set of differentiable functions.
 
 \begin{definition}[Pointwise functional change action]
   Let $\cstr{A}$ and $\cstr{B}$ be change actions. The \emph{pointwise functional change action} 
@@ -1128,9 +1131,13 @@ functions.
   \end{align*}
 \end{definition}
 
+That is, a change is given pointwise, mapping each point in the domain to a
+change in the codomain.
+
 The above definition is not always well-typed, since given $f : \cstr{A} \rightarrow \cstr{B}$ and
-$\delta f : A \rightarrow \changes{B}$ there is, in general, no guarantee that 
-$f \cplus_\rightarrow \delta f$ is differentiable. We present two simple criteria that guarantee this.
+$\delta f : A \rightarrow \changes{B}$ there is no guarantee that 
+$f \cplus_\rightarrow \delta f$ is differentiable. We present two sufficient
+criteria that guarantee this.
 
 \begin{theorem}
   \label{theorem:functionalCAct}
@@ -1165,22 +1172,18 @@ Moreover, the derivative of the evaluation map is quite easy to compute.
   $a \in A$, $\change{a} \in \changes{A}$,
   $\change{f} \in A \rightarrow \changes{B}$.
 
-  Then, by taking a derivative of $f$ we obtain the following derivative for the evaluation map:
-  \begin{displaymath}
+  Then the following are both derivatives of the evaluation map:
+  \begin{align*}
     \derive{\ev}_1((f, a), (\change{f}, \change{a})) 
-    \defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})
-  \end{displaymath}
-
-  Alternatively, by taking a derivative of $f \cplus \change{f}$ we can obtain another derivative
-  for the evaluation map:
-  \begin{displaymath}
+    &\defeq \derive{f}(a, \change{a}) \splus \change{f}(a \cplus \change{a})\\
     \derive{\ev}_2((f, a), (\change{f}, \change{a})) 
-    \defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})
-  \end{displaymath}
+    &\defeq \change{f}(a) \splus \derive{(f \cplus \change{f})}(a, \change{a})
+  \end{align*}
 \end{proposition}
 
-Having pointwise function changes allows us to actually compute a derivative of the
-evaluation map as shown. In practice, this means
+A functional change action merely tells us that a derivative of the evaluation
+map exists \textemdash{} a pointwise change action actually gives us a
+definition of it. In practice, this means
 that we will only be able to use the results in \cref{sec:fixpoints}
 (incremental computation and derivatives of fixpoints) when
 we have pointwise change actions, or where we have some other way of computing
