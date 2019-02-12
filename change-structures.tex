@@ -1192,15 +1192,16 @@ a derivative of the evaluation map.
 \section{Directed-complete partial orders and fixpoints}
 
 Directed-complete partial orders (dcpos) equipped with a least element, are an
-important class of posets. They provide us with the ability to take
-\emph{fixpoints} of (Scott-)continuous maps, which is especially important for interpreting recursion in program semantics.
+important class of posets. They allow us to take
+\emph{fixpoints} of (Scott-)continuous maps, which is 
+important for interpreting recursion in program semantics.
 
 \subsection{Dcpos}
 \label{sec:dcpos}
 
 As before, we can define change actions on dcpos, rather than sets, as change
 actions whose base and change sets are endowed with a dcpo structure, and where
-the monoid operation and action are continuous.
+the monoid operation and action are (Scott-)continuous.
 
 \begin{definition}
   A change action $\cstr{A}$ is \emph{continuous} if
@@ -1211,7 +1212,7 @@ the monoid operation and action are continuous.
   \end{itemize}
 \end{definition}
 
-Unlike the case for posets, the change order $\changeOrder$ does \emph{not}, in general,
+Unlike posets, the change order $\changeOrder$ does \emph{not}, in general,
 induce a dcpo on $\changes{A}$. As a counterexample, consider 
 the change action $(\overline{\NN}, \NN, +)$, where $\overline{\NN}$ denotes the dcpo of natural numbers
 extended with positive infinity.
@@ -1243,7 +1244,7 @@ we shall be using, such as the following, whose proof can be found in
 
 It is a well-known result in standard calculus that the limit of an absolutely convergent sequence of
 differentiable functions $\{f_i\}$ is itself differentiable, and its derivative is equal to the limit
-of the derivatives of the $f_i$. A remarkable consequence of \cref{prop:distributivityLimit} 
+of the derivatives of the $f_i$. A consequence of \cref{prop:distributivityLimit} 
 is the following analogous result:
 
 \begin{corollary}
@@ -1268,7 +1269,8 @@ Fixpoints appear frequently in the semantics of languages with recursion. If we
 can give a generic account of how to compute fixpoints using change actions,
 then this gives us a compositional way of extending a derivative for the
 non-recursive semantics of a language to a derivative that can also handle recursion.
-We will later apply this to full recursive Datalog (\cref{sec:datalogIncr}).
+We will later apply this technique to create a derivative for the semantics of
+full recursive Datalog (\cref{sec:datalogIncr}).
 
 \subsubsection{Iteration functions}
 \label{sec:iteration}
@@ -1295,8 +1297,8 @@ with respect to $f$, and this will give us a way to get from iterating $f$ to it
 The following theorems provide a
 generalization of semi-naive evaluation to any differentiable function over a
 continuous change action. Throughout this section we will assume that we have a continuous change action
-$\cstr{A}$, and any reference to the change action $\cstr{\NN}$ will refer to the obvious monoidal
-change action on the naturals defined in \cref{sec:examples}.
+$\cstr{A}$, and any reference to the change action $\cstr{\NN}$ will refer to
+the monoidal change action on the naturals defined in \cref{sec:examples}.
 
 Since we are trying to incrementalize the iterative step, we start by taking the partial
 derivative of $\iter$ with respect to $n$.
@@ -1365,21 +1367,23 @@ value of the fixpoint, i.e.
   F_{E \cplus \change{E}} \defeq \fixpoint (\lambda X . F(E \cplus \change{E}, X))
 \end{displaymath}
 
-If $F : B \times A \rightarrow A$ and $\cstr{A}$ is a complete change action where
-$\cstr{A} \ptfunc \cstr{A}$ is well-defined, then 
+This can be seen as applying a change to the \emph{function} whose fixpoint we are
+taking. We go from computing the fixpoint of $F(E, \_)$ to computing the
+fixpoint of $F(E \cplus \change{E}, \_)$. If we have a pointwise functional
+change action then we can express this change as a function giving the change at
+each point, that is:
 \begin{displaymath}
-  \lambda X . F(E \cplus \change{E}, X) = (\lambda X . F(E, X)) \cplus_{pt}
-  (\lambda X . F(E \cplus \change{E}, X) \cminus F(E, X))
+  \lambda X . F(E \cplus \change{E}, X) \cminus F(E, X)
 \end{displaymath}
-i.e. we are applying a change to the \emph{function} whose fixpoint we are taking.
 
 In Datalog this would allow us to update a recursively defined relation given an
 update to one of its non-recursive dependencies, or the extensional database.
 For example, we might want to take the transitive closure relation
 and update it by changing the edge relation $e$.
 
-However, this requires us to provide a derivative for the fixpoint operator
-$\fixpoint$ with respect to the function whose fixpoint is being taken.
+However, to compute these examples would requires us to provide a derivative
+for the fixpoint operator $\fixpoint$: we want to know how the resulting
+fixpoint changes given a change to its input function.
 
 \begin{definition}[Derivatives of fixpoints]
 \label{def:fixpointDerivatives}
@@ -1401,7 +1405,7 @@ derivative \textemdash{} for \emph{least} fixpoints. The appearance of
 $\derive{\ev}$, a derivative of the evaluation map, in the definition of
 $\adjust$ is also no coincidence: as evaluating a fixpoint consists of many
 steps of applying the evaluation map, so computing the derivative of a fixpoint
-consists of many stages of applying the derivative of the evaluation
+consists of many steps of applying the derivative of the evaluation
 map.\footnote{Perhaps surprisingly, the authors first discovered an expanded
   version of this formula, and it was only later that we realised the remarkable
   connection to $\derive{\ev}$.}
