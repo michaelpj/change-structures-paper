@@ -12,7 +12,12 @@
 \usepackage{thmtools}
 \usepackage{todonotes}
 \usepackage{etoolbox}
-\usepackage{appendix}
+
+\makeatletter
+\newcommand{\@chapapp}{\relax}%
+\makeatother
+\usepackage[title,header]{appendix}
+
 \usepackage{environ}
 
 % Switches between biblatex and natbib
@@ -1736,8 +1741,13 @@ techniques given here to languages other than Datalog.
 \fi
 
 \ifappendix
-\appendix
-\appendixpage
+
+\clearpage
+\renewcommand{\thechapter}{}
+\chapter{Appendices}
+\begin{appendices}
+\renewcommand{\thesection}{Appendix \Alph{section}}%
+\renewcommand{\thesubsection}{\Alph{section}.\arabic{subsection}}
 
 \section{Worked examples}
 \label{sec:workedExamples}
@@ -2305,7 +2315,9 @@ Beki\'c's Theorem \cite[section 10.1]{winskel1993formal}, but it has a straightf
     &= \derive{\lfp}(f, \change{f})
   \end{align*}
 \end{proof}
+\end{appendices}
+
 \else
-\fi
+\fi % end of appendices
 
 \end{document}
