@@ -114,7 +114,7 @@ which computes the transitive closure of an edge relation $e$:
 
 The semantics of Datalog tells us that the denotation of this program is the
 least fixpoint of the rule $tc$. Kleene's fixpoint Theorem tells us that we can 
-compute this fixpoint by repeatedly applying the rule until it stops changing, starting from the empty relation. For example, supposing
+compute this fixpoint by repeatedly applying the rule until the output stops changing, starting from the empty relation. For example, supposing
 that $e = \{ (1, 2), (2, 3), (3, 4) \}$, we get the following evaluation trace:
 \begin{center}
   \begin{tabular} {p{5em} p{12em} p{12em}}
@@ -188,7 +188,7 @@ nodes in a subtree given by $child$ have some property $p$:
   treeP(x) &\leftarrow p(x) \wedge \neg \exists y . (child(x,y) \wedge \neg treeP(y))
 \end{align*}
 
-This natural formulation amounts to recursion through an \emph{universal}
+The body of this predicate amounts to recursion through an \emph{universal}
 quantifier (encoded as $\neg \exists \neg$). We would
 like to be able to use semi-naive evaluation for this rule too, but the standard
 definition of semi-naive transformation is not well defined for the extended
@@ -196,7 +196,7 @@ program syntax, and it is unclear how to extend it (and the
 correctness proof) to handle such cases.
 
 It is possible, however, to write a delta program for $treeP$ by hand; indeed,
-the following definition provides one:\footnote{This rule should be read as: we
+here is a definition for the delta predicate (the accumulator is as before):\footnote{This rule should be read as: we
   can newly deduce that $x$ is in $treeP$ if $x$ satisfies the predicate, and
   we have newly deduced that one of its children is in $treeP$, and we currently
   believe that all of its children are in $treeP$.}
@@ -379,7 +379,7 @@ $f(a)$ to $f(a \cplus \change{a})$. We call this a \emph{derivative} of a functi
   \end{displaymath}
   A function which has a derivative is 
   \emph{differentiable}, and we will write $\cstr{A} \rightarrow \cstr{B}$ for
-  the set of differentiable functions.\footnote{Note that we do not require that $\derive{f}(a,
+  the set of differentiable functions between $A$ and $B$.\footnote{Note that we do not require that $\derive{f}(a,
     \change{a} \splus \change{b}) = \derive{f}(a, \change{a}) \splus \derive{f}(a
     \cplus \change{a}, \change{b})$ nor that $\derive{f}(a, \mzero) = \mzero$.
     These are natural conditions, and all the 
@@ -548,7 +548,7 @@ entirely by the coarseness of the actions.
 
 \begin{definition}
   Let $\cstr{A}_1$ and $ \cstr{A}_2$ be 
-  change actions on $A$. We say that $\cstr{A}_1$ is coarser than $\cstr{A}_2$ (or that $\cstr{A}_2$ is finer
+  change actions on $A$. We say that $\cstr{A}_1$ is \emph{coarser} than $\cstr{A}_2$ (or that $\cstr{A}_2$ is \emph{finer}
   than $\cstr{A}_1$) whenever for every $x \in A$ and change $\change{a}_1 \in
   \changes{A}_1$, there is a change $\change{a}_2 \in
   \changes{A}_2$ such that $x \cplus_{A_1} \change{a}_1 = x \cplus_{A_2} \change{a}_2$.
@@ -607,7 +607,7 @@ a change action in the category of posets and monotone maps.}
   \end{itemize}
 \end{definition}
 
-In fact, any change action whose base set is a poset induces a particularly convenient partial order
+In fact, any change action whose base set is a poset induces a partial order
 on the corresponding change set:
 
 \begin{definition}
@@ -1113,8 +1113,8 @@ function change $\delta f$:
 \subsection{Pointwise functional change actions}
 \label{sec:pointwiseFunctional}
 
-Even if we restrict ourselves to the differential functions between $\cstr{A}$
-and $\cstr{B]}$ it is hard to find a concrete functional change action for this set.
+Even if we restrict ourselves to the differentiable functions between $\cstr{A}$
+and $\cstr{B}$ it is hard to find a concrete functional change action for this set.
 Fortunately, in many important cases there is a simple change action
 on the set of differentiable functions.
 
@@ -1334,7 +1334,9 @@ Which has the property that
 
 This gives us a way to compute a fixpoint incrementally, by adding successive
 changes to an accumulator until we reach it. This is exactly how
-semi-naive evaluation works, with the delta relation and the accumulator relation.
+semi-naive evaluation works: you compute the delta relation and the accumulator
+simultaneously, adding the delta into the accumulator at each stage until it
+becomes the final output.
 
 \begin{rep-theorem}{fixpointIter}[Incremental computation of least fixpoints]
 \label{theorem:fixpointIter}
@@ -1601,7 +1603,7 @@ S-acts (i.e the category of monoid actions on sets) and their categorical struct
 over the years (Kilp, Knauer, and Mikhalev \cite{kilp2000monoids} is a good
 overview). However, there is a key difference between change actions considered
 as a category ($\cat{CAct}$) and the category of
-S-acts $\cat{SAct}$: the objects of $\cat{SAct}$ all maintain the same monoid
+S-acts ($\cat{SAct}$): the objects of $\cat{SAct}$ all maintain the same monoid
 structure, whereas we are interested in changing both the base set \emph{and} the structure of the action.
 
 \subsubsection{Derivatives of fixpoints}
@@ -1637,9 +1639,9 @@ Qian and Wiederhold \cite{qian1991incremental} compute differences with both an 
 rules that look quite similar to those we derive in
 \cref{theorem:concreteDatalog}. However, our presentation is significantly more
 generic, handles recursive expressions, and works on set semantics
-rather than bag semantics (the same approach of finding derivatives
+rather than bag semantics.\footnote{The same approach of finding derivatives
 would work with bag semantics, although unfortunately the Boolean algebra
-structure is missing).
+structure is missing.}
 
 Several approaches
 \cite{gupta1993maintaining,harrison1992maintenance} \textemdash{} most notably
