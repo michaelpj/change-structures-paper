@@ -26,6 +26,6 @@ stdenv.mkDerivation {
   name = "change-structures";
   buildInputs = [ tex biber ghostscript ];
   src = pkgs.lib.sourceFilesBySuffices ./. [ ".tex" ".bib" ".cls" ".bst" ];
-  buildPhase = "latexmk -view=pdf change-structures";
+  buildPhase = "HOME=$TMPDIR latexmk -view=pdf change-structures";
   installPhase = "install -Dt $out *.pdf";
 }
